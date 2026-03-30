@@ -806,7 +806,7 @@ $categoryMeta = [
         </div>
 
         <h1 class="hero-title">
-             Compress.<br>
+            Convert. Compress.<br>
             <em>Protect your files.</em>
         </h1>
 
