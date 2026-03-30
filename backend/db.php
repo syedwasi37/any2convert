@@ -58,6 +58,7 @@ if (!function_exists('envValue')) {
 }
 
 envLoad(dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env');
+envLoad(__DIR__ . DIRECTORY_SEPARATOR . '.env');
 
 $host = envValue('DB_HOST', 'localhost');
 $dbname = envValue('DB_NAME', '');
