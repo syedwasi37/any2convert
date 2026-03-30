@@ -2,8 +2,8 @@
 require_once __DIR__ . '/backend/auth_helpers.php';
 require_once __DIR__ . '/backend/ad_helpers.php';
 $flash = authGetFlash();
-$client_id = "1035171361659-scrunl9467itq9ifg5ae11sij9ljjiu3.apps.googleusercontent.com";
-$redirect_uri = "https://any2convert.com/backend/google_login.php";
+$client_id = envValue('GOOGLE_CLIENT_ID', '');
+$redirect_uri = envValue('GOOGLE_REDIRECT_URI', '');
 $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $client_id . "&redirect_uri=" . $redirect_uri . "&response_type=code&scope=email%20profile";
 ?>
 <!DOCTYPE html>

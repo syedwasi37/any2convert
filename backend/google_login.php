@@ -1,9 +1,14 @@
 <?php
 require_once 'auth_helpers.php';
 
-$client_id = '1035171361659-scrunl9467itq9ifg5ae11sij9ljjiu3.apps.googleusercontent.com';
-$client_secret = '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';
-$redirect_uri = 'https://any2convert.com/backend/google_login.php';
+$client_id = envValue('GOOGLE_CLIENT_ID', '');
+$client_secret = envValue('GOOGLE_CLIENT_SECRET', '');
+$redirect_uri = envValue('GOOGLE_REDIRECT_URI', '');
+
+if ($client_id === '' || $client_secret === '' || $redirect_uri === '') {
+    http_response_code(500);
+    exit('Missing Google OAuth configuration.');
+}
 
 if (isset($_GET['code'])) {
     // 1. Exchange code for access token
