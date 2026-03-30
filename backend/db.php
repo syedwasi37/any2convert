@@ -61,14 +61,9 @@ envLoad(dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env');
 envLoad(__DIR__ . DIRECTORY_SEPARATOR . '.env');
 
 $host = envValue('DB_HOST', 'localhost');
-$dbname = envValue('DB_NAME', '');
-$username = envValue('DB_USER', '');
-$password = envValue('DB_PASS', '');
-
-if ($dbname === '' || $username === '') {
-    http_response_code(500);
-    exit('Missing database configuration. Set DB_HOST, DB_NAME, DB_USER, and DB_PASS in .env');
-}
+$dbname = envValue('DB_NAME', 'u966926210_users_db');
+$username = envValue('DB_USER', 'u966926210_wasi_admin');
+$password = envValue('DB_PASS', '*S1vK!VJU#');
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
