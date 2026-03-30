@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://any2convert.com/</loc>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/about.php</loc>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/privacy.php</loc>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/contact.php</loc>
+    <priority>0.50</priority>
+  </url>
+  
+  <!-- SEO Tool Landing Pages -->
+  <url><loc>https://any2convert.com/image-to-pdf</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-image</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-word</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-powerpoint</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-excel</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/merge-pdf</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/compress-pdf</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/protect-pdf</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/word-to-pdf</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/json-to-csv</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/csv-to-json</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/qr-code-generator</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/password-generator</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/word-counter</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/image-compressor</loc><priority>0.90</priority></url>
+  <url><loc>https://any2convert.com/ocr-image-to-text</loc><priority>0.90</priority></url>
+
+  <url>
+    <loc>https://any2convert.com/blog/security-benefits.php</loc>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/blog/qr-guide.php</loc>
+    <priority>0.70</priority>
+  </url>
+</urlset>

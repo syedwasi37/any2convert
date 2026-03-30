@@ -1,0 +1,18 @@
+# Any2Convert Robots.txt - 2026 Optimization
+User-agent: *
+
+# Google ko ye pages scan karne dein
+Allow: /
+Allow: /index.php
+Allow: /blog/
+Allow: /about.php
+
+# In folders ko block karein (Security & Privacy)
+Disallow: /admin/
+Disallow: /backend/
+Disallow: /config/
+Disallow: /temp/
+Disallow: /dashboard.php
+
+# Sitemap ka link (Google ko rasta dikhane ke liye)
+Sitemap: https://any2convert.com/sitemap.xml
