@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/backend/auth_helpers.php';
+require_once __DIR__ . '/partials/site_chrome.php';
 $purpose = $_GET['purpose'] ?? '';
 $email = trim(strtolower($_GET['email'] ?? ''));
 $allowedPurposes = ['password_reset', 'login_2fa'];
@@ -62,26 +63,17 @@ $flash = authGetFlash();
         .brand-text { font-weight:700; font-size:1.05rem; letter-spacing:-0.02em; color:var(--text); }
         .brand-dot { color:var(--accent); }
     </style>
+    <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body>
+    <?php any2convertRenderTopbar([
+        'home_href' => 'index.php',
+        'links' => [
+            ['href' => $purpose === 'password_reset' ? 'forgot_password.php' : 'login.php', 'label' => $purpose === 'password_reset' ? 'Request Again' : 'Restart Login'],
+        ],
+        'badge' => 'Verify',
+    ]); ?>
     <div class="max-w-3xl mx-auto px-6 py-10">
-        <div class="flex justify-between items-center mb-8">
-            <a href="index.php" class="brand-mark" aria-label="Any2Convert home">
-                <span class="brand-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="8" y1="13" x2="16" y2="13"/>
-                        <line x1="8" y1="17" x2="13" y2="17"/>
-                    </svg>
-                </span>
-                <span class="brand-text">Any2Convert<span class="brand-dot">.</span></span>
-            </a>
-            <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-                <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
-            </button>
-        </div>
         <div class="panel max-w-2xl mx-auto rounded-[2.4rem] p-8 md:p-10">
             <p class="text-xs font-black uppercase tracking-[0.30em] text-blue-500">Verification</p>
             <h1 class="text-3xl md:text-4xl font-black mt-4">Enter your OTP</h1>
@@ -117,26 +109,12 @@ $flash = authGetFlash();
         </div>
     </div>
     <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-        const themeToggle = document.getElementById('themeToggle');
         const otpInput = document.getElementById('otpInput');
-        const iconMoon = document.getElementById('iconMoon');
-        const iconSun = document.getElementById('iconSun');
-        const applyThemeIcon = () => {
-            const dark = document.documentElement.classList.contains('dark');
-            iconMoon.style.display = dark ? 'none' : 'block';
-            iconSun.style.display = dark ? 'block' : 'none';
-        };
-        applyThemeIcon();
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeIcon();
-        });
         otpInput.addEventListener('input', () => {
             otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
         });
     </script>
+    <?php any2convertRenderFooter(); ?>
+    <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

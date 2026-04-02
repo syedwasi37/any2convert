@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/backend/auth_helpers.php';
 require_once __DIR__ . '/backend/ad_helpers.php';
+require_once __DIR__ . '/partials/site_chrome.php';
 authRequireLogin();
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
@@ -340,37 +341,20 @@ function dashboardInitials(string $name): string
             .metric-grid { grid-template-columns: 1fr; }
         }
     </style>
+    <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body>
     <?= adsRenderPosition($conn, 'header') ?>
-    <nav class="topbar">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <a href="index.php" class="brand-mark" aria-label="Any2Convert home">
-                    <span class="brand-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="8" y1="13" x2="16" y2="13"/>
-                            <line x1="8" y1="17" x2="13" y2="17"/>
-                        </svg>
-                    </span>
-                    <span class="brand-text">Any2Convert<span class="brand-dot">.</span></span>
-                </a>
-                <span class="hidden md:inline-flex px-3 py-1 rounded-full glass text-xs font-black uppercase tracking-[0.22em]">Dashboard</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <a href="index.php" class="nav-pill">Home</a>
-                <a href="index.php#tools" class="nav-pill">Tools</a>
-                <a href="contact.php" class="nav-pill">Support</a>
-                <button type="button" id="themeToggle" class="icon-btn" aria-label="Toggle theme">
-                    <svg id="iconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    <svg id="iconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
-                </button>
-                <a href="backend/logout.php" class="nav-pill">Logout</a>
-            </div>
-        </div>
-    </nav>
+    <?php any2convertRenderTopbar([
+        'home_href' => 'index.php',
+        'links' => [
+            ['href' => 'index.php', 'label' => 'Home'],
+            ['href' => 'index.php#tools', 'label' => 'Tools'],
+            ['href' => 'contact.php', 'label' => 'Support'],
+        ],
+        'badge' => 'Dashboard',
+        'cta_html' => '<a href="backend/logout.php" class="site-nav-pill">Logout</a>',
+    ]); ?>
 
     <main class="max-w-7xl mx-auto px-6 py-8">
         <?php if ($flash): ?>
@@ -618,29 +602,10 @@ function dashboardInitials(string $name): string
         </section>
     </main>
 
+    <?php any2convertRenderFooter(); ?>
     <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
 
     <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-
-        const themeToggle = document.getElementById('themeToggle');
-        const iconMoon = document.getElementById('iconMoon');
-        const iconSun = document.getElementById('iconSun');
-        function applyThemeIcon() {
-            const dark = document.documentElement.classList.contains('dark');
-            iconMoon.style.display = dark ? 'none' : 'block';
-            iconSun.style.display = dark ? 'block' : 'none';
-        }
-        applyThemeIcon();
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeIcon();
-        });
-
         function activateDashTab(tabName) {
             const safeTab = document.getElementById(tabName) ? tabName : 'overview';
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.toggle('active', el.dataset.tab === safeTab));
@@ -656,5 +621,6 @@ function dashboardInitials(string $name): string
 
         activateDashTab(window.location.hash ? window.location.hash.substring(1) : 'overview');
     </script>
+    <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>
