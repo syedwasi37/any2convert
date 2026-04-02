@@ -133,7 +133,7 @@ function getGenericUnitConverterHTML(array $config): string
 
     return '
     <div class="space-y-6">
-        <div class="grid xl:grid-cols-[1.2fr_0.8fr] gap-6">
+        <div class="grid 2xl:grid-cols-[1.12fr_0.88fr] gap-6">
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
                 <div class="flex items-start justify-between gap-4 mb-5">
                     <div>
@@ -143,7 +143,7 @@ function getGenericUnitConverterHTML(array $config): string
                     </div>
                     <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">⇄</div>
                 </div>
-                <div class="grid lg:grid-cols-[1.35fr_0.65fr] gap-4">
+                <div class="grid md:grid-cols-[1.25fr_0.75fr] gap-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Enter value</label>
                         <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" placeholder="Enter a value" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
@@ -158,7 +158,7 @@ function getGenericUnitConverterHTML(array $config): string
                         </div>
                     </div>
                 </div>
-                <div class="grid lg:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
+                <div class="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert from</label>
                         <select id="unitConverterFrom" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
@@ -607,8 +607,8 @@ function getCurrencyConverterHTML(): string
                 quickRates.innerHTML = "";
                 preferred.filter((code) => code !== base && rates[code]).slice(0, 6).forEach((code) => {
                     const card = document.createElement("div");
-                    card.className = "rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-3";
-                    card.innerHTML = `<div class="flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${currencyFlagMarkup(base, "w-6 h-4")} <span>${base}</span><span>to</span>${currencyFlagMarkup(code, "w-6 h-4")} <span>${code}</span></div><p class="text-lg font-black text-gray-900 dark:text-white mt-3 break-words">${Number(rates[code]).toFixed(4)}</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">1 ${base} reference rate</p>`;
+                    card.className = "rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-4";
+                    card.innerHTML = `<div class="flex items-center justify-between gap-3"><div class="flex items-center gap-2 min-w-0">${currencyFlagMarkup(code, "w-7 h-5")}<div class="min-w-0"><p class="text-sm font-black text-slate-900 dark:text-white">${code}</p><p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${currencyLabel(code)}</p></div></div><div class="text-right"><p class="text-lg font-black text-gray-900 dark:text-white">${Number(rates[code]).toFixed(4)}</p><p class="text-[11px] text-slate-400">per 1 ${base}</p></div></div>`;
                     quickRates.appendChild(card);
                 });
             }

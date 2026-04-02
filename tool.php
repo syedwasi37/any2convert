@@ -19,6 +19,18 @@ if (!$tool_data) {
 $tool_id = $tool_data['id'];
 trackVisit('Tool Page', $tool_id);
 
+$wideToolIds = [
+    'currency_converter',
+    'length_converter',
+    'weight_converter',
+    'temperature_converter',
+    'area_converter',
+    'volume_converter',
+    'speed_converter',
+    'time_converter',
+];
+$isWideTool = in_array($tool_id, $wideToolIds, true);
+
 require_once 'backend/tool_handlers.php';
 $tool_html = renderToolHandlerHTML($tool_id);
 
@@ -155,6 +167,10 @@ $tool_html = renderToolHandlerHTML($tool_id);
             padding: 30px;
             box-shadow: 0 12px 32px rgba(0,0,0,0.05);
         }
+        .tool-container.tool-container-wide {
+            max-width: 1180px;
+            padding: 34px;
+        }
         @media (max-width: 768px) {
             .tool-container {
                 padding: 16px;
@@ -267,10 +283,10 @@ if (isset($_SESSION['user_name'])) {
     <p style="color: var(--text-secondary); font-size: 1.1rem;">Fast, secure, and powered locally in your browser.</p>
 </header>
 
-<main style="max-width: 1000px; margin: 0 auto; padding: 0 20px;">
+<main style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>; margin: 0 auto; padding: 0 20px;">
     <?= adsRenderPosition($conn, 'top_content') ?>
     <!-- TOOL INTERFACE -->
-    <div class="tool-container" id="modalContent">
+    <div class="tool-container<?= $isWideTool ? ' tool-container-wide' : '' ?>" id="modalContent">
         <?= $tool_html ?>
     </div>
     
