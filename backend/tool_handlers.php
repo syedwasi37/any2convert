@@ -2835,7 +2835,7 @@ function getAiImageGeneratorHTML() {
         <div class="text-center">
             <div class="text-5xl mb-3">🎨</div>
             <p class="font-medium text-lg">AI Image Generator</p>
-            <p class="text-sm text-gray-500 mt-2">Generate stunning images from text prompts using Flux AI</p>
+            <p class="text-sm text-gray-500 mt-2">Generate images from text prompts using the server-configured AI provider</p>
         </div>
         
         <div>
@@ -2906,8 +2906,7 @@ function getAiImageGeneratorHTML() {
             let currentImageBlob = null;
             let currentImageUrl = "";
             
-            // Your API key
-            const API_KEY = "sk_ocfWF9G2OOwjTi43Cvbf6jQhfM1jQDCu";
+            
             
             function showStatus(message, isError = false) {
                 statusDiv.textContent = message;
@@ -2921,9 +2920,7 @@ function getAiImageGeneratorHTML() {
                 }, 5000);
             }
             
-            function encodePrompt(prompt) {
-                return encodeURIComponent(prompt);
-            }
+            
             
             async function generateImage() {
                 const prompt = promptInput.value.trim();
