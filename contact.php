@@ -2,6 +2,7 @@
 session_start();
 require_once 'backend/db.php';
 require_once 'backend/ad_helpers.php';
+require_once __DIR__ . '/partials/site_chrome.php';
 
 $stmt = $conn->query("SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 10");
 $feedbacks = $stmt->fetchAll();
@@ -31,30 +32,39 @@ if (isset($_SESSION['user_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-accent: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 35%, #eef2ff 100%);
-            --panel-bg: rgba(255,255,255,0.9);
-            --panel-soft: #f8fafc;
-            --panel-border: rgba(148,163,184,0.16);
-            --text-main: #0f172a;
-            --text-soft: #64748b;
-            --nav-bg: rgba(255,255,255,0.74);
-            --nav-border: rgba(148,163,184,0.14);
-            --pill-bg: rgba(255,255,255,0.86);
-            --pill-text: #334155;
-            --glow: rgba(59,130,246,0.14);
+            --bg-accent: radial-gradient(circle at 10% 10%, rgba(108,99,255,.18), transparent 24%), radial-gradient(circle at 86% 14%, rgba(34,211,238,.16), transparent 22%), radial-gradient(circle at 50% 0%, rgba(59,130,246,.12), transparent 36%), linear-gradient(180deg, #f8f8fc 0%, #eef3ff 100%);
+            --panel-bg: rgba(255,255,255,.72);
+            --panel-soft: rgba(241,244,255,.86);
+            --panel-border: rgba(17,17,24,.08);
+            --text-main: #111118;
+            --text-soft: #626280;
+            --nav-bg: rgba(255,255,255,.70);
+            --nav-border: rgba(17,17,24,.08);
+            --pill-bg: rgba(255,255,255,.84);
+            --pill-text: #20253d;
+            --glow: rgba(108,99,255,.16);
+            --accent: #6c63ff;
+            --green: #10b981;
+            --border: rgba(17,17,24,.08);
+            --bg-surface: rgba(255,255,255,.72);
+            --text-muted: #626280;
         }
         html.dark {
-            --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%);
-            --panel-bg: rgba(15,23,42,0.82);
-            --panel-soft: rgba(15,23,42,0.92);
-            --panel-border: rgba(148,163,184,0.16);
-            --text-main: #e2e8f0;
-            --text-soft: #94a3b8;
-            --nav-bg: rgba(2,6,23,0.76);
-            --nav-border: rgba(148,163,184,0.16);
-            --pill-bg: rgba(15,23,42,0.92);
-            --pill-text: #cbd5e1;
-            --glow: rgba(96,165,250,0.18);
+            --bg-accent: radial-gradient(circle at 10% 10%, rgba(139,124,255,.24), transparent 24%), radial-gradient(circle at 86% 14%, rgba(103,232,249,.18), transparent 22%), radial-gradient(circle at 50% 0%, rgba(96,165,250,.14), transparent 36%), linear-gradient(180deg, #060816 0%, #0a1022 100%);
+            --panel-bg: rgba(14,18,36,.70);
+            --panel-soft: rgba(18,24,44,.92);
+            --panel-border: rgba(255,255,255,.08);
+            --text-main: #eef2ff;
+            --text-soft: #a7afcf;
+            --nav-bg: rgba(11,15,29,.84);
+            --nav-border: rgba(255,255,255,.08);
+            --pill-bg: rgba(16,21,41,.92);
+            --pill-text: #eef2ff;
+            --glow: rgba(96,165,250,.20);
+            --accent: #8b7cff;
+            --border: rgba(255,255,255,.08);
+            --bg-surface: rgba(14,18,36,.70);
+            --text-muted: #a7afcf;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -73,37 +83,6 @@ if (isset($_SESSION['user_id'])) {
             filter: blur(24px);
             pointer-events: none;
             z-index: 0;
-        }
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-            backdrop-filter: blur(18px);
-            background: var(--nav-bg);
-            border-bottom: 1px solid var(--nav-border);
-        }
-        .nav-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: var(--pill-bg);
-            color: var(--pill-text);
-            border: 1px solid var(--panel-border);
-            font-weight: 700;
-            font-size: 0.88rem;
-            text-decoration: none;
-        }
-        .theme-toggle {
-            width: 46px;
-            height: 46px;
-            border-radius: 999px;
-            border: 1px solid var(--panel-border);
-            background: var(--pill-bg);
-            color: var(--pill-text);
-            font-size: 1rem;
-            font-weight: 700;
         }
         .panel {
             background: var(--panel-bg);
@@ -133,21 +112,17 @@ if (isset($_SESSION['user_id'])) {
         html.dark input,
         html.dark textarea { background: rgba(15,23,42,0.92) !important; color: var(--text-main) !important; }
     </style>
+    <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body class="min-h-screen">
     <?= adsRenderPosition($conn, 'header') ?>
-    <nav class="topbar">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <a href="index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
-                <span class="hidden md:inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-black uppercase tracking-[0.22em]">Support</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <a href="<?= htmlspecialchars($backHref) ?>" class="nav-pill"><?= htmlspecialchars($backLabel) ?></a>
-                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
-            </div>
-        </div>
-    </nav>
+    <?php any2convertRenderTopbar([
+        'home_href' => 'index.php',
+        'links' => [
+            ['href' => $backHref, 'label' => $backLabel],
+        ],
+        'badge' => 'Support',
+    ]); ?>
 
     <main class="contact-shell">
         <div class="max-w-6xl mx-auto px-6 py-12 relative z-10">
@@ -173,11 +148,11 @@ if (isset($_SESSION['user_id'])) {
                         <div class="bg-slate-50 p-4 rounded-2xl text-center">
                             <p class="text-[10px] font-black uppercase text-slate-400 mb-2">Rate our Service</p>
                             <div class="star-rating">
-                                <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
-                                <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
-                                <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
-                                <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
-                                <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                                <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
+                                <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+                                <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+                                <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+                                <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
                             </div>
                         </div>
 
@@ -199,7 +174,7 @@ if (isset($_SESSION['user_id'])) {
                                 <h4 class="font-bold text-slate-800"><?= htmlspecialchars($fb['name']) ?></h4>
                                 <div class="flex text-yellow-500 text-sm">
                                     <?php for ($i = 1; $i <= (int) $fb['rating']; $i++): ?>
-                                        ★
+                                        &#9733;
                                     <?php endfor; ?>
                                 </div>
                             </div>
@@ -207,7 +182,7 @@ if (isset($_SESSION['user_id'])) {
 
                             <?php if (!empty($fb['reply'])): ?>
                                 <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 ml-4 relative">
-                                    <div class="absolute -left-3 top-4 text-blue-200">↪</div>
+                                    <div class="absolute -left-3 top-4 text-blue-200">&#8617;</div>
                                     <p class="text-[10px] font-black uppercase text-blue-400 mb-1">Admin Reply</p>
                                     <p class="text-blue-800 text-sm font-medium"><?= htmlspecialchars($fb['reply']) ?></p>
                                 </div>
@@ -220,24 +195,8 @@ if (isset($_SESSION['user_id'])) {
     </main>
 
     <?= adsRenderPosition($conn, 'under_content') ?>
+    <?php any2convertRenderFooter(); ?>
     <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
-
-    <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-
-        const themeToggle = document.getElementById('themeToggle');
-        const applyThemeLabel = () => {
-            themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀' : '☾';
-        };
-        applyThemeLabel();
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeLabel();
-        });
-    </script>
+    <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

@@ -3,6 +3,7 @@ session_start();
 require_once 'seo_data.php';
 require_once 'backend/track_visit.php';
 require_once 'backend/ad_helpers.php';
+require_once __DIR__ . '/partials/site_chrome.php';
 
 $slug = $_GET['slug'] ?? '';
 $tool_data = $seo_tools[$slug] ?? null;
@@ -224,6 +225,7 @@ $tool_html = renderToolHandlerHTML($tool_id);
 
         /* Need these libraries depending on tool */
     </style>
+    <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body>
 <?= adsRenderPosition($conn, 'header') ?>
@@ -231,33 +233,17 @@ $tool_html = renderToolHandlerHTML($tool_id);
 <?php
 $isAdminUser = isset($_SESSION['email']) && $_SESSION['email'] === 'syedwasiulhassanshah@any2convert.com';
 $dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
+$toolTopbarCta = '';
+if (isset($_SESSION['user_name'])) {
+    $toolTopbarCta = '<a href="' . htmlspecialchars($dashboardHref, ENT_QUOTES) . '" class="site-nav-pill">Dashboard</a>';
+} else {
+    $toolTopbarCta = '<a href="login.php" class="site-nav-pill">Sign in</a><a href="signup.php" class="btn-primary" style="text-decoration:none;font-size:0.84rem;padding:9px 18px;border-radius:999px;">Get started</a>';
+}
 ?>
-
-<nav class="navbar sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-15 py-3">
-        <a href="/" style="text-decoration:none" class="flex items-center gap-2">
-            <div style="width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>
-                </svg>
-            </div>
-            <span class="logo-text">Any2Convert<span class="logo-dot">.</span></span>
-        </a>
-        <div class="flex items-center gap-2">
-			<!-- Dark Mode Toggle -->
-            <button id="themeToggle" onclick="toggleDarkMode()" title="Toggle dark mode" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;flex-shrink:0;">
-                <svg id="iconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <svg id="iconSun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            </button>
-            <?php if (isset($_SESSION['user_name'])): ?>
-                <a href="<?= htmlspecialchars($dashboardHref) ?>" class="nav-pill">Dashboard</a>
-            <?php else: ?>
-                <a href="login.php" class="nav-pill">Sign in</a>
-                <a href="signup.php" class="btn-primary">Get started</a>
-            <?php endif; ?>
-        </div>
-    </div>
-</nav>
+<?php any2convertRenderTopbar([
+    'home_href' => 'index.php',
+    'cta_html' => $toolTopbarCta,
+]); ?>
 
 <header style="text-align:center; padding: 60px 20px 20px;">
     <h1 style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;"><?= htmlspecialchars($tool_data['h1']) ?></h1>
@@ -301,9 +287,8 @@ $dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
 </main>
 <?= adsRenderPosition($conn, 'under_content') ?>
 
-<footer style="border-top:1px solid var(--border); background:var(--bg-surface); padding: 40px 20px; text-align:center; margin-top: 60px;">
-    <p style="color:var(--text-muted); font-size: 0.9rem;">© <?= date('Y') ?> Any2Convert. All rights reserved.</p>
-</footer>
+<?php any2convertRenderFooter(); ?>
+
 <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
 
 <script>
@@ -339,20 +324,6 @@ function ensureToolDependencies(toolId) {
     return Promise.all(dependencies.map(loadScriptOnce));
 }
 
-function toggleDarkMode() {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    document.getElementById('iconMoon').style.display = isDark ? 'none'  : '';
-    document.getElementById('iconSun').style.display  = isDark ? ''      : 'none';
-}
-(function(){
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.getElementById('iconMoon').style.display = 'none';
-        document.getElementById('iconSun').style.display  = '';
-    }
-})();
 
 // Ensure dynamic javascript returned by backend actually executes
 async function executeScripts(container) {
@@ -389,5 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<?php any2convertRenderThemeScript(); ?>
 </body>
 </html>
+
