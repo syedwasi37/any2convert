@@ -97,12 +97,18 @@ $tool_html = renderToolHandlerHTML($tool_id);
             --bg-card-hover:  #F3F3FA;
             --border:         rgba(0,0,0,0.08);
             --border-hover:   rgba(108,99,255,0.35);
+            --border-strong:  rgba(108,99,255,0.28);
             --text-primary:   #111118;
             --text-secondary: #464666;
             --text-muted:     #707096;
+            --text-main:      #111118;
             --accent:         #6C63FF;
             --accent-light:   rgba(108,99,255,0.08);
             --accent-glow:    rgba(108,99,255,0.3);
+            --nav-bg:         rgba(248,248,252,0.9);
+            --nav-border:     rgba(0,0,0,0.08);
+            --pill-bg:        rgba(255,255,255,0.86);
+            --pill-text:      #20253d;
             --red:            #EF4444;
             --blue:           #3B82F6;
             --violet:         #8B5CF6;
@@ -116,11 +122,17 @@ $tool_html = renderToolHandlerHTML($tool_id);
             --bg-card-hover:  #1C1C28;
             --border:         rgba(255,255,255,0.07);
             --border-hover:   rgba(255,255,255,0.15);
+            --border-strong:  rgba(96,165,250,0.35);
             --text-primary:   #F0F0F8;
             --text-secondary: #8B8BA7;
             --text-muted:     #4A4A62;
+            --text-main:      #F0F0F8;
             --accent-light:   rgba(108,99,255,0.15);
             --accent-glow:    rgba(108,99,255,0.4);
+            --nav-bg:         rgba(10,10,15,0.85);
+            --nav-border:     rgba(255,255,255,0.07);
+            --pill-bg:        rgba(22,22,31,0.96);
+            --pill-text:      #F0F0F8;
         }
         * { font-family: 'DM Sans', sans-serif; box-sizing: border-box; }
         body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; }
