@@ -93,6 +93,8 @@ function renderToolHandlerHTML($tool) {
             return getImageEnhancerHTML();
         case 'image_converter':
             return getImageConverterHTML();
+        case 'video_to_audio':
+            return getVideoToAudioHTML();
         case 'ai_image_generator':
             return getAiImageGeneratorHTML();
         case 'ocr_tool':
@@ -3182,6 +3184,214 @@ function getImageConverterHTML() {
                 const a = document.createElement("a");
                 a.href = url;
                 a.download = base + "-converted." + ext;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        })();
+    </script>';
+}
+
+function getVideoToAudioHTML() {
+    return '
+    <div class="space-y-6">
+        <div class="rounded-2xl border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-4">
+            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Extract audio from video</div>
+            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Convert MP4, MOV, WEBM, AVI, MKV, and more into MP3, WAV, OGG, AAC, or FLAC directly in your browser.</p>
+        </div>
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'videoToAudioInput\').click()">
+            <input type="file" id="videoToAudioInput" class="hidden" accept="video/*,.mkv,.avi,.mov,.mp4,.webm,.m4v">
+            <div class="text-5xl mb-3">VIDEO</div>
+            <p class="font-medium">Upload a video file</p>
+            <p class="text-sm text-gray-500 mt-2">Audio is extracted locally with FFmpeg WebAssembly</p>
+        </div>
+        <div id="videoToAudioMetaWrap" class="hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/30 p-4 space-y-2">
+            <div class="font-medium text-sm">Selected file</div>
+            <div id="videoToAudioFileMeta" class="text-sm text-gray-500"></div>
+            <video id="videoToAudioPreview" class="w-full max-h-72 rounded-xl bg-black hidden" controls preload="metadata"></video>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Output format</label>
+                <select id="videoToAudioFormat" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="mp3" selected>MP3</option>
+                    <option value="wav">WAV</option>
+                    <option value="aac">AAC</option>
+                    <option value="ogg">OGG</option>
+                    <option value="flac">FLAC</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Audio quality / bitrate</label>
+                <select id="videoToAudioBitrate" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="96k">96 kbps</option>
+                    <option value="128k" selected>128 kbps</option>
+                    <option value="192k">192 kbps</option>
+                    <option value="256k">256 kbps</option>
+                    <option value="320k">320 kbps</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+            <button id="videoToAudioRunBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to Audio</button>
+            <button id="videoToAudioDownloadBtn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition hidden">Download Audio</button>
+        </div>
+        <audio id="videoToAudioPlayer" class="w-full hidden" controls></audio>
+        <p id="videoToAudioStatus" class="text-sm text-gray-500 text-center"></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+    <script>
+        (function() {
+            const input = document.getElementById("videoToAudioInput");
+            const formatSelect = document.getElementById("videoToAudioFormat");
+            const bitrateSelect = document.getElementById("videoToAudioBitrate");
+            const runBtn = document.getElementById("videoToAudioRunBtn");
+            const downloadBtn = document.getElementById("videoToAudioDownloadBtn");
+            const status = document.getElementById("videoToAudioStatus");
+            const metaWrap = document.getElementById("videoToAudioMetaWrap");
+            const fileMeta = document.getElementById("videoToAudioFileMeta");
+            const preview = document.getElementById("videoToAudioPreview");
+            const player = document.getElementById("videoToAudioPlayer");
+
+            let ffmpeg = null;
+            let ffmpegLoaded = false;
+            let outputBlob = null;
+            let outputName = "";
+            let previewUrl = "";
+            let audioUrl = "";
+
+            function setStatus(message) {
+                status.textContent = message;
+            }
+
+            function revokeUrls() {
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    previewUrl = "";
+                }
+                if (audioUrl) {
+                    URL.revokeObjectURL(audioUrl);
+                    audioUrl = "";
+                }
+            }
+
+            async function ensureFFmpegLoaded() {
+                if (ffmpegLoaded) return ffmpeg;
+                const { FFmpeg } = FFmpegWASM;
+                const { toBlobURL } = FFmpegUtil;
+                ffmpeg = new FFmpeg();
+                ffmpeg.on("log", function(event) {
+                    if (event && event.message) {
+                        setStatus("Processing: " + event.message);
+                    }
+                });
+
+                const baseURL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd";
+                setStatus("Loading video conversion engine...");
+                await ffmpeg.load({
+                    coreURL: await toBlobURL(baseURL + "/ffmpeg-core.js", "text/javascript"),
+                    wasmURL: await toBlobURL(baseURL + "/ffmpeg-core.wasm", "application/wasm")
+                });
+                ffmpegLoaded = true;
+                setStatus("Converter ready.");
+                return ffmpeg;
+            }
+
+            function getOutputSettings(format, bitrate) {
+                switch (format) {
+                    case "wav":
+                        return { extension: "wav", mime: "audio/wav", args: ["-vn", "-acodec", "pcm_s16le", "-ar", "44100", "-ac", "2"] };
+                    case "aac":
+                        return { extension: "aac", mime: "audio/aac", args: ["-vn", "-c:a", "aac", "-b:a", bitrate] };
+                    case "ogg":
+                        return { extension: "ogg", mime: "audio/ogg", args: ["-vn", "-c:a", "libvorbis", "-b:a", bitrate] };
+                    case "flac":
+                        return { extension: "flac", mime: "audio/flac", args: ["-vn", "-c:a", "flac"] };
+                    case "mp3":
+                    default:
+                        return { extension: "mp3", mime: "audio/mpeg", args: ["-vn", "-c:a", "libmp3lame", "-b:a", bitrate] };
+                }
+            }
+
+            input.addEventListener("change", function() {
+                const file = this.files[0];
+                outputBlob = null;
+                outputName = "";
+                downloadBtn.classList.add("hidden");
+                player.classList.add("hidden");
+                player.removeAttribute("src");
+                revokeUrls();
+                if (!file) return;
+
+                previewUrl = URL.createObjectURL(file);
+                preview.src = previewUrl;
+                preview.classList.remove("hidden");
+                metaWrap.classList.remove("hidden");
+                fileMeta.textContent = file.name + " • " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
+                setStatus("Video loaded. Choose a format and click Convert to Audio.");
+            });
+
+            runBtn.addEventListener("click", async function() {
+                const file = input.files[0];
+                if (!file) return alert("Please select a video first");
+
+                runBtn.disabled = true;
+                runBtn.classList.add("opacity-50", "cursor-not-allowed");
+                downloadBtn.classList.add("hidden");
+                player.classList.add("hidden");
+                player.removeAttribute("src");
+                outputBlob = null;
+                outputName = "";
+                if (audioUrl) {
+                    URL.revokeObjectURL(audioUrl);
+                    audioUrl = "";
+                }
+
+                try {
+                    const engine = await ensureFFmpegLoaded();
+                    const { fetchFile } = FFmpegUtil;
+                    const extMatch = file.name.match(/\.([^.]+)$/);
+                    const inputExt = extMatch ? extMatch[1].toLowerCase() : "mp4";
+                    const safeInputName = "input." + inputExt;
+                    const baseName = file.name.replace(/\.[^.]+$/, "") || "audio";
+                    const format = formatSelect.value;
+                    const bitrate = bitrateSelect.value;
+                    const settings = getOutputSettings(format, bitrate);
+                    const outputFileName = "output." + settings.extension;
+
+                    setStatus("Preparing video file...");
+                    await engine.writeFile(safeInputName, await fetchFile(file));
+
+                    setStatus("Extracting audio...");
+                    await engine.exec(["-i", safeInputName].concat(settings.args, [outputFileName]));
+
+                    const data = await engine.readFile(outputFileName);
+                    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data.buffer || data);
+                    outputBlob = new Blob([bytes], { type: settings.mime });
+                    outputName = baseName + "." + settings.extension;
+                    audioUrl = URL.createObjectURL(outputBlob);
+                    player.src = audioUrl;
+                    player.classList.remove("hidden");
+                    downloadBtn.classList.remove("hidden");
+                    setStatus("Audio extracted successfully.");
+
+                    try { await engine.deleteFile(safeInputName); } catch (e) {}
+                    try { await engine.deleteFile(outputFileName); } catch (e) {}
+                } catch (error) {
+                    console.error("Video to audio conversion failed:", error);
+                    setStatus("Conversion failed: " + (error && error.message ? error.message : "Unknown error"));
+                } finally {
+                    runBtn.disabled = false;
+                    runBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                }
+            });
+
+            downloadBtn.addEventListener("click", function() {
+                if (!outputBlob) return;
+                const url = URL.createObjectURL(outputBlob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = outputName || "audio.mp3";
                 a.click();
                 URL.revokeObjectURL(url);
             });

@@ -252,6 +252,18 @@ $seo_tools = [
         ],
         'content' => 'Use the image converter to quickly change photos and graphics into the format you need for websites, uploads, or sharing. The conversion runs entirely in your browser, so your image stays on your device while you preview the result and download it in JPG, PNG, or WEBP format.'
     ],
+    'video-to-audio' => [
+        'id' => 'video_to_audio',
+        'h1' => 'Convert Video to Audio Online Free',
+        'title' => 'Video to Audio Converter - MP3, WAV, AAC, OGG, FLAC | Any2Convert',
+        'meta_desc' => 'Extract audio from MP4, MOV, WEBM, AVI, MKV, and other video files directly in your browser and export as MP3, WAV, AAC, OGG, or FLAC.',
+        'icon' => 'VIDEO',
+        'faqs' => [
+            ['q' => 'Which video formats are supported?', 'a' => 'This tool works with common formats like MP4, MOV, WEBM, AVI, MKV, and similar files your browser can read and FFmpeg can process.'],
+            ['q' => 'Which audio formats can I export?', 'a' => 'You can export extracted audio as MP3, WAV, AAC, OGG, or FLAC.']
+        ],
+        'content' => 'Use the video to audio converter to extract soundtracks, voice notes, lectures, interviews, or music from your video files without uploading them to a server. The conversion runs in your browser using WebAssembly, so your media stays on your device while you choose the output format that works best for editing, playback, or sharing.'
+    ],
     'ai-image-generator' => [
         'id' => 'ai_image_generator',
         'h1' => 'AI Image Generator from Text',

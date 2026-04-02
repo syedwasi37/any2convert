@@ -24,7 +24,7 @@ $tool_slugs = [
     'json_to_csv' => 'json-to-csv', 'csv_to_json' => 'csv-to-json', 'qr_generator' => 'qr-code-generator',
     'password_gen' => 'password-generator', 'word_counter' => 'word-counter', 'image_compressor' => 'image-compressor',
     'bg_remover' => 'background-remover', 'image_to_dxf' => 'image-to-dxf', 'image_to_svg' => 'image-to-svg',
-    'resize_image' => 'resize-image', 'crop_image' => 'crop-image', 'image_enhancer' => 'image-enhancer', 'image_converter' => 'image-converter', 'ai_image_generator' => 'ai-image-generator',
+    'resize_image' => 'resize-image', 'crop_image' => 'crop-image', 'image_enhancer' => 'image-enhancer', 'image_converter' => 'image-converter', 'video_to_audio' => 'video-to-audio', 'ai_image_generator' => 'ai-image-generator',
     'ocr_tool' => 'ocr-image-to-text'
 ];
 
@@ -88,6 +88,7 @@ $tools = [
             ['id' => 'crop_image', 'name' => 'Crop Image', 'icon' => 'crop_image', 'desc' => 'Crop screenshots and photos'],
             ['id' => 'image_enhancer', 'name' => 'Image Enhancer', 'icon' => 'image_enhancer', 'desc' => 'Upscale and sharpen blurry images'],
             ['id' => 'image_converter', 'name' => 'Image Converter', 'icon' => 'image_compressor', 'desc' => 'Change JPG, PNG, and WEBP formats'],
+            ['id' => 'video_to_audio', 'name' => 'Video to Audio', 'icon' => 'video_to_audio', 'desc' => 'Convert video to MP3, WAV, AAC, OGG, or FLAC'],
             ['id' => 'bg_remover', 'name' => 'Background Remover', 'icon' => 'bg_remover', 'desc' => 'Make transparent PNGs'],
             ['id' => 'image_to_dxf', 'name' => 'Image to DXF', 'icon' => 'image_to_dxf', 'desc' => 'Trace artwork for CAD'],
             ['id' => 'ai_image_generator', 'name' => 'AI Image Generator', 'icon' => 'ai_image_generator', 'desc' => 'Create images from prompts'],
@@ -881,6 +882,7 @@ $categoryMeta = [
         'word_counter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="19" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
         'image_compressor' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="12" y1="12" x2="16" y2="16"/></svg>',
         'image_enhancer' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>',
+        'video_to_audio' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><path d="M5 15v-6"/><path d="M8 13.5a2.5 2.5 0 1 0 0-3"/></svg>',
         'ocr_tool' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
     ];
 
@@ -1284,7 +1286,7 @@ function getToolName(toolId) {
         'csv_to_json':'CSV to JSON','qr_generator':'QR Code Generator','password_gen':'Password Generator',
         'word_counter':'Word Counter','image_compressor':'Image Compressor','bg_remover':'Background Remover',
         'image_to_dxf':'Image to DXF','image_to_svg':'Image to SVG','resize_image':'Resize Image','image_enhancer':'Image Enhancer',
-        'image_converter':'Image Converter','crop_image':'Crop Image','ai_image_generator':'AI Image Generator','ocr_tool':'OCR Tool',
+        'image_converter':'Image Converter','video_to_audio':'Video to Audio','crop_image':'Crop Image','ai_image_generator':'AI Image Generator','ocr_tool':'OCR Tool',
         'scan_to_pdf':'Scan to PDF'
     };
     return names[toolId] || 'Tool';
