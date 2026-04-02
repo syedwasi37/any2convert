@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth_bootstrap.php';
+require_once __DIR__ . '/jwt_helpers.php';
 
 any2convertBootstrapAuthSchema($conn);
 
@@ -37,10 +38,13 @@ function authFindUserByEmail(PDO $conn, string $email): ?array
 
 function authStartUserSession(array $user): void
 {
+    $token = jwtCreateToken($user);
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['user_name'] = $user['name'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['is_premium'] = $user['is_premium'] ?? 0;
+    $_SESSION['jwt_token'] = $token;
+    jwtSetAuthCookie($token);
     unset($_SESSION['pending_login_user_id'], $_SESSION['pending_login_email'], $_SESSION['pending_login_name']);
 }
 
