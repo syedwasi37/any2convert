@@ -45,14 +45,20 @@ function any2convertRenderChromeStyles(): void
             gap: 8px;
             border-radius: 999px;
             border: 1px solid var(--panel-border, var(--border, rgba(17,17,24,.08)));
-            background: var(--pill-bg, color-mix(in srgb, var(--panel-strong, rgba(255,255,255,.9)) 92%, transparent));
-            color: var(--pill-text, var(--text-main, #111118));
+            background: var(--pill-bg, var(--bg-soft, color-mix(in srgb, var(--panel-strong, rgba(255,255,255,.9)) 92%, transparent)));
+            color: var(--pill-text, var(--text-main, var(--text-primary, #111118)));
             text-decoration: none;
             font-weight: 700;
             font-size: 0.88rem;
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
         }
         .site-nav-pill {
             padding: 10px 16px;
+        }
+        .site-nav-pill:hover,
+        .site-theme-toggle:hover {
+            transform: translateY(-1px);
+            border-color: var(--border-strong, var(--panel-border, var(--border, rgba(17,17,24,.08))));
         }
         .site-theme-toggle {
             width: 46px;
@@ -71,7 +77,7 @@ function any2convertRenderChromeStyles(): void
             padding: 6px 12px;
             border-radius: 999px;
             border: 1px solid var(--panel-border, var(--border, rgba(17,17,24,.08)));
-            background: color-mix(in srgb, var(--pill-bg, rgba(255,255,255,.84)) 88%, transparent);
+            background: color-mix(in srgb, var(--pill-bg, var(--bg-soft, rgba(255,255,255,.84))) 88%, transparent);
             color: var(--accent, #6c63ff);
             font-size: 0.72rem;
             font-weight: 900;
