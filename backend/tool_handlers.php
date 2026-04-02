@@ -91,6 +91,8 @@ function renderToolHandlerHTML($tool) {
             return getCropImageHTML();
         case 'image_enhancer':
             return getImageEnhancerHTML();
+        case 'image_converter':
+            return getImageConverterHTML();
         case 'ai_image_generator':
             return getAiImageGeneratorHTML();
         case 'ocr_tool':
@@ -2636,6 +2638,10 @@ function getImageEnhancerHTML() {
                 </select>
             </div>
         </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">Output quality: <span id="enhancerQualityValue">92</span>%</label>
+            <input type="range" id="enhancerQuality" min="10" max="100" value="92" class="w-full">
+        </div>
 
         <div class="grid md:grid-cols-2 gap-4">
             <div>
@@ -2674,6 +2680,8 @@ function getImageEnhancerHTML() {
             const denoise = document.getElementById("enhancerDenoise");
             const denoiseValue = document.getElementById("enhancerDenoiseValue");
             const formatSelect = document.getElementById("enhancerFormat");
+            const qualityRange = document.getElementById("enhancerQuality");
+            const qualityValue = document.getElementById("enhancerQualityValue");
             const runBtn = document.getElementById("enhancerRunBtn");
             const downloadBtn = document.getElementById("enhancerDownloadBtn");
             const status = document.getElementById("enhancerStatus");
@@ -2690,6 +2698,9 @@ function getImageEnhancerHTML() {
             });
             denoise.addEventListener("input", function() {
                 denoiseValue.textContent = this.value;
+            });
+            qualityRange.addEventListener("input", function() {
+                qualityValue.textContent = this.value;
             });
 
             input.addEventListener("change", function() {
@@ -2771,6 +2782,7 @@ function getImageEnhancerHTML() {
                 const sharpAmount = (parseInt(sharpness.value, 10) || 0) / 100;
                 const detailAmount = (parseInt(detail.value, 10) || 0) / 100;
                 const denoiseAmount = (parseInt(denoise.value, 10) || 0) / 100;
+                const qualityAmount = (parseInt(qualityRange.value, 10) || 92) / 100;
                 const isMobile = window.matchMedia("(max-width: 768px)").matches;
                 const lowPowerDevice = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
                 const maxPixels = (isMobile || lowPowerDevice) ? 3500000 : 9000000;
@@ -2789,16 +2801,14 @@ function getImageEnhancerHTML() {
                 const ctx = canvas.getContext("2d", { willReadFrequently: true });
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = "high";
-                const midW = Math.max(1, Math.round((sourceImage.width + outW) / 2));
-                const midH = Math.max(1, Math.round((sourceImage.height + outH) / 2));
-                ctx.drawImage(sourceImage, 0, 0, midW, midH);
-                ctx.drawImage(canvas, 0, 0, midW, midH, 0, 0, outW, outH);
+                ctx.clearRect(0, 0, outW, outH);
+                ctx.drawImage(sourceImage, 0, 0, sourceImage.width, sourceImage.height, 0, 0, outW, outH);
                 let imageData = ctx.getImageData(0, 0, outW, outH);
                 imageData = enhancePixels(imageData, outW, outH, sharpAmount, detailAmount, denoiseAmount);
                 ctx.putImageData(imageData, 0, 0);
 
                 const format = formatSelect.value;
-                const quality = format === "image/png" ? undefined : 0.95;
+                const quality = format === "image/png" ? undefined : qualityAmount;
                 canvas.toBlob(function(blob) {
                     if (!blob) {
                         status.textContent = "Could not process image.";
@@ -3039,6 +3049,141 @@ function getAiImageGeneratorHTML() {
                 if (e.ctrlKey && e.key === "Enter") {
                     generateBtn.click();
                 }
+            });
+        })();
+    </script>';
+}
+
+function getImageConverterHTML() {
+    return '
+    <div class="space-y-6">
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'imageConverterInput\').click()">
+            <input type="file" id="imageConverterInput" class="hidden" accept="image/*">
+            <div class="text-5xl mb-3">CONVERT</div>
+            <p class="font-medium">Upload an image to change its format</p>
+            <p class="text-sm text-gray-500 mt-2">Convert JPG, PNG, and WEBP with adjustable quality</p>
+        </div>
+        <div id="imageConverterPreviewWrap" class="hidden grid md:grid-cols-2 gap-4 items-start">
+            <div>
+                <p class="text-sm font-medium mb-2">Original</p>
+                <img id="imageConverterOriginalImg" class="w-full max-h-72 object-contain rounded-xl border border-gray-200 dark:border-gray-700 bg-white/60">
+                <p id="imageConverterOriginalMeta" class="text-xs text-gray-500 mt-2"></p>
+            </div>
+            <div>
+                <p class="text-sm font-medium mb-2">Converted Preview</p>
+                <img id="imageConverterResultImg" class="w-full max-h-72 object-contain rounded-xl border border-gray-200 dark:border-gray-700 bg-white/60 hidden">
+                <p id="imageConverterResultMeta" class="text-xs text-gray-500 mt-2"></p>
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Output format</label>
+                <select id="imageConverterFormat" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="image/png">PNG</option>
+                    <option value="image/jpeg" selected>JPG</option>
+                    <option value="image/webp">WEBP</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Quality: <span id="imageConverterQualityValue">92</span>%</label>
+                <input type="range" id="imageConverterQuality" min="10" max="100" value="92" class="w-full">
+            </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+            <button id="imageConverterRunBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert Image</button>
+            <button id="imageConverterDownloadBtn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition hidden">Download Converted Image</button>
+        </div>
+        <p id="imageConverterStatus" class="text-sm text-gray-500 text-center"></p>
+    </div>
+    <script>
+        (function() {
+            let outputBlob = null;
+            const input = document.getElementById("imageConverterInput");
+            const formatSelect = document.getElementById("imageConverterFormat");
+            const qualityInput = document.getElementById("imageConverterQuality");
+            const qualityValue = document.getElementById("imageConverterQualityValue");
+            const runBtn = document.getElementById("imageConverterRunBtn");
+            const downloadBtn = document.getElementById("imageConverterDownloadBtn");
+            const previewWrap = document.getElementById("imageConverterPreviewWrap");
+            const originalImg = document.getElementById("imageConverterOriginalImg");
+            const resultImg = document.getElementById("imageConverterResultImg");
+            const originalMeta = document.getElementById("imageConverterOriginalMeta");
+            const resultMeta = document.getElementById("imageConverterResultMeta");
+            const status = document.getElementById("imageConverterStatus");
+
+            qualityInput.addEventListener("input", function() {
+                qualityValue.textContent = this.value;
+            });
+
+            input.addEventListener("change", function() {
+                const file = this.files[0];
+                outputBlob = null;
+                resultImg.classList.add("hidden");
+                downloadBtn.classList.add("hidden");
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        originalImg.src = e.target.result;
+                        originalMeta.textContent = img.width + " x " + img.height + " • " + Math.round(file.size / 1024) + " KB";
+                        previewWrap.classList.remove("hidden");
+                        status.textContent = "Image loaded. Choose a format and click Convert Image.";
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            runBtn.addEventListener("click", function() {
+                const file = input.files[0];
+                if (!file) return alert("Please select an image first");
+                status.textContent = "Converting image...";
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement("canvas");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext("2d");
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = "high";
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+                        const format = formatSelect.value;
+                        const quality = format === "image/png" ? undefined : ((parseInt(qualityInput.value, 10) || 92) / 100);
+                        canvas.toBlob(function(blob) {
+                            if (!blob) {
+                                status.textContent = "Could not convert image.";
+                                return;
+                            }
+                            outputBlob = blob;
+                            const resultUrl = URL.createObjectURL(blob);
+                            resultImg.src = resultUrl;
+                            resultImg.classList.remove("hidden");
+                            downloadBtn.classList.remove("hidden");
+                            resultMeta.textContent = img.width + " x " + img.height + " • " + Math.round(blob.size / 1024) + " KB";
+                            status.textContent = "Converted image ready.";
+                        }, format, quality);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            downloadBtn.addEventListener("click", function() {
+                if (!outputBlob) return;
+                const file = input.files[0];
+                const format = formatSelect.value;
+                const ext = format === "image/png" ? "png" : (format === "image/webp" ? "webp" : "jpg");
+                const base = (file ? file.name : "converted").replace(/\\.[^.]+$/, "");
+                const url = URL.createObjectURL(outputBlob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = base + "-converted." + ext;
+                a.click();
+                URL.revokeObjectURL(url);
             });
         })();
     </script>';

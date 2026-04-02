@@ -240,6 +240,18 @@ $seo_tools = [
         ],
         'content' => 'If your photo looks soft, pixelated, or a little blurry, this tool helps by enlarging and sharpening it in one step. You can choose upscale level and sharpness strength, preview the result, and download the improved image without sending your file to any server.'
     ],
+    'image-converter' => [
+        'id' => 'image_converter',
+        'h1' => 'Convert Image Format Online Free',
+        'title' => 'Image Converter - JPG, PNG, WEBP Format Changer | Any2Convert',
+        'meta_desc' => 'Convert image files between JPG, PNG, and WEBP in your browser with adjustable output quality.',
+        'icon' => 'CONVERT',
+        'faqs' => [
+            ['q' => 'What formats can I convert between?', 'a' => 'You can convert JPG, PNG, and WEBP images directly in your browser.'],
+            ['q' => 'Can I control output quality?', 'a' => 'Yes. JPG and WEBP exports include a quality slider so you can balance clarity and file size.']
+        ],
+        'content' => 'Use the image converter to quickly change photos and graphics into the format you need for websites, uploads, or sharing. The conversion runs entirely in your browser, so your image stays on your device while you preview the result and download it in JPG, PNG, or WEBP format.'
+    ],
     'ai-image-generator' => [
         'id' => 'ai_image_generator',
         'h1' => 'AI Image Generator from Text',
