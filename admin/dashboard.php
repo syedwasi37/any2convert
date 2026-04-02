@@ -385,6 +385,17 @@ $legacyAds = adsLegacyDefinitions();
                         <div>
                             <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">User Management</p>
                             <h2 class="text-2xl font-black mt-2">Search, block, unblock, or remove users</h2>
+                            <div class="mt-3 flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.18em]">
+                                <span class="inline-flex items-center rounded-full px-3 py-1 bg-slate-100 text-slate-600">
+                                    Showing <?= count($users) ?> result<?= count($users) === 1 ? '' : 's' ?>
+                                </span>
+                                <span class="inline-flex items-center rounded-full px-3 py-1 bg-amber-100 text-amber-700">
+                                    <?= (int) $blockedCount ?> blocked now
+                                </span>
+                                <span class="inline-flex items-center rounded-full px-3 py-1 bg-blue-100 text-blue-700">
+                                    Filter: <?= $filterBlocked === 'blocked' ? 'Blocked only' : ($filterBlocked === 'active' ? 'Active only' : 'All users') ?>
+                                </span>
+                            </div>
                         </div>
                         <form method="GET" class="flex flex-col sm:flex-row gap-3">
                             <input type="text" name="user_query" value="<?= htmlspecialchars($search) ?>" placeholder="Search by ID, name, or email" class="px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 min-w-[240px]">
