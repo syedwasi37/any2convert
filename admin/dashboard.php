@@ -373,10 +373,10 @@ $legacyAds = adsLegacyDefinitions();
         </div>
 
         <div class="flex flex-wrap gap-3 mb-6">
-            <button type="button" class="admin-tab active px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="users">Users</button>
-            <button type="button" class="admin-tab px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="feedback">Feedback</button>
-            <button type="button" class="admin-tab px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="reports">Reports</button>
-            <button type="button" class="admin-tab px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="ads">Ads</button>
+            <button type="button" class="admin-tab active px-5 py-3 rounded-2xl text-sm font-black uppercase tracking-[0.15em]" data-tab="users">Users</button>
+            <button type="button" class="admin-tab px-5 py-3 rounded-2xl text-sm font-black uppercase tracking-[0.15em]" data-tab="feedback">Feedback</button>
+            <button type="button" class="admin-tab px-5 py-3 rounded-2xl text-sm font-black uppercase tracking-[0.15em]" data-tab="reports">Reports</button>
+            <button type="button" class="admin-tab px-5 py-3 rounded-2xl text-sm font-black uppercase tracking-[0.15em]" data-tab="ads">Ads</button>
         </div>
 
         <div id="users" class="admin-pane active">
