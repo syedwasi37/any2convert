@@ -367,7 +367,7 @@ $legacyAds = adsLegacyDefinitions();
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
             <div class="panel rounded-[2rem] p-6"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">Total Visits</p><h2 class="text-4xl font-black mt-3"><?= $totalVisits ?></h2><p class="text-sm text-slate-500 mt-2">+<?= $todayVisits ?> today</p></div>
-            <div class="panel rounded-[2rem] p-6"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">Users</p><h2 class="text-4xl font-black mt-3"><?= $userCount ?></h2><p class="text-sm text-slate-500 mt-2">Registered accounts</p></div>
+            <div class="panel rounded-[2rem] p-6"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">Active Users</p><h2 class="text-4xl font-black mt-3"><?= max(0, $userCount - $blockedCount) ?></h2><p class="text-sm text-slate-500 mt-2"><?= $blockedCount > 0 ? $blockedCount . ' blocked account' . ($blockedCount === 1 ? '' : 's') . ' excluded' : 'Ready to use the tools' ?></p></div>
             <div class="panel rounded-[2rem] p-6"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">Blocked</p><h2 class="text-4xl font-black mt-3"><?= $blockedCount ?></h2><p class="text-sm text-slate-500 mt-2">Temporarily restricted users</p></div>
             <div class="panel rounded-[2rem] p-6"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">Feedback</p><h2 class="text-4xl font-black mt-3"><?= count($messages) ?></h2><p class="text-sm text-slate-500 mt-2">Latest moderation queue</p></div>
         </div>
