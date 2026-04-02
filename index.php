@@ -33,7 +33,12 @@ $tool_slugs = [
     'bank_statement_to_excel' => 'bank-statement-pdf-to-excel', 'grammar_checker' => 'grammar-checker',
     'paraphrase_tool' => 'paraphrase-tool', 'percentage_calculator' => 'percentage-calculator',
     'loan_calculator' => 'loan-calculator', 'bmi_calculator' => 'bmi-calculator',
-    'age_calculator' => 'age-calculator'
+    'age_calculator' => 'age-calculator',
+    'sensitivity_converter' => 'sensitivity-converter',
+    'reaction_time_test' => 'reaction-time-test',
+    'cps_test' => 'cps-test',
+    'gamer_tag_generator' => 'gamer-tag-generator',
+    'tournament_bracket_generator' => 'tournament-bracket-generator'
 ];
 
 // Get all tools from database for dynamic display
@@ -152,6 +157,17 @@ $tools = [
         'tools' => [
             ['id' => 'jwt_decoder', 'name' => 'JWT Decoder', 'icon' => 'jwt_decoder', 'desc' => 'Decode token headers and payloads locally'],
         ]
+    ],
+    'gaming' => [
+        'title' => 'Gaming Tools',
+        'icon' => 'GAME',
+        'tools' => [
+            ['id' => 'sensitivity_converter', 'name' => 'Sensitivity Converter', 'icon' => 'sensitivity_converter', 'desc' => 'Convert sensitivity between major FPS games'],
+            ['id' => 'reaction_time_test', 'name' => 'Reaction Time Test', 'icon' => 'reaction_time_test', 'desc' => 'Measure how quickly you react to a visual signal'],
+            ['id' => 'cps_test', 'name' => 'CPS Test', 'icon' => 'cps_test', 'desc' => 'Track clicks per second over a fast 5 second test'],
+            ['id' => 'gamer_tag_generator', 'name' => 'Gamer Tag Generator', 'icon' => 'gamer_tag_generator', 'desc' => 'Generate modern usernames for gaming profiles'],
+            ['id' => 'tournament_bracket_generator', 'name' => 'Tournament Bracket Generator', 'icon' => 'tournament_bracket_generator', 'desc' => 'Create a simple single-elimination bracket instantly'],
+        ]
     ]
 ];
 
@@ -164,6 +180,7 @@ $categoryMeta = [
     'business' => ['label' => 'Business Tools',       'accent' => 'emerald', 'hex' => '#10B981'],
     'writing' => ['label' => 'Writing Tools',         'accent' => 'indigo', 'hex' => '#6366F1'],
     'developer' => ['label' => 'Developer Tools',     'accent' => 'cyan', 'hex' => '#06B6D4'],
+    'gaming' => ['label' => 'Gaming Tools',           'accent' => 'pink', 'hex' => '#EC4899'],
 ];
 ?>
 <!DOCTYPE html>
@@ -927,6 +944,7 @@ $categoryMeta = [
             <button class="tool-filter-chip" data-tool-filter="business" type="button">Business</button>
             <button class="tool-filter-chip" data-tool-filter="writing" type="button">Writing</button>
             <button class="tool-filter-chip" data-tool-filter="developer" type="button">Developer</button>
+            <button class="tool-filter-chip" data-tool-filter="gaming" type="button">Gaming</button>
         </div>
     </div>
     <div id="toolNoResults" class="hidden-by-filter" style="margin:12px 0 24px;padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--text-secondary);text-align:center;">
@@ -975,6 +993,11 @@ $categoryMeta = [
         'loan_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h10"/><path d="M7 14h5"/></svg>',
         'bmi_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M8 7h8"/><path d="M8 12h8"/><path d="M8 17h8"/></svg>',
         'age_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M3 10h18"/></svg>',
+        'sensitivity_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M8 6h8"/><path d="M8 18h8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>',
+        'reaction_time_test' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+        'cps_test' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5l12-2v6"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+        'gamer_tag_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l2 8H4l2-8Z"/><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16h4"/></svg>',
+        'tournament_bracket_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10"/><path d="M7 17h10"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M12 7v10"/></svg>',
     ];
 
     $catColors = [
@@ -986,6 +1009,7 @@ $categoryMeta = [
         'business' => ['bg'=>'rgba(16,185,129,0.12)', 'color'=>'#34D399', 'label-bg'=>'rgba(16,185,129,0.1)','label-color'=>'#34D399'],
         'writing' => ['bg'=>'rgba(99,102,241,0.12)', 'color'=>'#818CF8', 'label-bg'=>'rgba(99,102,241,0.1)','label-color'=>'#818CF8'],
         'developer' => ['bg'=>'rgba(6,182,212,0.12)', 'color'=>'#22D3EE', 'label-bg'=>'rgba(6,182,212,0.1)','label-color'=>'#22D3EE'],
+        'gaming' => ['bg'=>'rgba(236,72,153,0.12)', 'color'=>'#F472B6', 'label-bg'=>'rgba(236,72,153,0.1)','label-color'=>'#F472B6'],
     ];
 
     foreach ($tools as $catKey => $category):
@@ -1107,6 +1131,7 @@ $categoryMeta = [
                 ['ocr_tool','OCR Tool'],['json_to_csv','JSON to CSV'],
                 ['currency_converter','Currency Converter'],['invoice_generator','Invoice Generator'],
                 ['grammar_checker','Grammar Checker'],['jwt_decoder','JWT Decoder'],
+                ['reaction_time_test','Reaction Time Test'],['gamer_tag_generator','Gamer Tag Generator'],
             ];
             foreach($popular as [$id,$label]): 
                 $slug = $tool_slugs[$id] ?? $id;
@@ -1390,7 +1415,9 @@ function getToolName(toolId) {
         'invoice_generator':'Invoice Generator','ats_resume_checker':'ATS Resume Checker','social_image_resizer':'Social Image Resizer',
         'jwt_decoder':'JWT Decoder','bank_statement_to_excel':'Bank Statement PDF to Excel','grammar_checker':'Grammar Checker',
         'paraphrase_tool':'Paraphrase Tool','percentage_calculator':'Percentage Calculator','loan_calculator':'Loan Calculator',
-        'bmi_calculator':'BMI Calculator','age_calculator':'Age Calculator'
+        'bmi_calculator':'BMI Calculator','age_calculator':'Age Calculator',
+        'sensitivity_converter':'Sensitivity Converter','reaction_time_test':'Reaction Time Test','cps_test':'CPS Test',
+        'gamer_tag_generator':'Gamer Tag Generator','tournament_bracket_generator':'Tournament Bracket Generator'
     };
     return names[toolId] || 'Tool';
 }

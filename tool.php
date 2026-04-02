@@ -39,6 +39,11 @@ $wideToolIds = [
     'loan_calculator',
     'bmi_calculator',
     'age_calculator',
+    'sensitivity_converter',
+    'reaction_time_test',
+    'cps_test',
+    'gamer_tag_generator',
+    'tournament_bracket_generator',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
 

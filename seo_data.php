@@ -682,5 +682,50 @@ $seo_tools = [
         'icon' => 'AGE',
         'faqs' => [['q' => 'Does it show months too?', 'a' => 'Yes. The age calculator shows completed years and the months since the last birthday.']],
         'content' => 'Use the age calculator for forms, records, school applications, and quick age math.'
+    ],
+    'sensitivity-converter' => [
+        'id' => 'sensitivity_converter',
+        'h1' => 'Sensitivity Converter for Games',
+        'title' => 'Sensitivity Converter - FPS Mouse Sensitivity Tool | Any2Convert',
+        'meta_desc' => 'Convert mouse sensitivity between popular FPS games like Valorant, CS2, Fortnite, Apex, and more.',
+        'icon' => 'SENS',
+        'faqs' => [['q' => 'Is it exact for every game setup?', 'a' => 'It is a strong starting point based on ratio presets, but you should still fine-tune in-game.']],
+        'content' => 'Move between shooters faster by converting your sensitivity into a usable value for another game.'
+    ],
+    'reaction-time-test' => [
+        'id' => 'reaction_time_test',
+        'h1' => 'Reaction Time Test Online',
+        'title' => 'Reaction Time Test - Measure Your Reflexes | Any2Convert',
+        'meta_desc' => 'Test how quickly you react to a visual signal with a simple browser-based reflex game.',
+        'icon' => 'RT',
+        'faqs' => [['q' => 'How do I use it?', 'a' => 'Start the test, wait for the panel to turn green, then click as fast as possible.']],
+        'content' => 'A quick reaction speed test for gamers who want to benchmark reflexes and improve consistency.'
+    ],
+    'cps-test' => [
+        'id' => 'cps_test',
+        'h1' => 'CPS Test Online',
+        'title' => 'CPS Test - Clicks Per Second Counter | Any2Convert',
+        'meta_desc' => 'Measure your clicks per second with a simple 5-second clicking challenge.',
+        'icon' => 'CPS',
+        'faqs' => [['q' => 'How long is the test?', 'a' => 'This version measures your score across a 5-second clicking window.']],
+        'content' => 'Use the CPS test to measure clicking speed for games, challenges, and casual skill comparisons.'
+    ],
+    'gamer-tag-generator' => [
+        'id' => 'gamer_tag_generator',
+        'h1' => 'Gamer Tag Generator Online',
+        'title' => 'Gamer Tag Generator - Create Gaming Usernames | Any2Convert',
+        'meta_desc' => 'Generate clean, edgy, cute, or pro-style gamer tags for your gaming profile or stream identity.',
+        'icon' => 'TAG',
+        'faqs' => [['q' => 'Can I copy the generated names?', 'a' => 'Yes. Click any generated gamer tag to copy it to your clipboard.']],
+        'content' => 'Create memorable usernames for games, Discord, Twitch, YouTube, and esports-style team identities.'
+    ],
+    'tournament-bracket-generator' => [
+        'id' => 'tournament_bracket_generator',
+        'h1' => 'Tournament Bracket Generator Online',
+        'title' => 'Tournament Bracket Generator - Single Elimination Layout | Any2Convert',
+        'meta_desc' => 'Generate a quick single-elimination bracket from player or team names right in your browser.',
+        'icon' => 'BRACKET',
+        'faqs' => [['q' => 'Does it support odd numbers of teams?', 'a' => 'Yes. Empty slots are filled as BYE entries to complete the bracket.']],
+        'content' => 'Build quick brackets for custom lobbies, friendly tournaments, esports tryouts, and gaming nights.'
     ]
 ];
