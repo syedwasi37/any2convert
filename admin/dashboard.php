@@ -434,7 +434,15 @@ $legacyAds = adsLegacyDefinitions();
                                                     <button type="submit" class="px-4 py-3 rounded-2xl bg-emerald-600 text-white text-sm font-bold">Unblock</button>
                                                 <?php else: ?>
                                                     <input type="hidden" name="action" value="block">
-                                                    <input type="number" name="block_days" min="1" max="365" value="7" class="w-20 px-3 py-3 rounded-2xl border border-slate-200 bg-white text-sm">
+                                                    <select name="block_days" class="min-w-[148px] px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold">
+                                                        <option value="1">1 day</option>
+                                                        <option value="3">3 days</option>
+                                                        <option value="7" selected>7 days</option>
+                                                        <option value="14">14 days</option>
+                                                        <option value="30">30 days</option>
+                                                        <option value="90">90 days</option>
+                                                        <option value="365">1 year</option>
+                                                    </select>
                                                     <button type="submit" class="px-4 py-3 rounded-2xl bg-amber-500 text-white text-sm font-bold">Block</button>
                                                 <?php endif; ?>
                                             </form>
