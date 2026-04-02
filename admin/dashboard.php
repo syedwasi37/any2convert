@@ -322,13 +322,19 @@ $legacyAds = adsLegacyDefinitions();
         html.dark .bg-blue-50 { background: rgba(37,99,235,0.16) !important; }
         html.dark .bg-green-50 { background: rgba(16,185,129,0.14) !important; }
         html.dark .bg-red-50 { background: rgba(239,68,68,0.14) !important; }
+        html.dark .text-slate-900,
+        html.dark .text-slate-800,
+        html.dark .text-slate-700 { color: var(--text-main) !important; }
+        html.dark .text-slate-600,
+        html.dark .text-slate-500,
+        html.dark .text-slate-400 { color: var(--text-soft) !important; }
         html.dark input,
         html.dark textarea,
         html.dark select { background: rgba(15,23,42,0.92); color: var(--text-main); }
     </style>
     <?php any2convertRenderChromeStyles(); ?>
 </head>
-<body class="min-h-screen text-slate-900">
+<body class="min-h-screen">
     <?php any2convertRenderTopbar([
         'home_href' => '../index.php',
         'links' => [
