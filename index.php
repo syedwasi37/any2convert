@@ -25,7 +25,9 @@ $tool_slugs = [
     'password_gen' => 'password-generator', 'word_counter' => 'word-counter', 'image_compressor' => 'image-compressor',
     'bg_remover' => 'background-remover', 'image_to_dxf' => 'image-to-dxf', 'image_to_svg' => 'image-to-svg',
     'resize_image' => 'resize-image', 'crop_image' => 'crop-image', 'image_enhancer' => 'image-enhancer', 'image_converter' => 'image-converter', 'video_to_audio' => 'video-to-audio', 'ai_image_generator' => 'ai-image-generator',
-    'ocr_tool' => 'ocr-image-to-text'
+    'ocr_tool' => 'ocr-image-to-text', 'currency_converter' => 'currency-converter', 'length_converter' => 'length-converter',
+    'weight_converter' => 'weight-converter', 'temperature_converter' => 'temperature-converter', 'area_converter' => 'area-converter',
+    'volume_converter' => 'volume-converter', 'speed_converter' => 'speed-converter', 'time_converter' => 'time-converter'
 ];
 
 // Get all tools from database for dynamic display
@@ -95,6 +97,20 @@ $tools = [
             ['id' => 'ocr_tool', 'name' => 'OCR Tool', 'icon' => 'ocr_tool', 'desc' => 'Extract text from images'],
             ['id' => 'scan_to_pdf', 'name' => 'Scan to PDF', 'icon' => 'img_to_pdf', 'desc' => 'Convert captured pages into a PDF'],
         ]
+    ],
+    'conversion' => [
+        'title' => 'Conversion Tools',
+        'icon' => 'CONV',
+        'tools' => [
+            ['id' => 'currency_converter', 'name' => 'Currency Converter', 'icon' => 'currency_converter', 'desc' => 'Live exchange rates with daily updates'],
+            ['id' => 'length_converter', 'name' => 'Length Converter', 'icon' => 'length_converter', 'desc' => 'Convert km to millimeter and more'],
+            ['id' => 'weight_converter', 'name' => 'Weight Converter', 'icon' => 'weight_converter', 'desc' => 'Convert kg, pounds, grams, and ounces'],
+            ['id' => 'temperature_converter', 'name' => 'Temperature Converter', 'icon' => 'temperature_converter', 'desc' => 'Convert Celsius, Fahrenheit, and Kelvin'],
+            ['id' => 'area_converter', 'name' => 'Area Converter', 'icon' => 'area_converter', 'desc' => 'Convert square feet, acres, hectares, and more'],
+            ['id' => 'volume_converter', 'name' => 'Volume Converter', 'icon' => 'volume_converter', 'desc' => 'Convert liters, gallons, cups, and more'],
+            ['id' => 'speed_converter', 'name' => 'Speed Converter', 'icon' => 'speed_converter', 'desc' => 'Convert km/h, mph, knots, and m/s'],
+            ['id' => 'time_converter', 'name' => 'Time Converter', 'icon' => 'time_converter', 'desc' => 'Convert seconds, minutes, hours, days, and years'],
+        ]
     ]
 ];
 
@@ -102,6 +118,7 @@ $categoryMeta = [
     'pdf'     => ['label' => 'PDF Tools',            'accent' => 'red',   'hex' => '#EF4444'],
     'convert' => ['label' => 'Document Converters',   'accent' => 'blue',  'hex' => '#3B82F6'],
     'utility' => ['label' => 'Utility Tools',         'accent' => 'violet','hex' => '#8B5CF6'],
+    'conversion' => ['label' => 'Conversion Tools',   'accent' => 'green', 'hex' => '#10B981'],
 ];
 ?>
 <!DOCTYPE html>
@@ -860,6 +877,7 @@ $categoryMeta = [
             <button class="tool-filter-chip" data-tool-filter="pdf" type="button">PDF</button>
             <button class="tool-filter-chip" data-tool-filter="convert" type="button">Converters</button>
             <button class="tool-filter-chip" data-tool-filter="utility" type="button">Utility</button>
+            <button class="tool-filter-chip" data-tool-filter="conversion" type="button">Conversion</button>
         </div>
     </div>
     <div id="toolNoResults" class="hidden-by-filter" style="margin:12px 0 24px;padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--text-secondary);text-align:center;">
@@ -889,12 +907,21 @@ $categoryMeta = [
         'image_enhancer' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>',
         'video_to_audio' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><path d="M5 15v-6"/><path d="M8 13.5a2.5 2.5 0 1 0 0-3"/></svg>',
         'ocr_tool' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+        'currency_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5c-.7-.8-1.8-1.3-3.1-1.3-1.9 0-3.4 1-3.4 2.6 0 3.8 6.9 1.7 6.9 5 0 1.4-1.4 2.5-3.4 2.5-1.4 0-2.8-.5-3.7-1.5"/><path d="M12 5v14"/></svg>',
+        'length_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21L21 3"/><path d="M7 17l-1.5 1.5"/><path d="M11 13l-1.5 1.5"/><path d="M15 9l-1.5 1.5"/><path d="M19 5l-1.5 1.5"/></svg>',
+        'weight_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21h12l-1.5-10h-9z"/><path d="M9 8a3 3 0 1 1 6 0"/><path d="M8 11h8"/></svg>',
+        'temperature_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V5a2 2 0 0 0-4 0v9.76a4 4 0 1 0 4 0z"/></svg>',
+        'area_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16"/><path d="M4 9h16"/></svg>',
+        'volume_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10"/><path d="M9 3v4l-4 7a5 5 0 0 0 4.4 7h5.2A5 5 0 0 0 19 14l-4-7V3"/></svg>',
+        'speed_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13a8 8 0 1 0-16 0"/><path d="M12 13l4-4"/><path d="M12 21v-2"/></svg>',
+        'time_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
     ];
 
     $catColors = [
         'pdf'     => ['bg'=>'rgba(239,68,68,0.12)',  'color'=>'#F87171', 'label-bg'=>'rgba(239,68,68,0.1)',  'label-color'=>'#F87171'],
         'convert' => ['bg'=>'rgba(59,130,246,0.12)', 'color'=>'#60A5FA', 'label-bg'=>'rgba(59,130,246,0.1)', 'label-color'=>'#60A5FA'],
         'utility' => ['bg'=>'rgba(139,92,246,0.12)', 'color'=>'#A78BFA', 'label-bg'=>'rgba(139,92,246,0.1)','label-color'=>'#A78BFA'],
+        'conversion' => ['bg'=>'rgba(16,185,129,0.12)', 'color'=>'#34D399', 'label-bg'=>'rgba(16,185,129,0.1)','label-color'=>'#34D399'],
     ];
 
     foreach ($tools as $catKey => $category):
@@ -1292,7 +1319,9 @@ function getToolName(toolId) {
         'word_counter':'Word Counter','image_compressor':'Image Compressor','bg_remover':'Background Remover',
         'image_to_dxf':'Image to DXF','image_to_svg':'Image to SVG','resize_image':'Resize Image','image_enhancer':'Image Enhancer',
         'image_converter':'Image Converter','video_to_audio':'Video to Audio','crop_image':'Crop Image','ai_image_generator':'AI Image Generator','ocr_tool':'OCR Tool',
-        'scan_to_pdf':'Scan to PDF'
+        'scan_to_pdf':'Scan to PDF','currency_converter':'Currency Converter','length_converter':'Length Converter',
+        'weight_converter':'Weight Converter','temperature_converter':'Temperature Converter','area_converter':'Area Converter',
+        'volume_converter':'Volume Converter','speed_converter':'Speed Converter','time_converter':'Time Converter'
     };
     return names[toolId] || 'Tool';
 }

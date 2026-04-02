@@ -264,6 +264,96 @@ $seo_tools = [
         ],
         'content' => 'Use the video to audio converter to extract soundtracks, voice notes, lectures, interviews, or music from your video files without uploading them to a server. The conversion runs in your browser using WebAssembly, so your media stays on your device while you choose the output format that works best for editing, playback, or sharing.'
     ],
+    'currency-converter' => [
+        'id' => 'currency_converter',
+        'h1' => 'Live Currency Converter',
+        'title' => 'Currency Converter - Live Exchange Rates Online | Any2Convert',
+        'meta_desc' => 'Convert currencies with live daily exchange rates online, including USD, EUR, GBP, PKR, AED, and more.',
+        'icon' => 'FX',
+        'faqs' => [
+            ['q' => 'Are the currency rates live?', 'a' => 'The converter fetches the latest available daily rates from Frankfurter, which aggregates official and central-bank data sources.'],
+            ['q' => 'Do I need an API key?', 'a' => 'No. This setup uses a public exchange-rate feed and refreshes rates live in the browser.']
+        ],
+        'content' => 'Use the live currency converter to switch between major world currencies with up-to-date daily rates. It is useful for shopping, travel planning, invoicing, budgeting, and quick comparisons without leaving the browser.'
+    ],
+    'length-converter' => [
+        'id' => 'length_converter',
+        'h1' => 'Length Converter Online',
+        'title' => 'Length Converter - KM to Millimeter, Meter, Inch, Foot | Any2Convert',
+        'meta_desc' => 'Convert length units like km to millimeter, meter to foot, inch to cm, and more instantly online.',
+        'icon' => 'LEN',
+        'faqs' => [
+            ['q' => 'Can I convert km to millimeter?', 'a' => 'Yes. The tool includes kilometers, meters, centimeters, millimeters, inches, feet, yards, and miles.'],
+            ['q' => 'Does it update instantly?', 'a' => 'Yes, the result updates as soon as you type or change a unit.']
+        ],
+        'content' => 'Convert common distance and length measurements in one place. This tool helps with schoolwork, engineering references, map reading, construction estimates, and everyday unit conversion.'
+    ],
+    'weight-converter' => [
+        'id' => 'weight_converter',
+        'h1' => 'Weight Converter Online',
+        'title' => 'Weight Converter - KG, Grams, Pounds, Ounces | Any2Convert',
+        'meta_desc' => 'Convert kilograms, grams, milligrams, pounds, ounces, and tonnes instantly online.',
+        'icon' => 'WGT',
+        'faqs' => [
+            ['q' => 'Does it support pounds and ounces?', 'a' => 'Yes. Pounds, ounces, kilograms, grams, milligrams, and metric tonnes are supported.']
+        ],
+        'content' => 'Use the weight converter for shipping estimates, fitness tracking, recipes, science problems, and quick metric-to-imperial conversions.'
+    ],
+    'temperature-converter' => [
+        'id' => 'temperature_converter',
+        'h1' => 'Temperature Converter Online',
+        'title' => 'Temperature Converter - Celsius, Fahrenheit, Kelvin | Any2Convert',
+        'meta_desc' => 'Convert temperature values between Celsius, Fahrenheit, and Kelvin instantly online.',
+        'icon' => 'TEMP',
+        'faqs' => [
+            ['q' => 'Does it handle Fahrenheit to Celsius correctly?', 'a' => 'Yes. It uses the proper temperature formulas instead of simple multipliers.']
+        ],
+        'content' => 'Quickly convert weather readings, lab values, cooking temperatures, and technical measurements between Celsius, Fahrenheit, and Kelvin.'
+    ],
+    'area-converter' => [
+        'id' => 'area_converter',
+        'h1' => 'Area Converter Online',
+        'title' => 'Area Converter - Square Feet, Acres, Hectares, m² | Any2Convert',
+        'meta_desc' => 'Convert area units like square feet, square meters, acres, hectares, and more online.',
+        'icon' => 'AREA',
+        'faqs' => [
+            ['q' => 'Can I convert land units like acres and hectares?', 'a' => 'Yes. The tool supports acres, hectares, square feet, square meters, and more.']
+        ],
+        'content' => 'Use the area converter for property measurements, room planning, architecture, farming, and survey-related calculations.'
+    ],
+    'volume-converter' => [
+        'id' => 'volume_converter',
+        'h1' => 'Volume Converter Online',
+        'title' => 'Volume Converter - Liters, Gallons, Cups, mL | Any2Convert',
+        'meta_desc' => 'Convert liters, milliliters, gallons, cups, quarts, pints, and cubic meters online.',
+        'icon' => 'VOL',
+        'faqs' => [
+            ['q' => 'Does it support cooking units?', 'a' => 'Yes. Cups, pints, quarts, gallons, liters, and milliliters are included.']
+        ],
+        'content' => 'Convert liquid and container volumes for recipes, packaging, fuel estimates, and everyday measurement needs.'
+    ],
+    'speed-converter' => [
+        'id' => 'speed_converter',
+        'h1' => 'Speed Converter Online',
+        'title' => 'Speed Converter - KM/H, MPH, Knots, m/s | Any2Convert',
+        'meta_desc' => 'Convert speed values between km/h, mph, knots, meters per second, and feet per second online.',
+        'icon' => 'SPD',
+        'faqs' => [
+            ['q' => 'Can I convert km/h to mph?', 'a' => 'Yes. The tool supports km/h, mph, knots, m/s, and ft/s.']
+        ],
+        'content' => 'Useful for driving, cycling, marine navigation, sports stats, weather data, and technical calculations involving motion.'
+    ],
+    'time-converter' => [
+        'id' => 'time_converter',
+        'h1' => 'Time Converter Online',
+        'title' => 'Time Converter - Seconds, Minutes, Hours, Days, Years | Any2Convert',
+        'meta_desc' => 'Convert time units like seconds, minutes, hours, days, weeks, months, and years online.',
+        'icon' => 'TIME',
+        'faqs' => [
+            ['q' => 'Can I convert hours to days or minutes to years?', 'a' => 'Yes. The converter supports seconds, minutes, hours, days, weeks, months, and years.']
+        ],
+        'content' => 'Use the time converter for schedules, planning, payroll estimates, project durations, study calculations, and everyday time math.'
+    ],
     'ai-image-generator' => [
         'id' => 'ai_image_generator',
         'h1' => 'AI Image Generator from Text',

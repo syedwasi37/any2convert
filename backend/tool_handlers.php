@@ -95,6 +95,22 @@ function renderToolHandlerHTML($tool) {
             return getImageConverterHTML();
         case 'video_to_audio':
             return getVideoToAudioHTML();
+        case 'currency_converter':
+            return getCurrencyConverterHTML();
+        case 'length_converter':
+            return getLengthConverterHTML();
+        case 'weight_converter':
+            return getWeightConverterHTML();
+        case 'temperature_converter':
+            return getTemperatureConverterHTML();
+        case 'area_converter':
+            return getAreaConverterHTML();
+        case 'volume_converter':
+            return getVolumeConverterHTML();
+        case 'speed_converter':
+            return getSpeedConverterHTML();
+        case 'time_converter':
+            return getTimeConverterHTML();
         case 'ai_image_generator':
             return getAiImageGeneratorHTML();
         case 'ocr_tool':
@@ -102,6 +118,455 @@ function renderToolHandlerHTML($tool) {
         default:
             return '<div class="text-center py-12">Tool coming soon!</div>';
     }
+}
+
+function getGenericUnitConverterHTML(array $config): string
+{
+    $title = htmlspecialchars($config['title'], ENT_QUOTES);
+    $description = htmlspecialchars($config['description'], ENT_QUOTES);
+    $unitsJson = htmlspecialchars(json_encode($config['units'], JSON_UNESCAPED_SLASHES), ENT_QUOTES);
+    $decimals = (int) ($config['decimals'] ?? 6);
+    $defaultValue = htmlspecialchars((string) ($config['default_value'] ?? '1'), ENT_QUOTES);
+    $formulaText = htmlspecialchars($config['formula_text'] ?? 'Results update instantly as you type.', ENT_QUOTES);
+
+    return '
+    <div class="space-y-6">
+        <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-6">
+            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">' . $title . '</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">' . $description . '</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Value</label>
+                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Precision</label>
+                        <input type="range" id="unitConverterPrecision" min="0" max="' . $decimals . '" value="' . min(4, $decimals) . '" class="w-full">
+                        <p class="text-xs text-gray-500 mt-2"><span id="unitConverterPrecisionValue">' . min(4, $decimals) . '</span> decimal places</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">From</label>
+                        <select id="unitConverterFrom" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">To</label>
+                        <select id="unitConverterTo" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button id="unitConverterSwap" class="px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Swap Units</button>
+                    <button id="unitConverterCopy" class="px-4 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition">Copy Result</button>
+                </div>
+                <p id="unitConverterStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">' . $formulaText . '</p>
+            </div>
+            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-950/70 p-6">
+                <p class="text-xs font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Live Preview</p>
+                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-6">
+                    <p id="unitConverterResultText" class="text-3xl font-black text-gray-900 dark:text-white">0</p>
+                    <p id="unitConverterFormula" class="text-sm text-gray-500 dark:text-gray-400 mt-3">Choose units to start converting.</p>
+                </div>
+                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-5">
+                    <h4 class="font-bold text-gray-900 dark:text-white">Common conversions</h4>
+                    <div id="unitConverterQuickGrid" class="mt-4 grid sm:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const units = JSON.parse("' . $unitsJson . '");
+            const valueInput = document.getElementById("unitConverterValue");
+            const precisionInput = document.getElementById("unitConverterPrecision");
+            const precisionValue = document.getElementById("unitConverterPrecisionValue");
+            const fromSelect = document.getElementById("unitConverterFrom");
+            const toSelect = document.getElementById("unitConverterTo");
+            const swapBtn = document.getElementById("unitConverterSwap");
+            const copyBtn = document.getElementById("unitConverterCopy");
+            const status = document.getElementById("unitConverterStatus");
+            const resultText = document.getElementById("unitConverterResultText");
+            const formula = document.getElementById("unitConverterFormula");
+            const quickGrid = document.getElementById("unitConverterQuickGrid");
+
+            Object.values(units).forEach((unit) => {
+                if (typeof unit.toBase === "string") {
+                    unit.toBase = Function("value", `return (${unit.toBase})(value);`);
+                }
+                if (typeof unit.fromBase === "string") {
+                    unit.fromBase = Function("value", `return (${unit.fromBase})(value);`);
+                }
+            });
+
+            const unitEntries = Object.entries(units);
+            unitEntries.forEach(([key, unit], index) => {
+                const optionFrom = document.createElement("option");
+                optionFrom.value = key;
+                optionFrom.textContent = unit.label;
+                const optionTo = optionFrom.cloneNode(true);
+                fromSelect.appendChild(optionFrom);
+                toSelect.appendChild(optionTo);
+                if (index === 0) fromSelect.value = key;
+                if (index === 1) toSelect.value = key;
+            });
+
+            function formatNumber(value, digits) {
+                if (!Number.isFinite(value)) return "--";
+                const fixed = value.toFixed(digits);
+                if (fixed.indexOf(".") === -1) return fixed;
+                return fixed.replace(/0+$/, "").replace(/\\.$/, "");
+            }
+
+            function convertValue(value, fromKey, toKey) {
+                const fromUnit = units[fromKey];
+                const toUnit = units[toKey];
+                if (!fromUnit || !toUnit || !Number.isFinite(value)) {
+                    return NaN;
+                }
+                if (fromUnit.type === "temperature" || toUnit.type === "temperature") {
+                    const baseKelvin = fromUnit.toBase(value);
+                    return toUnit.fromBase(baseKelvin);
+                }
+                return value * (fromUnit.factor / toUnit.factor);
+            }
+
+            function renderQuickGrid(currentValue, fromKey) {
+                quickGrid.innerHTML = "";
+                Object.entries(units).filter(([key]) => key !== fromKey).slice(0, 6).forEach(([key, unit]) => {
+                    const card = document.createElement("div");
+                    card.className = "rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-900 px-4 py-3";
+                    const converted = convertValue(currentValue, fromKey, key);
+                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${unit.short || unit.label}</p><p class="text-lg font-bold text-gray-900 dark:text-white mt-2">${formatNumber(converted, Number(precisionInput.value))}</p>`;
+                    quickGrid.appendChild(card);
+                });
+            }
+
+            function update() {
+                const numericValue = parseFloat(valueInput.value);
+                const digits = Number(precisionInput.value);
+                precisionValue.textContent = String(digits);
+                const converted = convertValue(numericValue, fromSelect.value, toSelect.value);
+                resultText.textContent = Number.isFinite(converted) ? formatNumber(converted, digits) : "--";
+                if (Number.isFinite(numericValue) && units[fromSelect.value] && units[toSelect.value]) {
+                    formula.textContent = `${formatNumber(numericValue, digits)} ${units[fromSelect.value].label} = ${formatNumber(converted, digits)} ${units[toSelect.value].label}`;
+                    status.textContent = "Conversion updated instantly.";
+                } else {
+                    formula.textContent = "Enter a valid number to see the converted value.";
+                    status.textContent = "Waiting for a valid input.";
+                }
+                renderQuickGrid(numericValue, fromSelect.value);
+            }
+
+            [valueInput, precisionInput, fromSelect, toSelect].forEach((el) => el.addEventListener("input", update));
+            swapBtn.addEventListener("click", () => {
+                const currentFrom = fromSelect.value;
+                fromSelect.value = toSelect.value;
+                toSelect.value = currentFrom;
+                update();
+            });
+            copyBtn.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(resultText.textContent || "");
+                    status.textContent = "Converted value copied to clipboard.";
+                } catch (error) {
+                    status.textContent = "Could not copy automatically. Please copy manually.";
+                }
+            });
+            update();
+        })();
+    </script>';
+}
+
+function getLengthConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Length Converter',
+        'description' => 'Convert between kilometers, meters, centimeters, millimeters, inches, feet, yards, and miles instantly.',
+        'default_value' => '1',
+        'formula_text' => 'Perfect for km to millimeter, inch to centimeter, or mile to meter conversions.',
+        'units' => [
+            'km' => ['label' => 'Kilometers', 'short' => 'km', 'factor' => 1000],
+            'm' => ['label' => 'Meters', 'short' => 'm', 'factor' => 1],
+            'cm' => ['label' => 'Centimeters', 'short' => 'cm', 'factor' => 0.01],
+            'mm' => ['label' => 'Millimeters', 'short' => 'mm', 'factor' => 0.001],
+            'mi' => ['label' => 'Miles', 'short' => 'mi', 'factor' => 1609.344],
+            'yd' => ['label' => 'Yards', 'short' => 'yd', 'factor' => 0.9144],
+            'ft' => ['label' => 'Feet', 'short' => 'ft', 'factor' => 0.3048],
+            'in' => ['label' => 'Inches', 'short' => 'in', 'factor' => 0.0254],
+        ],
+    ]);
+}
+
+function getWeightConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Weight Converter',
+        'description' => 'Convert mass between kilograms, grams, milligrams, pounds, ounces, and tonnes.',
+        'default_value' => '1',
+        'units' => [
+            'kg' => ['label' => 'Kilograms', 'short' => 'kg', 'factor' => 1],
+            'g' => ['label' => 'Grams', 'short' => 'g', 'factor' => 0.001],
+            'mg' => ['label' => 'Milligrams', 'short' => 'mg', 'factor' => 0.000001],
+            'lb' => ['label' => 'Pounds', 'short' => 'lb', 'factor' => 0.45359237],
+            'oz' => ['label' => 'Ounces', 'short' => 'oz', 'factor' => 0.028349523125],
+            'tonne' => ['label' => 'Metric Tonnes', 'short' => 't', 'factor' => 1000],
+        ],
+    ]);
+}
+
+function getTemperatureConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Temperature Converter',
+        'description' => 'Switch between Celsius, Fahrenheit, and Kelvin with the correct formulas applied automatically.',
+        'default_value' => '25',
+        'units' => [
+            'c' => ['label' => 'Celsius', 'short' => '°C', 'type' => 'temperature', 'toBase' => 'function(value){ return value + 273.15; }', 'fromBase' => 'function(value){ return value - 273.15; }'],
+            'f' => ['label' => 'Fahrenheit', 'short' => '°F', 'type' => 'temperature', 'toBase' => 'function(value){ return ((value - 32) * 5 / 9) + 273.15; }', 'fromBase' => 'function(value){ return ((value - 273.15) * 9 / 5) + 32; }'],
+            'k' => ['label' => 'Kelvin', 'short' => 'K', 'type' => 'temperature', 'toBase' => 'function(value){ return value; }', 'fromBase' => 'function(value){ return value; }'],
+        ],
+    ]);
+}
+
+function getAreaConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Area Converter',
+        'description' => 'Convert square units for plots, rooms, land, and map dimensions.',
+        'default_value' => '1',
+        'units' => [
+            'sqm' => ['label' => 'Square Meters', 'short' => 'm²', 'factor' => 1],
+            'sqkm' => ['label' => 'Square Kilometers', 'short' => 'km²', 'factor' => 1000000],
+            'sqcm' => ['label' => 'Square Centimeters', 'short' => 'cm²', 'factor' => 0.0001],
+            'sqmm' => ['label' => 'Square Millimeters', 'short' => 'mm²', 'factor' => 0.000001],
+            'sqft' => ['label' => 'Square Feet', 'short' => 'ft²', 'factor' => 0.09290304],
+            'sqin' => ['label' => 'Square Inches', 'short' => 'in²', 'factor' => 0.00064516],
+            'acre' => ['label' => 'Acres', 'short' => 'ac', 'factor' => 4046.8564224],
+            'hectare' => ['label' => 'Hectares', 'short' => 'ha', 'factor' => 10000],
+        ],
+    ]);
+}
+
+function getVolumeConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Volume Converter',
+        'description' => 'Convert liters, milliliters, cubic meters, gallons, quarts, pints, and cups.',
+        'default_value' => '1',
+        'units' => [
+            'l' => ['label' => 'Liters', 'short' => 'L', 'factor' => 1],
+            'ml' => ['label' => 'Milliliters', 'short' => 'mL', 'factor' => 0.001],
+            'cum' => ['label' => 'Cubic Meters', 'short' => 'm³', 'factor' => 1000],
+            'cup' => ['label' => 'Cups', 'short' => 'cup', 'factor' => 0.2365882365],
+            'pt' => ['label' => 'Pints', 'short' => 'pt', 'factor' => 0.473176473],
+            'qt' => ['label' => 'Quarts', 'short' => 'qt', 'factor' => 0.946352946],
+            'gal' => ['label' => 'Gallons (US)', 'short' => 'gal', 'factor' => 3.785411784],
+        ],
+    ]);
+}
+
+function getSpeedConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Speed Converter',
+        'description' => 'Convert speed values between km/h, m/s, mph, knots, and feet per second.',
+        'default_value' => '60',
+        'units' => [
+            'kmh' => ['label' => 'Kilometers per Hour', 'short' => 'km/h', 'factor' => 1],
+            'ms' => ['label' => 'Meters per Second', 'short' => 'm/s', 'factor' => 3.6],
+            'mph' => ['label' => 'Miles per Hour', 'short' => 'mph', 'factor' => 1.609344],
+            'knot' => ['label' => 'Knots', 'short' => 'kn', 'factor' => 1.852],
+            'fts' => ['label' => 'Feet per Second', 'short' => 'ft/s', 'factor' => 1.09728],
+        ],
+    ]);
+}
+
+function getTimeConverterHTML(): string
+{
+    return getGenericUnitConverterHTML([
+        'title' => 'Time Converter',
+        'description' => 'Convert seconds, minutes, hours, days, weeks, months, and years in one place.',
+        'default_value' => '1',
+        'units' => [
+            'sec' => ['label' => 'Seconds', 'short' => 'sec', 'factor' => 1],
+            'min' => ['label' => 'Minutes', 'short' => 'min', 'factor' => 60],
+            'hour' => ['label' => 'Hours', 'short' => 'hr', 'factor' => 3600],
+            'day' => ['label' => 'Days', 'short' => 'day', 'factor' => 86400],
+            'week' => ['label' => 'Weeks', 'short' => 'wk', 'factor' => 604800],
+            'month' => ['label' => 'Months', 'short' => 'mo', 'factor' => 2629800],
+            'year' => ['label' => 'Years', 'short' => 'yr', 'factor' => 31557600],
+        ],
+    ]);
+}
+
+function getCurrencyConverterHTML(): string
+{
+    return '
+    <div class="space-y-6">
+        <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-6">
+            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Live Currency Converter</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Convert between major currencies with live daily rates from Frankfurter using official institutions and central-bank sources.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Amount</label>
+                        <input type="number" id="currencyAmount" value="1" step="any" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Refresh</label>
+                        <button id="currencyRefreshBtn" class="w-full px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Refresh Live Rates</button>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">From</label>
+                        <select id="currencyFrom" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">To</label>
+                        <select id="currencyTo" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button id="currencySwapBtn" class="px-4 py-3 rounded-2xl bg-slate-900 dark:bg-slate-700 text-white font-semibold">Swap</button>
+                    <button id="currencyCopyBtn" class="px-4 py-3 rounded-2xl bg-emerald-600 text-white font-semibold">Copy Result</button>
+                </div>
+                <p id="currencyStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Loading latest currency list and rates...</p>
+            </div>
+            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-950/70 p-6">
+                <p class="text-xs font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Output</p>
+                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-6">
+                    <p id="currencyResultText" class="text-3xl font-black text-gray-900 dark:text-white">--</p>
+                    <p id="currencyMetaText" class="text-sm text-gray-500 dark:text-gray-400 mt-3">Waiting for live rates.</p>
+                </div>
+                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-5">
+                    <h4 class="font-bold text-gray-900 dark:text-white">Quick rates</h4>
+                    <div id="currencyQuickRates" class="mt-4 grid sm:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const amountInput = document.getElementById("currencyAmount");
+            const fromSelect = document.getElementById("currencyFrom");
+            const toSelect = document.getElementById("currencyTo");
+            const refreshBtn = document.getElementById("currencyRefreshBtn");
+            const swapBtn = document.getElementById("currencySwapBtn");
+            const copyBtn = document.getElementById("currencyCopyBtn");
+            const status = document.getElementById("currencyStatus");
+            const resultText = document.getElementById("currencyResultText");
+            const metaText = document.getElementById("currencyMetaText");
+            const quickRates = document.getElementById("currencyQuickRates");
+
+            let currencies = {};
+            let lastPayload = null;
+            const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
+
+            function formatAmount(value, currency) {
+                try {
+                    return new Intl.NumberFormat(undefined, {
+                        style: "currency",
+                        currency,
+                        maximumFractionDigits: 4
+                    }).format(value);
+                } catch (error) {
+                    return value.toFixed(4) + " " + currency;
+                }
+            }
+
+            async function loadCurrencies() {
+                const resp = await fetch("https://api.frankfurter.dev/v2/currencies");
+                if (!resp.ok) throw new Error("Could not load currency list.");
+                currencies = await resp.json();
+                const codes = Object.keys(currencies).sort((a, b) => {
+                    const aPreferred = preferred.includes(a) ? preferred.indexOf(a) : 999;
+                    const bPreferred = preferred.includes(b) ? preferred.indexOf(b) : 999;
+                    if (aPreferred !== bPreferred) return aPreferred - bPreferred;
+                    return a.localeCompare(b);
+                });
+                [fromSelect, toSelect].forEach((select) => {
+                    select.innerHTML = "";
+                    codes.forEach((code) => {
+                        const option = document.createElement("option");
+                        option.value = code;
+                        option.textContent = `${code} - ${currencies[code]}`;
+                        select.appendChild(option);
+                    });
+                });
+                fromSelect.value = "USD";
+                toSelect.value = "PKR";
+            }
+
+            function renderQuickRates(base, rates) {
+                quickRates.innerHTML = "";
+                preferred.filter((code) => code !== base && rates[code]).slice(0, 6).forEach((code) => {
+                    const card = document.createElement("div");
+                    card.className = "rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-900 px-4 py-3";
+                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${base} to ${code}</p><p class="text-lg font-bold text-gray-900 dark:text-white mt-2">${Number(rates[code]).toFixed(4)}</p>`;
+                    quickRates.appendChild(card);
+                });
+            }
+
+            async function updateRates() {
+                const amount = parseFloat(amountInput.value);
+                const base = fromSelect.value;
+                const quote = toSelect.value;
+                if (!base || !quote) return;
+                status.textContent = "Fetching live exchange rates...";
+                try {
+                    const requestedQuotes = [quote, ...preferred.filter((code) => code !== base && code !== quote).slice(0, 6)];
+                    const resp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
+                    if (!resp.ok) throw new Error("Rate request failed.");
+                    const payload = await resp.json();
+                    lastPayload = payload;
+                    const rate = Array.isArray(payload) ? payload[0]?.rate : payload?.rates?.[quote];
+                    const dateLabel = Array.isArray(payload) ? payload[0]?.date : payload?.date;
+                    if (!Number.isFinite(Number(rate))) throw new Error("No live rate available.");
+                    const converted = (Number.isFinite(amount) ? amount : 0) * Number(rate);
+                    resultText.textContent = formatAmount(converted, quote);
+                    metaText.textContent = `${amount || 0} ${base} = ${converted.toFixed(4)} ${quote} using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.`;
+                    status.textContent = "Live exchange rate updated.";
+                    const quickMap = {};
+                    if (Array.isArray(payload)) {
+                        payload.forEach((item) => {
+                            if (item && item.quote) quickMap[item.quote] = item.rate;
+                        });
+                    } else if (payload?.rates) {
+                        Object.assign(quickMap, payload.rates);
+                    }
+                    renderQuickRates(base, quickMap);
+                } catch (error) {
+                    status.textContent = error.message || "Could not fetch live rates right now.";
+                    metaText.textContent = "Please try refreshing the live currency feed.";
+                    resultText.textContent = "--";
+                    quickRates.innerHTML = "";
+                }
+            }
+
+            [amountInput, fromSelect, toSelect].forEach((el) => el.addEventListener("input", updateRates));
+            refreshBtn.addEventListener("click", updateRates);
+            swapBtn.addEventListener("click", () => {
+                const from = fromSelect.value;
+                fromSelect.value = toSelect.value;
+                toSelect.value = from;
+                updateRates();
+            });
+            copyBtn.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(resultText.textContent || "");
+                    status.textContent = "Converted currency value copied.";
+                } catch (error) {
+                    status.textContent = "Could not copy automatically. Please copy manually.";
+                }
+            });
+
+            loadCurrencies().then(updateRates).catch((error) => {
+                status.textContent = error.message || "Could not load currency data.";
+            });
+        })();
+    </script>';
 }
 
 function getImageToPdfHTML() {
