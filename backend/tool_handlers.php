@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // backend/tool_handlers.php
 
 function renderToolHandlerHTML($tool) {
@@ -124,10 +124,12 @@ function getGenericUnitConverterHTML(array $config): string
 {
     $title = htmlspecialchars($config['title'], ENT_QUOTES);
     $description = htmlspecialchars($config['description'], ENT_QUOTES);
-    $unitsJson = htmlspecialchars(json_encode($config['units'], JSON_UNESCAPED_SLASHES), ENT_QUOTES);
+    $unitsJson = base64_encode(json_encode($config['units'], JSON_UNESCAPED_SLASHES));
     $decimals = (int) ($config['decimals'] ?? 6);
     $defaultValue = htmlspecialchars((string) ($config['default_value'] ?? '1'), ENT_QUOTES);
     $formulaText = htmlspecialchars($config['formula_text'] ?? 'Results update instantly as you type.', ENT_QUOTES);
+    $defaultFrom = htmlspecialchars((string) ($config['default_from'] ?? ''), ENT_QUOTES);
+    $defaultTo = htmlspecialchars((string) ($config['default_to'] ?? ''), ENT_QUOTES);
 
     return '
     <div class="space-y-6">
@@ -177,7 +179,7 @@ function getGenericUnitConverterHTML(array $config): string
     </div>
     <script>
         (() => {
-            const units = JSON.parse("' . $unitsJson . '");
+            const units = JSON.parse(atob("' . $unitsJson . '"));
             const valueInput = document.getElementById("unitConverterValue");
             const precisionInput = document.getElementById("unitConverterPrecision");
             const precisionValue = document.getElementById("unitConverterPrecisionValue");
@@ -190,15 +192,6 @@ function getGenericUnitConverterHTML(array $config): string
             const formula = document.getElementById("unitConverterFormula");
             const quickGrid = document.getElementById("unitConverterQuickGrid");
 
-            Object.values(units).forEach((unit) => {
-                if (typeof unit.toBase === "string") {
-                    unit.toBase = Function("value", `return (${unit.toBase})(value);`);
-                }
-                if (typeof unit.fromBase === "string") {
-                    unit.fromBase = Function("value", `return (${unit.fromBase})(value);`);
-                }
-            });
-
             const unitEntries = Object.entries(units);
             unitEntries.forEach(([key, unit], index) => {
                 const optionFrom = document.createElement("option");
@@ -210,6 +203,13 @@ function getGenericUnitConverterHTML(array $config): string
                 if (index === 0) fromSelect.value = key;
                 if (index === 1) toSelect.value = key;
             });
+
+            if ("' . $defaultFrom . '" && units["' . $defaultFrom . '"]) {
+                fromSelect.value = "' . $defaultFrom . '";
+            }
+            if ("' . $defaultTo . '" && units["' . $defaultTo . '"]) {
+                toSelect.value = "' . $defaultTo . '";
+            }
 
             function formatNumber(value, digits) {
                 if (!Number.isFinite(value)) return "--";
@@ -225,8 +225,8 @@ function getGenericUnitConverterHTML(array $config): string
                     return NaN;
                 }
                 if (fromUnit.type === "temperature" || toUnit.type === "temperature") {
-                    const baseKelvin = fromUnit.toBase(value);
-                    return toUnit.fromBase(baseKelvin);
+                    const baseKelvin = (value * fromUnit.toBaseFactor) + fromUnit.toBaseOffset;
+                    return (baseKelvin * toUnit.fromBaseFactor) + toUnit.fromBaseOffset;
                 }
                 return value * (fromUnit.factor / toUnit.factor);
             }
@@ -284,6 +284,8 @@ function getLengthConverterHTML(): string
         'title' => 'Length Converter',
         'description' => 'Convert between kilometers, meters, centimeters, millimeters, inches, feet, yards, and miles instantly.',
         'default_value' => '1',
+        'default_from' => 'km',
+        'default_to' => 'mm',
         'formula_text' => 'Perfect for km to millimeter, inch to centimeter, or mile to meter conversions.',
         'units' => [
             'km' => ['label' => 'Kilometers', 'short' => 'km', 'factor' => 1000],
@@ -304,6 +306,8 @@ function getWeightConverterHTML(): string
         'title' => 'Weight Converter',
         'description' => 'Convert mass between kilograms, grams, milligrams, pounds, ounces, and tonnes.',
         'default_value' => '1',
+        'default_from' => 'kg',
+        'default_to' => 'lb',
         'units' => [
             'kg' => ['label' => 'Kilograms', 'short' => 'kg', 'factor' => 1],
             'g' => ['label' => 'Grams', 'short' => 'g', 'factor' => 0.001],
@@ -321,10 +325,12 @@ function getTemperatureConverterHTML(): string
         'title' => 'Temperature Converter',
         'description' => 'Switch between Celsius, Fahrenheit, and Kelvin with the correct formulas applied automatically.',
         'default_value' => '25',
+        'default_from' => 'c',
+        'default_to' => 'f',
         'units' => [
-            'c' => ['label' => 'Celsius', 'short' => '°C', 'type' => 'temperature', 'toBase' => 'function(value){ return value + 273.15; }', 'fromBase' => 'function(value){ return value - 273.15; }'],
-            'f' => ['label' => 'Fahrenheit', 'short' => '°F', 'type' => 'temperature', 'toBase' => 'function(value){ return ((value - 32) * 5 / 9) + 273.15; }', 'fromBase' => 'function(value){ return ((value - 273.15) * 9 / 5) + 32; }'],
-            'k' => ['label' => 'Kelvin', 'short' => 'K', 'type' => 'temperature', 'toBase' => 'function(value){ return value; }', 'fromBase' => 'function(value){ return value; }'],
+            'c' => ['label' => 'Celsius', 'short' => 'deg C', 'type' => 'temperature', 'toBaseFactor' => 1, 'toBaseOffset' => 273.15, 'fromBaseFactor' => 1, 'fromBaseOffset' => -273.15],
+            'f' => ['label' => 'Fahrenheit', 'short' => 'deg F', 'type' => 'temperature', 'toBaseFactor' => 0.5555555556, 'toBaseOffset' => 255.3722222222, 'fromBaseFactor' => 1.8, 'fromBaseOffset' => -459.67],
+            'k' => ['label' => 'Kelvin', 'short' => 'K', 'type' => 'temperature', 'toBaseFactor' => 1, 'toBaseOffset' => 0, 'fromBaseFactor' => 1, 'fromBaseOffset' => 0],
         ],
     ]);
 }
@@ -335,13 +341,15 @@ function getAreaConverterHTML(): string
         'title' => 'Area Converter',
         'description' => 'Convert square units for plots, rooms, land, and map dimensions.',
         'default_value' => '1',
+        'default_from' => 'sqft',
+        'default_to' => 'sqm',
         'units' => [
-            'sqm' => ['label' => 'Square Meters', 'short' => 'm²', 'factor' => 1],
-            'sqkm' => ['label' => 'Square Kilometers', 'short' => 'km²', 'factor' => 1000000],
-            'sqcm' => ['label' => 'Square Centimeters', 'short' => 'cm²', 'factor' => 0.0001],
-            'sqmm' => ['label' => 'Square Millimeters', 'short' => 'mm²', 'factor' => 0.000001],
-            'sqft' => ['label' => 'Square Feet', 'short' => 'ft²', 'factor' => 0.09290304],
-            'sqin' => ['label' => 'Square Inches', 'short' => 'in²', 'factor' => 0.00064516],
+            'sqm' => ['label' => 'Square Meters', 'short' => 'sq m', 'factor' => 1],
+            'sqkm' => ['label' => 'Square Kilometers', 'short' => 'sq km', 'factor' => 1000000],
+            'sqcm' => ['label' => 'Square Centimeters', 'short' => 'sq cm', 'factor' => 0.0001],
+            'sqmm' => ['label' => 'Square Millimeters', 'short' => 'sq mm', 'factor' => 0.000001],
+            'sqft' => ['label' => 'Square Feet', 'short' => 'sq ft', 'factor' => 0.09290304],
+            'sqin' => ['label' => 'Square Inches', 'short' => 'sq in', 'factor' => 0.00064516],
             'acre' => ['label' => 'Acres', 'short' => 'ac', 'factor' => 4046.8564224],
             'hectare' => ['label' => 'Hectares', 'short' => 'ha', 'factor' => 10000],
         ],
@@ -354,10 +362,12 @@ function getVolumeConverterHTML(): string
         'title' => 'Volume Converter',
         'description' => 'Convert liters, milliliters, cubic meters, gallons, quarts, pints, and cups.',
         'default_value' => '1',
+        'default_from' => 'l',
+        'default_to' => 'gal',
         'units' => [
             'l' => ['label' => 'Liters', 'short' => 'L', 'factor' => 1],
             'ml' => ['label' => 'Milliliters', 'short' => 'mL', 'factor' => 0.001],
-            'cum' => ['label' => 'Cubic Meters', 'short' => 'm³', 'factor' => 1000],
+            'cum' => ['label' => 'Cubic Meters', 'short' => 'cu m', 'factor' => 1000],
             'cup' => ['label' => 'Cups', 'short' => 'cup', 'factor' => 0.2365882365],
             'pt' => ['label' => 'Pints', 'short' => 'pt', 'factor' => 0.473176473],
             'qt' => ['label' => 'Quarts', 'short' => 'qt', 'factor' => 0.946352946],
@@ -372,6 +382,8 @@ function getSpeedConverterHTML(): string
         'title' => 'Speed Converter',
         'description' => 'Convert speed values between km/h, m/s, mph, knots, and feet per second.',
         'default_value' => '60',
+        'default_from' => 'kmh',
+        'default_to' => 'mph',
         'units' => [
             'kmh' => ['label' => 'Kilometers per Hour', 'short' => 'km/h', 'factor' => 1],
             'ms' => ['label' => 'Meters per Second', 'short' => 'm/s', 'factor' => 3.6],
@@ -388,6 +400,8 @@ function getTimeConverterHTML(): string
         'title' => 'Time Converter',
         'description' => 'Convert seconds, minutes, hours, days, weeks, months, and years in one place.',
         'default_value' => '1',
+        'default_from' => 'hour',
+        'default_to' => 'min',
         'units' => [
             'sec' => ['label' => 'Seconds', 'short' => 'sec', 'factor' => 1],
             'min' => ['label' => 'Minutes', 'short' => 'min', 'factor' => 60],
@@ -491,7 +505,10 @@ function getCurrencyConverterHTML(): string
                     codes.forEach((code) => {
                         const option = document.createElement("option");
                         option.value = code;
-                        option.textContent = `${code} - ${currencies[code]}`;
+                        const currencyLabel = typeof currencies[code] === "string"
+                            ? currencies[code]
+                            : (currencies[code]?.name || code);
+                        option.textContent = `${code} - ${currencyLabel}`;
                         select.appendChild(option);
                     });
                 });
@@ -574,7 +591,7 @@ function getImageToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'imgToPdfInput\').click()">
             <input type="file" id="imgToPdfInput" class="hidden" accept="image/*" multiple>
-            <div class="text-5xl mb-3">🖼️</div>
+            <div class="text-5xl mb-3">ðŸ–¼ï¸</div>
             <p class="font-medium">Click to select images (JPG, PNG, WEBP)</p>
             <p class="text-sm text-gray-500 mt-2">Multiple files allowed | 100% client-side</p>
         </div>
@@ -592,7 +609,7 @@ function getImageToPdfHTML() {
                 reader.onload = function(e) {
                     const div = document.createElement("div");
                     div.className = "relative";
-                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">✓</span>`;
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">âœ“</span>`;
                     imgPreview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
@@ -644,7 +661,7 @@ function getPdfToImageHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToImgInput\').click()">
             <input type="file" id="pdfToImgInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️🖼️</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ–¼ï¸</div>
             <p class="font-medium">Select PDF to convert to images</p>
             <p class="text-sm text-gray-500 mt-2">Each page will be converted to high-quality JPG</p>
         </div>
@@ -709,7 +726,7 @@ function getPdfToWordHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️📝</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“</div>
             <p class="font-medium">Select PDF file to convert to Word</p>
             <p class="text-sm text-gray-500 mt-2">Extract text with formatting preserved</p>
         </div>
@@ -852,7 +869,7 @@ function getPdfToPptHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToPptInput\').click()">
             <input type="file" id="pdfToPptInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️📊</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“Š</div>
             <p class="font-medium">Select PDF to convert to PowerPoint</p>
             <p class="text-sm text-gray-500 mt-2">Each page becomes a slide with content preserved</p>
         </div>
@@ -1013,7 +1030,7 @@ function getPdfToExcelHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToExcelInput\').click()">
             <input type="file" id="pdfToExcelInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️📈</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“ˆ</div>
             <p class="font-medium">Select PDF to extract data</p>
             <p class="text-sm text-gray-500 mt-2">Extract tables and structured data to Excel</p>
         </div>
@@ -1129,7 +1146,7 @@ function getMergePdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'mergePdfInput\').click()">
             <input type="file" id="mergePdfInput" class="hidden" accept=".pdf" multiple>
-            <div class="text-5xl mb-3">📑➕📑</div>
+            <div class="text-5xl mb-3">ðŸ“‘âž•ðŸ“‘</div>
             <p class="font-medium">Select PDF files to merge</p>
             <p class="text-sm text-gray-500 mt-2">Combine multiple PDFs into one document</p>
         </div>
@@ -1147,7 +1164,7 @@ function getMergePdfHTML() {
             Array.from(this.files).forEach((file, idx) => {
                 const badge = document.createElement("span");
                 badge.className = "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm";
-                badge.innerText = "📄 " + file.name;
+                badge.innerText = "ðŸ“„ " + file.name;
                 mergePreview.appendChild(badge);
             });
         });
@@ -1188,7 +1205,7 @@ function getCompressPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'compressPdfInput\').click()">
             <input type="file" id="compressPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">🗜️</div>
+            <div class="text-5xl mb-3">ðŸ—œï¸</div>
             <p class="font-medium">Select PDF to compress</p>
             <p class="text-sm text-gray-500 mt-2">Reduce file size while maintaining quality</p>
         </div>
@@ -1259,7 +1276,7 @@ function getProtectPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'protectPdfInput\').click()">
             <input type="file" id="protectPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">🔒</div>
+            <div class="text-5xl mb-3">ðŸ”’</div>
             <p class="font-medium">Select PDF to protect</p>
             <p class="text-sm text-gray-500 mt-2">Add password protection to your PDF</p>
         </div>
@@ -1339,7 +1356,7 @@ function getWordToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'wordToPdfInput\').click()">
             <input type="file" id="wordToPdfInput" class="hidden" accept=".doc,.docx">
-            <div class="text-5xl mb-3">📝➡️📄</div>
+            <div class="text-5xl mb-3">ðŸ“âž¡ï¸ðŸ“„</div>
             <p class="font-medium">Select Word file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">DOC/DOCX to PDF conversion with formatting preserved</p>
         </div>
@@ -1478,7 +1495,7 @@ function getExcelToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'excelToPdfInput\').click()">
             <input type="file" id="excelToPdfInput" class="hidden" accept=".xls,.xlsx,.csv">
-            <div class="text-5xl mb-3">📊➡️📄</div>
+            <div class="text-5xl mb-3">ðŸ“Šâž¡ï¸ðŸ“„</div>
             <p class="font-medium">Select Excel/CSV file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">XLS/XLSX/CSV to PDF conversion with table formatting</p>
         </div>
@@ -1645,7 +1662,7 @@ function getPptToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pptToPdfInput\').click()">
             <input type="file" id="pptToPdfInput" class="hidden" accept=".ppt,.pptx">
-            <div class="text-5xl mb-3">📽️➡️📄</div>
+            <div class="text-5xl mb-3">ðŸ“½ï¸âž¡ï¸ðŸ“„</div>
             <p class="font-medium">Select PowerPoint file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">PPT/PPTX to PDF conversion with slide layout preserved</p>
         </div>
@@ -2050,7 +2067,7 @@ function getImageCompressorHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'compressImageInput\').click()">
             <input type="file" id="compressImageInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">🖼️🗜️</div>
+            <div class="text-5xl mb-3">ðŸ–¼ï¸ðŸ—œï¸</div>
             <p class="font-medium">Select image to compress</p>
             <p class="text-sm text-gray-500 mt-2">JPG, PNG, WEBP supported</p>
         </div>
@@ -2164,7 +2181,7 @@ function getBackgroundRemoverHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'bgRemoverInput\').click()">
             <input type="file" id="bgRemoverInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">🪄</div>
+            <div class="text-5xl mb-3">ðŸª„</div>
             <p class="font-medium">Upload an image to remove the background</p>
             <p class="text-sm text-gray-500 mt-2">Best for product shots, logos, signatures, and clean backgrounds</p>
         </div>
@@ -2420,7 +2437,7 @@ function getImageToDxfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'imgToDxfInput\').click()">
             <input type="file" id="imgToDxfInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">📐</div>
+            <div class="text-5xl mb-3">ðŸ“</div>
             <p class="font-medium">Upload an image to trace into DXF</p>
             <p class="text-sm text-gray-500 mt-2">Best for logos, silhouettes, stamps, line art, and high-contrast artwork</p>
         </div>
@@ -2475,7 +2492,7 @@ function getImageToDxfHTML() {
             reader.onload = function(e) {
                 imgToDxfPreview.src = e.target.result;
                 imgToDxfPreviewWrap.classList.remove("hidden");
-                imgToDxfMeta.innerText = file.name + " • " + Math.round(file.size / 1024) + " KB";
+                imgToDxfMeta.innerText = file.name + " â€¢ " + Math.round(file.size / 1024) + " KB";
                 document.getElementById("imgToDxfDownload").classList.add("hidden");
                 imgToDxfStatus.innerText = "Ready to trace. Lower threshold keeps more dark pixels; higher threshold keeps more of the image.";
             };
@@ -2568,7 +2585,7 @@ function getImageToDxfHTML() {
 
                     imgToDxfContent = imgToDxfBuildFile(lines);
                     document.getElementById("imgToDxfDownload").classList.remove("hidden");
-                    imgToDxfStatus.innerText = "DXF ready. Generated " + lines.length + " line segments from a " + width + "×" + height + " trace.";
+                    imgToDxfStatus.innerText = "DXF ready. Generated " + lines.length + " line segments from a " + width + "Ã—" + height + " trace.";
                 };
                 img.src = e.target.result;
             };
@@ -2669,7 +2686,7 @@ function getImageToSvgHTML() {
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById("imgToSvgPreview").src = e.target.result;
-                document.getElementById("imgToSvgMeta").innerText = file.name + " • " + Math.round(file.size / 1024) + " KB";
+                document.getElementById("imgToSvgMeta").innerText = file.name + " â€¢ " + Math.round(file.size / 1024) + " KB";
                 document.getElementById("imgToSvgPreviewWrap").classList.remove("hidden");
                 document.getElementById("imgToSvgDownload").classList.add("hidden");
                 document.getElementById("imgToSvgStatus").innerText = "Ready to trace into SVG.";
@@ -2806,7 +2823,7 @@ function getResizeImageHTML() {
                     resizeWidth.value = img.width;
                     resizeHeight.value = img.height;
                     document.getElementById("resizeOriginalImg").src = e.target.result;
-                    document.getElementById("resizeOriginalMeta").innerText = img.width + " x " + img.height + " • " + Math.round(file.size / 1024) + " KB";
+                    document.getElementById("resizeOriginalMeta").innerText = img.width + " x " + img.height + " â€¢ " + Math.round(file.size / 1024) + " KB";
                     document.getElementById("resizePreviewWrap").classList.remove("hidden");
                     document.getElementById("resizeResultImg").classList.add("hidden");
                     document.getElementById("resizeDownloadBtn").classList.add("hidden");
@@ -2853,7 +2870,7 @@ function getResizeImageHTML() {
                         const preview = document.getElementById("resizeResultImg");
                         preview.src = url;
                         preview.classList.remove("hidden");
-                        document.getElementById("resizeResultMeta").innerText = width + " x " + height + " • " + Math.round(blob.size / 1024) + " KB";
+                        document.getElementById("resizeResultMeta").innerText = width + " x " + height + " â€¢ " + Math.round(blob.size / 1024) + " KB";
                         document.getElementById("resizeDownloadBtn").classList.remove("hidden");
                         document.getElementById("resizeStatus").innerText = "Resized image ready.";
                     }, format, quality);
@@ -3068,7 +3085,7 @@ function getImageEnhancerHTML() {
         </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'enhancerInput\').click()">
             <input type="file" id="enhancerInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">✨</div>
+            <div class="text-5xl mb-3">âœ¨</div>
             <p class="font-medium">Choose an image to enhance</p>
             <p class="text-sm text-gray-500 mt-2">Best for blurry, low-resolution photos</p>
         </div>
@@ -3310,7 +3327,7 @@ function getAiImageGeneratorHTML() {
     return '
     <div class="space-y-6">
         <div class="text-center">
-            <div class="text-5xl mb-3">🎨</div>
+            <div class="text-5xl mb-3">ðŸŽ¨</div>
             <p class="font-medium text-lg">AI Image Generator</p>
             <p class="text-sm text-gray-500 mt-2">Generate images from text prompts using the server-configured AI provider</p>
         </div>
@@ -3412,7 +3429,7 @@ function getAiImageGeneratorHTML() {
                 
 
                 try {
-                    showStatus("🎨 Generating your image... This may take a few seconds.");
+                    showStatus("ðŸŽ¨ Generating your image... This may take a few seconds.");
                     
                     // Make authenticated request
                     const response = await fetch("backend/ai_image_proxy.php", {
@@ -3457,7 +3474,7 @@ function getAiImageGeneratorHTML() {
                     
                 } catch (error) {
                     console.error("Generation error:", error);
-                    showStatus("❌ " + error.message, true);
+                    showStatus("âŒ " + error.message, true);
                     resultContainer.classList.add("hidden");
                     return null;
                 }
@@ -3593,7 +3610,7 @@ function getImageConverterHTML() {
                     const img = new Image();
                     img.onload = function() {
                         originalImg.src = e.target.result;
-                        originalMeta.textContent = img.width + " x " + img.height + " • " + Math.round(file.size / 1024) + " KB";
+                        originalMeta.textContent = img.width + " x " + img.height + " â€¢ " + Math.round(file.size / 1024) + " KB";
                         previewWrap.classList.remove("hidden");
                         status.textContent = "Image loaded. Choose a format and click Convert Image.";
                     };
@@ -3630,7 +3647,7 @@ function getImageConverterHTML() {
                             resultImg.src = resultUrl;
                             resultImg.classList.remove("hidden");
                             downloadBtn.classList.remove("hidden");
-                            resultMeta.textContent = img.width + " x " + img.height + " • " + Math.round(blob.size / 1024) + " KB";
+                            resultMeta.textContent = img.width + " x " + img.height + " â€¢ " + Math.round(blob.size / 1024) + " KB";
                             status.textContent = "Converted image ready.";
                         }, format, quality);
                     };
@@ -3792,7 +3809,7 @@ function getVideoToAudioHTML() {
                 preview.src = previewUrl;
                 preview.classList.remove("hidden");
                 metaWrap.classList.remove("hidden");
-                fileMeta.textContent = file.name + " • " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
+                fileMeta.textContent = file.name + " â€¢ " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
                 setStatus("Video loaded. Choose a format and click Convert to Audio.");
             });
 
@@ -3868,7 +3885,7 @@ function getOcrToolHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'ocrImageInput\').click()">
             <input type="file" id="ocrImageInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">👁️📝</div>
+            <div class="text-5xl mb-3">ðŸ‘ï¸ðŸ“</div>
             <p class="font-medium">Upload an image with text</p>
             <p class="text-sm text-gray-500 mt-2">We\'ll extract text using OCR (works best with clear images)</p>
         </div>
@@ -3932,7 +3949,7 @@ function getPdfToWordPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️📝</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“</div>
             <p class="font-medium">Select PDF file to convert to Word</p>
             <p class="text-sm text-gray-500 mt-2">100% Free & Offline (Client-Side)</p>
         </div>
@@ -3992,7 +4009,7 @@ function getPdfToPptPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToPptInput\').click()">
             <input type="file" id="pdfToPptInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️📊</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“Š</div>
             <p class="font-medium">Select PDF file to convert to PPT</p>
             <p class="text-sm text-gray-500 mt-2">100% Free & Offline (Powerpoint Slide Generator)</p>
         </div>
@@ -4055,7 +4072,7 @@ function getPdfToExcelPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToExcelInput\').click()">
             <input type="file" id="pdfToExcelInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">📄➡️📈</div>
+            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“ˆ</div>
             <p class="font-medium">Select PDF to extract tables to Excel</p>
             <p class="text-sm text-gray-500 mt-2">100% Free & Offline Array Builder</p>
         </div>
@@ -4122,7 +4139,7 @@ function getWordToPdfPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'wordToPdfInput\').click()">
             <input type="file" id="wordToPdfInput" class="hidden" accept=".doc,.docx">
-            <div class="text-5xl mb-3">📝➡️📄</div>
+            <div class="text-5xl mb-3">ðŸ“âž¡ï¸ðŸ“„</div>
             <p class="font-medium">Select Word file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">100% Free HTML5 Canvas Porting</p>
         </div>
@@ -4179,7 +4196,7 @@ function getProtectPdfPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'protectPdfInput\').click()">
             <input type="file" id="protectPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">🔒</div>
+            <div class="text-5xl mb-3">ðŸ”’</div>
             <p class="font-medium">Select PDF to protect</p>
             <p class="text-sm text-gray-500 mt-2">Protects document natively via JS Canvas flatten</p>
         </div>
@@ -4335,7 +4352,7 @@ function getSplitPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'splitPdfInput\').click()">
             <input type="file" id="splitPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">✂️</div>
+            <div class="text-5xl mb-3">âœ‚ï¸</div>
             <p class="font-medium">Select PDF to split</p>
             <p class="text-sm text-gray-500 mt-2">Split every page into a separate PDF file</p>
         </div>
@@ -4576,9 +4593,9 @@ function getRotatePdfHTML() {
     <div class="space-y-6">
         <input type="file" id="rotatePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
         <select id="rotatePdfAngle" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-            <option value="90">Rotate 90°</option>
-            <option value="180">Rotate 180°</option>
-            <option value="270">Rotate 270°</option>
+            <option value="90">Rotate 90Â°</option>
+            <option value="180">Rotate 180Â°</option>
+            <option value="270">Rotate 270Â°</option>
         </select>
         <button id="rotatePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Rotate PDF</button>
     </div>
@@ -5186,3 +5203,4 @@ if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
 }
 
 ?>
+
