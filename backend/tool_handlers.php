@@ -3238,8 +3238,8 @@ function getVideoToAudioHTML() {
         <audio id="videoToAudioPlayer" class="w-full hidden" controls></audio>
         <p id="videoToAudioStatus" class="text-sm text-gray-500 text-center"></p>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+    <script src="assets/vendor/ffmpeg/ffmpeg.js"></script>
+    <script src="assets/vendor/ffmpeg/util.js"></script>
     <script>
         (function() {
             const input = document.getElementById("videoToAudioInput");
