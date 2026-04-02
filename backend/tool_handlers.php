@@ -1218,69 +1218,143 @@ HTML;
 
 function getPercentageCalculatorHTML() {
     return <<<'HTML'
-    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7">
-            <p class="text-[11px] tracking-[0.34em] uppercase text-amber-500 font-semibold">Calculator</p>
-            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Percentage Calculator</h2>
-            <div class="mt-5 grid md:grid-cols-3 gap-4">
-                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Value</span><input id="percentValue" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="25"></label>
-                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">% Of</span><input id="percentBase" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="200"></label>
-                <div class="flex items-end"><button id="percentCalcBtn" class="w-full rounded-2xl bg-amber-500 text-slate-950 px-5 py-3 font-semibold">Calculate</button></div>
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.05fr_0.95fr] gap-6">
+        <div class="rounded-[34px] border border-amber-200/60 dark:border-amber-500/15 bg-gradient-to-br from-white via-amber-50/70 to-orange-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(245,158,11,0.12)] p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-amber-500 font-semibold">Calculator Suite</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Percentage Calculator</h2>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-xl">Use it for discounts, growth rates, exam scores, margins, and everyday comparisons without messy mental math.</p>
+                </div>
+                <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-amber-500/15 text-amber-500 items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                </div>
+            </div>
+            <div class="mt-6 grid sm:grid-cols-3 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Value</span>
+                    <input id="percentValue" type="number" class="mt-3 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="25">
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">% Of</span>
+                    <input id="percentBase" type="number" class="mt-3 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="200">
+                </label>
+                <div class="flex items-stretch">
+                    <button id="percentCalcBtn" class="w-full rounded-[28px] bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 px-5 py-4 font-semibold shadow-[0_20px_45px_rgba(245,158,11,0.28)]">Calculate Percentage</button>
+                </div>
+            </div>
+            <div class="mt-5 flex flex-wrap gap-2" id="percentPresets">
+                <button type="button" data-value="25" data-base="200" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">25 of 200</button>
+                <button type="button" data-value="15" data-base="60" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">15 of 60</button>
+                <button type="button" data-value="320" data-base="500" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">320 of 500</button>
             </div>
         </div>
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white"><p class="text-xs uppercase tracking-[0.22em] text-amber-300">Result</p><div id="percentResult" class="mt-4 text-5xl font-black">0</div><p id="percentMeta" class="mt-3 text-sm text-slate-300">25 is what percent of 200?</p></div>
+        <div class="grid gap-6">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-amber-300">Result</p>
+                <div id="percentResult" class="mt-4 text-6xl font-black tracking-tight">0%</div>
+                <p id="percentMeta" class="mt-3 text-sm leading-6 text-slate-300">25 is what percent of 200?</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Quick Tip</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Use this for sale discounts, attendance percentages, and profit margin snapshots.</p>
+                </div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Formula</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300"><strong class="text-slate-900 dark:text-white">Value / Base × 100</strong></p>
+                </div>
+            </div>
+        </div>
     </div>
-    <script>(() => { const calc = () => { const value = parseFloat(document.getElementById("percentValue").value) || 0; const base = parseFloat(document.getElementById("percentBase").value) || 0; const result = base === 0 ? 0 : (value / base) * 100; document.getElementById("percentResult").textContent = `${result.toFixed(2)}%`; document.getElementById("percentMeta").textContent = `${value} is ${result.toFixed(2)}% of ${base}.`; }; document.getElementById("percentCalcBtn").addEventListener("click", calc); calc(); })();</script>
+    <script>(() => { const valueInput = document.getElementById("percentValue"); const baseInput = document.getElementById("percentBase"); const resultEl = document.getElementById("percentResult"); const metaEl = document.getElementById("percentMeta"); const calc = () => { const value = parseFloat(valueInput.value) || 0; const base = parseFloat(baseInput.value) || 0; const result = base === 0 ? 0 : (value / base) * 100; resultEl.textContent = `${result.toFixed(2)}%`; metaEl.textContent = `${value} is ${result.toFixed(2)}% of ${base}.`; }; document.getElementById("percentCalcBtn").addEventListener("click", calc); [valueInput, baseInput].forEach((el) => el.addEventListener("input", calc)); document.querySelectorAll("#percentPresets [data-value]").forEach((btn) => btn.addEventListener("click", () => { valueInput.value = btn.dataset.value; baseInput.value = btn.dataset.base; calc(); })); calc(); })();</script>
 HTML;
 }
 
 function getLoanCalculatorHTML() {
     return <<<'HTML'
-    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7">
-            <p class="text-[11px] tracking-[0.34em] uppercase text-emerald-500 font-semibold">Calculator</p>
-            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Loan EMI Calculator</h2>
-            <div class="mt-5 grid md:grid-cols-3 gap-4">
-                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Loan Amount</span><input id="loanAmount" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="500000"></label>
-                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Annual Rate %</span><input id="loanRate" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="14"></label>
-                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Months</span><input id="loanMonths" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="36"></label>
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.08fr_0.92fr] gap-6">
+        <div class="rounded-[34px] border border-emerald-200/60 dark:border-emerald-500/15 bg-gradient-to-br from-white via-emerald-50/70 to-teal-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(16,185,129,0.12)] p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-emerald-500 font-semibold">Calculator Suite</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Loan EMI Calculator</h2>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-xl">Estimate monthly payments, interest cost, and total repayment with a cleaner finance-style layout.</p>
+                </div>
+                <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-500 items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h10"/><path d="M7 14h5"/></svg>
+                </div>
             </div>
-            <button id="loanCalcBtn" class="mt-5 rounded-2xl bg-emerald-500 text-white px-5 py-3 font-semibold">Calculate EMI</button>
+            <div class="mt-6 grid md:grid-cols-3 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Loan Amount</span><input id="loanAmount" type="number" class="mt-3 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="500000"></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Annual Rate %</span><input id="loanRate" type="number" step="0.1" class="mt-3 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="14"></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Months</span><input id="loanMonths" type="number" class="mt-3 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="36"></label>
+            </div>
+            <div class="mt-5 flex flex-wrap gap-2" id="loanPresets">
+                <button type="button" data-amount="300000" data-rate="12" data-months="24" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Small loan</button>
+                <button type="button" data-amount="1000000" data-rate="14" data-months="48" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Business loan</button>
+                <button type="button" data-amount="2500000" data-rate="11.5" data-months="60" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Long term</button>
+            </div>
+            <button id="loanCalcBtn" class="mt-6 rounded-[28px] bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(16,185,129,0.28)]">Calculate EMI</button>
         </div>
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white space-y-4"><div><p class="text-xs uppercase tracking-[0.22em] text-emerald-300">Monthly EMI</p><div id="loanEmi" class="mt-2 text-5xl font-black">0</div></div><div><p class="text-xs uppercase tracking-[0.22em] text-slate-400">Total Payment</p><div id="loanTotal" class="mt-2 text-2xl font-bold">0</div></div><div><p class="text-xs uppercase tracking-[0.22em] text-slate-400">Total Interest</p><div id="loanInterest" class="mt-2 text-2xl font-bold">0</div></div></div>
+        <div class="grid gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-emerald-300">Monthly EMI</p>
+                <div id="loanEmi" class="mt-3 text-6xl font-black tracking-tight">0</div>
+                <p class="mt-3 text-sm text-slate-300">Your estimated recurring monthly payment.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Total Payment</p>
+                    <div id="loanTotal" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</div>
+                </div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Total Interest</p>
+                    <div id="loanInterest" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <script>(() => { const calc = () => { const principal = parseFloat(document.getElementById("loanAmount").value) || 0; const annualRate = parseFloat(document.getElementById("loanRate").value) || 0; const months = parseFloat(document.getElementById("loanMonths").value) || 0; const monthlyRate = annualRate / 12 / 100; const emi = monthlyRate === 0 ? principal / Math.max(months, 1) : (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1); const total = emi * months; const interest = total - principal; document.getElementById("loanEmi").textContent = emi.toFixed(2); document.getElementById("loanTotal").textContent = total.toFixed(2); document.getElementById("loanInterest").textContent = interest.toFixed(2); }; document.getElementById("loanCalcBtn").addEventListener("click", calc); calc(); })();</script>
+    <script>(() => { const amountEl = document.getElementById("loanAmount"); const rateEl = document.getElementById("loanRate"); const monthsEl = document.getElementById("loanMonths"); const calc = () => { const principal = parseFloat(amountEl.value) || 0; const annualRate = parseFloat(rateEl.value) || 0; const months = parseFloat(monthsEl.value) || 0; const monthlyRate = annualRate / 12 / 100; const emi = monthlyRate === 0 ? principal / Math.max(months, 1) : (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1); const total = emi * months; const interest = total - principal; document.getElementById("loanEmi").textContent = emi.toFixed(2); document.getElementById("loanTotal").textContent = total.toFixed(2); document.getElementById("loanInterest").textContent = interest.toFixed(2); }; document.getElementById("loanCalcBtn").addEventListener("click", calc); [amountEl, rateEl, monthsEl].forEach((el) => el.addEventListener("input", calc)); document.querySelectorAll("#loanPresets [data-amount]").forEach((btn) => btn.addEventListener("click", () => { amountEl.value = btn.dataset.amount; rateEl.value = btn.dataset.rate; monthsEl.value = btn.dataset.months; calc(); })); calc(); })();</script>
 HTML;
 }
 
 function getBmiCalculatorHTML() {
     return <<<'HTML'
-    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7">
-            <p class="text-[11px] tracking-[0.34em] uppercase text-rose-500 font-semibold">Calculator</p>
-            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">BMI Calculator</h2>
-            <div class="mt-5 grid gap-4">
-                <div class="grid md:grid-cols-[1fr_150px] gap-4">
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.06fr_0.94fr] gap-6">
+        <div class="rounded-[34px] border border-rose-200/60 dark:border-rose-500/15 bg-gradient-to-br from-white via-rose-50/70 to-pink-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(244,63,94,0.12)] p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-rose-500 font-semibold">Calculator Suite</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">BMI Calculator</h2>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-xl">Check body mass index with multiple unit options and a cleaner health-focused layout.</p>
+                </div>
+                <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-rose-500/15 text-rose-500 items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v18"/><path d="M8 7h8"/><path d="M8 12h8"/><path d="M8 17h8"/></svg>
+                </div>
+            </div>
+            <div class="mt-6 grid gap-4">
+                <div class="grid md:grid-cols-[1fr_190px] gap-4">
                     <label class="block">
                         <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Weight</span>
-                        <input id="bmiWeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="70">
+                        <input id="bmiWeight" type="number" step="0.1" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="70">
                     </label>
                     <label class="block">
                         <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Weight Unit</span>
-                        <select id="bmiWeightUnit" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white">
+                        <select id="bmiWeightUnit" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white">
                             <option value="kg">Kilograms (kg)</option>
                             <option value="lb">Pounds (lb)</option>
                         </select>
                     </label>
                 </div>
-                <div class="grid md:grid-cols-[1fr_150px] gap-4">
+                <div class="grid md:grid-cols-[1fr_190px] gap-4">
                     <label class="block">
                         <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Height</span>
-                        <input id="bmiHeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="175">
+                        <input id="bmiHeight" type="number" step="0.1" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="175">
                     </label>
                     <label class="block">
                         <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Height Unit</span>
-                        <select id="bmiHeightUnit" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white">
+                        <select id="bmiHeightUnit" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white">
                             <option value="cm">Centimeters (cm)</option>
                             <option value="m">Meters (m)</option>
                             <option value="ftin">Feet + Inches</option>
@@ -1291,21 +1365,42 @@ function getBmiCalculatorHTML() {
                 <div id="bmiFeetInchesWrap" class="hidden grid md:grid-cols-2 gap-4">
                     <label class="block">
                         <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Feet</span>
-                        <input id="bmiFeet" type="number" step="1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="5">
+                        <input id="bmiFeet" type="number" step="1" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="5">
                     </label>
                     <label class="block">
                         <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Inches</span>
-                        <input id="bmiInches" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="9">
+                        <input id="bmiInches" type="number" step="0.1" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="9">
                     </label>
                 </div>
-                <button id="bmiCalcBtn" class="rounded-2xl bg-rose-500 text-white px-5 py-3 font-semibold">Calculate BMI</button>
+                <div class="flex flex-wrap gap-2" id="bmiPresets">
+                    <button type="button" data-weight="70" data-weight-unit="kg" data-height="175" data-height-unit="cm" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Metric</button>
+                    <button type="button" data-weight="154" data-weight-unit="lb" data-height-unit="ftin" data-feet="5" data-inches="9" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Imperial</button>
+                    <button type="button" data-weight="82" data-weight-unit="kg" data-height="1.78" data-height-unit="m" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Meters</button>
+                </div>
+                <button id="bmiCalcBtn" class="rounded-[28px] bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(244,63,94,0.28)]">Calculate BMI</button>
             </div>
         </div>
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white">
-            <p class="text-xs uppercase tracking-[0.22em] text-rose-300">Body Mass Index</p>
-            <div id="bmiResult" class="mt-4 text-5xl font-black">0</div>
-            <p id="bmiCategory" class="mt-3 text-lg text-slate-300">Category will appear here.</p>
-            <p id="bmiMeta" class="mt-3 text-sm text-slate-400">Supports kg, lb, cm, m, feet/inches, and inches.</p>
+        <div class="grid gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-rose-300">Body Mass Index</p>
+                <div id="bmiResult" class="mt-4 text-6xl font-black tracking-tight">0</div>
+                <p id="bmiCategory" class="mt-3 text-xl text-slate-200">Category will appear here.</p>
+                <p id="bmiMeta" class="mt-3 text-sm leading-6 text-slate-400">Supports kg, lb, cm, m, feet/inches, and inches.</p>
+            </div>
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Range</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Normal BMI is usually between 18.5 and 24.9.</p>
+                </div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Use Case</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Useful for quick health estimates, not a diagnosis.</p>
+                </div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Units</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Metric and imperial inputs are both supported.</p>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -1365,6 +1460,16 @@ function getBmiCalculatorHTML() {
                 calc();
             });
             [weightInput, weightUnit, heightInput, feetInput, inchesInput].forEach((el) => el.addEventListener("input", calc));
+            document.querySelectorAll("#bmiPresets [data-weight]").forEach((btn) => btn.addEventListener("click", () => {
+                weightInput.value = btn.dataset.weight || weightInput.value;
+                weightUnit.value = btn.dataset.weightUnit || weightUnit.value;
+                heightUnit.value = btn.dataset.heightUnit || heightUnit.value;
+                heightInput.value = btn.dataset.height || heightInput.value;
+                feetInput.value = btn.dataset.feet || feetInput.value;
+                inchesInput.value = btn.dataset.inches || inchesInput.value;
+                syncHeightFields();
+                calc();
+            }));
             document.getElementById("bmiCalcBtn").addEventListener("click", calc);
             syncHeightFields();
             calc();
@@ -1375,11 +1480,50 @@ HTML;
 
 function getAgeCalculatorHTML() {
     return <<<'HTML'
-    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7"><p class="text-[11px] tracking-[0.34em] uppercase text-indigo-500 font-semibold">Calculator</p><h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Age Calculator</h2><label class="block mt-5"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Date of Birth</span><input id="ageDob" type="date" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></label><button id="ageCalcBtn" class="mt-5 rounded-2xl bg-indigo-600 text-white px-5 py-3 font-semibold">Calculate Age</button></div>
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white"><p class="text-xs uppercase tracking-[0.22em] text-indigo-300">Current Age</p><div id="ageYears" class="mt-4 text-5xl font-black">0 years</div><p id="ageMeta" class="mt-3 text-lg text-slate-300">Select a birth date.</p></div>
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.02fr_0.98fr] gap-6">
+        <div class="rounded-[34px] border border-indigo-200/60 dark:border-indigo-500/15 bg-gradient-to-br from-white via-indigo-50/70 to-sky-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(99,102,241,0.12)] p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-indigo-500 font-semibold">Calculator Suite</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Age Calculator</h2>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-xl">Check current age from date of birth with a cleaner result layout for forms, records, and quick calculations.</p>
+                </div>
+                <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-indigo-500/15 text-indigo-500 items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M3 10h18"/></svg>
+                </div>
+            </div>
+            <div class="mt-6 grid gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Date of Birth</span>
+                    <input id="ageDob" type="date" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white">
+                </label>
+                <div class="flex flex-wrap gap-2" id="agePresets">
+                    <button type="button" data-date="2000-01-01" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">2000-01-01</button>
+                    <button type="button" data-date="1995-08-17" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">1995-08-17</button>
+                    <button type="button" data-date="2010-06-10" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">2010-06-10</button>
+                </div>
+                <button id="ageCalcBtn" class="rounded-[28px] bg-gradient-to-r from-indigo-500 to-sky-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(99,102,241,0.28)]">Calculate Age</button>
+            </div>
+        </div>
+        <div class="grid gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-indigo-300">Current Age</p>
+                <div id="ageYears" class="mt-4 text-6xl font-black tracking-tight">0 years</div>
+                <p id="ageMeta" class="mt-3 text-lg text-slate-300">Select a birth date.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Useful For</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Admissions, HR forms, profile onboarding, and quick record checks.</p>
+                </div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Output</p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Shows completed years plus months since the last birthday.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <script>(() => { const calc = () => { const value = document.getElementById("ageDob").value; if (!value) return; const dob = new Date(value), now = new Date(); let years = now.getFullYear() - dob.getFullYear(), months = now.getMonth() - dob.getMonth(); if (months < 0 || (months === 0 && now.getDate() < dob.getDate())) { years--; months += 12; } document.getElementById("ageYears").textContent = `${years} years`; document.getElementById("ageMeta").textContent = `${months} months since last birthday.`; }; document.getElementById("ageCalcBtn").addEventListener("click", calc); })();</script>
+    <script>(() => { const dobInput = document.getElementById("ageDob"); const calc = () => { const value = dobInput.value; if (!value) return; const dob = new Date(value), now = new Date(); let years = now.getFullYear() - dob.getFullYear(), months = now.getMonth() - dob.getMonth(); if (months < 0 || (months === 0 && now.getDate() < dob.getDate())) { years--; months += 12; } document.getElementById("ageYears").textContent = `${years} years`; document.getElementById("ageMeta").textContent = `${months} months since last birthday.`; }; document.getElementById("ageCalcBtn").addEventListener("click", calc); dobInput.addEventListener("input", calc); document.querySelectorAll("#agePresets [data-date]").forEach((btn) => btn.addEventListener("click", () => { dobInput.value = btn.dataset.date; calc(); })); })();</script>
 HTML;
 }
 
