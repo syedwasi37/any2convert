@@ -2933,43 +2933,32 @@ function getAiImageGeneratorHTML() {
                 const height = heightSelect.value;
                 const negPrompt = negativePrompt.value.trim();
                 
-                // Build the API URL using gen.pollinations.ai endpoint
-                let apiUrl = `https://gen.pollinations.ai/image/${encodePrompt(prompt)}`;
-                const params = new URLSearchParams();
-                params.set("width", width);
-                params.set("height", height);
-                params.set("model", "zimage");  // Using zimage as per your working example
-                params.set("seed", "0");
-                params.set("enhance", "false");
-                params.set("safe", "false");
-                params.set("quality", "medium");
-                
-                if (negPrompt) {
-                    params.set("negative_prompt", negPrompt);
-                }
-                
-                apiUrl += "?" + params.toString();
-                
+
                 try {
                     showStatus("🎨 Generating your image... This may take a few seconds.");
                     
                     // Make authenticated request
-                    const response = await fetch(apiUrl, {
-                        method: "GET",
+                    const response = await fetch("backend/ai_image_proxy.php", {
+                        method: "POST",
                         headers: {
-                            "Authorization": `Bearer ${API_KEY}`,
-                            "Accept": "image/jpeg, image/png",
                             "Content-Type": "application/json"
-                        }
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt,
+                            negative_prompt: negPrompt,
+                            width: parseInt(width, 10),
+                            height: parseInt(height, 10)
+                        })
                     });
                     
                     if (!response.ok) {
-                        const errorText = await response.text();
+                        const contentType = response.headers.get("content-type") || "";
                         let errorMessage = `HTTP ${response.status}: Failed to generate image`;
-                        try {
-                            const errorData = JSON.parse(errorText);
+                        if (contentType.includes("application/json")) {
+                            const errorData = await response.json();
                             errorMessage = errorData.error?.message || errorMessage;
-                        } catch(e) {
+                        } else {
+                            const errorText = await response.text();
                             errorMessage = errorText || errorMessage;
                         }
                         throw new Error(errorMessage);
