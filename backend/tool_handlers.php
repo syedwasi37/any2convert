@@ -475,7 +475,6 @@ function getCurrencyConverterHTML(): string
             const quickRates = document.getElementById("currencyQuickRates");
 
             let currencies = {};
-            let lastPayload = null;
             const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
 
             function formatAmount(value, currency) {
@@ -493,7 +492,17 @@ function getCurrencyConverterHTML(): string
             async function loadCurrencies() {
                 const resp = await fetch("https://api.frankfurter.dev/v2/currencies");
                 if (!resp.ok) throw new Error("Could not load currency list.");
-                currencies = await resp.json();
+                const payload = await resp.json();
+                if (Array.isArray(payload)) {
+                    currencies = payload.reduce((acc, item) => {
+                        if (item && item.iso_code) {
+                            acc[item.iso_code] = item;
+                        }
+                        return acc;
+                    }, {});
+                } else {
+                    currencies = payload || {};
+                }
                 const codes = Object.keys(currencies).sort((a, b) => {
                     const aPreferred = preferred.includes(a) ? preferred.indexOf(a) : 999;
                     const bPreferred = preferred.includes(b) ? preferred.indexOf(b) : 999;
@@ -533,27 +542,30 @@ function getCurrencyConverterHTML(): string
                 if (!base || !quote) return;
                 status.textContent = "Fetching live exchange rates...";
                 try {
-                    const requestedQuotes = [quote, ...preferred.filter((code) => code !== base && code !== quote).slice(0, 6)];
-                    const resp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
-                    if (!resp.ok) throw new Error("Rate request failed.");
-                    const payload = await resp.json();
-                    lastPayload = payload;
-                    const rate = Array.isArray(payload) ? payload[0]?.rate : payload?.rates?.[quote];
-                    const dateLabel = Array.isArray(payload) ? payload[0]?.date : payload?.date;
+                    const rateResp = await fetch(`https://api.frankfurter.dev/v2/rate/${encodeURIComponent(base)}/${encodeURIComponent(quote)}`);
+                    if (!rateResp.ok) throw new Error("Rate request failed.");
+                    const ratePayload = await rateResp.json();
+                    const rate = ratePayload?.rate;
+                    const dateLabel = ratePayload?.date;
                     if (!Number.isFinite(Number(rate))) throw new Error("No live rate available.");
                     const converted = (Number.isFinite(amount) ? amount : 0) * Number(rate);
                     resultText.textContent = formatAmount(converted, quote);
                     metaText.textContent = `${amount || 0} ${base} = ${converted.toFixed(4)} ${quote} using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.`;
                     status.textContent = "Live exchange rate updated.";
-                    const quickMap = {};
-                    if (Array.isArray(payload)) {
-                        payload.forEach((item) => {
-                            if (item && item.quote) quickMap[item.quote] = item.rate;
-                        });
-                    } else if (payload?.rates) {
-                        Object.assign(quickMap, payload.rates);
+                    const requestedQuotes = preferred.filter((code) => code !== base).slice(0, 6);
+                    const quickResp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
+                    if (quickResp.ok) {
+                        const quickPayload = await quickResp.json();
+                        const quickMap = {};
+                        if (Array.isArray(quickPayload)) {
+                            quickPayload.forEach((item) => {
+                                if (item && item.quote) quickMap[item.quote] = item.rate;
+                            });
+                        }
+                        renderQuickRates(base, quickMap);
+                    } else {
+                        quickRates.innerHTML = "";
                     }
-                    renderQuickRates(base, quickMap);
                 } catch (error) {
                     status.textContent = error.message || "Could not fetch live rates right now.";
                     metaText.textContent = "Please try refreshing the live currency feed.";
