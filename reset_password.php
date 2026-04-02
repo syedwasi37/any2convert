@@ -31,12 +31,26 @@ $verifiedEmail = $_SESSION['password_reset_verified_email'];
         .flash.error { background:rgba(239,68,68,.08); color:#dc2626; } .flash.success { background:rgba(34,197,94,.08); color:#15803d; }
         .theme-toggle { width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; border:1px solid var(--border); background:color-mix(in srgb, var(--panel-strong) 92%, transparent); color:var(--text); }
         .theme-toggle svg { width:18px; height:18px; }
+        .brand-mark { display:inline-flex; align-items:center; gap:10px; text-decoration:none; }
+        .brand-icon { width:30px; height:30px; border-radius:8px; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 12px 24px rgba(108,99,255,.24); }
+        .brand-text { font-weight:700; font-size:1.05rem; letter-spacing:-0.02em; color:var(--text); }
+        .brand-dot { color:var(--accent); }
     </style>
 </head>
 <body>
     <div class="max-w-3xl mx-auto px-6 py-10">
         <div class="flex justify-between items-center mb-8">
-            <a href="index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
+            <a href="index.php" class="brand-mark" aria-label="Any2Convert home">
+                <span class="brand-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="8" y1="13" x2="16" y2="13"/>
+                        <line x1="8" y1="17" x2="13" y2="17"/>
+                    </svg>
+                </span>
+                <span class="brand-text">Any2Convert<span class="brand-dot">.</span></span>
+            </a>
             <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
                 <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>

@@ -84,6 +84,31 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
         .pill { padding: 10px 16px; font-size: .9rem; }
         .theme-toggle { width: 46px; height: 46px; }
         .theme-toggle svg { width: 18px; height: 18px; }
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .brand-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 12px 24px rgba(108,99,255,.24);
+        }
+        .brand-text {
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+        .brand-dot { color: var(--accent); }
         .hero-card {
             position: relative;
             overflow: hidden;
@@ -184,7 +209,17 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
     <?= adsRenderPosition($conn, 'header') ?>
     <nav class="topbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <a href="index.php" class="text-2xl font-extrabold tracking-tighter italic text-blue-600">ANY2CONVERT</a>
+            <a href="index.php" class="brand-mark" aria-label="Any2Convert home">
+                <span class="brand-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="8" y1="13" x2="16" y2="13"/>
+                        <line x1="8" y1="17" x2="13" y2="17"/>
+                    </svg>
+                </span>
+                <span class="brand-text">Any2Convert<span class="brand-dot">.</span></span>
+            </a>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="index.php" class="pill">Home</a>
                 <a href="signup.php" class="pill">Create Account</a>

@@ -29,6 +29,10 @@ $flash = authGetFlash();
         .pill,.theme-toggle { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:999px; border:1px solid var(--border); background:color-mix(in srgb, var(--panel-strong) 92%, transparent); color:var(--text); text-decoration:none; font-weight:700; }
         .pill { padding:10px 16px; font-size:.9rem; } .theme-toggle { width:46px; height:46px; }
         .theme-toggle svg { width:18px; height:18px; }
+        .brand-mark { display:inline-flex; align-items:center; gap:10px; text-decoration:none; }
+        .brand-icon { width:30px; height:30px; border-radius:8px; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 12px 24px rgba(108,99,255,.24); }
+        .brand-text { font-weight:700; font-size:1.05rem; letter-spacing:-0.02em; color:var(--text); }
+        .brand-dot { color:var(--accent); }
         .label { font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.24em; color:var(--muted); margin-bottom:10px; display:block; }
         .input { width:100%; padding:16px 18px; border-radius:18px; border:1px solid var(--border); background:color-mix(in srgb, var(--panel-strong) 96%, transparent); color:var(--text); font-size:1rem; font-weight:600; outline:none; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
         .input:focus { border-color:color-mix(in srgb, var(--accent) 55%, white); box-shadow:0 0 0 4px rgba(37,99,235,.12); transform:translateY(-1px); }
@@ -44,7 +48,17 @@ $flash = authGetFlash();
     <?= adsRenderPosition($conn, 'header') ?>
     <nav class="topbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <a href="index.php" class="text-2xl font-extrabold tracking-tighter italic text-blue-600">ANY2CONVERT</a>
+            <a href="index.php" class="brand-mark" aria-label="Any2Convert home">
+                <span class="brand-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="8" y1="13" x2="16" y2="13"/>
+                        <line x1="8" y1="17" x2="13" y2="17"/>
+                    </svg>
+                </span>
+                <span class="brand-text">Any2Convert<span class="brand-dot">.</span></span>
+            </a>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="index.php" class="pill">Home</a>
                 <a href="login.php" class="pill">Login</a>
