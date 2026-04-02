@@ -141,6 +141,8 @@ function renderToolHandlerHTML($tool) {
             return getCpsTestHTML();
         case 'gamer_tag_generator':
             return getGamerTagGeneratorHTML();
+        case 'clip_to_gif':
+            return getClipToGifHTML();
         case 'tournament_bracket_generator':
             return getTournamentBracketGeneratorHTML();
         case 'ai_image_generator':
@@ -1551,7 +1553,7 @@ function getSensitivityConverterHTML() {
                     <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2v20"/><path d="M8 6h8"/><path d="M8 18h8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
                 </div>
             </div>
-            <div class="mt-6 grid md:grid-cols-3 gap-4">
+            <div class="mt-6 grid md:grid-cols-2 gap-4">
                 <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
                     <span class="text-xs uppercase tracking-[0.22em] text-slate-500">From Game</span>
                     <select id="sensFromGame" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white"></select>
@@ -1560,15 +1562,16 @@ function getSensitivityConverterHTML() {
                     <span class="text-xs uppercase tracking-[0.22em] text-slate-500">To Game</span>
                     <select id="sensToGame" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white"></select>
                 </label>
-                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
-                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Your Sensitivity</span>
-                    <input id="sensValue" type="number" step="0.001" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="1.000">
-                </label>
+            </div>
+            <div class="mt-4 grid md:grid-cols-3 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Mouse DPI</span><input id="sensDpi" type="number" step="1" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="800"></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">In-Game Sens</span><input id="sensValue" type="number" step="0.001" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="1.000"></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Windows Mouse</span><select id="sensWindows" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white"><option value="0.1">1/11</option><option value="0.2">2/11</option><option value="0.3">3/11</option><option value="0.4">4/11</option><option value="0.5">5/11</option><option value="1" selected>6/11 Default</option><option value="1.5">7/11</option><option value="2">8/11</option><option value="2.5">9/11</option><option value="3">10/11</option><option value="3.5">11/11</option></select></label>
             </div>
             <div class="mt-5 flex flex-wrap gap-2" id="sensPresets">
-                <button type="button" data-from="Valorant" data-to="CS2" data-value="0.35" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Valorant to CS2</button>
-                <button type="button" data-from="Fortnite" data-to="Apex Legends" data-value="8.00" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Fortnite to Apex</button>
-                <button type="button" data-from="Overwatch 2" data-to="Call of Duty" data-value="4.00" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">OW2 to COD</button>
+                <button type="button" data-from="Valorant" data-to="CS2" data-value="0.35" data-dpi="800" data-win="1" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Valorant to CS2</button>
+                <button type="button" data-from="Fortnite" data-to="Apex Legends" data-value="8.00" data-dpi="1600" data-win="1" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">Fortnite to Apex</button>
+                <button type="button" data-from="Overwatch 2" data-to="Call of Duty" data-value="4.00" data-dpi="800" data-win="1.5" class="rounded-full bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">OW2 to COD</button>
             </div>
         </div>
         <div class="grid gap-4">
@@ -1578,15 +1581,15 @@ function getSensitivityConverterHTML() {
                 <p id="sensMeta" class="mt-3 text-sm leading-6 text-slate-300">Choose your source and target game to convert sensitivity.</p>
             </div>
             <div class="grid sm:grid-cols-2 gap-4">
-                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Games</p><p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Valorant, CS2, Fortnite, Apex, Overwatch 2, COD.</p></div>
-                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Note</p><p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Use this as a starting point and fine-tune in-game.</p></div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">eDPI</p><p id="sensEdpi" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
+                <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Windows Factor</p><p id="sensWinMeta" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">6/11</p></div>
             </div>
         </div>
     </div>
     <script>
         (() => {
             const ratios = { "Valorant": 1, "CS2": 3.181818, "Fortnite": 22.0, "Apex Legends": 3.333333, "Overwatch 2": 10.606061, "Call of Duty": 8.0 };
-            const fromEl = document.getElementById("sensFromGame"), toEl = document.getElementById("sensToGame"), valueEl = document.getElementById("sensValue"), resultEl = document.getElementById("sensResult"), metaEl = document.getElementById("sensMeta");
+            const fromEl = document.getElementById("sensFromGame"), toEl = document.getElementById("sensToGame"), valueEl = document.getElementById("sensValue"), dpiEl = document.getElementById("sensDpi"), winEl = document.getElementById("sensWindows"), resultEl = document.getElementById("sensResult"), metaEl = document.getElementById("sensMeta"), edpiEl = document.getElementById("sensEdpi"), winMetaEl = document.getElementById("sensWinMeta");
             Object.keys(ratios).forEach((game) => {
                 fromEl.appendChild(new Option(game, game));
                 toEl.appendChild(new Option(game, game));
@@ -1595,12 +1598,18 @@ function getSensitivityConverterHTML() {
             toEl.value = "CS2";
             function calc() {
                 const val = parseFloat(valueEl.value) || 0;
-                const converted = val * (ratios[fromEl.value] / ratios[toEl.value]);
+                const dpi = parseFloat(dpiEl.value) || 0;
+                const windowsFactor = parseFloat(winEl.value) || 1;
+                const effectiveSens = val * windowsFactor;
+                const converted = effectiveSens * (ratios[fromEl.value] / ratios[toEl.value]);
+                const edpi = dpi * effectiveSens;
                 resultEl.textContent = converted.toFixed(3);
-                metaEl.textContent = `${val.toFixed(3)} in ${fromEl.value} is about ${converted.toFixed(3)} in ${toEl.value}.`;
+                edpiEl.textContent = edpi.toFixed(1);
+                winMetaEl.textContent = winEl.options[winEl.selectedIndex].textContent.replace(" Default", "");
+                metaEl.textContent = `${val.toFixed(3)} sens at ${dpi} DPI with ${winMetaEl.textContent} Windows speed converts to about ${converted.toFixed(3)} in ${toEl.value}.`;
             }
-            [fromEl, toEl, valueEl].forEach((el) => el.addEventListener("input", calc));
-            document.querySelectorAll("#sensPresets [data-from]").forEach((btn) => btn.addEventListener("click", () => { fromEl.value = btn.dataset.from; toEl.value = btn.dataset.to; valueEl.value = btn.dataset.value; calc(); }));
+            [fromEl, toEl, valueEl, dpiEl, winEl].forEach((el) => el.addEventListener("input", calc));
+            document.querySelectorAll("#sensPresets [data-from]").forEach((btn) => btn.addEventListener("click", () => { fromEl.value = btn.dataset.from; toEl.value = btn.dataset.to; valueEl.value = btn.dataset.value; dpiEl.value = btn.dataset.dpi; winEl.value = btn.dataset.win; calc(); }));
             calc();
         })();
     </script>
@@ -1756,6 +1765,117 @@ function getGamerTagGeneratorHTML() {
             }
             document.getElementById("tagGenerateBtn").addEventListener("click", generate);
             generate();
+        })();
+    </script>
+HTML;
+}
+
+function getClipToGifHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
+        <div class="rounded-[34px] border border-pink-200/60 dark:border-pink-500/15 bg-gradient-to-br from-white via-pink-50/70 to-rose-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(236,72,153,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-pink-500 font-semibold">Gaming Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Clip to GIF</h2>
+            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Turn a short gaming clip into a GIF using local FFmpeg processing in the browser.</p>
+            <input id="clipGifInput" type="file" accept="video/*" class="mt-6 block w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white">
+            <div class="mt-5 grid md:grid-cols-4 gap-4">
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Start (sec)</span><input id="clipGifStart" type="number" min="0" step="0.1" value="0" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Duration</span><input id="clipGifDuration" type="number" min="1" step="0.1" value="3" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">FPS</span><input id="clipGifFps" type="number" min="5" max="30" step="1" value="12" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Width</span><input id="clipGifWidth" type="number" min="160" step="10" value="480" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white"></label>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="clipGifRunBtn" class="rounded-[28px] bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(236,72,153,0.28)]">Create GIF</button>
+                <button id="clipGifDownloadBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold" disabled>Download GIF</button>
+                <p id="clipGifStatus" class="self-center text-sm text-slate-500 dark:text-slate-400">Upload a short clip to begin.</p>
+            </div>
+            <video id="clipGifPreviewVideo" class="mt-6 hidden w-full rounded-[28px] bg-black" controls preload="metadata"></video>
+        </div>
+        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+            <p class="text-xs uppercase tracking-[0.22em] text-pink-300">GIF Preview</p>
+            <div class="mt-4 min-h-[320px] rounded-[28px] border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
+                <img id="clipGifPreview" class="max-w-full hidden" alt="GIF preview">
+                <div id="clipGifPlaceholder" class="text-slate-400 text-sm">Your generated GIF will appear here.</div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/vendor/ffmpeg/ffmpeg.js"></script>
+    <script src="assets/vendor/ffmpeg/util.js"></script>
+    <script>
+        (() => {
+            const input = document.getElementById("clipGifInput");
+            const runBtn = document.getElementById("clipGifRunBtn");
+            const downloadBtn = document.getElementById("clipGifDownloadBtn");
+            const status = document.getElementById("clipGifStatus");
+            const previewVideo = document.getElementById("clipGifPreviewVideo");
+            const previewImg = document.getElementById("clipGifPreview");
+            const placeholder = document.getElementById("clipGifPlaceholder");
+            let ffmpeg = null;
+            let ffmpegLoaded = false;
+            let gifUrl = "";
+
+            function setStatus(message) { status.textContent = message; }
+            function revokeGif() { if (gifUrl) { URL.revokeObjectURL(gifUrl); gifUrl = ""; } }
+            async function ensureFFmpegLoaded() {
+                if (ffmpegLoaded) return ffmpeg;
+                const { FFmpeg } = FFmpegWASM;
+                const { toBlobURL } = FFmpegUtil;
+                ffmpeg = new FFmpeg();
+                ffmpeg.on("log", function(event) { if (event && event.message) setStatus("Processing: " + event.message); });
+                const baseURL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd";
+                setStatus("Loading GIF conversion engine...");
+                await ffmpeg.load({
+                    coreURL: await toBlobURL(baseURL + "/ffmpeg-core.js", "text/javascript"),
+                    wasmURL: await toBlobURL(baseURL + "/ffmpeg-core.wasm", "application/wasm")
+                });
+                ffmpegLoaded = true;
+                setStatus("GIF converter ready.");
+                return ffmpeg;
+            }
+
+            input.addEventListener("change", () => {
+                const file = input.files?.[0];
+                if (!file) return;
+                previewVideo.src = URL.createObjectURL(file);
+                previewVideo.classList.remove("hidden");
+                setStatus(`Loaded ${file.name}.`);
+            });
+
+            runBtn.addEventListener("click", async () => {
+                const file = input.files?.[0];
+                if (!file) { setStatus("Please select a video clip first."); return; }
+                try {
+                    revokeGif();
+                    const engine = await ensureFFmpegLoaded();
+                    const { fetchFile } = FFmpegUtil;
+                    const start = parseFloat(document.getElementById("clipGifStart").value) || 0;
+                    const duration = parseFloat(document.getElementById("clipGifDuration").value) || 3;
+                    const fps = parseFloat(document.getElementById("clipGifFps").value) || 12;
+                    const width = parseFloat(document.getElementById("clipGifWidth").value) || 480;
+                    const inputName = "clip." + ((file.name.split(".").pop() || "mp4").toLowerCase());
+                    await engine.writeFile(inputName, await fetchFile(file));
+                    setStatus("Creating GIF...");
+                    await engine.exec(["-ss", String(start), "-t", String(duration), "-i", inputName, "-vf", `fps=${fps},scale=${width}:-1:flags=lanczos`, "-loop", "0", "output.gif"]);
+                    const data = await engine.readFile("output.gif");
+                    const blob = new Blob([data.buffer], { type: "image/gif" });
+                    gifUrl = URL.createObjectURL(blob);
+                    previewImg.src = gifUrl;
+                    previewImg.classList.remove("hidden");
+                    placeholder.classList.add("hidden");
+                    downloadBtn.disabled = false;
+                    setStatus("GIF created successfully.");
+                } catch (error) {
+                    setStatus(error.message || "Could not create GIF.");
+                }
+            });
+
+            downloadBtn.addEventListener("click", () => {
+                if (!gifUrl) return;
+                const a = document.createElement("a");
+                a.href = gifUrl;
+                a.download = "clip.gif";
+                a.click();
+            });
         })();
     </script>
 HTML;

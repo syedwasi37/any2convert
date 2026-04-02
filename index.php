@@ -38,6 +38,7 @@ $tool_slugs = [
     'reaction_time_test' => 'reaction-time-test',
     'cps_test' => 'cps-test',
     'gamer_tag_generator' => 'gamer-tag-generator',
+    'clip_to_gif' => 'clip-to-gif',
     'tournament_bracket_generator' => 'tournament-bracket-generator'
 ];
 
@@ -166,6 +167,7 @@ $tools = [
             ['id' => 'reaction_time_test', 'name' => 'Reaction Time Test', 'icon' => 'reaction_time_test', 'desc' => 'Measure how quickly you react to a visual signal'],
             ['id' => 'cps_test', 'name' => 'CPS Test', 'icon' => 'cps_test', 'desc' => 'Track clicks per second over a fast 5 second test'],
             ['id' => 'gamer_tag_generator', 'name' => 'Gamer Tag Generator', 'icon' => 'gamer_tag_generator', 'desc' => 'Generate modern usernames for gaming profiles'],
+            ['id' => 'clip_to_gif', 'name' => 'Clip to GIF', 'icon' => 'clip_to_gif', 'desc' => 'Turn short gaming clips into shareable GIFs'],
             ['id' => 'tournament_bracket_generator', 'name' => 'Tournament Bracket Generator', 'icon' => 'tournament_bracket_generator', 'desc' => 'Create a simple single-elimination bracket instantly'],
         ]
     ]
@@ -997,6 +999,7 @@ $categoryMeta = [
         'reaction_time_test' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
         'cps_test' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5l12-2v6"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
         'gamer_tag_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l2 8H4l2-8Z"/><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16h4"/></svg>',
+        'clip_to_gif' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 10h4"/><path d="M8 14h3"/><path d="M15 10v4"/><path d="M19 10h-3v4"/></svg>',
         'tournament_bracket_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10"/><path d="M7 17h10"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M12 7v10"/></svg>',
     ];
 
@@ -1132,6 +1135,7 @@ $categoryMeta = [
                 ['currency_converter','Currency Converter'],['invoice_generator','Invoice Generator'],
                 ['grammar_checker','Grammar Checker'],['jwt_decoder','JWT Decoder'],
                 ['reaction_time_test','Reaction Time Test'],['gamer_tag_generator','Gamer Tag Generator'],
+                ['clip_to_gif','Clip to GIF'],
             ];
             foreach($popular as [$id,$label]): 
                 $slug = $tool_slugs[$id] ?? $id;
@@ -1417,7 +1421,7 @@ function getToolName(toolId) {
         'paraphrase_tool':'Paraphrase Tool','percentage_calculator':'Percentage Calculator','loan_calculator':'Loan Calculator',
         'bmi_calculator':'BMI Calculator','age_calculator':'Age Calculator',
         'sensitivity_converter':'Sensitivity Converter','reaction_time_test':'Reaction Time Test','cps_test':'CPS Test',
-        'gamer_tag_generator':'Gamer Tag Generator','tournament_bracket_generator':'Tournament Bracket Generator'
+        'gamer_tag_generator':'Gamer Tag Generator','clip_to_gif':'Clip to GIF','tournament_bracket_generator':'Tournament Bracket Generator'
     };
     return names[toolId] || 'Tool';
 }

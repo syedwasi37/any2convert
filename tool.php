@@ -43,6 +43,7 @@ $wideToolIds = [
     'reaction_time_test',
     'cps_test',
     'gamer_tag_generator',
+    'clip_to_gif',
     'tournament_bracket_generator',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
@@ -347,7 +348,7 @@ const toolDependencyMap = {
     bank_statement_to_excel: [
         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
-    ]
+    ],
 };
 
 function loadScriptOnce(src) {

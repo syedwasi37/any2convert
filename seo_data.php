@@ -719,6 +719,15 @@ $seo_tools = [
         'faqs' => [['q' => 'Can I copy the generated names?', 'a' => 'Yes. Click any generated gamer tag to copy it to your clipboard.']],
         'content' => 'Create memorable usernames for games, Discord, Twitch, YouTube, and esports-style team identities.'
     ],
+    'clip-to-gif' => [
+        'id' => 'clip_to_gif',
+        'h1' => 'Clip to GIF Online',
+        'title' => 'Clip to GIF - Turn Gaming Clips into GIFs | Any2Convert',
+        'meta_desc' => 'Convert short gaming clips into shareable GIFs by choosing the start time, duration, FPS, and width.',
+        'icon' => 'GIF',
+        'faqs' => [['q' => 'Does it process locally?', 'a' => 'Yes. The GIF conversion runs in your browser using FFmpeg WebAssembly.']],
+        'content' => 'Make highlight GIFs from your gameplay clips for Discord, X, forums, and social media without leaving the browser.'
+    ],
     'tournament-bracket-generator' => [
         'id' => 'tournament_bracket_generator',
         'h1' => 'Tournament Bracket Generator Online',
