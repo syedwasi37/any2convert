@@ -85,8 +85,8 @@ function any2convertRenderChromeStyles(): void
             text-transform: uppercase;
         }
         .site-footer {
-            border-top: 1px solid var(--border, rgba(17,17,24,.08));
-            background: var(--bg-surface, var(--panel, rgba(255,255,255,.72)));
+            border-top: 1px solid var(--panel-border, var(--border, rgba(17,17,24,.08)));
+            background: var(--bg-surface, var(--panel-bg, var(--panel, rgba(255,255,255,.72))));
         }
         .site-footer-link {
             color: var(--muted, var(--text-muted, var(--text-soft, #626280)));
@@ -206,7 +206,7 @@ function any2convertRenderFooter(): void
                     </div>
                 </div>
             </div>
-            <div style="border-top:1px solid var(--border, rgba(17,17,24,.08));padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div style="border-top:1px solid var(--panel-border, var(--border, rgba(17,17,24,.08)));padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
                 <span style="font-size:0.78rem;color:var(--text-muted, var(--text-soft, #626280));">&copy; <?= date('Y') ?> Any2Convert. All rights reserved. Made with love in Karachi, Pakistan.</span>
                 <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-muted, var(--text-soft, #626280));">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green, #10b981)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
