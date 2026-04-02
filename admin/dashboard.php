@@ -219,6 +219,28 @@ $legacyAds = adsLegacyDefinitions();
             font-size: 0.88rem;
             text-decoration: none;
         }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid var(--panel-border);
+            background: rgba(255,255,255,0.92);
+            color: var(--text-main);
+        }
+        .action-btn.primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 18px 35px rgba(37,99,235,0.22);
+        }
         .theme-toggle {
             width: 46px;
             height: 46px;
@@ -270,8 +292,7 @@ $legacyAds = adsLegacyDefinitions();
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="../index.php" class="nav-pill">Home</a>
-                <a href="export_report.php" class="nav-pill">Export</a>
-                <a href="#users" class="nav-pill" onclick="activateAdminTab('users');return false;">Users</a>
+                <a href="#reports" class="nav-pill" onclick="activateAdminTab('reports');return false;">Reports</a>
                 <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
                 <a href="../backend/logout.php" class="px-5 py-3 rounded-full bg-slate-900 text-white font-bold text-sm hover:bg-blue-600">Logout</a>
             </div>
@@ -286,9 +307,9 @@ $legacyAds = adsLegacyDefinitions();
                 <p class="text-slate-500 mt-3 max-w-3xl">Monitor users, review feedback, block or remove accounts, and generate usage reports from real tool activity.</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="export_report.php" class="px-5 py-3 rounded-2xl bg-white text-slate-800 font-bold text-sm shadow-sm border border-slate-200 hover:border-blue-300">Export CSV Report</a>
-                <a href="../index.php" class="px-5 py-3 rounded-2xl bg-white text-slate-800 font-bold text-sm shadow-sm border border-slate-200 hover:border-blue-300">Preview Site</a>
-                <a href="../backend/logout.php" class="px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600">Logout</a>
+                <button type="button" class="action-btn primary" onclick="activateAdminTab('users')">Manage Users</button>
+                <button type="button" class="action-btn" onclick="activateAdminTab('feedback')">Open Feedback</button>
+                <a href="export_report.php" class="action-btn">Export CSV</a>
             </div>
         </div>
 
@@ -609,7 +630,7 @@ $legacyAds = adsLegacyDefinitions();
 
         const themeToggle = document.getElementById('themeToggle');
         const applyThemeLabel = () => {
-            themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀' : '☾';
+            themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
         };
         applyThemeLabel();
         themeToggle.addEventListener('click', () => {

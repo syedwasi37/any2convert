@@ -144,6 +144,28 @@ function dashboardPublicUserId(int $id): string
             font-size: 0.88rem;
             text-decoration: none;
         }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid var(--panel-border);
+            background: rgba(255,255,255,0.92);
+            color: var(--text-main);
+        }
+        .action-btn.primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 18px 35px rgba(37,99,235,0.22);
+        }
         .theme-toggle {
             width: 46px;
             height: 46px;
@@ -201,7 +223,7 @@ function dashboardPublicUserId(int $id): string
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="index.php" class="nav-pill">Home</a>
-                <a href="contact.php" class="nav-pill">Support</a>
+                <a href="index.php#tools" class="nav-pill">Explore Tools</a>
                 <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
                 <a href="backend/logout.php" class="px-5 py-3 rounded-full bg-slate-900 text-white font-bold text-sm hover:bg-blue-600">Logout</a>
             </div>
@@ -218,9 +240,8 @@ function dashboardPublicUserId(int $id): string
                 </div>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="index.php" class="px-5 py-3 rounded-2xl bg-white text-slate-800 font-bold text-sm shadow-sm border border-slate-200 hover:border-blue-300">Go Back</a>
-                <a href="forgot_password.php" class="px-5 py-3 rounded-2xl bg-white text-slate-800 font-bold text-sm shadow-sm border border-slate-200 hover:border-blue-300">Reset Password</a>
-                <a href="backend/logout.php" class="px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-blue-600">Logout</a>
+                <button type="button" class="action-btn primary" onclick="activateDashTab('security')">Security Settings</button>
+                <a href="forgot_password.php" class="action-btn">Reset Password</a>
             </div>
         </div>
 
@@ -325,7 +346,7 @@ function dashboardPublicUserId(int $id): string
 
                 <aside class="space-y-6">
                     <section class="panel rounded-[2rem] p-7">
-                        <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Quick Summary</p>
+                        <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Highlights</p>
                         <div class="mt-5 space-y-4">
                             <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
                                 <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Unique Tools Used</p>
@@ -431,7 +452,7 @@ function dashboardPublicUserId(int $id): string
                 </section>
 
                 <section class="panel rounded-[2rem] p-7">
-                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Quick Summary</p>
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Security Notes</p>
                     <div class="mt-5 space-y-4">
                         <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
                             <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Unique Tools Used</p>
@@ -460,7 +481,7 @@ function dashboardPublicUserId(int $id): string
 
         const themeToggle = document.getElementById('themeToggle');
         const applyThemeLabel = () => {
-            themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀' : '☾';
+            themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
         };
         applyThemeLabel();
         themeToggle.addEventListener('click', () => {
