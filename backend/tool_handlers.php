@@ -1256,10 +1256,120 @@ HTML;
 function getBmiCalculatorHTML() {
     return <<<'HTML'
     <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7"><p class="text-[11px] tracking-[0.34em] uppercase text-rose-500 font-semibold">Calculator</p><h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">BMI Calculator</h2><div class="mt-5 grid gap-4"><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Weight (kg)</span><input id="bmiWeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="70"></label><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Height (cm)</span><input id="bmiHeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="175"></label><button id="bmiCalcBtn" class="rounded-2xl bg-rose-500 text-white px-5 py-3 font-semibold">Calculate BMI</button></div></div>
-        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white"><p class="text-xs uppercase tracking-[0.22em] text-rose-300">Body Mass Index</p><div id="bmiResult" class="mt-4 text-5xl font-black">0</div><p id="bmiCategory" class="mt-3 text-lg text-slate-300">Category will appear here.</p></div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-rose-500 font-semibold">Calculator</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">BMI Calculator</h2>
+            <div class="mt-5 grid gap-4">
+                <div class="grid md:grid-cols-[1fr_150px] gap-4">
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Weight</span>
+                        <input id="bmiWeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="70">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Weight Unit</span>
+                        <select id="bmiWeightUnit" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white">
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="lb">Pounds (lb)</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="grid md:grid-cols-[1fr_150px] gap-4">
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Height</span>
+                        <input id="bmiHeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="175">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Height Unit</span>
+                        <select id="bmiHeightUnit" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white">
+                            <option value="cm">Centimeters (cm)</option>
+                            <option value="m">Meters (m)</option>
+                            <option value="ftin">Feet + Inches</option>
+                            <option value="in">Inches (in)</option>
+                        </select>
+                    </label>
+                </div>
+                <div id="bmiFeetInchesWrap" class="hidden grid md:grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Feet</span>
+                        <input id="bmiFeet" type="number" step="1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="5">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Inches</span>
+                        <input id="bmiInches" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="9">
+                    </label>
+                </div>
+                <button id="bmiCalcBtn" class="rounded-2xl bg-rose-500 text-white px-5 py-3 font-semibold">Calculate BMI</button>
+            </div>
+        </div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white">
+            <p class="text-xs uppercase tracking-[0.22em] text-rose-300">Body Mass Index</p>
+            <div id="bmiResult" class="mt-4 text-5xl font-black">0</div>
+            <p id="bmiCategory" class="mt-3 text-lg text-slate-300">Category will appear here.</p>
+            <p id="bmiMeta" class="mt-3 text-sm text-slate-400">Supports kg, lb, cm, m, feet/inches, and inches.</p>
+        </div>
     </div>
-    <script>(() => { const calc = () => { const weight = parseFloat(document.getElementById("bmiWeight").value) || 0; const heightCm = parseFloat(document.getElementById("bmiHeight").value) || 0; const heightM = heightCm / 100; const bmi = heightM ? weight / (heightM * heightM) : 0; let label = "Underweight"; if (bmi >= 25) label = "Overweight"; else if (bmi >= 18.5) label = "Normal"; document.getElementById("bmiResult").textContent = bmi.toFixed(1); document.getElementById("bmiCategory").textContent = label; }; document.getElementById("bmiCalcBtn").addEventListener("click", calc); calc(); })();</script>
+    <script>
+        (() => {
+            const weightInput = document.getElementById("bmiWeight");
+            const weightUnit = document.getElementById("bmiWeightUnit");
+            const heightInput = document.getElementById("bmiHeight");
+            const heightUnit = document.getElementById("bmiHeightUnit");
+            const feetWrap = document.getElementById("bmiFeetInchesWrap");
+            const feetInput = document.getElementById("bmiFeet");
+            const inchesInput = document.getElementById("bmiInches");
+            const resultEl = document.getElementById("bmiResult");
+            const categoryEl = document.getElementById("bmiCategory");
+            const metaEl = document.getElementById("bmiMeta");
+
+            function syncHeightFields() {
+                const useFeet = heightUnit.value === "ftin";
+                feetWrap.classList.toggle("hidden", !useFeet);
+                heightInput.parentElement.classList.toggle("hidden", useFeet);
+            }
+
+            function getWeightKg() {
+                const value = parseFloat(weightInput.value) || 0;
+                return weightUnit.value === "lb" ? value * 0.45359237 : value;
+            }
+
+            function getHeightMeters() {
+                const value = parseFloat(heightInput.value) || 0;
+                switch (heightUnit.value) {
+                    case "m":
+                        return value;
+                    case "in":
+                        return value * 0.0254;
+                    case "ftin":
+                        return ((parseFloat(feetInput.value) || 0) * 12 + (parseFloat(inchesInput.value) || 0)) * 0.0254;
+                    case "cm":
+                    default:
+                        return value / 100;
+                }
+            }
+
+            function calc() {
+                const weightKg = getWeightKg();
+                const heightM = getHeightMeters();
+                const bmi = heightM ? weightKg / (heightM * heightM) : 0;
+                let label = "Underweight";
+                if (bmi >= 30) label = "Obesity";
+                else if (bmi >= 25) label = "Overweight";
+                else if (bmi >= 18.5) label = "Normal";
+                resultEl.textContent = bmi.toFixed(1);
+                categoryEl.textContent = label;
+                metaEl.textContent = `Calculated using ${weightKg.toFixed(1)} kg and ${heightM.toFixed(2)} m.`;
+            }
+
+            heightUnit.addEventListener("change", () => {
+                syncHeightFields();
+                calc();
+            });
+            [weightInput, weightUnit, heightInput, feetInput, inchesInput].forEach((el) => el.addEventListener("input", calc));
+            document.getElementById("bmiCalcBtn").addEventListener("click", calc);
+            syncHeightFields();
+            calc();
+        })();
+    </script>
 HTML;
 }
 
