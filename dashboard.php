@@ -107,6 +107,7 @@ function dashboardInitials(string $name): string
             --bg-soft: rgba(255,255,255,0.84);
             --bg-muted: rgba(243,243,250,0.88);
             --border: rgba(17,17,24,0.08);
+            --panel-border: rgba(17,17,24,0.08);
             --border-strong: rgba(108,99,255,0.26);
             --text-main: #111118;
             --text-soft: #565676;
@@ -117,6 +118,10 @@ function dashboardInitials(string $name): string
             --success: #10b981;
             --danger: #ef4444;
             --shadow: 0 24px 60px rgba(27, 39, 94, 0.10);
+            --nav-bg: color-mix(in srgb, var(--bg-soft) 88%, transparent);
+            --nav-border: rgba(17,17,24,0.08);
+            --pill-bg: color-mix(in srgb, var(--bg-soft) 92%, transparent);
+            --pill-text: #20253d;
         }
         html.dark {
             --bg-base: #060816;
@@ -124,6 +129,7 @@ function dashboardInitials(string $name): string
             --bg-soft: rgba(11,15,29,0.82);
             --bg-muted: rgba(18,24,44,0.92);
             --border: rgba(255,255,255,0.08);
+            --panel-border: rgba(255,255,255,0.08);
             --border-strong: rgba(96,165,250,0.35);
             --text-main: #eef2ff;
             --text-soft: #a7afcf;
@@ -132,6 +138,10 @@ function dashboardInitials(string $name): string
             --accent-blue: #60a5fa;
             --accent-cyan: #67e8f9;
             --shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+            --nav-bg: rgba(11,15,29,0.84);
+            --nav-border: rgba(255,255,255,0.08);
+            --pill-bg: rgba(16,21,41,0.92);
+            --pill-text: #eef2ff;
         }
         * { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
