@@ -918,7 +918,7 @@ function getAtsResumeCheckerHTML() {
             function tokenize(text) { return (text.toLowerCase().match(/[a-z][a-z0-9+#.-]{2,}/g) || []).filter((word) => !["with","from","that","this","have","your","will","into","their","about","using","years","year"].includes(word)); }
             function analyze() {
                 const resume = resumeInput.value.trim(), job = jobInput.value.trim();
-                if (!resume || !job) { statusEl.textContent = "Resume and job description dono chahiye."; return; }
+                if (!resume || !job) { statusEl.textContent = "Please provide both a resume and a job description."; return; }
                 const resumeLower = resume.toLowerCase(), jobTokens = tokenize(job), frequency = {};
                 jobTokens.forEach((token) => frequency[token] = (frequency[token] || 0) + 1);
                 const topKeywords = Object.entries(frequency).sort((a, b) => b[1] - a[1]).slice(0, 18).map(([word]) => word);
