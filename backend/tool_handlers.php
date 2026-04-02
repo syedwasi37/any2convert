@@ -457,11 +457,13 @@ function getCurrencyConverterHTML(): string
                 <div class="grid lg:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">From currency</label>
+                        <div id="currencyFromDisplay" class="mb-3"></div>
                         <select id="currencyFrom" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
                     </div>
                     <button id="currencySwapBtn" class="h-[62px] w-[62px] rounded-2xl bg-emerald-600 text-white font-black text-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">⇄</button>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">To currency</label>
+                        <div id="currencyToDisplay" class="mb-3"></div>
                         <select id="currencyTo" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
                     </div>
                 </div>
@@ -499,23 +501,54 @@ function getCurrencyConverterHTML(): string
             const resultText = document.getElementById("currencyResultText");
             const metaText = document.getElementById("currencyMetaText");
             const quickRates = document.getElementById("currencyQuickRates");
+            const fromDisplay = document.getElementById("currencyFromDisplay");
+            const toDisplay = document.getElementById("currencyToDisplay");
 
             let currencies = {};
             const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
 
-            function flagEmoji(countryCode) {
-                return countryCode
-                    .toUpperCase()
-                    .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
-            }
-
-            function currencyFlag(code) {
+            function currencyCountryCode(code) {
                 const map = {
                     USD: "US", EUR: "EU", GBP: "GB", PKR: "PK", AED: "AE",
                     SAR: "SA", INR: "IN", CAD: "CA", AUD: "AU", JPY: "JP",
                     CNY: "CN", CHF: "CH", TRY: "TR", NZD: "NZ", SGD: "SG"
                 };
-                return map[code] ? flagEmoji(map[code]) : "🏳️";
+                return map[code] || "";
+            }
+
+            function currencyLabel(code) {
+                const item = currencies[code];
+                return typeof item === "string" ? item : (item?.name || code);
+            }
+
+            function currencyFlagUrl(code) {
+                const countryCode = currencyCountryCode(code);
+                return countryCode ? `https://flagcdn.com/48x36/${countryCode.toLowerCase()}.png` : "";
+            }
+
+            function currencyFlagMarkup(code, size = "w-8 h-6") {
+                const url = currencyFlagUrl(code);
+                if (!url) {
+                    return `<div class="${size} rounded-lg bg-slate-200 dark:bg-slate-700"></div>`;
+                }
+                return `<img src="${url}" alt="${code} flag" class="${size} rounded-md object-cover shadow-sm" loading="lazy" referrerpolicy="no-referrer">`;
+            }
+
+            function renderCurrencyDisplay(target, code) {
+                if (!target) return;
+                target.innerHTML = `
+                    <div class="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-3">
+                        ${currencyFlagMarkup(code, "w-10 h-7")}
+                        <div class="min-w-0">
+                            <div class="text-sm font-black text-slate-900 dark:text-white">${code}</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${currencyLabel(code)}</div>
+                        </div>
+                    </div>`;
+            }
+
+            function syncCurrencyDisplays() {
+                renderCurrencyDisplay(fromDisplay, fromSelect.value);
+                renderCurrencyDisplay(toDisplay, toSelect.value);
             }
 
             function formatAmount(value, currency) {
@@ -555,15 +588,13 @@ function getCurrencyConverterHTML(): string
                     codes.forEach((code) => {
                         const option = document.createElement("option");
                         option.value = code;
-                        const currencyLabel = typeof currencies[code] === "string"
-                            ? currencies[code]
-                            : (currencies[code]?.name || code);
-                        option.textContent = `${currencyFlag(code)} ${code} - ${currencyLabel}`;
+                        option.textContent = `${code} - ${currencyLabel(code)}`;
                         select.appendChild(option);
                     });
                 });
                 fromSelect.value = "USD";
                 toSelect.value = "PKR";
+                syncCurrencyDisplays();
             }
 
             function renderQuickRates(base, rates) {
@@ -571,7 +602,7 @@ function getCurrencyConverterHTML(): string
                 preferred.filter((code) => code !== base && rates[code]).slice(0, 6).forEach((code) => {
                     const card = document.createElement("div");
                     card.className = "rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-3";
-                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${currencyFlag(base)} ${base} to ${currencyFlag(code)} ${code}</p><p class="text-lg font-black text-gray-900 dark:text-white mt-2">${Number(rates[code]).toFixed(4)}</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">1 ${base} reference rate</p>`;
+                    card.innerHTML = `<div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${currencyFlagMarkup(base, "w-6 h-4")} <span>${base}</span><span>to</span>${currencyFlagMarkup(code, "w-6 h-4")} <span>${code}</span></div><p class="text-lg font-black text-gray-900 dark:text-white mt-3">${Number(rates[code]).toFixed(4)}</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">1 ${base} reference rate</p>`;
                     quickRates.appendChild(card);
                 });
             }
@@ -590,8 +621,9 @@ function getCurrencyConverterHTML(): string
                     const dateLabel = ratePayload?.date;
                     if (!Number.isFinite(Number(rate))) throw new Error("No live rate available.");
                     const converted = (Number.isFinite(amount) ? amount : 0) * Number(rate);
-                    resultText.textContent = `${currencyFlag(quote)} ${formatAmount(converted, quote)}`;
-                    metaText.textContent = `${currencyFlag(base)} ${amount || 0} ${base} = ${currencyFlag(quote)} ${converted.toFixed(4)} ${quote} using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.`;
+                    syncCurrencyDisplays();
+                    resultText.innerHTML = `<span class="inline-flex items-center gap-3">${currencyFlagMarkup(quote, "w-10 h-7")}<span>${formatAmount(converted, quote)}</span></span>`;
+                    metaText.innerHTML = `<span class="inline-flex items-center gap-2">${currencyFlagMarkup(base, "w-6 h-4")}<span>${amount || 0} ${base}</span></span> = <span class="inline-flex items-center gap-2">${currencyFlagMarkup(quote, "w-6 h-4")}<span>${converted.toFixed(4)} ${quote}</span></span> using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.`;
                     status.textContent = "Live exchange rate updated.";
                     const requestedQuotes = preferred.filter((code) => code !== base).slice(0, 6);
                     const quickResp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
