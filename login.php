@@ -26,28 +26,26 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f6fbff;
-            --bg-accent: radial-gradient(circle at top left, rgba(14, 165, 233, 0.18), transparent 28%), radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.16), transparent 26%), linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
-            --panel: rgba(255,255,255,0.84);
-            --panel-strong: rgba(255,255,255,0.96);
-            --border: rgba(148,163,184,0.18);
-            --text: #0f172a;
-            --muted: #64748b;
-            --soft: #e2e8f0;
-            --accent: #2563eb;
-            --accent-strong: #1d4ed8;
+            --bg-accent: radial-gradient(circle at 10% 10%, rgba(108,99,255,.18), transparent 24%), radial-gradient(circle at 86% 14%, rgba(34,211,238,.16), transparent 22%), radial-gradient(circle at 50% 0%, rgba(59,130,246,.12), transparent 36%), linear-gradient(180deg, #f8f8fc 0%, #eef3ff 100%);
+            --panel: rgba(255,255,255,0.68);
+            --panel-strong: rgba(255,255,255,0.86);
+            --border: rgba(17,17,24,0.08);
+            --text: #111118;
+            --muted: #626280;
+            --soft: rgba(241,244,255,0.82);
+            --accent: #6c63ff;
+            --accent-strong: #3b82f6;
         }
         html.dark {
-            --bg: #020617;
-            --bg-accent: radial-gradient(circle at top left, rgba(37, 99, 235, 0.28), transparent 28%), radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.18), transparent 24%), linear-gradient(180deg, #081121 0%, #020617 100%);
-            --panel: rgba(7,18,36,0.76);
-            --panel-strong: rgba(9,16,31,0.94);
-            --border: rgba(148,163,184,0.18);
-            --text: #e2e8f0;
-            --muted: #94a3b8;
-            --soft: rgba(15,23,42,0.82);
-            --accent: #60a5fa;
-            --accent-strong: #3b82f6;
+            --bg-accent: radial-gradient(circle at 10% 10%, rgba(139,124,255,.24), transparent 24%), radial-gradient(circle at 86% 14%, rgba(103,232,249,.18), transparent 22%), radial-gradient(circle at 50% 0%, rgba(96,165,250,.14), transparent 36%), linear-gradient(180deg, #060816 0%, #0a1022 100%);
+            --panel: rgba(14,18,36,0.66);
+            --panel-strong: rgba(11,15,29,0.86);
+            --border: rgba(255,255,255,0.08);
+            --text: #eef2ff;
+            --muted: #a7afcf;
+            --soft: rgba(18,24,44,0.92);
+            --accent: #8b7cff;
+            --accent-strong: #60a5fa;
         }
         * { box-sizing: border-box; }
         body {
@@ -69,7 +67,7 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
             background: var(--panel);
             border: 1px solid var(--border);
             backdrop-filter: blur(24px);
-            box-shadow: 0 28px 80px rgba(15,23,42,0.10);
+            box-shadow: 0 30px 80px rgba(27,39,94,0.12);
         }
         .pill, .theme-toggle {
             display: inline-flex;
@@ -85,6 +83,7 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
         }
         .pill { padding: 10px 16px; font-size: .9rem; }
         .theme-toggle { width: 46px; height: 46px; }
+        .theme-toggle svg { width: 18px; height: 18px; }
         .hero-card {
             position: relative;
             overflow: hidden;
@@ -189,7 +188,10 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
             <div class="flex flex-wrap items-center gap-3">
                 <a href="index.php" class="pill">Home</a>
                 <a href="signup.php" class="pill">Create Account</a>
-                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">Theme</button>
+                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+                </button>
             </div>
         </div>
     </nav>
@@ -268,14 +270,18 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');
         const themeToggle = document.getElementById('themeToggle');
-        const applyThemeLabel = () => {
-            themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
+        const iconMoon = document.getElementById('iconMoon');
+        const iconSun = document.getElementById('iconSun');
+        const applyThemeIcon = () => {
+            const dark = document.documentElement.classList.contains('dark');
+            iconMoon.style.display = dark ? 'none' : 'block';
+            iconSun.style.display = dark ? 'block' : 'none';
         };
-        applyThemeLabel();
+        applyThemeIcon();
         themeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeLabel();
+            applyThemeIcon();
         });
     </script>
 </body>

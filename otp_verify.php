@@ -20,17 +20,17 @@ $flash = authGetFlash();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-accent: radial-gradient(circle at top left, rgba(14,165,233,.18), transparent 28%), radial-gradient(circle at bottom right, rgba(99,102,241,.16), transparent 26%), linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%); --panel: rgba(255,255,255,.9); --border: rgba(148,163,184,.18); --text: #0f172a; --muted: #64748b; }
-        html.dark { --bg-accent: radial-gradient(circle at top left, rgba(37,99,235,.28), transparent 28%), radial-gradient(circle at bottom right, rgba(14,165,233,.18), transparent 24%), linear-gradient(180deg, #081121 0%, #020617 100%); --panel: rgba(7,18,36,.84); --border: rgba(148,163,184,.18); --text: #e2e8f0; --muted: #94a3b8; }
+        :root { --bg-accent: radial-gradient(circle at 10% 10%, rgba(108,99,255,.18), transparent 24%), radial-gradient(circle at 86% 14%, rgba(34,211,238,.16), transparent 22%), radial-gradient(circle at 50% 0%, rgba(59,130,246,.12), transparent 36%), linear-gradient(180deg, #f8f8fc 0%, #eef3ff 100%); --panel: rgba(255,255,255,.72); --panel-strong: rgba(255,255,255,.92); --border: rgba(17,17,24,.08); --text: #111118; --muted: #626280; --accent: #6c63ff; --accent-strong: #3b82f6; }
+        html.dark { --bg-accent: radial-gradient(circle at 10% 10%, rgba(139,124,255,.24), transparent 24%), radial-gradient(circle at 86% 14%, rgba(103,232,249,.18), transparent 22%), radial-gradient(circle at 50% 0%, rgba(96,165,250,.14), transparent 36%), linear-gradient(180deg, #060816 0%, #0a1022 100%); --panel: rgba(14,18,36,.70); --panel-strong: rgba(11,15,29,.92); --border: rgba(255,255,255,.08); --text: #eef2ff; --muted: #a7afcf; --accent: #8b7cff; --accent-strong: #60a5fa; }
         body { margin:0; min-height:100vh; font-family:'Plus Jakarta Sans', sans-serif; background:var(--bg-accent); color:var(--text); }
-        .panel { background:var(--panel); border:1px solid var(--border); backdrop-filter:blur(24px); box-shadow:0 28px 80px rgba(15,23,42,.10); }
+        .panel { background:var(--panel); border:1px solid var(--border); backdrop-filter:blur(24px); box-shadow:0 30px 80px rgba(27,39,94,.12); }
         .otp-input {
             width: 100%;
             padding: 18px 20px;
             border-radius: 24px;
             border: 2px solid rgba(37,99,235,.22);
-            background: rgba(255,255,255,.96);
-            color: #0f172a;
+            background: color-mix(in srgb, var(--panel-strong) 98%, transparent);
+            color: var(--text);
             text-align: center;
             font-size: 2rem;
             font-weight: 800;
@@ -38,9 +38,9 @@ $flash = authGetFlash();
             outline: none;
             box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
         }
-        html.dark .otp-input { background: rgba(15,23,42,.95); color:#f8fafc; border-color: rgba(96,165,250,.35); }
+        html.dark .otp-input { border-color: rgba(96,165,250,.35); }
         .otp-input:focus { box-shadow: 0 0 0 5px rgba(37,99,235,.12); border-color: rgba(37,99,235,.5); }
-        .btn { width:100%; border:0; border-radius:18px; padding:15px 18px; font-size:.88rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff; box-shadow:0 18px 35px rgba(37,99,235,.24); cursor:pointer; }
+        .btn { width:100%; border:0; border-radius:18px; padding:15px 18px; font-size:.88rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; background:linear-gradient(135deg, var(--accent), var(--accent-strong)); color:#fff; box-shadow:0 18px 35px rgba(108,99,255,.24); cursor:pointer; }
         .flash { border-radius:18px; padding:14px 16px; font-size:.92rem; font-weight:600; margin-top:18px; }
         .flash.error { background:rgba(239,68,68,.08); color:#dc2626; } .flash.success { background:rgba(34,197,94,.08); color:#15803d; }
         .otp-hint {
@@ -53,16 +53,20 @@ $flash = authGetFlash();
             height:54px;
             border-radius:16px;
             border:1px dashed var(--border);
-            background: rgba(255,255,255,.55);
+            background: color-mix(in srgb, var(--panel-strong) 70%, transparent);
         }
-        html.dark .otp-box { background: rgba(15,23,42,.72); }
+        .theme-toggle { width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; border:1px solid var(--border); background:color-mix(in srgb, var(--panel-strong) 92%, transparent); color:var(--text); }
+        .theme-toggle svg { width:18px; height:18px; }
     </style>
 </head>
 <body>
     <div class="max-w-3xl mx-auto px-6 py-10">
         <div class="flex justify-between items-center mb-8">
             <a href="index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
-            <button type="button" id="themeToggle" class="w-11 h-11 rounded-full bg-white border border-slate-200 font-bold">Theme</button>
+            <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+            </button>
         </div>
         <div class="panel max-w-2xl mx-auto rounded-[2.4rem] p-8 md:p-10">
             <p class="text-xs font-black uppercase tracking-[0.30em] text-blue-500">Verification</p>
@@ -103,12 +107,18 @@ $flash = authGetFlash();
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');
         const themeToggle = document.getElementById('themeToggle');
         const otpInput = document.getElementById('otpInput');
-        const applyThemeLabel = () => { themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark'; };
-        applyThemeLabel();
+        const iconMoon = document.getElementById('iconMoon');
+        const iconSun = document.getElementById('iconSun');
+        const applyThemeIcon = () => {
+            const dark = document.documentElement.classList.contains('dark');
+            iconMoon.style.display = dark ? 'none' : 'block';
+            iconSun.style.display = dark ? 'block' : 'none';
+        };
+        applyThemeIcon();
         themeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeLabel();
+            applyThemeIcon();
         });
         otpInput.addEventListener('input', () => {
             otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);

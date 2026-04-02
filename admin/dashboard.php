@@ -155,30 +155,34 @@ $legacyAds = adsLegacyDefinitions();
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-accent: radial-gradient(circle at top, #e0e7ff 0%, #f8fafc 35%, #eff6ff 100%);
-            --panel-bg: rgba(255,255,255,0.92);
-            --panel-soft: #f8fafc;
-            --panel-border: rgba(148,163,184,0.14);
-            --text-main: #0f172a;
-            --text-soft: #64748b;
-            --nav-bg: rgba(255,255,255,0.74);
-            --nav-border: rgba(148,163,184,0.14);
-            --pill-bg: rgba(255,255,255,0.86);
-            --pill-text: #334155;
-            --glow: rgba(59,130,246,0.12);
+            --bg-accent: radial-gradient(circle at 10% 10%, rgba(108,99,255,.18), transparent 24%), radial-gradient(circle at 86% 14%, rgba(34,211,238,.16), transparent 22%), radial-gradient(circle at 50% 0%, rgba(59,130,246,.12), transparent 36%), linear-gradient(180deg, #f8f8fc 0%, #eef3ff 100%);
+            --panel-bg: rgba(255,255,255,0.72);
+            --panel-soft: rgba(241,244,255,0.86);
+            --panel-border: rgba(17,17,24,0.08);
+            --text-main: #111118;
+            --text-soft: #626280;
+            --nav-bg: rgba(255,255,255,0.70);
+            --nav-border: rgba(17,17,24,0.08);
+            --pill-bg: rgba(255,255,255,0.84);
+            --pill-text: #20253d;
+            --glow: rgba(108,99,255,0.16);
+            --accent: #6c63ff;
+            --accent-blue: #3b82f6;
         }
         html.dark {
-            --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%);
-            --panel-bg: rgba(15,23,42,0.82);
-            --panel-soft: rgba(15,23,42,0.92);
-            --panel-border: rgba(148,163,184,0.16);
-            --text-main: #e2e8f0;
-            --text-soft: #94a3b8;
-            --nav-bg: rgba(2,6,23,0.76);
-            --nav-border: rgba(148,163,184,0.16);
-            --pill-bg: rgba(15,23,42,0.92);
-            --pill-text: #cbd5e1;
-            --glow: rgba(96,165,250,0.18);
+            --bg-accent: radial-gradient(circle at 10% 10%, rgba(139,124,255,.24), transparent 24%), radial-gradient(circle at 86% 14%, rgba(103,232,249,.18), transparent 22%), radial-gradient(circle at 50% 0%, rgba(96,165,250,.14), transparent 36%), linear-gradient(180deg, #060816 0%, #0a1022 100%);
+            --panel-bg: rgba(14,18,36,0.70);
+            --panel-soft: rgba(18,24,44,0.92);
+            --panel-border: rgba(255,255,255,0.08);
+            --text-main: #eef2ff;
+            --text-soft: #a7afcf;
+            --nav-bg: rgba(11,15,29,0.84);
+            --nav-border: rgba(255,255,255,0.08);
+            --pill-bg: rgba(16,21,41,0.92);
+            --pill-text: #eef2ff;
+            --glow: rgba(96,165,250,0.20);
+            --accent: #8b7cff;
+            --accent-blue: #60a5fa;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -232,14 +236,14 @@ $legacyAds = adsLegacyDefinitions();
             text-transform: uppercase;
             text-decoration: none;
             border: 1px solid var(--panel-border);
-            background: rgba(255,255,255,0.92);
+            background: color-mix(in srgb, var(--pill-bg) 94%, transparent);
             color: var(--text-main);
         }
         .action-btn.primary {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
             color: #fff;
             border-color: transparent;
-            box-shadow: 0 18px 35px rgba(37,99,235,0.22);
+            box-shadow: 0 18px 35px rgba(108,99,255,0.22);
         }
         .theme-toggle {
             width: 46px;
@@ -248,9 +252,11 @@ $legacyAds = adsLegacyDefinitions();
             border: 1px solid var(--panel-border);
             background: var(--pill-bg);
             color: var(--pill-text);
-            font-size: 1rem;
-            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
+        .theme-toggle svg { width: 18px; height: 18px; }
         .panel {
             background: var(--panel-bg);
             backdrop-filter: blur(16px);
@@ -258,23 +264,30 @@ $legacyAds = adsLegacyDefinitions();
             box-shadow: 0 24px 70px rgba(15,23,42,0.08);
         }
         .admin-tab { background: var(--pill-bg); color: var(--pill-text); border-color: var(--panel-border); }
-        .admin-tab.active { background:#0f172a; color:#fff; border-color:#0f172a; }
+        .admin-tab.active { background:linear-gradient(135deg, var(--accent), var(--accent-blue)); color:#fff; border-color:transparent; }
         .admin-pane { display:none; }
         .admin-pane.active { display:block; }
-        html.dark .admin-tab.active { background:#2563eb; border-color:#2563eb; }
-        html.dark .bg-white,
-        html.dark .bg-slate-50 { background: var(--panel-soft) !important; }
-        html.dark .text-slate-900,
-        html.dark .text-slate-800,
-        html.dark .text-slate-700 { color: var(--text-main) !important; }
-        html.dark .text-slate-500,
-        html.dark .text-slate-400,
-        html.dark .text-slate-600 { color: var(--text-soft) !important; }
-        html.dark .border-slate-200,
-        html.dark .border-slate-300,
-        html.dark .border-blue-100,
-        html.dark .border-green-100,
-        html.dark .border-red-100 { border-color: var(--panel-border) !important; }
+        .panel .bg-white,
+        .panel .bg-slate-50,
+        .panel.bg-slate-50 { background: var(--panel-soft) !important; }
+        .panel .text-slate-900,
+        .panel .text-slate-800,
+        .panel .text-slate-700 { color: var(--text-main) !important; }
+        .panel .text-slate-500,
+        .panel .text-slate-400,
+        .panel .text-slate-600 { color: var(--text-soft) !important; }
+        .panel .border-slate-200,
+        .panel .border-slate-300,
+        .panel .border-blue-100,
+        .panel .border-green-100,
+        .panel .border-red-100 { border-color: var(--panel-border) !important; }
+        .panel input,
+        .panel select,
+        .panel textarea {
+            color: var(--text-main);
+            border-color: var(--panel-border) !important;
+            background: color-mix(in srgb, var(--pill-bg) 94%, transparent) !important;
+        }
         html.dark .bg-blue-50 { background: rgba(37,99,235,0.16) !important; }
         html.dark .bg-green-50 { background: rgba(16,185,129,0.14) !important; }
         html.dark .bg-red-50 { background: rgba(239,68,68,0.14) !important; }
@@ -293,7 +306,10 @@ $legacyAds = adsLegacyDefinitions();
             <div class="flex flex-wrap items-center gap-3">
                 <a href="../index.php" class="nav-pill">Home</a>
                 <a href="#reports" class="nav-pill" onclick="activateAdminTab('reports');return false;">Reports</a>
-                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
+                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+                </button>
                 <a href="../backend/logout.php" class="px-5 py-3 rounded-full bg-slate-900 text-white font-bold text-sm hover:bg-blue-600">Logout</a>
             </div>
         </div>
@@ -629,14 +645,18 @@ $legacyAds = adsLegacyDefinitions();
         }
 
         const themeToggle = document.getElementById('themeToggle');
-        const applyThemeLabel = () => {
-            themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
+        const iconMoon = document.getElementById('iconMoon');
+        const iconSun = document.getElementById('iconSun');
+        const applyThemeIcon = () => {
+            const dark = document.documentElement.classList.contains('dark');
+            iconMoon.style.display = dark ? 'none' : 'block';
+            iconSun.style.display = dark ? 'block' : 'none';
         };
-        applyThemeLabel();
+        applyThemeIcon();
         themeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeLabel();
+            applyThemeIcon();
         });
 
         function activateAdminTab(tabName) {

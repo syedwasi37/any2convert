@@ -41,6 +41,7 @@ function any2convertBootstrapAuthSchema(PDO $conn): void
         'email_auth_enabled' => "ALTER TABLE users ADD COLUMN email_auth_enabled TINYINT(1) NOT NULL DEFAULT 0",
         'email_verified_at' => "ALTER TABLE users ADD COLUMN email_verified_at DATETIME NULL",
         'blocked_until' => "ALTER TABLE users ADD COLUMN blocked_until DATETIME NULL",
+        'avatar_path' => "ALTER TABLE users ADD COLUMN avatar_path VARCHAR(255) NULL",
     ];
 
     try {

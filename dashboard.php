@@ -64,6 +64,25 @@ function dashboardPublicUserId(int $id): string
 {
     return 'A2C-' . str_pad((string) ($id * 73 + 10000), 7, '0', STR_PAD_LEFT);
 }
+
+function dashboardAvatarUrl(array $user): string
+{
+    if (!empty($user['avatar_path'])) {
+        return $user['avatar_path'];
+    }
+
+    return '';
+}
+
+function dashboardInitials(string $name): string
+{
+    $parts = preg_split('/\s+/', trim($name)) ?: [];
+    $initials = '';
+    foreach (array_slice($parts, 0, 2) as $part) {
+        $initials .= strtoupper(substr($part, 0, 1));
+    }
+    return $initials !== '' ? $initials : 'U';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,259 +91,443 @@ function dashboardPublicUserId(int $id): string
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dashboard | Any2Convert</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #eef4ff;
-            --bg-accent: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 35%, #eef2ff 100%);
-            --panel-bg: rgba(255,255,255,0.88);
-            --panel-soft: #f8fafc;
-            --panel-border: rgba(148,163,184,0.16);
-            --text-main: #0f172a;
-            --text-soft: #64748b;
-            --text-faint: #94a3b8;
-            --nav-bg: rgba(255,255,255,0.72);
-            --nav-border: rgba(148,163,184,0.14);
-            --pill-bg: rgba(255,255,255,0.86);
-            --pill-text: #334155;
-            --hero-glow: rgba(59,130,246,0.16);
+            --bg-base: #f8f8fc;
+            --bg-surface: rgba(255,255,255,0.68);
+            --bg-soft: rgba(255,255,255,0.84);
+            --bg-muted: rgba(243,243,250,0.88);
+            --border: rgba(17,17,24,0.08);
+            --border-strong: rgba(108,99,255,0.26);
+            --text-main: #111118;
+            --text-soft: #565676;
+            --text-faint: #7a7a98;
+            --accent: #6c63ff;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow: 0 24px 60px rgba(27, 39, 94, 0.10);
         }
         html.dark {
-            --bg-main: #020617;
-            --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%);
-            --panel-bg: rgba(15,23,42,0.82);
-            --panel-soft: rgba(15,23,42,0.92);
-            --panel-border: rgba(148,163,184,0.16);
-            --text-main: #e2e8f0;
-            --text-soft: #94a3b8;
-            --text-faint: #64748b;
-            --nav-bg: rgba(2,6,23,0.7);
-            --nav-border: rgba(148,163,184,0.16);
-            --pill-bg: rgba(15,23,42,0.92);
-            --pill-text: #cbd5e1;
-            --hero-glow: rgba(96,165,250,0.2);
+            --bg-base: #060816;
+            --bg-surface: rgba(14,18,36,0.66);
+            --bg-soft: rgba(11,15,29,0.82);
+            --bg-muted: rgba(18,24,44,0.92);
+            --border: rgba(255,255,255,0.08);
+            --border-strong: rgba(96,165,250,0.35);
+            --text-main: #eef2ff;
+            --text-soft: #a7afcf;
+            --text-faint: #7b86af;
+            --accent: #8b7cff;
+            --accent-blue: #60a5fa;
+            --accent-cyan: #67e8f9;
+            --shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
         }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-accent);
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'DM Sans', sans-serif;
             color: var(--text-main);
-            transition: background .2s ease, color .2s ease;
-        }
-        .dashboard-shell { position: relative; }
-        .dashboard-shell::before {
-            content: '';
-            position: absolute;
-            inset: 0 auto auto 50%;
-            width: 58rem;
-            height: 20rem;
-            transform: translateX(-50%);
-            background: radial-gradient(circle, var(--hero-glow) 0%, transparent 70%);
-            filter: blur(20px);
-            pointer-events: none;
-            z-index: 0;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(108,99,255,0.16), transparent 22%),
+                radial-gradient(circle at 88% 12%, rgba(34,211,238,0.12), transparent 18%),
+                radial-gradient(circle at 50% 0%, rgba(59,130,246,0.12), transparent 34%),
+                linear-gradient(180deg, var(--bg-base) 0%, color-mix(in srgb, var(--bg-base) 88%, #eef2ff) 100%);
         }
         .topbar {
             position: sticky;
             top: 0;
-            z-index: 40;
+            z-index: 30;
             backdrop-filter: blur(18px);
-            background: var(--nav-bg);
-            border-bottom: 1px solid var(--nav-border);
+            background: color-mix(in srgb, var(--bg-soft) 88%, transparent);
+            border-bottom: 1px solid var(--border);
         }
-        .nav-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: var(--pill-bg);
-            color: var(--pill-text);
-            border: 1px solid var(--panel-border);
-            font-weight: 700;
-            font-size: 0.88rem;
-            text-decoration: none;
+        .glass {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(22px);
+            box-shadow: var(--shadow);
         }
-        .action-btn {
+        .soft-card {
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+        }
+        .nav-pill, .icon-btn, .cta-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform .18s ease, border-color .18s ease, background .18s ease;
+        }
+        .nav-pill {
+            padding: 10px 16px;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--bg-soft) 92%, transparent);
+        }
+        .icon-btn {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--bg-soft) 92%, transparent);
+            color: var(--text-main);
+        }
+        .cta-btn {
             padding: 14px 18px;
             border-radius: 18px;
-            font-weight: 800;
-            font-size: 0.86rem;
-            letter-spacing: 0.08em;
+            font-size: .88rem;
             text-transform: uppercase;
-            text-decoration: none;
-            border: 1px solid var(--panel-border);
-            background: rgba(255,255,255,0.92);
-            color: var(--text-main);
+            letter-spacing: .12em;
+            border: 1px solid transparent;
         }
-        .action-btn.primary {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        .cta-btn.primary {
             color: #fff;
-            border-color: transparent;
-            box-shadow: 0 18px 35px rgba(37,99,235,0.22);
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            box-shadow: 0 18px 36px rgba(108,99,255,0.22);
         }
-        .theme-toggle {
-            width: 46px;
-            height: 46px;
-            border-radius: 999px;
-            border: 1px solid var(--panel-border);
-            background: var(--pill-bg);
-            color: var(--pill-text);
-            font-size: 1rem;
-            font-weight: 700;
-        }
-        .panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(18px);
-            border: 1px solid var(--panel-border);
-            box-shadow: 0 24px 70px rgba(15,23,42,0.08);
-        }
-        .dash-tab {
-            background: var(--pill-bg);
-            color: var(--pill-text);
-            border-color: var(--panel-border);
-        }
-        .dash-tab.active { background:#0f172a; color:#fff; border-color:#0f172a; }
-        .dash-pane { display:none; }
-        .dash-pane.active { display:block; }
-        html.dark .dash-tab.active { background: #2563eb; border-color: #2563eb; }
-        html.dark .bg-white,
-        html.dark .bg-slate-50 { background: var(--panel-soft) !important; }
-        html.dark .text-slate-900,
-        html.dark .text-slate-800,
-        html.dark .text-slate-700 { color: var(--text-main) !important; }
-        html.dark .text-slate-500,
-        html.dark .text-slate-400 { color: var(--text-soft) !important; }
-        html.dark .border-slate-200,
-        html.dark .border-slate-300,
-        html.dark .border-blue-100 { border-color: var(--panel-border) !important; }
-        html.dark .bg-blue-50 { background: rgba(37,99,235,0.18) !important; }
-        html.dark .text-blue-900 { color: #dbeafe !important; }
-        html.dark .text-blue-600,
-        html.dark .text-blue-500 { color: #93c5fd !important; }
-        html.dark input,
-        html.dark textarea,
-        html.dark select {
-            background: rgba(15,23,42,0.92);
+        .cta-btn.secondary {
             color: var(--text-main);
+            background: color-mix(in srgb, var(--bg-soft) 94%, transparent);
+            border-color: var(--border);
+        }
+        .nav-pill:hover, .icon-btn:hover, .cta-btn:hover { transform: translateY(-1px); }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+            gap: 24px;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .tab-btn {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--bg-soft) 92%, transparent);
+            color: var(--text-soft);
+            font-size: .82rem;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            padding: 13px 18px;
+        }
+        .tab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            border-color: transparent;
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .avatar-shell {
+            position: relative;
+            width: 108px;
+            height: 108px;
+            border-radius: 28px;
+            padding: 4px;
+            background: linear-gradient(135deg, rgba(108,99,255,.45), rgba(34,211,238,.38));
+            box-shadow: 0 18px 36px rgba(108,99,255,.18);
+        }
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 24px;
+            background: var(--bg-muted);
+        }
+        .avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: .08em;
+            color: #1f3f98;
+            background:
+                radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), transparent 34%),
+                linear-gradient(135deg, rgba(255,255,255,.92), rgba(203,213,255,.95));
+        }
+        html.dark .avatar-fallback {
+            color: #eef2ff;
+            background:
+                radial-gradient(circle at 30% 25%, rgba(139,124,255,.35), transparent 34%),
+                linear-gradient(135deg, rgba(37,56,123,.96), rgba(16,93,140,.92));
+        }
+        .upload-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--bg-soft) 94%, transparent);
+            color: var(--text-main);
+        }
+        .upload-input::file-selector-button {
+            margin-right: 12px;
+            border: 0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .switch-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 18px;
+            border-radius: 20px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+        }
+        .history-item, .feedback-item {
+            border-radius: 22px;
+            padding: 18px 20px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+        }
+        .flash {
+            border-radius: 20px;
+            padding: 14px 16px;
+            font-size: .94rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+        .flash.error { background: rgba(239,68,68,.08); color: var(--danger); border-color: rgba(239,68,68,.14); }
+        .flash.success { background: rgba(16,185,129,.08); color: var(--success); border-color: rgba(16,185,129,.14); }
+        @media (max-width: 1200px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            .metric-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-900">
+<body>
     <?= adsRenderPosition($conn, 'header') ?>
     <nav class="topbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div class="flex items-center gap-4">
-                <a href="index.php" class="text-2xl font-extrabold tracking-tighter italic text-blue-600">ANY2CONVERT</a>
-                <span class="hidden md:inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-black uppercase tracking-[0.22em]">User Space</span>
+                <a href="index.php" class="text-2xl font-extrabold tracking-tighter italic text-[var(--accent)]">Any2Convert.</a>
+                <span class="hidden md:inline-flex px-3 py-1 rounded-full glass text-xs font-black uppercase tracking-[0.22em]">Dashboard</span>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="index.php" class="nav-pill">Home</a>
-                <a href="index.php#tools" class="nav-pill">Explore Tools</a>
-                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
-                <a href="backend/logout.php" class="px-5 py-3 rounded-full bg-slate-900 text-white font-bold text-sm hover:bg-blue-600">Logout</a>
+                <a href="index.php#tools" class="nav-pill">Tools</a>
+                <a href="contact.php" class="nav-pill">Support</a>
+                <button type="button" id="themeToggle" class="icon-btn" aria-label="Toggle theme">
+                    <svg id="iconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg id="iconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+                <a href="backend/logout.php" class="nav-pill">Logout</a>
             </div>
         </div>
     </nav>
-    <div class="dashboard-shell">
-    <div class="max-w-7xl mx-auto px-6 py-8 relative z-10">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-            <div>
-                <div class="mt-5">
-                    <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">User Dashboard</p>
-                    <h1 class="text-4xl font-black tracking-tight mt-2">Welcome back, <?= htmlspecialchars(explode(' ', $user['name'])[0]) ?></h1>
-                    <p class="text-slate-500 mt-3 max-w-2xl">Track your recent tool activity, monitor replies to your feedback, and keep your account secure with email authentication.</p>
-                </div>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <button type="button" class="action-btn primary" onclick="activateDashTab('security')">Security Settings</button>
-                <a href="forgot_password.php" class="action-btn">Reset Password</a>
-            </div>
-        </div>
 
+    <main class="max-w-7xl mx-auto px-6 py-8">
         <?php if ($flash): ?>
-            <div class="mb-6 rounded-3xl px-5 py-4 text-sm font-semibold <?= $flash['type'] === 'error' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100' ?>">
+            <div class="flash <?= $flash['type'] === 'error' ? 'error' : 'success' ?> mb-6">
                 <?= htmlspecialchars($flash['message']) ?>
             </div>
         <?php endif; ?>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-            <div class="panel rounded-[2rem] p-6">
-                <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Public Account ID</p>
-                <h2 class="text-3xl font-black mt-3"><?= htmlspecialchars(dashboardPublicUserId((int) $user['id'])) ?></h2>
-                <p class="text-sm text-slate-500 mt-3"><?= htmlspecialchars($user['email']) ?></p>
+        <section class="hero-grid mb-8">
+            <div class="glass rounded-[2rem] p-7">
+                <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+                    <div class="flex items-start gap-5">
+                        <div class="avatar-shell">
+                            <?php if (dashboardAvatarUrl($user) !== ''): ?>
+                                <img src="<?= htmlspecialchars(dashboardAvatarUrl($user)) ?>" alt="Profile photo" class="avatar-image">
+                            <?php else: ?>
+                                <div class="avatar-fallback"><?= htmlspecialchars(dashboardInitials((string) $user['name'])) ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-[0.30em] text-[var(--accent-blue)]">User Dashboard</p>
+                            <h1 class="text-4xl font-black tracking-tight mt-3">Welcome back, <?= htmlspecialchars(explode(' ', $user['name'])[0]) ?></h1>
+                            <p class="mt-3 max-w-2xl leading-7 text-[color:var(--text-soft)]">A cleaner space for your profile, activity, and account controls. Your dashboard now follows the same airy glassmorphism vibe as the homepage, with stronger contrast in dark mode.</p>
+                            <div class="flex flex-wrap gap-3 mt-6">
+                                <button type="button" class="cta-btn primary" onclick="activateDashTab('security')">Security Settings</button>
+                                <a href="forgot_password.php" class="cta-btn secondary">Reset Password</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass rounded-[1.6rem] p-5 min-w-[280px]">
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--text-faint)]">Profile Photo</p>
+                        <p class="text-sm leading-6 mt-2 text-[color:var(--text-soft)]">Upload JPG, PNG, or WEBP under 4 MB. Your avatar will show here after saving.</p>
+                        <form action="backend/update_profile_photo.php" method="POST" enctype="multipart/form-data" class="space-y-3 mt-4">
+                            <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" class="upload-input" required>
+                            <button type="submit" class="cta-btn primary w-full" style="width:100%;">Save Photo</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="panel rounded-[2rem] p-6">
-                <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Tool Actions</p>
-                <h2 class="text-3xl font-black mt-3"><?= (int) ($stats['total_actions'] ?? 0) ?></h2>
-                <p class="text-sm text-slate-500 mt-3">Tracked visits and tool opens on your account</p>
+
+            <div class="glass rounded-[2rem] p-7">
+                <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">Profile Snapshot</p>
+                <div class="space-y-4 mt-5">
+                    <div class="soft-card rounded-[1.4rem] p-4">
+                        <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Public Account ID</p>
+                        <p class="text-2xl font-black mt-2"><?= htmlspecialchars(dashboardPublicUserId((int) $user['id'])) ?></p>
+                    </div>
+                    <div class="soft-card rounded-[1.4rem] p-4">
+                        <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Email</p>
+                        <p class="font-bold mt-2 break-all"><?= htmlspecialchars($user['email']) ?></p>
+                    </div>
+                    <div class="soft-card rounded-[1.4rem] p-4">
+                        <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Email Auth</p>
+                        <p class="font-bold mt-2"><?= !empty($user['email_auth_enabled']) ? 'Enabled' : 'Disabled' ?></p>
+                        <p class="text-sm mt-1 text-[color:var(--text-soft)]"><?= !empty($user['email_auth_enabled']) ? 'Login OTP is active.' : 'One-click sign-in flow only.' ?></p>
+                    </div>
+                </div>
             </div>
-            <div class="panel rounded-[2rem] p-6">
-                <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Favorite Tool</p>
+        </section>
+
+        <section class="metric-grid mb-8">
+            <div class="glass rounded-[1.7rem] p-5">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--text-faint)]">Tool Actions</p>
+                <h2 class="text-4xl font-black mt-3"><?= (int) ($stats['total_actions'] ?? 0) ?></h2>
+                <p class="text-sm mt-2 text-[color:var(--text-soft)]">Tracked visits and tool opens</p>
+            </div>
+            <div class="glass rounded-[1.7rem] p-5">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--text-faint)]">Unique Tools</p>
+                <h2 class="text-4xl font-black mt-3"><?= (int) ($stats['unique_tools'] ?? 0) ?></h2>
+                <p class="text-sm mt-2 text-[color:var(--text-soft)]">Different tools explored so far</p>
+            </div>
+            <div class="glass rounded-[1.7rem] p-5">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--text-faint)]">Favorite Tool</p>
                 <h2 class="text-2xl font-black mt-3"><?= $favoriteTool ? htmlspecialchars(dashboardFormatTool($favoriteTool['tool_used'])) : 'No history yet' ?></h2>
-                <p class="text-sm text-slate-500 mt-3"><?= $favoriteTool ? (int) $favoriteTool['total'] . ' visits' : 'Start using tools to build history' ?></p>
+                <p class="text-sm mt-2 text-[color:var(--text-soft)]"><?= $favoriteTool ? (int) $favoriteTool['total'] . ' visits' : 'Start using tools to build history' ?></p>
             </div>
-            <div class="panel rounded-[2rem] p-6">
-                <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Email Auth</p>
-                <h2 class="text-3xl font-black mt-3"><?= !empty($user['email_auth_enabled']) ? 'On' : 'Off' ?></h2>
-                <p class="text-sm text-slate-500 mt-3"><?= !empty($user['email_auth_enabled']) ? 'Login OTP is active' : 'Extra protection is currently disabled' ?></p>
+            <div class="glass rounded-[1.7rem] p-5">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--text-faint)]">Last Activity</p>
+                <h2 class="text-xl font-black mt-3"><?= !empty($stats['last_activity']) ? htmlspecialchars(date('d M Y', strtotime($stats['last_activity']))) : 'No activity yet' ?></h2>
+                <p class="text-sm mt-2 text-[color:var(--text-soft)]"><?= !empty($stats['last_activity']) ? htmlspecialchars(date('h:i A', strtotime($stats['last_activity']))) : 'Use a tool to get started' ?></p>
             </div>
-        </div>
+        </section>
 
-        <div class="flex flex-wrap gap-3 mb-6">
-            <button type="button" class="dash-tab active px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="overview">Overview</button>
-            <button type="button" class="dash-tab px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="history">History</button>
-            <button type="button" class="dash-tab px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="feedback">Feedback</button>
-            <button type="button" class="dash-tab px-5 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black uppercase tracking-[0.15em]" data-tab="security">Security</button>
-        </div>
+        <section class="mb-6 flex flex-wrap gap-3">
+            <button type="button" class="tab-btn active" data-tab="overview">Overview</button>
+            <button type="button" class="tab-btn" data-tab="history">History</button>
+            <button type="button" class="tab-btn" data-tab="feedback">Feedback</button>
+            <button type="button" class="tab-btn" data-tab="security">Security</button>
+        </section>
 
-        <div id="overview" class="dash-pane active">
-            <div class="grid grid-cols-1 xl:grid-cols-[1.35fr_0.95fr] gap-6">
-                <div class="space-y-6">
-                    <section class="panel rounded-[2rem] p-7">
-                        <div class="flex items-center justify-between gap-4 mb-6">
-                            <div>
-                                <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Conversion History</p>
-                                <h2 class="text-2xl font-black mt-2">Recent tool activity</h2>
-                            </div>
-                            <span class="px-3 py-2 rounded-2xl bg-blue-50 text-blue-600 text-xs font-black uppercase tracking-[0.2em]"><?= count($history) ?> items</span>
+        <section id="overview" class="tab-pane active">
+            <div class="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6">
+                <div class="glass rounded-[2rem] p-7">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">Recent Activity</p>
+                            <h2 class="text-2xl font-black mt-2">Latest tools you opened</h2>
                         </div>
-
-                        <?php if (!$history): ?>
-                            <div class="rounded-[1.75rem] border border-dashed border-slate-300 p-10 text-center text-slate-400 font-semibold">No tool history yet. Start using Any2Convert tools and your activity will appear here.</div>
-                        <?php else: ?>
-                            <div class="space-y-4">
-                                <?php foreach (array_slice($history, 0, 5) as $item): ?>
-                                    <div class="rounded-[1.75rem] bg-slate-50 px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <span class="px-3 py-2 rounded-2xl soft-card text-xs font-black uppercase tracking-[0.2em]"><?= count($history) ?> items</span>
+                    </div>
+                    <?php if (!$history): ?>
+                        <div class="history-item text-center text-[color:var(--text-soft)] font-semibold">No tool history yet. Start using Any2Convert tools and your activity will appear here.</div>
+                    <?php else: ?>
+                        <div class="space-y-4">
+                            <?php foreach (array_slice($history, 0, 5) as $item): ?>
+                                <div class="history-item">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                                         <div>
-                                            <p class="text-lg font-black text-slate-900"><?= htmlspecialchars(dashboardFormatTool($item['tool_used'])) ?></p>
-                                            <p class="text-sm text-slate-500"><?= htmlspecialchars($item['page_name']) ?></p>
+                                            <p class="text-lg font-black"><?= htmlspecialchars(dashboardFormatTool($item['tool_used'])) ?></p>
+                                            <p class="text-sm text-[color:var(--text-soft)]"><?= htmlspecialchars($item['page_name']) ?></p>
                                         </div>
-                                        <div class="text-sm font-semibold text-slate-500"><?= htmlspecialchars(date('d M Y, h:i A', strtotime($item['visit_date']))) ?></div>
+                                        <div class="text-sm font-semibold text-[color:var(--text-soft)]"><?= htmlspecialchars(date('d M Y, h:i A', strtotime($item['visit_date']))) ?></div>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    </section>
-
-                    <section class="panel rounded-[2rem] p-7">
-                        <div class="mb-6">
-                            <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Feedback History</p>
-                            <h2 class="text-2xl font-black mt-2">Latest conversation with admin</h2>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
+                    <?php endif; ?>
+                </div>
 
-                        <?php if (!$feedbacks): ?>
-                            <div class="rounded-[1.75rem] border border-dashed border-slate-300 p-10 text-center text-slate-400 font-semibold">No feedback posted yet.</div>
-                        <?php else: ?>
-                            <?php $feedback = $feedbacks[0]; ?>
-                            <article class="rounded-[1.8rem] bg-slate-50 p-5">
+                <div class="glass rounded-[2rem] p-7">
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">Account Card</p>
+                    <div class="soft-card rounded-[1.7rem] p-5 mt-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-[1.2rem] overflow-hidden border border-[color:var(--border)] bg-[color:var(--bg-muted)] flex items-center justify-center">
+                                <?php if (dashboardAvatarUrl($user) !== ''): ?>
+                                    <img src="<?= htmlspecialchars(dashboardAvatarUrl($user)) ?>" alt="Avatar" class="w-full h-full object-cover">
+                                <?php else: ?>
+                                    <span class="text-lg font-black text-[var(--accent-blue)]"><?= htmlspecialchars(dashboardInitials((string) $user['name'])) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <div>
+                                <p class="text-xl font-black"><?= htmlspecialchars($user['name']) ?></p>
+                                <p class="text-sm text-[color:var(--text-soft)]"><?= htmlspecialchars($user['email']) ?></p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-5">
+                            <div class="soft-card rounded-[1rem] p-4">
+                                <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Initials</p>
+                                <p class="text-2xl font-black mt-2"><?= htmlspecialchars(dashboardInitials((string) $user['name'])) ?></p>
+                            </div>
+                            <div class="soft-card rounded-[1rem] p-4">
+                                <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Premium</p>
+                                <p class="text-2xl font-black mt-2"><?= !empty($user['is_premium']) ? 'Yes' : 'No' ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="history" class="tab-pane">
+            <div class="glass rounded-[2rem] p-7">
+                <div class="mb-6">
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">History</p>
+                    <h2 class="text-2xl font-black mt-2">Full recent activity log</h2>
+                </div>
+                <?php if (!$history): ?>
+                    <div class="history-item text-center text-[color:var(--text-soft)] font-semibold">No tool history yet.</div>
+                <?php else: ?>
+                    <div class="space-y-4">
+                        <?php foreach ($history as $item): ?>
+                            <div class="history-item">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                    <div>
+                                        <p class="text-lg font-black"><?= htmlspecialchars(dashboardFormatTool($item['tool_used'])) ?></p>
+                                        <p class="text-sm text-[color:var(--text-soft)]"><?= htmlspecialchars($item['page_name']) ?></p>
+                                    </div>
+                                    <div class="text-sm font-semibold text-[color:var(--text-soft)]"><?= htmlspecialchars(date('d M Y, h:i A', strtotime($item['visit_date']))) ?></div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <section id="feedback" class="tab-pane">
+            <div class="glass rounded-[2rem] p-7">
+                <div class="mb-6">
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">Feedback</p>
+                    <h2 class="text-2xl font-black mt-2">Your comments and admin replies</h2>
+                </div>
+                <?php if (!$feedbacks): ?>
+                    <div class="feedback-item text-center text-[color:var(--text-soft)] font-semibold">No feedback posted yet.</div>
+                <?php else: ?>
+                    <div class="space-y-5">
+                        <?php foreach ($feedbacks as $feedback): ?>
+                            <article class="feedback-item">
                                 <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                                     <div>
-                                        <h3 class="text-lg font-black text-slate-900"><?= htmlspecialchars($feedback['subject']) ?></h3>
-                                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400"><?= htmlspecialchars(date('d M Y', strtotime($feedback['created_at']))) ?></p>
+                                        <h3 class="text-lg font-black"><?= htmlspecialchars($feedback['subject']) ?></h3>
+                                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[color:var(--text-faint)]"><?= htmlspecialchars(date('d M Y', strtotime($feedback['created_at']))) ?></p>
                                     </div>
                                     <div class="text-yellow-500 text-sm">
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -332,147 +535,56 @@ function dashboardPublicUserId(int $id): string
                                         <?php endfor; ?>
                                     </div>
                                 </div>
-                                <p class="text-slate-600 leading-7"><?= nl2br(htmlspecialchars($feedback['message'])) ?></p>
+                                <p class="leading-7 text-[color:var(--text-soft)]"><?= nl2br(htmlspecialchars($feedback['message'])) ?></p>
                                 <?php if (!empty($feedback['reply'])): ?>
-                                    <div class="mt-4 rounded-[1.5rem] bg-blue-50 border border-blue-100 px-4 py-4">
-                                        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-blue-500 mb-1">Admin Reply</p>
-                                        <p class="text-blue-900 font-medium"><?= nl2br(htmlspecialchars($feedback['reply'])) ?></p>
+                                    <div class="mt-4 rounded-[1.2rem] px-4 py-4 border border-[color:var(--border)] bg-[rgba(59,130,246,0.09)]">
+                                        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--accent-blue)] mb-1">Admin Reply</p>
+                                        <p class="font-medium"><?= nl2br(htmlspecialchars($feedback['reply'])) ?></p>
                                     </div>
                                 <?php endif; ?>
                             </article>
-                        <?php endif; ?>
-                    </section>
-                </div>
-
-                <aside class="space-y-6">
-                    <section class="panel rounded-[2rem] p-7">
-                        <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Highlights</p>
-                        <div class="mt-5 space-y-4">
-                            <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
-                                <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Unique Tools Used</p>
-                                <p class="text-2xl font-black mt-2"><?= (int) ($stats['unique_tools'] ?? 0) ?></p>
-                            </div>
-                            <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
-                                <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Last Activity</p>
-                                <p class="text-lg font-black mt-2"><?= !empty($stats['last_activity']) ? htmlspecialchars(date('d M Y, h:i A', strtotime($stats['last_activity']))) : 'No activity yet' ?></p>
-                            </div>
-                            <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
-                                <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Password Help</p>
-                                <a href="forgot_password.php" class="inline-flex mt-2 text-blue-600 font-black">Reset by Email OTP</a>
-                            </div>
-                        </div>
-                    </section>
-                </aside>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
-        </div>
+        </section>
 
-        <div id="history" class="dash-pane">
-            <section class="panel rounded-[2rem] p-7">
-                    <div class="flex items-center justify-between gap-4 mb-6">
-                        <div>
-                            <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Conversion History</p>
-                            <h2 class="text-2xl font-black mt-2">Recent tool activity</h2>
-                        </div>
-                        <span class="px-3 py-2 rounded-2xl bg-blue-50 text-blue-600 text-xs font-black uppercase tracking-[0.2em]"><?= count($history) ?> items</span>
-                    </div>
-
-                    <?php if (!$history): ?>
-                        <div class="rounded-[1.75rem] border border-dashed border-slate-300 p-10 text-center text-slate-400 font-semibold">No tool history yet. Start using Any2Convert tools and your activity will appear here.</div>
-                    <?php else: ?>
-                        <div class="space-y-4">
-                            <?php foreach ($history as $item): ?>
-                                <div class="rounded-[1.75rem] bg-slate-50 px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                    <div>
-                                        <p class="text-lg font-black text-slate-900"><?= htmlspecialchars(dashboardFormatTool($item['tool_used'])) ?></p>
-                                        <p class="text-sm text-slate-500"><?= htmlspecialchars($item['page_name']) ?></p>
-                                    </div>
-                                    <div class="text-sm font-semibold text-slate-500"><?= htmlspecialchars(date('d M Y, h:i A', strtotime($item['visit_date']))) ?></div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-            </section>
-        </div>
-
-        <div id="feedback" class="dash-pane">
-            <section class="panel rounded-[2rem] p-7">
-                    <div class="mb-6">
-                        <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Feedback History</p>
-                        <h2 class="text-2xl font-black mt-2">Your comments and admin replies</h2>
-                    </div>
-
-                    <?php if (!$feedbacks): ?>
-                        <div class="rounded-[1.75rem] border border-dashed border-slate-300 p-10 text-center text-slate-400 font-semibold">No feedback posted yet.</div>
-                    <?php else: ?>
-                        <div class="space-y-5">
-                            <?php foreach ($feedbacks as $feedback): ?>
-                                <article class="rounded-[1.8rem] bg-slate-50 p-5">
-                                    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-                                        <div>
-                                            <h3 class="text-lg font-black text-slate-900"><?= htmlspecialchars($feedback['subject']) ?></h3>
-                                            <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400"><?= htmlspecialchars(date('d M Y', strtotime($feedback['created_at']))) ?></p>
-                                        </div>
-                                        <div class="text-yellow-500 text-sm">
-                                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                <?= $i <= (int) $feedback['rating'] ? '★' : '☆' ?>
-                                            <?php endfor; ?>
-                                        </div>
-                                    </div>
-                                    <p class="text-slate-600 leading-7"><?= nl2br(htmlspecialchars($feedback['message'])) ?></p>
-                                    <?php if (!empty($feedback['reply'])): ?>
-                                        <div class="mt-4 rounded-[1.5rem] bg-blue-50 border border-blue-100 px-4 py-4">
-                                            <p class="text-[11px] font-black uppercase tracking-[0.2em] text-blue-500 mb-1">Admin Reply</p>
-                                            <p class="text-blue-900 font-medium"><?= nl2br(htmlspecialchars($feedback['reply'])) ?></p>
-                                        </div>
-                                    <?php endif; ?>
-                                </article>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-            </section>
-        </div>
-
-        <div id="security" class="dash-pane">
-            <div class="grid grid-cols-1 xl:grid-cols-[1fr_0.9fr] gap-6">
-                <section class="panel rounded-[2rem] p-7">
-                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Security</p>
+        <section id="security" class="tab-pane">
+            <div class="grid grid-cols-1 xl:grid-cols-[1fr_0.88fr] gap-6">
+                <div class="glass rounded-[2rem] p-7">
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">Security</p>
                     <h2 class="text-2xl font-black mt-2">Account protection</h2>
-                    <p class="text-slate-500 mt-3">Turn on email authentication if you want every login to require a one-time OTP from your inbox.</p>
-
+                    <p class="mt-3 leading-7 text-[color:var(--text-soft)]">Enable email authentication if you want every login to require a one-time code from your inbox.</p>
                     <form action="backend/update_security_settings.php" method="POST" class="mt-6 space-y-4">
-                        <label class="flex items-start gap-3 p-4 rounded-[1.5rem] bg-slate-50">
+                        <label class="switch-row">
                             <input type="checkbox" name="email_auth_enabled" value="1" class="mt-1 h-5 w-5" <?= !empty($user['email_auth_enabled']) ? 'checked' : '' ?>>
                             <span>
-                                <span class="block font-bold text-slate-800">Require OTP on every login</span>
-                                <span class="block text-sm text-slate-500 mt-1">Adds an extra verification step for better account safety.</span>
+                                <span class="block font-bold">Require OTP on every login</span>
+                                <span class="block text-sm mt-1 text-[color:var(--text-soft)]">Adds an extra verification step so account access depends on both password and inbox access.</span>
                             </span>
                         </label>
-                        <button type="submit" class="w-full rounded-2xl bg-blue-600 text-white py-4 font-black uppercase tracking-[0.18em] text-sm hover:bg-slate-900">Save Security Settings</button>
+                        <button type="submit" class="cta-btn primary w-full" style="width:100%;">Save Security Settings</button>
                     </form>
-                </section>
-
-                <section class="panel rounded-[2rem] p-7">
-                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">Security Notes</p>
-                    <div class="mt-5 space-y-4">
-                        <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
-                            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Unique Tools Used</p>
-                            <p class="text-2xl font-black mt-2"><?= (int) ($stats['unique_tools'] ?? 0) ?></p>
+                </div>
+                <div class="glass rounded-[2rem] p-7">
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">Quick Tips</p>
+                    <div class="space-y-4 mt-5">
+                        <div class="soft-card rounded-[1.4rem] p-4">
+                            <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Best Practice</p>
+                            <p class="font-bold mt-2">Use a unique password with OTP enabled.</p>
                         </div>
-                        <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
-                            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Last Activity</p>
-                            <p class="text-lg font-black mt-2"><?= !empty($stats['last_activity']) ? htmlspecialchars(date('d M Y, h:i A', strtotime($stats['last_activity']))) : 'No activity yet' ?></p>
-                        </div>
-                        <div class="rounded-[1.5rem] bg-slate-50 px-4 py-4">
-                            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Password Help</p>
-                            <a href="forgot_password.php" class="inline-flex mt-2 text-blue-600 font-black">Reset by Email OTP</a>
+                        <div class="soft-card rounded-[1.4rem] p-4">
+                            <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Recovery</p>
+                            <a href="forgot_password.php" class="inline-flex mt-2 font-bold text-[var(--accent-blue)]">Reset by Email OTP</a>
                         </div>
                     </div>
-                </section>
+                </div>
             </div>
-        </div>
-    </div>
-    </div>
+        </section>
+    </main>
+
     <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
+
     <script>
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
@@ -480,26 +592,30 @@ function dashboardPublicUserId(int $id): string
         }
 
         const themeToggle = document.getElementById('themeToggle');
-        const applyThemeLabel = () => {
-            themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
-        };
-        applyThemeLabel();
+        const iconMoon = document.getElementById('iconMoon');
+        const iconSun = document.getElementById('iconSun');
+        function applyThemeIcon() {
+            const dark = document.documentElement.classList.contains('dark');
+            iconMoon.style.display = dark ? 'none' : 'block';
+            iconSun.style.display = dark ? 'block' : 'none';
+        }
+        applyThemeIcon();
         themeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeLabel();
+            applyThemeIcon();
         });
 
         function activateDashTab(tabName) {
             const safeTab = document.getElementById(tabName) ? tabName : 'overview';
-            document.querySelectorAll('.dash-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === safeTab));
-            document.querySelectorAll('.dash-pane').forEach(el => el.classList.toggle('active', el.id === safeTab));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.toggle('active', el.dataset.tab === safeTab));
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.toggle('active', el.id === safeTab));
             if (window.location.hash !== '#' + safeTab) {
                 history.replaceState(null, '', '#' + safeTab);
             }
         }
 
-        document.querySelectorAll('.dash-tab').forEach(btn => {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => activateDashTab(btn.dataset.tab));
         });
 
