@@ -28,6 +28,17 @@ $wideToolIds = [
     'volume_converter',
     'speed_converter',
     'time_converter',
+    'invoice_generator',
+    'ats_resume_checker',
+    'social_image_resizer',
+    'jwt_decoder',
+    'bank_statement_to_excel',
+    'grammar_checker',
+    'paraphrase_tool',
+    'percentage_calculator',
+    'loan_calculator',
+    'bmi_calculator',
+    'age_calculator',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
 
@@ -327,7 +338,11 @@ if (isset($_SESSION['user_name'])) {
 <script>
 const toolDependencyMap = {
     img_to_pdf: ["https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"],
-    protect_pdf: ["https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"]
+    protect_pdf: ["https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"],
+    bank_statement_to_excel: [
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    ]
 };
 
 function loadScriptOnce(src) {

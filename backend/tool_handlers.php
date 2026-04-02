@@ -111,6 +111,28 @@ function renderToolHandlerHTML($tool) {
             return getSpeedConverterHTML();
         case 'time_converter':
             return getTimeConverterHTML();
+        case 'invoice_generator':
+            return getInvoiceGeneratorHTML();
+        case 'ats_resume_checker':
+            return getAtsResumeCheckerHTML();
+        case 'social_image_resizer':
+            return getSocialImageResizerHTML();
+        case 'jwt_decoder':
+            return getJwtDecoderHTML();
+        case 'bank_statement_to_excel':
+            return getBankStatementToExcelHTML();
+        case 'grammar_checker':
+            return getGrammarCheckerHTML();
+        case 'paraphrase_tool':
+            return getParaphraseToolHTML();
+        case 'percentage_calculator':
+            return getPercentageCalculatorHTML();
+        case 'loan_calculator':
+            return getLoanCalculatorHTML();
+        case 'bmi_calculator':
+            return getBmiCalculatorHTML();
+        case 'age_calculator':
+            return getAgeCalculatorHTML();
         case 'ai_image_generator':
             return getAiImageGeneratorHTML();
         case 'ocr_tool':
@@ -784,6 +806,471 @@ function getCurrencyConverterHTML(): string
             });
         })();
     </script>';
+}
+
+function getInvoiceGeneratorHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto">
+        <div class="grid xl:grid-cols-[1.15fr_0.85fr] gap-6">
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/70 shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-6 md:p-7 space-y-6">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-[11px] tracking-[0.34em] uppercase text-emerald-500 font-semibold">Business Tool</p>
+                        <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Invoice Generator</h2>
+                        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Create a printable invoice with tax, line items, and a live preview.</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/><path d="M9 9h2"/></svg>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Business Name</span><input id="invoiceBusiness" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Any2Convert Studio"></label>
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Client Name</span><input id="invoiceClient" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Client or company"></label>
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Invoice Number</span><input id="invoiceNumber" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="INV-2026-001"></label>
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Currency</span><select id="invoiceCurrency" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"><option value="$">USD ($)</option><option value="PKR">PKR</option><option value="AED">AED</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></label>
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Issue Date</span><input id="invoiceIssueDate" type="date" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></label>
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Due Date</span><input id="invoiceDueDate" type="date" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></label>
+                </div>
+                <div class="grid md:grid-cols-[1fr_170px] gap-4">
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Business Details</span><textarea id="invoiceBusinessMeta" rows="3" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Address, email, phone"></textarea></label>
+                    <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Tax %</span><input id="invoiceTax" type="number" min="0" step="0.1" value="0" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></label>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white">Line Items</p>
+                        <button id="addInvoiceItem" class="rounded-2xl bg-emerald-500 text-white px-4 py-2 text-sm font-semibold">Add Item</button>
+                    </div>
+                    <div id="invoiceItems" class="space-y-3"></div>
+                </div>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Notes</span><textarea id="invoiceNotes" rows="3" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Payment terms, thank-you note, bank details"></textarea></label>
+                <div class="flex flex-wrap gap-3">
+                    <button id="invoicePrint" class="rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 font-semibold">Print Invoice</button>
+                    <button id="invoiceDownload" class="rounded-2xl bg-blue-600 text-white px-5 py-3 font-semibold">Download HTML</button>
+                    <p id="invoiceStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Invoice preview updates automatically.</p>
+                </div>
+            </div>
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-50/85 dark:bg-slate-950/80 shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-4 md:p-5">
+                <div id="invoicePreview" class="rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 min-h-[760px] text-slate-900 dark:text-white"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const itemsWrap = document.getElementById("invoiceItems");
+            const preview = document.getElementById("invoicePreview");
+            const status = document.getElementById("invoiceStatus");
+            const inputs = ["invoiceBusiness","invoiceClient","invoiceNumber","invoiceCurrency","invoiceIssueDate","invoiceDueDate","invoiceBusinessMeta","invoiceTax","invoiceNotes"].map((id) => document.getElementById(id));
+            document.getElementById("invoiceIssueDate").valueAsDate = new Date();
+            const due = new Date(); due.setDate(due.getDate() + 7); document.getElementById("invoiceDueDate").valueAsDate = due;
+            function addItemRow(data = {}) {
+                const row = document.createElement("div");
+                row.className = "grid md:grid-cols-[1.6fr_120px_140px_52px] gap-3";
+                row.innerHTML = `<input class="item-desc rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Design package" value="${data.desc || ""}"><input class="item-qty rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="1" step="1" value="${data.qty || 1}"><input class="item-price rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="0" step="0.01" value="${data.price || 0}"><button class="remove-item rounded-2xl bg-rose-500/12 text-rose-500 font-bold">×</button>`;
+                row.querySelectorAll("input").forEach((el) => el.addEventListener("input", renderInvoice));
+                row.querySelector(".remove-item").addEventListener("click", () => { row.remove(); renderInvoice(); });
+                itemsWrap.appendChild(row);
+            }
+            function money(value) { const symbol = document.getElementById("invoiceCurrency").value || "$"; return `${symbol} ${Number(value || 0).toFixed(2)}`; }
+            function renderInvoice() {
+                const rows = Array.from(itemsWrap.children).map((row) => {
+                    const desc = row.querySelector(".item-desc").value || "Service item";
+                    const qty = parseFloat(row.querySelector(".item-qty").value) || 0;
+                    const price = parseFloat(row.querySelector(".item-price").value) || 0;
+                    return { desc, qty, price, total: qty * price };
+                });
+                const subtotal = rows.reduce((sum, row) => sum + row.total, 0);
+                const taxRate = parseFloat(document.getElementById("invoiceTax").value) || 0;
+                const taxValue = subtotal * (taxRate / 100);
+                const total = subtotal + taxValue;
+                preview.innerHTML = `<div class="flex items-start justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-5"><div><p class="text-xs tracking-[0.3em] uppercase text-emerald-500 font-semibold">Invoice</p><h3 class="mt-2 text-3xl font-black">${document.getElementById("invoiceBusiness").value || "Your Business"}</h3><p class="mt-2 text-sm text-slate-500 dark:text-slate-400 whitespace-pre-line">${document.getElementById("invoiceBusinessMeta").value || "Business details will appear here."}</p></div><div class="text-right text-sm"><p><span class="text-slate-500">Invoice #</span> <strong>${document.getElementById("invoiceNumber").value || "INV-001"}</strong></p><p class="mt-2"><span class="text-slate-500">Issued</span> <strong>${document.getElementById("invoiceIssueDate").value || "--"}</strong></p><p class="mt-2"><span class="text-slate-500">Due</span> <strong>${document.getElementById("invoiceDueDate").value || "--"}</strong></p></div></div><div class="grid md:grid-cols-2 gap-4 py-5"><div><p class="text-xs tracking-[0.25em] uppercase text-slate-500">Bill To</p><p class="mt-2 text-lg font-bold">${document.getElementById("invoiceClient").value || "Client Name"}</p></div><div class="md:text-right"><p class="text-xs tracking-[0.25em] uppercase text-slate-500">Total Due</p><p class="mt-2 text-3xl font-black text-emerald-500">${money(total)}</p></div></div><div class="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800"><table class="w-full text-sm"><thead class="bg-slate-100 dark:bg-slate-800/70"><tr><th class="text-left px-4 py-3">Item</th><th class="text-left px-4 py-3">Qty</th><th class="text-left px-4 py-3">Price</th><th class="text-right px-4 py-3">Total</th></tr></thead><tbody>${rows.map((row) => `<tr class="border-t border-slate-200 dark:border-slate-800"><td class="px-4 py-3">${row.desc}</td><td class="px-4 py-3">${row.qty}</td><td class="px-4 py-3">${money(row.price)}</td><td class="px-4 py-3 text-right font-semibold">${money(row.total)}</td></tr>`).join("") || '<tr><td colspan="4" class="px-4 py-5 text-center text-slate-500">Add line items to build the invoice.</td></tr>'}</tbody></table></div><div class="mt-5 space-y-2 text-sm"><div class="flex items-center justify-between"><span class="text-slate-500">Subtotal</span><strong>${money(subtotal)}</strong></div><div class="flex items-center justify-between"><span class="text-slate-500">Tax (${taxRate.toFixed(1)}%)</span><strong>${money(taxValue)}</strong></div><div class="flex items-center justify-between text-lg"><span class="font-bold">Grand Total</span><strong class="text-emerald-500">${money(total)}</strong></div></div><div class="mt-6 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4"><p class="text-xs tracking-[0.22em] uppercase text-slate-500">Notes</p><p class="mt-2 text-sm whitespace-pre-line">${document.getElementById("invoiceNotes").value || "Thanks for your business."}</p></div>`;
+                status.textContent = `Subtotal ${money(subtotal)} updated.`;
+            }
+            document.getElementById("addInvoiceItem").addEventListener("click", () => addItemRow());
+            inputs.forEach((input) => input.addEventListener("input", renderInvoice));
+            document.getElementById("invoicePrint").addEventListener("click", () => window.print());
+            document.getElementById("invoiceDownload").addEventListener("click", () => { const blob = new Blob([`<html><head><meta charset="UTF-8"><title>Invoice</title></head><body>${preview.innerHTML}</body></html>`], { type: "text/html" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "invoice.html"; a.click(); URL.revokeObjectURL(url); });
+            addItemRow({ desc: "Creative service", qty: 1, price: 150 }); addItemRow({ desc: "Revision support", qty: 2, price: 40 }); renderInvoice();
+        })();
+    </script>
+HTML;
+}
+
+function getAtsResumeCheckerHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.05fr_0.95fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
+            <div class="flex items-start justify-between gap-4"><div><p class="text-[11px] tracking-[0.34em] uppercase text-fuchsia-500 font-semibold">Resume Tool</p><h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">ATS Resume Checker</h2><p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Compare your resume with a job description and spot missing keywords quickly.</p></div><div class="w-14 h-14 rounded-2xl bg-fuchsia-500/15 text-fuchsia-500 flex items-center justify-center"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></div></div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Paste Resume</span><textarea id="atsResume" rows="16" class="mt-2 w-full rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-slate-900 dark:text-white" placeholder="Summary, experience, education, skills..."></textarea></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Paste Job Description</span><textarea id="atsJob" rows="16" class="mt-2 w-full rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-slate-900 dark:text-white" placeholder="Role requirements, skills, responsibilities..."></textarea></label>
+            </div>
+            <div class="flex flex-wrap gap-3"><button id="atsAnalyze" class="rounded-2xl bg-fuchsia-600 text-white px-5 py-3 font-semibold">Analyze ATS Match</button><button id="atsDemo" class="rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white px-5 py-3 font-semibold">Load Demo</button><p id="atsStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Score is based on keyword overlap, section coverage, and measurable metrics.</p></div>
+        </div>
+        <div class="space-y-6">
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-50/85 dark:bg-slate-950/80 shadow-xl p-6"><p class="text-xs tracking-[0.28em] uppercase text-slate-500">ATS Score</p><div class="mt-4 flex items-end gap-3"><div id="atsScore" class="text-6xl font-black text-slate-900 dark:text-white">0</div><div class="text-xl font-semibold text-slate-500 mb-2">/ 100</div></div><div class="mt-4 h-3 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div id="atsBar" class="h-full rounded-full bg-gradient-to-r from-fuchsia-500 to-violet-500" style="width:0%"></div></div><p id="atsSummary" class="mt-4 text-sm text-slate-500 dark:text-slate-400">Paste your resume and job description to get suggestions.</p></div>
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6"><h3 class="text-xl font-black text-slate-900 dark:text-white">Missing Keywords</h3><div id="atsKeywords" class="mt-4 flex flex-wrap gap-2"></div></div>
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6"><h3 class="text-xl font-black text-slate-900 dark:text-white">Actionable Notes</h3><ul id="atsTips" class="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-300"></ul></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const resumeInput = document.getElementById("atsResume"), jobInput = document.getElementById("atsJob"), scoreEl = document.getElementById("atsScore"), barEl = document.getElementById("atsBar"), summaryEl = document.getElementById("atsSummary"), keywordsEl = document.getElementById("atsKeywords"), tipsEl = document.getElementById("atsTips"), statusEl = document.getElementById("atsStatus");
+            function tokenize(text) { return (text.toLowerCase().match(/[a-z][a-z0-9+#.-]{2,}/g) || []).filter((word) => !["with","from","that","this","have","your","will","into","their","about","using","years","year"].includes(word)); }
+            function analyze() {
+                const resume = resumeInput.value.trim(), job = jobInput.value.trim();
+                if (!resume || !job) { statusEl.textContent = "Resume and job description dono chahiye."; return; }
+                const resumeLower = resume.toLowerCase(), jobTokens = tokenize(job), frequency = {};
+                jobTokens.forEach((token) => frequency[token] = (frequency[token] || 0) + 1);
+                const topKeywords = Object.entries(frequency).sort((a, b) => b[1] - a[1]).slice(0, 18).map(([word]) => word);
+                const missing = topKeywords.filter((word) => !resumeLower.includes(word)).slice(0, 10);
+                const matched = topKeywords.length - missing.length;
+                const keywordScore = topKeywords.length ? (matched / topKeywords.length) * 55 : 0;
+                const sections = ["experience","skills","education","projects","summary"], foundSections = sections.filter((section) => resumeLower.includes(section));
+                const total = Math.round(Math.min(100, keywordScore + (foundSections.length / sections.length) * 25 + (/\d/.test(resume) ? 10 : 0) + (/(built|led|managed|launched|improved|optimized|delivered|designed)/i.test(resume) ? 10 : 0)));
+                scoreEl.textContent = total; barEl.style.width = total + "%";
+                summaryEl.textContent = total >= 80 ? "Strong match. Fine-tune the missing keywords and measurable impact." : total >= 60 ? "Decent match. Add missing terms and sharpen role-specific experience." : "Low match. Rework your summary, skills, and impact bullets around the job description.";
+                keywordsEl.innerHTML = missing.length ? missing.map((word) => `<span class="px-3 py-2 rounded-full bg-rose-500/10 text-rose-500 text-sm font-semibold">${word}</span>`).join("") : '<span class="px-3 py-2 rounded-full bg-emerald-500/10 text-emerald-500 text-sm font-semibold">No major keyword gaps found</span>';
+                const tips = [foundSections.length < sections.length ? `Add missing sections: ${sections.filter((section) => !foundSections.includes(section)).join(", ")}.` : "Core resume sections are present.", missing.length ? `Work these terms naturally into your resume: ${missing.slice(0, 5).join(", ")}.` : "Keyword alignment looks strong for the top terms.", /\d/.test(resume) ? "You already use measurable numbers. Keep that impact language." : "Add numbers like revenue, response time, users, or conversion gains.", /(built|led|managed|launched|improved|optimized|delivered|designed)/i.test(resume) ? "Action verbs are present. Nice." : "Start bullets with action verbs like built, led, improved, or optimized."];
+                tipsEl.innerHTML = tips.map((tip) => `<li class="rounded-2xl bg-slate-100 dark:bg-slate-900 px-4 py-3">${tip}</li>`).join("");
+                statusEl.textContent = `Checked ${topKeywords.length} key terms and ${foundSections.length}/${sections.length} major sections.`;
+            }
+            document.getElementById("atsAnalyze").addEventListener("click", analyze);
+            document.getElementById("atsDemo").addEventListener("click", () => { resumeInput.value = "Product designer with 4 years of experience designing landing pages, dashboards, and design systems. Led redesign projects that improved conversion by 24%. Skills: Figma, UX research, wireframing, prototyping, accessibility, collaboration. Experience: designed flows with product managers and engineers. Education: BBA."; jobInput.value = "We are hiring a product designer with experience in Figma, prototyping, design systems, accessibility, UX research, collaboration, dashboards, experimentation, stakeholder communication, and measurable product impact."; analyze(); });
+        })();
+    </script>
+HTML;
+}
+
+function getSocialImageResizerHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
+            <div class="flex items-start justify-between gap-4"><div><p class="text-[11px] tracking-[0.34em] uppercase text-cyan-500 font-semibold">Social Media Tool</p><h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Social Image Resizer</h2><p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Resize one image for Instagram, YouTube, LinkedIn, Facebook, X, and more.</p></div><div class="w-14 h-14 rounded-2xl bg-cyan-500/15 text-cyan-500 flex items-center justify-center"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h8v8H8z"/></svg></div></div>
+            <div class="grid md:grid-cols-[1fr_240px] gap-4"><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Upload Image</span><input id="socialImageInput" type="file" accept="image/*" class="mt-2 block w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></label><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Platform Preset</span><select id="socialPreset" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></select></label></div>
+            <div class="grid md:grid-cols-2 gap-4"><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Fit Mode</span><select id="socialFit" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"><option value="cover">Cover</option><option value="contain">Contain</option></select></label><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Background</span><input id="socialBg" type="color" value="#0f172a" class="mt-2 w-full h-[52px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-2 py-2"></label></div>
+            <div class="flex flex-wrap gap-3"><button id="socialResize" class="rounded-2xl bg-cyan-600 text-white px-5 py-3 font-semibold">Resize Image</button><button id="socialDownload" class="rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 font-semibold">Download PNG</button><p id="socialStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Choose a platform preset to generate the output.</p></div>
+        </div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-5 text-white">
+            <div class="flex items-center justify-between"><div><p class="text-[11px] tracking-[0.3em] uppercase text-cyan-300">Preview</p><h3 id="socialMeta" class="mt-2 text-xl font-black">Ready for export</h3></div><div id="socialDims" class="text-sm text-slate-300">0 × 0</div></div>
+            <div class="mt-5 rounded-[28px] overflow-hidden bg-slate-900 border border-white/10 min-h-[420px] flex items-center justify-center"><canvas id="socialCanvas" class="max-w-full max-h-[480px]"></canvas></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const presets = { instagram_post: { label: "Instagram Post", width: 1080, height: 1080 }, instagram_story: { label: "Instagram Story", width: 1080, height: 1920 }, youtube_thumb: { label: "YouTube Thumbnail", width: 1280, height: 720 }, linkedin_post: { label: "LinkedIn Post", width: 1200, height: 627 }, facebook_post: { label: "Facebook Post", width: 1200, height: 630 }, x_post: { label: "X / Twitter Post", width: 1600, height: 900 }, whatsapp_status: { label: "WhatsApp Status", width: 1080, height: 1920 } };
+            const presetSelect = document.getElementById("socialPreset"), input = document.getElementById("socialImageInput"), fitSelect = document.getElementById("socialFit"), bgInput = document.getElementById("socialBg"), canvas = document.getElementById("socialCanvas"), ctx = canvas.getContext("2d"), status = document.getElementById("socialStatus"), dims = document.getElementById("socialDims"), meta = document.getElementById("socialMeta"); let image = null;
+            Object.entries(presets).forEach(([value, preset]) => { const option = document.createElement("option"); option.value = value; option.textContent = `${preset.label} (${preset.width}×${preset.height})`; presetSelect.appendChild(option); });
+            function draw() {
+                const preset = presets[presetSelect.value]; if (!preset) return;
+                canvas.width = preset.width; canvas.height = preset.height; ctx.fillStyle = bgInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height); dims.textContent = `${preset.width} × ${preset.height}`; meta.textContent = preset.label;
+                if (!image) { status.textContent = "Upload an image first."; return; }
+                const scale = fitSelect.value === "cover" ? Math.max(canvas.width / image.width, canvas.height / image.height) : Math.min(canvas.width / image.width, canvas.height / image.height);
+                const drawWidth = image.width * scale, drawHeight = image.height * scale, x = (canvas.width - drawWidth) / 2, y = (canvas.height - drawHeight) / 2;
+                ctx.drawImage(image, x, y, drawWidth, drawHeight); status.textContent = `Resized for ${preset.label}.`;
+            }
+            input.addEventListener("change", (event) => { const file = event.target.files?.[0]; if (!file) return; const img = new Image(); img.onload = () => { image = img; draw(); }; img.src = URL.createObjectURL(file); });
+            [presetSelect, fitSelect, bgInput].forEach((el) => el.addEventListener("input", draw));
+            document.getElementById("socialResize").addEventListener("click", draw);
+            document.getElementById("socialDownload").addEventListener("click", () => { if (!canvas.width) return; const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `${presetSelect.value || "social-image"}.png`; a.click(); });
+            presetSelect.value = "instagram_post"; draw();
+        })();
+    </script>
+HTML;
+}
+
+function getJwtDecoderHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_1fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-amber-500 font-semibold">Developer Tool</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">JWT Decoder</h2>
+                    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Decode header and payload locally in your browser. No token leaves your device.</p>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h7"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg>
+                </div>
+            </div>
+            <textarea id="jwtInput" rows="10" class="w-full rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-slate-900 dark:text-white font-mono text-sm" placeholder="Paste JWT token here"></textarea>
+            <div class="flex flex-wrap gap-3">
+                <button id="jwtDecodeBtn" class="rounded-2xl bg-amber-500 text-slate-950 px-5 py-3 font-semibold">Decode Token</button>
+                <button id="jwtDemoBtn" class="rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white px-5 py-3 font-semibold">Load Demo</button>
+                <p id="jwtStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Header and payload will be shown below.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="rounded-3xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Issuer</p><p id="jwtIss" class="mt-2 font-semibold break-all">--</p></div>
+                <div class="rounded-3xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Subject</p><p id="jwtSub" class="mt-2 font-semibold break-all">--</p></div>
+                <div class="rounded-3xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Expires</p><p id="jwtExp" class="mt-2 font-semibold break-all">--</p></div>
+            </div>
+        </div>
+        <div class="space-y-6">
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white">Header</h3>
+                <pre id="jwtHeader" class="mt-4 rounded-3xl bg-slate-950 text-emerald-300 p-4 overflow-auto text-xs min-h-[180px]"></pre>
+            </div>
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white">Payload</h3>
+                <pre id="jwtPayload" class="mt-4 rounded-3xl bg-slate-950 text-cyan-300 p-4 overflow-auto text-xs min-h-[280px]"></pre>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const input = document.getElementById("jwtInput"), status = document.getElementById("jwtStatus"), headerEl = document.getElementById("jwtHeader"), payloadEl = document.getElementById("jwtPayload");
+            function decodePart(part) {
+                const normalized = part.replace(/-/g, "+").replace(/_/g, "/");
+                const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+                return JSON.parse(decodeURIComponent(Array.prototype.map.call(atob(padded), (c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")));
+            }
+            function formatDate(value) {
+                if (!value) return "--";
+                const date = new Date(Number(value) * 1000);
+                return isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+            }
+            function decodeToken() {
+                try {
+                    const token = input.value.trim();
+                    const parts = token.split(".");
+                    if (parts.length < 2) throw new Error("Invalid JWT format.");
+                    const header = decodePart(parts[0]);
+                    const payload = decodePart(parts[1]);
+                    headerEl.textContent = JSON.stringify(header, null, 2);
+                    payloadEl.textContent = JSON.stringify(payload, null, 2);
+                    document.getElementById("jwtIss").textContent = payload.iss || "--";
+                    document.getElementById("jwtSub").textContent = payload.sub || payload.email || "--";
+                    document.getElementById("jwtExp").textContent = formatDate(payload.exp);
+                    status.textContent = "JWT decoded locally.";
+                } catch (error) {
+                    headerEl.textContent = "";
+                    payloadEl.textContent = "";
+                    status.textContent = error.message || "Could not decode JWT.";
+                }
+            }
+            document.getElementById("jwtDecodeBtn").addEventListener("click", decodeToken);
+            document.getElementById("jwtDemoBtn").addEventListener("click", () => {
+                input.value = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZW1vQGFueTJjb252ZXJ0LmNvbSIsImlzcyI6IkFueTJDb252ZXJ0IiwiZXhwIjoyMDAwMDAwMDAwLCJyb2xlIjoidXNlciJ9.signature";
+                decodeToken();
+            });
+        })();
+    </script>
+HTML;
+}
+
+function getBankStatementToExcelHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[0.95fr_1.05fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-emerald-500 font-semibold">Finance Tool</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Bank Statement PDF to Excel</h2>
+                    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Extract statement rows from PDF text and export them as an Excel sheet.</p>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5"/><path d="M9 14l2 2 4-4"/></svg>
+                </div>
+            </div>
+            <input id="statementPdfInput" type="file" accept="application/pdf" class="block w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white">
+            <div class="grid md:grid-cols-2 gap-4">
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Date Pattern</span><input id="statementDatePattern" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="dd/mm/yyyy or dd-mm-yyyy"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Currency Hint</span><input id="statementCurrencyHint" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="PKR, USD, AED, etc."></label>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button id="statementExtractBtn" class="rounded-2xl bg-emerald-500 text-white px-5 py-3 font-semibold">Extract Transactions</button>
+                <button id="statementExportBtn" class="rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 font-semibold">Export Excel</button>
+                <p id="statementStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Upload a statement PDF to start.</p>
+            </div>
+        </div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-5">
+            <div class="flex items-center justify-between gap-4">
+                <div><p class="text-[11px] tracking-[0.3em] uppercase text-slate-500">Extracted Rows</p><h3 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">Transaction Preview</h3></div>
+                <div id="statementCount" class="rounded-full bg-slate-100 dark:bg-slate-900 px-4 py-2 text-sm text-slate-600 dark:text-slate-300">0 rows</div>
+            </div>
+            <div class="mt-5 overflow-auto rounded-[28px] border border-slate-200 dark:border-slate-800">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-100 dark:bg-slate-900">
+                        <tr><th class="text-left px-4 py-3">Date</th><th class="text-left px-4 py-3">Description</th><th class="text-left px-4 py-3">Amount</th><th class="text-left px-4 py-3">Balance</th></tr>
+                    </thead>
+                    <tbody id="statementRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const fileInput = document.getElementById("statementPdfInput"), status = document.getElementById("statementStatus"), rowsWrap = document.getElementById("statementRows"), countEl = document.getElementById("statementCount");
+            let rows = [];
+            async function extractRows() {
+                const file = fileInput.files?.[0];
+                if (!file) { status.textContent = "Select a PDF statement first."; return; }
+                if (!window.pdfjsLib) { status.textContent = "PDF library not loaded."; return; }
+                const buffer = await file.arrayBuffer();
+                const pdf = await window.pdfjsLib.getDocument({ data: buffer }).promise;
+                const allLines = [];
+                for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
+                    const page = await pdf.getPage(pageNo);
+                    const content = await page.getTextContent();
+                    const text = content.items.map((item) => item.str).join(" ");
+                    text.split(/(?=\d{2}[\/-]\d{2}[\/-]\d{2,4})/).forEach((line) => allLines.push(line.trim()));
+                }
+                rows = allLines.map((line) => {
+                    const match = line.match(/(\d{2}[\/-]\d{2}[\/-]\d{2,4})\s+(.+?)\s+(-?\d[\d,]*\.?\d*)\s+(-?\d[\d,]*\.?\d*)$/);
+                    if (!match) return null;
+                    return { date: match[1], description: match[2], amount: match[3], balance: match[4] };
+                }).filter(Boolean);
+                rowsWrap.innerHTML = rows.length ? rows.map((row) => `<tr class="border-t border-slate-200 dark:border-slate-800"><td class="px-4 py-3">${row.date}</td><td class="px-4 py-3">${row.description}</td><td class="px-4 py-3">${row.amount}</td><td class="px-4 py-3">${row.balance}</td></tr>`).join("") : '<tr><td colspan="4" class="px-4 py-6 text-center text-slate-500">No transaction rows detected. Try a clearer statement PDF.</td></tr>';
+                countEl.textContent = `${rows.length} rows`;
+                status.textContent = rows.length ? "Transactions extracted. Review and export to Excel." : "Could not detect rows automatically.";
+            }
+            function exportExcel() {
+                if (!rows.length) { status.textContent = "Extract rows first."; return; }
+                if (!window.XLSX) { status.textContent = "Excel library not loaded."; return; }
+                const sheet = window.XLSX.utils.json_to_sheet(rows);
+                const wb = window.XLSX.utils.book_new();
+                window.XLSX.utils.book_append_sheet(wb, sheet, "Statement");
+                window.XLSX.writeFile(wb, "bank-statement.xlsx");
+            }
+            document.getElementById("statementExtractBtn").addEventListener("click", () => extractRows().catch((error) => status.textContent = error.message || "Extraction failed."));
+            document.getElementById("statementExportBtn").addEventListener("click", exportExcel);
+        })();
+    </script>
+HTML;
+}
+
+function getGrammarCheckerHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-violet-500 font-semibold">Writing Tool</p>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Grammar Checker</h2>
+            <textarea id="grammarInput" rows="16" class="w-full rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-slate-900 dark:text-white" placeholder="Paste your text here"></textarea>
+            <div class="flex flex-wrap gap-3"><button id="grammarCheckBtn" class="rounded-2xl bg-violet-600 text-white px-5 py-3 font-semibold">Check Grammar</button><button id="grammarDemoBtn" class="rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white px-5 py-3 font-semibold">Load Demo</button><p id="grammarStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Basic fixes include casing, punctuation, spacing, and repeated marks.</p></div>
+        </div>
+        <div class="space-y-6">
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6"><h3 class="text-xl font-black text-slate-900 dark:text-white">Suggestions</h3><ul id="grammarSuggestions" class="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-300"></ul></div>
+            <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6"><h3 class="text-xl font-black text-white">Cleaned Text</h3><textarea id="grammarOutput" rows="12" class="mt-4 w-full rounded-3xl bg-slate-900 border border-white/10 px-4 py-4 text-slate-100"></textarea></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const input = document.getElementById("grammarInput"), output = document.getElementById("grammarOutput"), suggestions = document.getElementById("grammarSuggestions"), status = document.getElementById("grammarStatus");
+            function runCheck() {
+                let text = input.value || "";
+                const notes = [];
+                if (/\bi\b/.test(text)) { text = text.replace(/\bi\b/g, "I"); notes.push("Capitalized standalone 'i' to 'I'."); }
+                if (/\s{2,}/.test(text)) { text = text.replace(/\s{2,}/g, " "); notes.push("Removed extra spaces."); }
+                if (/([!?.,])\1+/.test(text)) { text = text.replace(/([!?.,])\1+/g, "$1"); notes.push("Reduced repeated punctuation marks."); }
+                if (/\b(dont|cant|wont|im|ive|doesnt|isnt)\b/gi.test(text)) { text = text.replace(/\bdont\b/gi, "don't").replace(/\bcant\b/gi, "can't").replace(/\bwont\b/gi, "won't").replace(/\bim\b/gi, "I'm").replace(/\bive\b/gi, "I've").replace(/\bdoesnt\b/gi, "doesn't").replace(/\bisnt\b/gi, "isn't"); notes.push("Normalized common contractions."); }
+                if (text && !/[.!?]$/.test(text.trim())) { text = text.trim() + "."; notes.push("Added ending punctuation."); }
+                output.value = text;
+                suggestions.innerHTML = notes.length ? notes.map((note) => `<li class="rounded-2xl bg-slate-100 dark:bg-slate-900 px-4 py-3">${note}</li>`).join("") : '<li class="rounded-2xl bg-emerald-500/10 text-emerald-500 px-4 py-3">No obvious quick-fix issues found.</li>';
+                status.textContent = notes.length ? `${notes.length} quick grammar improvements applied.` : "Text already looks clean.";
+            }
+            document.getElementById("grammarCheckBtn").addEventListener("click", runCheck);
+            document.getElementById("grammarDemoBtn").addEventListener("click", () => { input.value = "hi i wrote this  text  but it isnt looking good!! can you fix it"; runCheck(); });
+        })();
+    </script>
+HTML;
+}
+
+function getParaphraseToolHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_1fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-sky-500 font-semibold">Writing Tool</p>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Paraphrase Tool</h2>
+            <textarea id="paraphraseInput" rows="16" class="w-full rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-slate-900 dark:text-white" placeholder="Paste your paragraph here"></textarea>
+            <div class="flex flex-wrap gap-3"><button id="paraphraseBtn" class="rounded-2xl bg-sky-600 text-white px-5 py-3 font-semibold">Paraphrase Text</button><button id="paraphraseDemoBtn" class="rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white px-5 py-3 font-semibold">Load Demo</button><p id="paraphraseStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Creates a cleaner alternative phrasing locally in the browser.</p></div>
+        </div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6">
+            <h3 class="text-xl font-black text-white">Paraphrased Version</h3>
+            <textarea id="paraphraseOutput" rows="18" class="mt-4 w-full rounded-3xl bg-slate-900 border border-white/10 px-4 py-4 text-slate-100"></textarea>
+            <div class="mt-4 flex flex-wrap gap-3"><button id="paraphraseCopy" class="rounded-2xl bg-white text-slate-900 px-5 py-3 font-semibold">Copy Result</button><div id="paraphraseNotes" class="text-sm text-slate-300 self-center"></div></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const input = document.getElementById("paraphraseInput"), output = document.getElementById("paraphraseOutput"), status = document.getElementById("paraphraseStatus"), notes = document.getElementById("paraphraseNotes");
+            const swaps = [["in order to","to"],["due to the fact that","because"],["a lot of","many"],["helps to","helps"],["make sure","ensure"],["has the ability to","can"],["in the event that","if"],["at this point in time","now"],["utilize","use"],["prior to","before"]];
+            function paraphrase() {
+                let text = input.value.trim();
+                if (!text) { status.textContent = "Enter some text first."; return; }
+                swaps.forEach(([from, to]) => {
+                    const regex = new RegExp(from, "gi");
+                    text = text.replace(regex, to);
+                });
+                text = text.replace(/\s{2,}/g, " ").replace(/\.\s+/g, ".\n\n");
+                text = text.replace(/^\s*([a-z])/m, (m, c) => c.toUpperCase());
+                output.value = text;
+                status.textContent = "Paraphrased version generated.";
+                notes.textContent = `${swaps.length} phrase-level rewrites available in the local rule set.`;
+            }
+            document.getElementById("paraphraseBtn").addEventListener("click", paraphrase);
+            document.getElementById("paraphraseDemoBtn").addEventListener("click", () => { input.value = "In order to improve the website, we need to utilize clearer wording and make sure the content is easier to read at this point in time."; paraphrase(); });
+            document.getElementById("paraphraseCopy").addEventListener("click", async () => {
+                try { await navigator.clipboard.writeText(output.value || ""); notes.textContent = "Copied."; } catch (e) { notes.textContent = "Copy failed."; }
+            });
+        })();
+    </script>
+HTML;
+}
+
+function getPercentageCalculatorHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+        <div class="md:col-span-2 rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-amber-500 font-semibold">Calculator</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Percentage Calculator</h2>
+            <div class="mt-5 grid md:grid-cols-3 gap-4">
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Value</span><input id="percentValue" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="25"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">% Of</span><input id="percentBase" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="200"></label>
+                <div class="flex items-end"><button id="percentCalcBtn" class="w-full rounded-2xl bg-amber-500 text-slate-950 px-5 py-3 font-semibold">Calculate</button></div>
+            </div>
+        </div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white"><p class="text-xs uppercase tracking-[0.22em] text-amber-300">Result</p><div id="percentResult" class="mt-4 text-5xl font-black">0</div><p id="percentMeta" class="mt-3 text-sm text-slate-300">25 is what percent of 200?</p></div>
+    </div>
+    <script>(() => { const calc = () => { const value = parseFloat(document.getElementById("percentValue").value) || 0; const base = parseFloat(document.getElementById("percentBase").value) || 0; const result = base === 0 ? 0 : (value / base) * 100; document.getElementById("percentResult").textContent = `${result.toFixed(2)}%`; document.getElementById("percentMeta").textContent = `${value} is ${result.toFixed(2)}% of ${base}.`; }; document.getElementById("percentCalcBtn").addEventListener("click", calc); calc(); })();</script>
+HTML;
+}
+
+function getLoanCalculatorHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-emerald-500 font-semibold">Calculator</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Loan EMI Calculator</h2>
+            <div class="mt-5 grid md:grid-cols-3 gap-4">
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Loan Amount</span><input id="loanAmount" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="500000"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Annual Rate %</span><input id="loanRate" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="14"></label>
+                <label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Months</span><input id="loanMonths" type="number" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="36"></label>
+            </div>
+            <button id="loanCalcBtn" class="mt-5 rounded-2xl bg-emerald-500 text-white px-5 py-3 font-semibold">Calculate EMI</button>
+        </div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white space-y-4"><div><p class="text-xs uppercase tracking-[0.22em] text-emerald-300">Monthly EMI</p><div id="loanEmi" class="mt-2 text-5xl font-black">0</div></div><div><p class="text-xs uppercase tracking-[0.22em] text-slate-400">Total Payment</p><div id="loanTotal" class="mt-2 text-2xl font-bold">0</div></div><div><p class="text-xs uppercase tracking-[0.22em] text-slate-400">Total Interest</p><div id="loanInterest" class="mt-2 text-2xl font-bold">0</div></div></div>
+    </div>
+    <script>(() => { const calc = () => { const principal = parseFloat(document.getElementById("loanAmount").value) || 0; const annualRate = parseFloat(document.getElementById("loanRate").value) || 0; const months = parseFloat(document.getElementById("loanMonths").value) || 0; const monthlyRate = annualRate / 12 / 100; const emi = monthlyRate === 0 ? principal / Math.max(months, 1) : (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1); const total = emi * months; const interest = total - principal; document.getElementById("loanEmi").textContent = emi.toFixed(2); document.getElementById("loanTotal").textContent = total.toFixed(2); document.getElementById("loanInterest").textContent = interest.toFixed(2); }; document.getElementById("loanCalcBtn").addEventListener("click", calc); calc(); })();</script>
+HTML;
+}
+
+function getBmiCalculatorHTML() {
+    return <<<'HTML'
+    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7"><p class="text-[11px] tracking-[0.34em] uppercase text-rose-500 font-semibold">Calculator</p><h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">BMI Calculator</h2><div class="mt-5 grid gap-4"><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Weight (kg)</span><input id="bmiWeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="70"></label><label class="block"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Height (cm)</span><input id="bmiHeight" type="number" step="0.1" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" value="175"></label><button id="bmiCalcBtn" class="rounded-2xl bg-rose-500 text-white px-5 py-3 font-semibold">Calculate BMI</button></div></div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white"><p class="text-xs uppercase tracking-[0.22em] text-rose-300">Body Mass Index</p><div id="bmiResult" class="mt-4 text-5xl font-black">0</div><p id="bmiCategory" class="mt-3 text-lg text-slate-300">Category will appear here.</p></div>
+    </div>
+    <script>(() => { const calc = () => { const weight = parseFloat(document.getElementById("bmiWeight").value) || 0; const heightCm = parseFloat(document.getElementById("bmiHeight").value) || 0; const heightM = heightCm / 100; const bmi = heightM ? weight / (heightM * heightM) : 0; let label = "Underweight"; if (bmi >= 25) label = "Overweight"; else if (bmi >= 18.5) label = "Normal"; document.getElementById("bmiResult").textContent = bmi.toFixed(1); document.getElementById("bmiCategory").textContent = label; }; document.getElementById("bmiCalcBtn").addEventListener("click", calc); calc(); })();</script>
+HTML;
+}
+
+function getAgeCalculatorHTML() {
+    return <<<'HTML'
+    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7"><p class="text-[11px] tracking-[0.34em] uppercase text-indigo-500 font-semibold">Calculator</p><h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Age Calculator</h2><label class="block mt-5"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Date of Birth</span><input id="ageDob" type="date" class="mt-2 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white"></label><button id="ageCalcBtn" class="mt-5 rounded-2xl bg-indigo-600 text-white px-5 py-3 font-semibold">Calculate Age</button></div>
+        <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-6 text-white"><p class="text-xs uppercase tracking-[0.22em] text-indigo-300">Current Age</p><div id="ageYears" class="mt-4 text-5xl font-black">0 years</div><p id="ageMeta" class="mt-3 text-lg text-slate-300">Select a birth date.</p></div>
+    </div>
+    <script>(() => { const calc = () => { const value = document.getElementById("ageDob").value; if (!value) return; const dob = new Date(value), now = new Date(); let years = now.getFullYear() - dob.getFullYear(), months = now.getMonth() - dob.getMonth(); if (months < 0 || (months === 0 && now.getDate() < dob.getDate())) { years--; months += 12; } document.getElementById("ageYears").textContent = `${years} years`; document.getElementById("ageMeta").textContent = `${months} months since last birthday.`; }; document.getElementById("ageCalcBtn").addEventListener("click", calc); })();</script>
+HTML;
 }
 
 function getImageToPdfHTML() {

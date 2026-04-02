@@ -583,5 +583,104 @@ $seo_tools = [
         'icon' => 'TR',
         'faqs' => [['q' => 'Does it translate the whole layout?', 'a' => 'This version translates extracted text, not the full original visual layout.']],
         'content' => 'Translate the readable text from a PDF into another language with a lightweight browser workflow.'
+    ],
+    'invoice-generator' => [
+        'id' => 'invoice_generator',
+        'h1' => 'Invoice Generator Online',
+        'title' => 'Invoice Generator - Create Printable Invoices Free | Any2Convert',
+        'meta_desc' => 'Build a clean invoice with business details, client info, tax, and line items right in your browser.',
+        'icon' => 'INV',
+        'faqs' => [['q' => 'Can I print the invoice?', 'a' => 'Yes. You can preview it live, print it, or download it as an HTML invoice file.']],
+        'content' => 'Generate a client-ready invoice with totals, tax, dates, and notes using a fast browser-only workflow.'
+    ],
+    'ats-resume-checker' => [
+        'id' => 'ats_resume_checker',
+        'h1' => 'ATS Resume Checker Online',
+        'title' => 'ATS Resume Checker - Match Resume to Job Description | Any2Convert',
+        'meta_desc' => 'Compare your resume against a job description and find missing keywords and weak sections.',
+        'icon' => 'ATS',
+        'faqs' => [['q' => 'How is the score calculated?', 'a' => 'The tool checks keyword overlap, section coverage, numbers, and action-oriented phrasing.']],
+        'content' => 'Paste your resume and a job description to get an instant ATS-style match score with practical improvement notes.'
+    ],
+    'social-image-resizer' => [
+        'id' => 'social_image_resizer',
+        'h1' => 'Social Image Resizer Online',
+        'title' => 'Social Image Resizer - Instagram, YouTube, LinkedIn Sizes | Any2Convert',
+        'meta_desc' => 'Resize one image for multiple social media platforms with ready-made aspect ratio presets.',
+        'icon' => 'SOC',
+        'faqs' => [['q' => 'Which presets are included?', 'a' => 'It includes presets for Instagram posts and stories, YouTube thumbnails, LinkedIn, Facebook, X, and more.']],
+        'content' => 'Prepare social media creatives in the correct dimensions without opening a heavy desktop design app.'
+    ],
+    'jwt-decoder' => [
+        'id' => 'jwt_decoder',
+        'h1' => 'JWT Decoder Online',
+        'title' => 'JWT Decoder - Read Header and Payload Locally | Any2Convert',
+        'meta_desc' => 'Paste a JWT and decode its header, payload, expiration, and subject locally in your browser.',
+        'icon' => 'JWT',
+        'faqs' => [['q' => 'Does the token get uploaded?', 'a' => 'No. The JWT is decoded in your browser and is not sent to a server.']],
+        'content' => 'Debug access tokens safely by decoding standard JWT structures right in your browser.'
+    ],
+    'bank-statement-pdf-to-excel' => [
+        'id' => 'bank_statement_to_excel',
+        'h1' => 'Bank Statement PDF to Excel',
+        'title' => 'Bank Statement PDF to Excel Converter | Any2Convert',
+        'meta_desc' => 'Extract transaction rows from a bank statement PDF and export the data to an Excel file.',
+        'icon' => 'BANK',
+        'faqs' => [['q' => 'Will it work on every statement layout?', 'a' => 'It works best on text-based bank statements with clearly aligned date, description, amount, and balance columns.']],
+        'content' => 'Turn a bank statement PDF into structured spreadsheet rows for quick review, filtering, and bookkeeping.'
+    ],
+    'grammar-checker' => [
+        'id' => 'grammar_checker',
+        'h1' => 'Grammar Checker Online',
+        'title' => 'Grammar Checker - Quick Writing Cleanup Tool | Any2Convert',
+        'meta_desc' => 'Fix basic grammar, punctuation, spacing, and capitalization issues instantly in your browser.',
+        'icon' => 'GRAM',
+        'faqs' => [['q' => 'What does it correct?', 'a' => 'It handles quick grammar cleanup such as repeated punctuation, spacing, casing, and common contractions.']],
+        'content' => 'Use the grammar checker for a fast cleanup pass before sending emails, assignments, or website copy.'
+    ],
+    'paraphrase-tool' => [
+        'id' => 'paraphrase_tool',
+        'h1' => 'Paraphrase Tool Online',
+        'title' => 'Paraphrase Tool - Rewrite Sentences More Clearly | Any2Convert',
+        'meta_desc' => 'Rewrite text into clearer wording with a lightweight local paraphrasing workflow.',
+        'icon' => 'PARA',
+        'faqs' => [['q' => 'Is this AI-based?', 'a' => 'This version uses a lightweight in-browser rewrite approach for quick phrase-level improvements.']],
+        'content' => 'Refresh repetitive phrasing and tighten sentence structure without leaving your browser.'
+    ],
+    'percentage-calculator' => [
+        'id' => 'percentage_calculator',
+        'h1' => 'Percentage Calculator Online',
+        'title' => 'Percentage Calculator - Percentage of a Number | Any2Convert',
+        'meta_desc' => 'Calculate percentages and simple rate relationships online.',
+        'icon' => 'PCT',
+        'faqs' => [['q' => 'Can I calculate what percent one value is of another?', 'a' => 'Yes. Enter a value and a base number to instantly compute the percentage.']],
+        'content' => 'Quickly solve everyday percentage problems for discounts, comparisons, growth, and reporting.'
+    ],
+    'loan-calculator' => [
+        'id' => 'loan_calculator',
+        'h1' => 'Loan EMI Calculator Online',
+        'title' => 'Loan Calculator - EMI, Interest, and Total Payment | Any2Convert',
+        'meta_desc' => 'Estimate monthly EMI, total payment, and total interest for a loan.',
+        'icon' => 'LOAN',
+        'faqs' => [['q' => 'Does it support monthly EMI?', 'a' => 'Yes. Enter the principal, annual rate, and months to get a monthly EMI estimate.']],
+        'content' => 'Plan loans more confidently with an instant monthly EMI and total interest breakdown.'
+    ],
+    'bmi-calculator' => [
+        'id' => 'bmi_calculator',
+        'h1' => 'BMI Calculator Online',
+        'title' => 'BMI Calculator - Body Mass Index from Height and Weight | Any2Convert',
+        'meta_desc' => 'Calculate BMI using your height and weight with a simple browser-based calculator.',
+        'icon' => 'BMI',
+        'faqs' => [['q' => 'What units does it use?', 'a' => 'This version uses kilograms for weight and centimeters for height.']],
+        'content' => 'Check body mass index quickly and get a basic category reading in one step.'
+    ],
+    'age-calculator' => [
+        'id' => 'age_calculator',
+        'h1' => 'Age Calculator Online',
+        'title' => 'Age Calculator - Calculate Age from Date of Birth | Any2Convert',
+        'meta_desc' => 'Find current age in years and months by entering a date of birth.',
+        'icon' => 'AGE',
+        'faqs' => [['q' => 'Does it show months too?', 'a' => 'Yes. The age calculator shows completed years and the months since the last birthday.']],
+        'content' => 'Use the age calculator for forms, records, school applications, and quick age math.'
     ]
 ];

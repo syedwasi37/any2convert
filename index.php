@@ -27,7 +27,13 @@ $tool_slugs = [
     'resize_image' => 'resize-image', 'crop_image' => 'crop-image', 'image_enhancer' => 'image-enhancer', 'image_converter' => 'image-converter', 'video_to_audio' => 'video-to-audio', 'ai_image_generator' => 'ai-image-generator',
     'ocr_tool' => 'ocr-image-to-text', 'currency_converter' => 'currency-converter', 'length_converter' => 'length-converter',
     'weight_converter' => 'weight-converter', 'temperature_converter' => 'temperature-converter', 'area_converter' => 'area-converter',
-    'volume_converter' => 'volume-converter', 'speed_converter' => 'speed-converter', 'time_converter' => 'time-converter'
+    'volume_converter' => 'volume-converter', 'speed_converter' => 'speed-converter', 'time_converter' => 'time-converter',
+    'invoice_generator' => 'invoice-generator', 'ats_resume_checker' => 'ats-resume-checker',
+    'social_image_resizer' => 'social-image-resizer', 'jwt_decoder' => 'jwt-decoder',
+    'bank_statement_to_excel' => 'bank-statement-pdf-to-excel', 'grammar_checker' => 'grammar-checker',
+    'paraphrase_tool' => 'paraphrase-tool', 'percentage_calculator' => 'percentage-calculator',
+    'loan_calculator' => 'loan-calculator', 'bmi_calculator' => 'bmi-calculator',
+    'age_calculator' => 'age-calculator'
 ];
 
 // Get all tools from database for dynamic display
@@ -111,6 +117,41 @@ $tools = [
             ['id' => 'speed_converter', 'name' => 'Speed Converter', 'icon' => 'speed_converter', 'desc' => 'Convert km/h, mph, knots, and m/s'],
             ['id' => 'time_converter', 'name' => 'Time Converter', 'icon' => 'time_converter', 'desc' => 'Convert seconds, minutes, hours, days, and years'],
         ]
+    ],
+    'calculator' => [
+        'title' => 'Calculator Tools',
+        'icon' => 'CALC',
+        'tools' => [
+            ['id' => 'percentage_calculator', 'name' => 'Percentage Calculator', 'icon' => 'percentage_calculator', 'desc' => 'Find percentages, rates, and quick value ratios'],
+            ['id' => 'loan_calculator', 'name' => 'Loan Calculator', 'icon' => 'loan_calculator', 'desc' => 'Calculate EMI, total payment, and total interest'],
+            ['id' => 'bmi_calculator', 'name' => 'BMI Calculator', 'icon' => 'bmi_calculator', 'desc' => 'Check body mass index from height and weight'],
+            ['id' => 'age_calculator', 'name' => 'Age Calculator', 'icon' => 'age_calculator', 'desc' => 'Calculate age in years and months from birth date'],
+        ]
+    ],
+    'business' => [
+        'title' => 'Business Tools',
+        'icon' => 'BIZ',
+        'tools' => [
+            ['id' => 'invoice_generator', 'name' => 'Invoice Generator', 'icon' => 'invoice_generator', 'desc' => 'Create printable invoices with totals and tax'],
+            ['id' => 'ats_resume_checker', 'name' => 'ATS Resume Checker', 'icon' => 'ats_resume_checker', 'desc' => 'Compare your resume against a job description'],
+            ['id' => 'bank_statement_to_excel', 'name' => 'Bank Statement PDF to Excel', 'icon' => 'bank_statement_to_excel', 'desc' => 'Extract statement rows and export them to XLSX'],
+            ['id' => 'social_image_resizer', 'name' => 'Social Image Resizer', 'icon' => 'social_image_resizer', 'desc' => 'Resize creatives for Instagram, YouTube, LinkedIn, and more'],
+        ]
+    ],
+    'writing' => [
+        'title' => 'Writing Tools',
+        'icon' => 'WRITE',
+        'tools' => [
+            ['id' => 'grammar_checker', 'name' => 'Grammar Checker', 'icon' => 'grammar_checker', 'desc' => 'Clean spacing, punctuation, and casing issues'],
+            ['id' => 'paraphrase_tool', 'name' => 'Paraphrase Tool', 'icon' => 'paraphrase_tool', 'desc' => 'Rewrite wording into a cleaner alternative phrasing'],
+        ]
+    ],
+    'developer' => [
+        'title' => 'Developer Tools',
+        'icon' => 'DEV',
+        'tools' => [
+            ['id' => 'jwt_decoder', 'name' => 'JWT Decoder', 'icon' => 'jwt_decoder', 'desc' => 'Decode token headers and payloads locally'],
+        ]
     ]
 ];
 
@@ -119,6 +160,10 @@ $categoryMeta = [
     'convert' => ['label' => 'Document Converters',   'accent' => 'blue',  'hex' => '#3B82F6'],
     'utility' => ['label' => 'Utility Tools',         'accent' => 'violet','hex' => '#8B5CF6'],
     'conversion' => ['label' => 'Conversion Tools',   'accent' => 'green', 'hex' => '#10B981'],
+    'calculator' => ['label' => 'Calculator Tools',   'accent' => 'amber', 'hex' => '#F59E0B'],
+    'business' => ['label' => 'Business Tools',       'accent' => 'emerald', 'hex' => '#10B981'],
+    'writing' => ['label' => 'Writing Tools',         'accent' => 'indigo', 'hex' => '#6366F1'],
+    'developer' => ['label' => 'Developer Tools',     'accent' => 'cyan', 'hex' => '#06B6D4'],
 ];
 ?>
 <!DOCTYPE html>
@@ -878,6 +923,10 @@ $categoryMeta = [
             <button class="tool-filter-chip" data-tool-filter="convert" type="button">Converters</button>
             <button class="tool-filter-chip" data-tool-filter="utility" type="button">Utility</button>
             <button class="tool-filter-chip" data-tool-filter="conversion" type="button">Conversion</button>
+            <button class="tool-filter-chip" data-tool-filter="calculator" type="button">Calculators</button>
+            <button class="tool-filter-chip" data-tool-filter="business" type="button">Business</button>
+            <button class="tool-filter-chip" data-tool-filter="writing" type="button">Writing</button>
+            <button class="tool-filter-chip" data-tool-filter="developer" type="button">Developer</button>
         </div>
     </div>
     <div id="toolNoResults" class="hidden-by-filter" style="margin:12px 0 24px;padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--text-secondary);text-align:center;">
@@ -915,6 +964,17 @@ $categoryMeta = [
         'volume_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10"/><path d="M9 3v4l-4 7a5 5 0 0 0 4.4 7h5.2A5 5 0 0 0 19 14l-4-7V3"/></svg>',
         'speed_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13a8 8 0 1 0-16 0"/><path d="M12 13l4-4"/><path d="M12 21v-2"/></svg>',
         'time_converter' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+        'invoice_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>',
+        'ats_resume_checker' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>',
+        'social_image_resizer' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h8v8H8z"/></svg>',
+        'jwt_decoder' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h10"/><path d="M7 13h7"/><path d="M7 17h4"/></svg>',
+        'bank_statement_to_excel' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5"/><path d="M9 14l2 2 4-4"/></svg>',
+        'grammar_checker' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h6"/><path d="M7 5v14"/><path d="M15 5l5 14"/><path d="M13 14h5"/></svg>',
+        'paraphrase_tool' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10"/><path d="M7 12h7"/><path d="M7 17h10"/><path d="M17 10l3 2-3 2"/></svg>',
+        'percentage_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+        'loan_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h10"/><path d="M7 14h5"/></svg>',
+        'bmi_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M8 7h8"/><path d="M8 12h8"/><path d="M8 17h8"/></svg>',
+        'age_calculator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M3 10h18"/></svg>',
     ];
 
     $catColors = [
@@ -922,6 +982,10 @@ $categoryMeta = [
         'convert' => ['bg'=>'rgba(59,130,246,0.12)', 'color'=>'#60A5FA', 'label-bg'=>'rgba(59,130,246,0.1)', 'label-color'=>'#60A5FA'],
         'utility' => ['bg'=>'rgba(139,92,246,0.12)', 'color'=>'#A78BFA', 'label-bg'=>'rgba(139,92,246,0.1)','label-color'=>'#A78BFA'],
         'conversion' => ['bg'=>'rgba(16,185,129,0.12)', 'color'=>'#34D399', 'label-bg'=>'rgba(16,185,129,0.1)','label-color'=>'#34D399'],
+        'calculator' => ['bg'=>'rgba(245,158,11,0.12)', 'color'=>'#FBBF24', 'label-bg'=>'rgba(245,158,11,0.1)','label-color'=>'#FBBF24'],
+        'business' => ['bg'=>'rgba(16,185,129,0.12)', 'color'=>'#34D399', 'label-bg'=>'rgba(16,185,129,0.1)','label-color'=>'#34D399'],
+        'writing' => ['bg'=>'rgba(99,102,241,0.12)', 'color'=>'#818CF8', 'label-bg'=>'rgba(99,102,241,0.1)','label-color'=>'#818CF8'],
+        'developer' => ['bg'=>'rgba(6,182,212,0.12)', 'color'=>'#22D3EE', 'label-bg'=>'rgba(6,182,212,0.1)','label-color'=>'#22D3EE'],
     ];
 
     foreach ($tools as $catKey => $category):
@@ -1041,7 +1105,8 @@ $categoryMeta = [
                 ['img_to_pdf','Image to PDF'],['pdf_to_word','PDF to Word'],
                 ['merge_pdf','Merge PDF'],['compress_pdf','Compress PDF'],
                 ['ocr_tool','OCR Tool'],['json_to_csv','JSON to CSV'],
-                ['qr_generator','QR Generator'],['protect_pdf','Protect PDF'],
+                ['currency_converter','Currency Converter'],['invoice_generator','Invoice Generator'],
+                ['grammar_checker','Grammar Checker'],['jwt_decoder','JWT Decoder'],
             ];
             foreach($popular as [$id,$label]): 
                 $slug = $tool_slugs[$id] ?? $id;
@@ -1321,7 +1386,11 @@ function getToolName(toolId) {
         'image_converter':'Image Converter','video_to_audio':'Video to Audio','crop_image':'Crop Image','ai_image_generator':'AI Image Generator','ocr_tool':'OCR Tool',
         'scan_to_pdf':'Scan to PDF','currency_converter':'Currency Converter','length_converter':'Length Converter',
         'weight_converter':'Weight Converter','temperature_converter':'Temperature Converter','area_converter':'Area Converter',
-        'volume_converter':'Volume Converter','speed_converter':'Speed Converter','time_converter':'Time Converter'
+        'volume_converter':'Volume Converter','speed_converter':'Speed Converter','time_converter':'Time Converter',
+        'invoice_generator':'Invoice Generator','ats_resume_checker':'ATS Resume Checker','social_image_resizer':'Social Image Resizer',
+        'jwt_decoder':'JWT Decoder','bank_statement_to_excel':'Bank Statement PDF to Excel','grammar_checker':'Grammar Checker',
+        'paraphrase_tool':'Paraphrase Tool','percentage_calculator':'Percentage Calculator','loan_calculator':'Loan Calculator',
+        'bmi_calculator':'BMI Calculator','age_calculator':'Age Calculator'
     };
     return names[toolId] || 'Tool';
 }
