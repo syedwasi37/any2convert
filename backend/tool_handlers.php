@@ -133,7 +133,7 @@ function getGenericUnitConverterHTML(array $config): string
 
     return '
     <div class="space-y-6">
-        <div class="grid lg:grid-cols-[1.08fr_0.92fr] gap-6">
+        <div class="grid xl:grid-cols-[1.2fr_0.8fr] gap-6">
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
                 <div class="flex items-start justify-between gap-4 mb-5">
                     <div>
@@ -143,30 +143,30 @@ function getGenericUnitConverterHTML(array $config): string
                     </div>
                     <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">⇄</div>
                 </div>
-                <div class="grid md:grid-cols-[1.2fr_0.8fr] gap-4">
+                <div class="grid lg:grid-cols-[1.35fr_0.65fr] gap-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Enter value</label>
-                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" placeholder="Enter a value" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">Type any number and the result updates instantly.</p>
                     </div>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Precision</label>
-                        <input type="range" id="unitConverterPrecision" min="0" max="' . $decimals . '" value="' . min(4, $decimals) . '" class="w-full accent-blue-600">
+                        <input type="range" id="unitConverterPrecision" min="0" max="' . $decimals . '" value="' . min(4, $decimals) . '" class="w-full mt-2 accent-blue-600">
                         <div class="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                             <span>Rounded output</span>
                             <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300 font-black"><span id="unitConverterPrecisionValue">' . min(4, $decimals) . '</span> dp</span>
                         </div>
                     </div>
                 </div>
-                <div class="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
+                <div class="grid lg:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert from</label>
-                        <select id="unitConverterFrom" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
+                        <select id="unitConverterFrom" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
                     </div>
-                    <button id="unitConverterSwap" class="h-14 w-14 rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">⇄</button>
+                    <button id="unitConverterSwap" class="h-[62px] w-[62px] rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">⇄</button>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert to</label>
-                        <select id="unitConverterTo" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
+                        <select id="unitConverterTo" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
                     </div>
                 </div>
                 <div class="mt-5 flex flex-wrap gap-3">
@@ -432,7 +432,7 @@ function getCurrencyConverterHTML(): string
 {
     return '
     <div class="space-y-6">
-        <div class="grid lg:grid-cols-[1.08fr_0.92fr] gap-6">
+        <div class="grid xl:grid-cols-[1.2fr_0.8fr] gap-6">
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-emerald-50/70 to-blue-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
                 <div class="flex items-start justify-between gap-4 mb-5">
                     <div>
@@ -442,27 +442,27 @@ function getCurrencyConverterHTML(): string
                     </div>
                     <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 text-xl">$</div>
                 </div>
-                <div class="grid md:grid-cols-[1.15fr_0.85fr] gap-4">
+                <div class="grid lg:grid-cols-[1.35fr_0.65fr] gap-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Amount</label>
-                        <input type="number" id="currencyAmount" value="1" step="any" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                        <input type="number" id="currencyAmount" value="1" step="any" placeholder="Enter amount" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">Enter any amount and compare it live.</p>
                     </div>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Rate sync</label>
-                        <button id="currencyRefreshBtn" class="w-full px-4 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Refresh Live Rates</button>
+                        <button id="currencyRefreshBtn" class="w-full min-h-[62px] px-5 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Refresh Live Rates</button>
                         <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">Pull the latest available market reference.</div>
                     </div>
                 </div>
-                <div class="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
+                <div class="grid lg:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">From currency</label>
-                        <select id="currencyFrom" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
+                        <select id="currencyFrom" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
                     </div>
-                    <button id="currencySwapBtn" class="h-14 w-14 rounded-2xl bg-emerald-600 text-white font-black text-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">⇄</button>
+                    <button id="currencySwapBtn" class="h-[62px] w-[62px] rounded-2xl bg-emerald-600 text-white font-black text-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">⇄</button>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">To currency</label>
-                        <select id="currencyTo" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
+                        <select id="currencyTo" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
                     </div>
                 </div>
                 <div class="mt-5 flex flex-wrap gap-3">
