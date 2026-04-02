@@ -133,45 +133,59 @@ function getGenericUnitConverterHTML(array $config): string
 
     return '
     <div class="space-y-6">
-        <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-6">
-            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
-                <div class="mb-4">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">' . $title . '</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">' . $description . '</p>
+        <div class="grid lg:grid-cols-[1.08fr_0.92fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Smart Converter</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">' . $title . '</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">' . $description . '</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">⇄</div>
                 </div>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Value</label>
-                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white">
+                <div class="grid md:grid-cols-[1.2fr_0.8fr] gap-4">
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Enter value</label>
+                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">Type any number and the result updates instantly.</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Precision</label>
-                        <input type="range" id="unitConverterPrecision" min="0" max="' . $decimals . '" value="' . min(4, $decimals) . '" class="w-full">
-                        <p class="text-xs text-gray-500 mt-2"><span id="unitConverterPrecisionValue">' . min(4, $decimals) . '</span> decimal places</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">From</label>
-                        <select id="unitConverterFrom" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">To</label>
-                        <select id="unitConverterTo" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Precision</label>
+                        <input type="range" id="unitConverterPrecision" min="0" max="' . $decimals . '" value="' . min(4, $decimals) . '" class="w-full accent-blue-600">
+                        <div class="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                            <span>Rounded output</span>
+                            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300 font-black"><span id="unitConverterPrecisionValue">' . min(4, $decimals) . '</span> dp</span>
+                        </div>
                     </div>
                 </div>
-                <div class="mt-4 flex flex-wrap gap-3">
-                    <button id="unitConverterSwap" class="px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Swap Units</button>
-                    <button id="unitConverterCopy" class="px-4 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition">Copy Result</button>
+                <div class="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert from</label>
+                        <select id="unitConverterFrom" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
+                    </div>
+                    <button id="unitConverterSwap" class="h-14 w-14 rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">⇄</button>
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert to</label>
+                        <select id="unitConverterTo" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
+                    </div>
+                </div>
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="unitConverterCopy" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition">Copy Result</button>
+                    <div class="px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-sm font-semibold">Fast, private, and client-side</div>
                 </div>
                 <p id="unitConverterStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">' . $formulaText . '</p>
             </div>
-            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-950/70 p-6">
-                <p class="text-xs font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Live Preview</p>
-                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-6">
-                    <p id="unitConverterResultText" class="text-3xl font-black text-gray-900 dark:text-white">0</p>
-                    <p id="unitConverterFormula" class="text-sm text-gray-500 dark:text-gray-400 mt-3">Choose units to start converting.</p>
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Live Preview</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <p id="unitConverterResultText" class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">0</p>
+                    <p id="unitConverterFormula" class="text-sm text-gray-500 dark:text-gray-400 mt-3 leading-6">Choose units to start converting.</p>
                 </div>
-                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-5">
-                    <h4 class="font-bold text-gray-900 dark:text-white">Common conversions</h4>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <h4 class="font-black text-gray-900 dark:text-white">Quick conversions</h4>
+                        <span class="text-xs font-black uppercase tracking-[0.18em] text-gray-400">Popular</span>
+                    </div>
                     <div id="unitConverterQuickGrid" class="mt-4 grid sm:grid-cols-2 gap-3"></div>
                 </div>
             </div>
@@ -235,9 +249,9 @@ function getGenericUnitConverterHTML(array $config): string
                 quickGrid.innerHTML = "";
                 Object.entries(units).filter(([key]) => key !== fromKey).slice(0, 6).forEach(([key, unit]) => {
                     const card = document.createElement("div");
-                    card.className = "rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-900 px-4 py-3";
+                    card.className = "rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-3";
                     const converted = convertValue(currentValue, fromKey, key);
-                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${unit.short || unit.label}</p><p class="text-lg font-bold text-gray-900 dark:text-white mt-2">${formatNumber(converted, Number(precisionInput.value))}</p>`;
+                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${unit.short || unit.label}</p><p class="text-lg font-black text-gray-900 dark:text-white mt-2">${formatNumber(converted, Number(precisionInput.value))}</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${unit.label}</p>`;
                     quickGrid.appendChild(card);
                 });
             }
@@ -418,44 +432,56 @@ function getCurrencyConverterHTML(): string
 {
     return '
     <div class="space-y-6">
-        <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-6">
-            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
-                <div class="mb-4">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Live Currency Converter</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Convert between major currencies with live daily rates from Frankfurter using official institutions and central-bank sources.</p>
+        <div class="grid lg:grid-cols-[1.08fr_0.92fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-emerald-50/70 to-blue-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Rates</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Live Currency Converter</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Convert between major currencies with live daily rates from Frankfurter using official institutions and central-bank sources.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 text-xl">$</div>
                 </div>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Amount</label>
-                        <input type="number" id="currencyAmount" value="1" step="any" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white">
+                <div class="grid md:grid-cols-[1.15fr_0.85fr] gap-4">
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Amount</label>
+                        <input type="number" id="currencyAmount" value="1" step="any" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">Enter any amount and compare it live.</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Refresh</label>
-                        <button id="currencyRefreshBtn" class="w-full px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Refresh Live Rates</button>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">From</label>
-                        <select id="currencyFrom" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">To</label>
-                        <select id="currencyTo" class="w-full p-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white text-gray-900 dark:bg-slate-950 dark:text-white"></select>
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Rate sync</label>
+                        <button id="currencyRefreshBtn" class="w-full px-4 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Refresh Live Rates</button>
+                        <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">Pull the latest available market reference.</div>
                     </div>
                 </div>
-                <div class="mt-4 flex flex-wrap gap-3">
-                    <button id="currencySwapBtn" class="px-4 py-3 rounded-2xl bg-slate-900 dark:bg-slate-700 text-white font-semibold">Swap</button>
-                    <button id="currencyCopyBtn" class="px-4 py-3 rounded-2xl bg-emerald-600 text-white font-semibold">Copy Result</button>
+                <div class="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end mt-4">
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">From currency</label>
+                        <select id="currencyFrom" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
+                    </div>
+                    <button id="currencySwapBtn" class="h-14 w-14 rounded-2xl bg-emerald-600 text-white font-black text-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">⇄</button>
+                    <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">To currency</label>
+                        <select id="currencyTo" class="w-full px-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
+                    </div>
+                </div>
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="currencyCopyBtn" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition">Copy Result</button>
+                    <div class="px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-sm font-semibold">Daily reference rates, no key required</div>
                 </div>
                 <p id="currencyStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Loading latest currency list and rates...</p>
             </div>
-            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-950/70 p-6">
-                <p class="text-xs font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Output</p>
-                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-6">
-                    <p id="currencyResultText" class="text-3xl font-black text-gray-900 dark:text-white">--</p>
-                    <p id="currencyMetaText" class="text-sm text-gray-500 dark:text-gray-400 mt-3">Waiting for live rates.</p>
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-emerald-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Output</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <p id="currencyResultText" class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">--</p>
+                    <p id="currencyMetaText" class="text-sm text-gray-500 dark:text-gray-400 mt-3 leading-6">Waiting for live rates.</p>
                 </div>
-                <div class="mt-4 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 p-5">
-                    <h4 class="font-bold text-gray-900 dark:text-white">Quick rates</h4>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <h4 class="font-black text-gray-900 dark:text-white">Quick rates</h4>
+                        <span class="text-xs font-black uppercase tracking-[0.18em] text-gray-400">Market view</span>
+                    </div>
                     <div id="currencyQuickRates" class="mt-4 grid sm:grid-cols-2 gap-3"></div>
                 </div>
             </div>
@@ -476,6 +502,21 @@ function getCurrencyConverterHTML(): string
 
             let currencies = {};
             const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
+
+            function flagEmoji(countryCode) {
+                return countryCode
+                    .toUpperCase()
+                    .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
+            }
+
+            function currencyFlag(code) {
+                const map = {
+                    USD: "US", EUR: "EU", GBP: "GB", PKR: "PK", AED: "AE",
+                    SAR: "SA", INR: "IN", CAD: "CA", AUD: "AU", JPY: "JP",
+                    CNY: "CN", CHF: "CH", TRY: "TR", NZD: "NZ", SGD: "SG"
+                };
+                return map[code] ? flagEmoji(map[code]) : "🏳️";
+            }
 
             function formatAmount(value, currency) {
                 try {
@@ -517,7 +558,7 @@ function getCurrencyConverterHTML(): string
                         const currencyLabel = typeof currencies[code] === "string"
                             ? currencies[code]
                             : (currencies[code]?.name || code);
-                        option.textContent = `${code} - ${currencyLabel}`;
+                        option.textContent = `${currencyFlag(code)} ${code} - ${currencyLabel}`;
                         select.appendChild(option);
                     });
                 });
@@ -529,8 +570,8 @@ function getCurrencyConverterHTML(): string
                 quickRates.innerHTML = "";
                 preferred.filter((code) => code !== base && rates[code]).slice(0, 6).forEach((code) => {
                     const card = document.createElement("div");
-                    card.className = "rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-900 px-4 py-3";
-                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${base} to ${code}</p><p class="text-lg font-bold text-gray-900 dark:text-white mt-2">${Number(rates[code]).toFixed(4)}</p>`;
+                    card.className = "rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-3";
+                    card.innerHTML = `<p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">${currencyFlag(base)} ${base} to ${currencyFlag(code)} ${code}</p><p class="text-lg font-black text-gray-900 dark:text-white mt-2">${Number(rates[code]).toFixed(4)}</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">1 ${base} reference rate</p>`;
                     quickRates.appendChild(card);
                 });
             }
@@ -549,8 +590,8 @@ function getCurrencyConverterHTML(): string
                     const dateLabel = ratePayload?.date;
                     if (!Number.isFinite(Number(rate))) throw new Error("No live rate available.");
                     const converted = (Number.isFinite(amount) ? amount : 0) * Number(rate);
-                    resultText.textContent = formatAmount(converted, quote);
-                    metaText.textContent = `${amount || 0} ${base} = ${converted.toFixed(4)} ${quote} using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.`;
+                    resultText.textContent = `${currencyFlag(quote)} ${formatAmount(converted, quote)}`;
+                    metaText.textContent = `${currencyFlag(base)} ${amount || 0} ${base} = ${currencyFlag(quote)} ${converted.toFixed(4)} ${quote} using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.`;
                     status.textContent = "Live exchange rate updated.";
                     const requestedQuotes = preferred.filter((code) => code !== base).slice(0, 6);
                     const quickResp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
