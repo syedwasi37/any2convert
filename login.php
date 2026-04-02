@@ -14,7 +14,12 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Any2Convert</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: 'class'
+    };
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GNWNK7QZTD"></script>
     <script>
         window.dataLayer = window.dataLayer || [];

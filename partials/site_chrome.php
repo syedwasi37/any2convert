@@ -26,7 +26,7 @@ function any2convertRenderChromeStyles(): void
             font-weight: 700;
             font-size: 1.05rem;
             letter-spacing: -0.02em;
-            color: var(--text-main, var(--text-primary, #111118));
+            color: var(--text, var(--text-main, var(--text-primary, #111118)));
         }
         .brand-dot { color: var(--accent, #6c63ff); }
         .site-topbar {
@@ -46,7 +46,7 @@ function any2convertRenderChromeStyles(): void
             border-radius: 999px;
             border: 1px solid var(--panel-border, var(--border, rgba(17,17,24,.08)));
             background: var(--pill-bg, var(--bg-soft, color-mix(in srgb, var(--panel-strong, rgba(255,255,255,.9)) 92%, transparent)));
-            color: var(--pill-text, var(--text-main, var(--text-primary, #111118)));
+            color: var(--pill-text, var(--text, var(--text-main, var(--text-primary, #111118))));
             text-decoration: none;
             font-weight: 700;
             font-size: 0.88rem;
@@ -89,20 +89,20 @@ function any2convertRenderChromeStyles(): void
             background: var(--bg-surface, var(--panel, rgba(255,255,255,.72)));
         }
         .site-footer-link {
-            color: var(--text-muted, var(--text-soft, #626280));
+            color: var(--muted, var(--text-muted, var(--text-soft, #626280)));
             font-size: 0.82rem;
             text-decoration: none;
             transition: color 0.18s ease;
         }
         .site-footer-link:hover {
-            color: var(--text-main, var(--text-primary, #111118));
+            color: var(--text, var(--text-main, var(--text-primary, #111118)));
         }
         .site-footer-heading {
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            color: var(--text-muted, var(--text-soft, #626280));
+            color: var(--muted, var(--text-muted, var(--text-soft, #626280)));
             margin-bottom: 14px;
         }
         @media (max-width: 900px) {

@@ -44,7 +44,12 @@ $tool_html = renderToolHandlerHTML($tool_id);
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <link rel="canonical" href="https://any2convert.com/<?= htmlspecialchars($slug) ?>">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: 'class'
+    };
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
