@@ -125,11 +125,15 @@ function getGenericUnitConverterHTML(array $config): string
     $title = htmlspecialchars($config['title'], ENT_QUOTES);
     $description = htmlspecialchars($config['description'], ENT_QUOTES);
     $unitsJson = base64_encode(json_encode($config['units'], JSON_UNESCAPED_SLASHES));
+    $presetsJson = base64_encode(json_encode($config['presets'] ?? [], JSON_UNESCAPED_SLASHES));
     $decimals = (int) ($config['decimals'] ?? 6);
     $defaultValue = htmlspecialchars((string) ($config['default_value'] ?? '1'), ENT_QUOTES);
     $formulaText = htmlspecialchars($config['formula_text'] ?? 'Results update instantly as you type.', ENT_QUOTES);
     $defaultFrom = htmlspecialchars((string) ($config['default_from'] ?? ''), ENT_QUOTES);
     $defaultTo = htmlspecialchars((string) ($config['default_to'] ?? ''), ENT_QUOTES);
+    $inputPlaceholder = htmlspecialchars((string) ($config['input_placeholder'] ?? 'Enter a value'), ENT_QUOTES);
+    $badge = htmlspecialchars((string) ($config['badge'] ?? 'Smart Converter'), ENT_QUOTES);
+    $icon = htmlspecialchars((string) ($config['icon'] ?? '⇄'), ENT_QUOTES);
 
     return '
     <div class="space-y-6">
@@ -137,16 +141,17 @@ function getGenericUnitConverterHTML(array $config): string
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
                 <div class="flex items-start justify-between gap-4 mb-5">
                     <div>
-                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Smart Converter</p>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">' . $badge . '</p>
                         <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">' . $title . '</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">' . $description . '</p>
                     </div>
-                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">⇄</div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">' . $icon . '</div>
                 </div>
+                <div id="unitConverterPresets" class="flex flex-wrap gap-2 mb-4"></div>
                 <div class="grid md:grid-cols-[1.25fr_0.75fr] gap-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Enter value</label>
-                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" placeholder="Enter a value" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+                        <input type="number" id="unitConverterValue" value="' . $defaultValue . '" step="any" placeholder="' . $inputPlaceholder . '" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-2xl font-black text-gray-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">Type any number and the result updates instantly.</p>
                     </div>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
@@ -194,6 +199,7 @@ function getGenericUnitConverterHTML(array $config): string
     <script>
         (() => {
             const units = JSON.parse(atob("' . $unitsJson . '"));
+            const presets = JSON.parse(atob("' . $presetsJson . '"));
             const valueInput = document.getElementById("unitConverterValue");
             const precisionInput = document.getElementById("unitConverterPrecision");
             const precisionValue = document.getElementById("unitConverterPrecisionValue");
@@ -205,6 +211,7 @@ function getGenericUnitConverterHTML(array $config): string
             const resultText = document.getElementById("unitConverterResultText");
             const formula = document.getElementById("unitConverterFormula");
             const quickGrid = document.getElementById("unitConverterQuickGrid");
+            const presetsWrap = document.getElementById("unitConverterPresets");
 
             const unitEntries = Object.entries(units);
             unitEntries.forEach(([key, unit], index) => {
@@ -223,6 +230,24 @@ function getGenericUnitConverterHTML(array $config): string
             }
             if ("' . $defaultTo . '" && units["' . $defaultTo . '"]) {
                 toSelect.value = "' . $defaultTo . '";
+            }
+
+            function renderPresets() {
+                if (!presetsWrap || !Array.isArray(presets) || !presets.length) return;
+                presetsWrap.innerHTML = "";
+                presets.forEach((preset) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900 text-xs font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 hover:border-blue-400 hover:text-blue-600 transition";
+                    button.textContent = preset.label || "Preset";
+                    button.addEventListener("click", () => {
+                        if (preset.value !== undefined) valueInput.value = preset.value;
+                        if (preset.from && units[preset.from]) fromSelect.value = preset.from;
+                        if (preset.to && units[preset.to]) toSelect.value = preset.to;
+                        update();
+                    });
+                    presetsWrap.appendChild(button);
+                });
             }
 
             function formatNumber(value, digits) {
@@ -287,6 +312,7 @@ function getGenericUnitConverterHTML(array $config): string
                     status.textContent = "Could not copy automatically. Please copy manually.";
                 }
             });
+            renderPresets();
             update();
         })();
     </script>';
@@ -297,10 +323,18 @@ function getLengthConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Length Converter',
         'description' => 'Convert between kilometers, meters, centimeters, millimeters, inches, feet, yards, and miles instantly.',
+        'badge' => 'Distance & Size',
+        'icon' => '↔',
+        'input_placeholder' => 'Example: 1.5',
         'default_value' => '1',
         'default_from' => 'km',
         'default_to' => 'mm',
         'formula_text' => 'Perfect for km to millimeter, inch to centimeter, or mile to meter conversions.',
+        'presets' => [
+            ['label' => '1 km to mm', 'value' => 1, 'from' => 'km', 'to' => 'mm'],
+            ['label' => '6 ft to cm', 'value' => 6, 'from' => 'ft', 'to' => 'cm'],
+            ['label' => '3 mi to km', 'value' => 3, 'from' => 'mi', 'to' => 'km'],
+        ],
         'units' => [
             'km' => ['label' => 'Kilometers', 'short' => 'km', 'factor' => 1000],
             'm' => ['label' => 'Meters', 'short' => 'm', 'factor' => 1],
@@ -319,9 +353,17 @@ function getWeightConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Weight Converter',
         'description' => 'Convert mass between kilograms, grams, milligrams, pounds, ounces, and tonnes.',
+        'badge' => 'Mass & Weight',
+        'icon' => '⚖',
+        'input_placeholder' => 'Example: 72',
         'default_value' => '1',
         'default_from' => 'kg',
         'default_to' => 'lb',
+        'presets' => [
+            ['label' => '1 kg to lb', 'value' => 1, 'from' => 'kg', 'to' => 'lb'],
+            ['label' => '500 g to oz', 'value' => 500, 'from' => 'g', 'to' => 'oz'],
+            ['label' => '2 lb to g', 'value' => 2, 'from' => 'lb', 'to' => 'g'],
+        ],
         'units' => [
             'kg' => ['label' => 'Kilograms', 'short' => 'kg', 'factor' => 1],
             'g' => ['label' => 'Grams', 'short' => 'g', 'factor' => 0.001],
@@ -338,9 +380,17 @@ function getTemperatureConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Temperature Converter',
         'description' => 'Switch between Celsius, Fahrenheit, and Kelvin with the correct formulas applied automatically.',
+        'badge' => 'Weather & Science',
+        'icon' => '°',
+        'input_placeholder' => 'Example: 25',
         'default_value' => '25',
         'default_from' => 'c',
         'default_to' => 'f',
+        'presets' => [
+            ['label' => 'Room temp', 'value' => 25, 'from' => 'c', 'to' => 'f'],
+            ['label' => 'Boiling point', 'value' => 100, 'from' => 'c', 'to' => 'f'],
+            ['label' => 'Freezing point', 'value' => 32, 'from' => 'f', 'to' => 'c'],
+        ],
         'units' => [
             'c' => ['label' => 'Celsius', 'short' => 'deg C', 'type' => 'temperature', 'toBaseFactor' => 1, 'toBaseOffset' => 273.15, 'fromBaseFactor' => 1, 'fromBaseOffset' => -273.15],
             'f' => ['label' => 'Fahrenheit', 'short' => 'deg F', 'type' => 'temperature', 'toBaseFactor' => 0.5555555556, 'toBaseOffset' => 255.3722222222, 'fromBaseFactor' => 1.8, 'fromBaseOffset' => -459.67],
@@ -354,9 +404,17 @@ function getAreaConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Area Converter',
         'description' => 'Convert square units for plots, rooms, land, and map dimensions.',
+        'badge' => 'Land & Space',
+        'icon' => '▢',
+        'input_placeholder' => 'Example: 1200',
         'default_value' => '1',
         'default_from' => 'sqft',
         'default_to' => 'sqm',
+        'presets' => [
+            ['label' => '1200 sq ft', 'value' => 1200, 'from' => 'sqft', 'to' => 'sqm'],
+            ['label' => '1 acre to ha', 'value' => 1, 'from' => 'acre', 'to' => 'hectare'],
+            ['label' => '5000 sq m', 'value' => 5000, 'from' => 'sqm', 'to' => 'acre'],
+        ],
         'units' => [
             'sqm' => ['label' => 'Square Meters', 'short' => 'sq m', 'factor' => 1],
             'sqkm' => ['label' => 'Square Kilometers', 'short' => 'sq km', 'factor' => 1000000],
@@ -375,9 +433,17 @@ function getVolumeConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Volume Converter',
         'description' => 'Convert liters, milliliters, cubic meters, gallons, quarts, pints, and cups.',
+        'badge' => 'Liquid & Capacity',
+        'icon' => '◔',
+        'input_placeholder' => 'Example: 2.5',
         'default_value' => '1',
         'default_from' => 'l',
         'default_to' => 'gal',
+        'presets' => [
+            ['label' => '1 L to gal', 'value' => 1, 'from' => 'l', 'to' => 'gal'],
+            ['label' => '500 mL to cup', 'value' => 500, 'from' => 'ml', 'to' => 'cup'],
+            ['label' => '2 gal to L', 'value' => 2, 'from' => 'gal', 'to' => 'l'],
+        ],
         'units' => [
             'l' => ['label' => 'Liters', 'short' => 'L', 'factor' => 1],
             'ml' => ['label' => 'Milliliters', 'short' => 'mL', 'factor' => 0.001],
@@ -395,9 +461,17 @@ function getSpeedConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Speed Converter',
         'description' => 'Convert speed values between km/h, m/s, mph, knots, and feet per second.',
+        'badge' => 'Travel & Motion',
+        'icon' => '→',
+        'input_placeholder' => 'Example: 60',
         'default_value' => '60',
         'default_from' => 'kmh',
         'default_to' => 'mph',
+        'presets' => [
+            ['label' => '60 km/h', 'value' => 60, 'from' => 'kmh', 'to' => 'mph'],
+            ['label' => '100 mph', 'value' => 100, 'from' => 'mph', 'to' => 'kmh'],
+            ['label' => '20 kn', 'value' => 20, 'from' => 'knot', 'to' => 'kmh'],
+        ],
         'units' => [
             'kmh' => ['label' => 'Kilometers per Hour', 'short' => 'km/h', 'factor' => 1],
             'ms' => ['label' => 'Meters per Second', 'short' => 'm/s', 'factor' => 3.6],
@@ -413,9 +487,17 @@ function getTimeConverterHTML(): string
     return getGenericUnitConverterHTML([
         'title' => 'Time Converter',
         'description' => 'Convert seconds, minutes, hours, days, weeks, months, and years in one place.',
+        'badge' => 'Duration & Time',
+        'icon' => '◷',
+        'input_placeholder' => 'Example: 3',
         'default_value' => '1',
         'default_from' => 'hour',
         'default_to' => 'min',
+        'presets' => [
+            ['label' => '1 hr to min', 'value' => 1, 'from' => 'hour', 'to' => 'min'],
+            ['label' => '7 days to hr', 'value' => 7, 'from' => 'day', 'to' => 'hour'],
+            ['label' => '12 mo to yr', 'value' => 12, 'from' => 'month', 'to' => 'year'],
+        ],
         'units' => [
             'sec' => ['label' => 'Seconds', 'short' => 'sec', 'factor' => 1],
             'min' => ['label' => 'Minutes', 'short' => 'min', 'factor' => 60],
@@ -442,6 +524,7 @@ function getCurrencyConverterHTML(): string
                     </div>
                     <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 text-xl">$</div>
                 </div>
+                <div id="currencyPresets" class="flex flex-wrap gap-2 mb-4"></div>
                 <div class="grid lg:grid-cols-[1.35fr_0.65fr] gap-4">
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Amount</label>
@@ -503,9 +586,16 @@ function getCurrencyConverterHTML(): string
             const quickRates = document.getElementById("currencyQuickRates");
             const fromDisplay = document.getElementById("currencyFromDisplay");
             const toDisplay = document.getElementById("currencyToDisplay");
+            const presetsWrap = document.getElementById("currencyPresets");
 
             let currencies = {};
             const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
+            const presets = [
+                { label: "USD to PKR", from: "USD", to: "PKR", value: 1 },
+                { label: "EUR to USD", from: "EUR", to: "USD", value: 1 },
+                { label: "AED to PKR", from: "AED", to: "PKR", value: 100 },
+                { label: "GBP to INR", from: "GBP", to: "INR", value: 50 }
+            ];
 
             function currencyCountryCode(code) {
                 const map = {
@@ -557,6 +647,24 @@ function getCurrencyConverterHTML(): string
                 renderCurrencyDisplay(toDisplay, toSelect.value);
             }
 
+            function renderCurrencyPresets() {
+                if (!presetsWrap) return;
+                presetsWrap.innerHTML = "";
+                presets.forEach((preset) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900 text-xs font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 hover:border-emerald-400 hover:text-emerald-600 transition";
+                    button.textContent = preset.label;
+                    button.addEventListener("click", () => {
+                        amountInput.value = preset.value;
+                        fromSelect.value = preset.from;
+                        toSelect.value = preset.to;
+                        updateRates();
+                    });
+                    presetsWrap.appendChild(button);
+                });
+            }
+
             function formatAmount(value, currency) {
                 try {
                     return new Intl.NumberFormat(undefined, {
@@ -601,6 +709,7 @@ function getCurrencyConverterHTML(): string
                 fromSelect.value = "USD";
                 toSelect.value = "PKR";
                 syncCurrencyDisplays();
+                renderCurrencyPresets();
             }
 
             function renderQuickRates(base, rates) {
