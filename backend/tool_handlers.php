@@ -1547,7 +1547,7 @@ function getSensitivityConverterHTML() {
                 <div>
                     <p class="text-[11px] tracking-[0.34em] uppercase text-cyan-500 font-semibold">Gaming Tools</p>
                     <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Sensitivity Converter</h2>
-                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-xl">Convert mouse sensitivity between shooter titles and compare true sensitivity versus stretched-resolution visual feel.</p>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-xl">Convert mouse sensitivity between shooter titles, then optionally compare stretched-resolution visual feel for setups like 4:3 stretched versus native 16:9.</p>
                 </div>
                 <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-cyan-500/15 text-cyan-500 items-center justify-center">
                     <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2v20"/><path d="M8 6h8"/><path d="M8 18h8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
@@ -1555,37 +1555,56 @@ function getSensitivityConverterHTML() {
             </div>
             <div class="mt-6 grid md:grid-cols-2 gap-4">
                 <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
-                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">From Game</span>
-                    <select id="sensFromGame" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white"></select>
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">From Game</span>
+                    <select id="sensFromGame" class="mt-3 w-full appearance-none rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white"></select>
                 </label>
                 <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
-                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">To Game</span>
-                    <select id="sensToGame" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white"></select>
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">To Game</span>
+                    <select id="sensToGame" class="mt-3 w-full appearance-none rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white"></select>
                 </label>
             </div>
             <div class="mt-4 grid md:grid-cols-3 gap-4">
-                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Mouse DPI</span><input id="sensDpi" type="number" step="1" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="800"></label>
-                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">In-Game Sens</span><input id="sensValue" type="number" step="0.001" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-lg font-semibold text-slate-900 dark:text-white" value="1.000"></label>
-                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-xs uppercase tracking-[0.22em] text-slate-500">Windows Mouse</span><select id="sensWindows" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white"><option value="0.1">1/11</option><option value="0.2">2/11</option><option value="0.3">3/11</option><option value="0.4">4/11</option><option value="0.5">5/11</option><option value="1" selected>6/11 Default</option><option value="1.5">7/11</option><option value="2">8/11</option><option value="2.5">9/11</option><option value="3">10/11</option><option value="3.5">11/11</option></select></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Mouse DPI</span><input id="sensDpi" type="number" step="1" class="mt-3 w-full rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-xl font-black text-slate-900 shadow-sm dark:text-white" value="800"></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">In-Game Sens</span><input id="sensValue" type="number" step="0.001" class="mt-3 w-full rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-xl font-black text-slate-900 shadow-sm dark:text-white" value="1.000"></label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4"><span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Windows Mouse</span><select id="sensWindows" class="mt-3 w-full appearance-none rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white"><option value="0.1">1/11</option><option value="0.2">2/11</option><option value="0.3">3/11</option><option value="0.4">4/11</option><option value="0.5">5/11</option><option value="1" selected>6/11 Default</option><option value="1.5">7/11</option><option value="2">8/11</option><option value="2.5">9/11</option><option value="3">10/11</option><option value="3.5">11/11</option></select></label>
             </div>
-            <div class="mt-4 grid md:grid-cols-2 gap-4">
+            <div class="mt-5 rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                <label class="inline-flex items-center gap-3 cursor-pointer">
+                    <input id="sensResolutionToggle" type="checkbox" class="h-5 w-5 rounded border border-cyan-300 text-cyan-500 focus:ring-cyan-400">
+                    <span class="text-sm font-semibold text-slate-900 dark:text-white">Use optional stretched-resolution visual adjustment</span>
+                </label>
+                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Keep this off for true raw conversion only. Turn it on if you want an extra suggestion for native vs stretched screen feel.</p>
+            </div>
+            <div id="sensResolutionWrap" class="mt-4 hidden grid md:grid-cols-2 gap-4">
                 <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
-                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Source Resolution Mode</span>
-                    <select id="sensSourceResolution" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Source Resolution Mode</span>
+                    <select id="sensSourceResolution" class="mt-3 w-full appearance-none rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
                         <option value="1920x1080|native">1920x1080 Native 16:9</option>
+                        <option value="2560x1440|native">2560x1440 Native 16:9</option>
+                        <option value="1680x1050|native">1680x1050 Native 16:10</option>
+                        <option value="1440x900|native">1440x900 Native 16:10</option>
                         <option value="1280x960|stretched">1280x960 Stretched 4:3</option>
                         <option value="1280x960|blackbars">1280x960 Black Bars 4:3</option>
+                        <option value="1280x1024|stretched">1280x1024 Stretched 5:4</option>
                         <option value="1440x1080|stretched">1440x1080 Stretched 4:3</option>
+                        <option value="1600x1200|stretched">1600x1200 Stretched 4:3</option>
+                        <option value="1152x864|stretched">1152x864 Stretched 4:3</option>
                         <option value="1024x768|stretched">1024x768 Stretched 4:3</option>
                     </select>
                 </label>
                 <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
-                    <span class="text-xs uppercase tracking-[0.22em] text-slate-500">Target Resolution Mode</span>
-                    <select id="sensTargetResolution" class="mt-3 w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-4 text-base font-semibold text-slate-900 dark:text-white">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Target Resolution Mode</span>
+                    <select id="sensTargetResolution" class="mt-3 w-full appearance-none rounded-[24px] border border-cyan-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-cyan-50/70 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
                         <option value="1920x1080|native">1920x1080 Native 16:9</option>
+                        <option value="2560x1440|native">2560x1440 Native 16:9</option>
+                        <option value="1680x1050|native">1680x1050 Native 16:10</option>
+                        <option value="1440x900|native">1440x900 Native 16:10</option>
                         <option value="1280x960|stretched">1280x960 Stretched 4:3</option>
                         <option value="1280x960|blackbars">1280x960 Black Bars 4:3</option>
+                        <option value="1280x1024|stretched">1280x1024 Stretched 5:4</option>
                         <option value="1440x1080|stretched">1440x1080 Stretched 4:3</option>
+                        <option value="1600x1200|stretched">1600x1200 Stretched 4:3</option>
+                        <option value="1152x864|stretched">1152x864 Stretched 4:3</option>
                         <option value="1024x768|stretched">1024x768 Stretched 4:3</option>
                     </select>
                 </label>
@@ -1606,7 +1625,7 @@ function getSensitivityConverterHTML() {
                 <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">eDPI</p><p id="sensEdpi" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
                 <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Windows Factor</p><p id="sensWinMeta" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">6/11</p></div>
             </div>
-            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-6">
+            <div id="sensVisualCard" class="hidden rounded-[34px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-6">
                 <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Visual Match Suggestion</p>
                 <div id="sensVisualResult" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0.000</div>
                 <p id="sensVisualMeta" class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">This optional suggestion adjusts for perceived horizontal feel when switching between native and stretched resolutions.</p>
@@ -1616,7 +1635,7 @@ function getSensitivityConverterHTML() {
     <script>
         (() => {
             const ratios = { "Valorant": 1, "CS2": 3.181818, "Fortnite": 22.0, "Apex Legends": 3.333333, "Overwatch 2": 10.606061, "Call of Duty": 8.0 };
-            const fromEl = document.getElementById("sensFromGame"), toEl = document.getElementById("sensToGame"), valueEl = document.getElementById("sensValue"), dpiEl = document.getElementById("sensDpi"), winEl = document.getElementById("sensWindows"), sourceResEl = document.getElementById("sensSourceResolution"), targetResEl = document.getElementById("sensTargetResolution"), resultEl = document.getElementById("sensResult"), metaEl = document.getElementById("sensMeta"), edpiEl = document.getElementById("sensEdpi"), winMetaEl = document.getElementById("sensWinMeta"), visualResultEl = document.getElementById("sensVisualResult"), visualMetaEl = document.getElementById("sensVisualMeta");
+            const fromEl = document.getElementById("sensFromGame"), toEl = document.getElementById("sensToGame"), valueEl = document.getElementById("sensValue"), dpiEl = document.getElementById("sensDpi"), winEl = document.getElementById("sensWindows"), resolutionToggleEl = document.getElementById("sensResolutionToggle"), resolutionWrapEl = document.getElementById("sensResolutionWrap"), visualCardEl = document.getElementById("sensVisualCard"), sourceResEl = document.getElementById("sensSourceResolution"), targetResEl = document.getElementById("sensTargetResolution"), resultEl = document.getElementById("sensResult"), metaEl = document.getElementById("sensMeta"), edpiEl = document.getElementById("sensEdpi"), winMetaEl = document.getElementById("sensWinMeta"), visualResultEl = document.getElementById("sensVisualResult"), visualMetaEl = document.getElementById("sensVisualMeta");
             Object.keys(ratios).forEach((game) => {
                 fromEl.appendChild(new Option(game, game));
                 toEl.appendChild(new Option(game, game));
@@ -1624,6 +1643,11 @@ function getSensitivityConverterHTML() {
             fromEl.value = "Valorant";
             toEl.value = "CS2";
             targetResEl.value = "1280x960|stretched";
+            function syncResolutionUI() {
+                const enabled = resolutionToggleEl.checked;
+                resolutionWrapEl.classList.toggle("hidden", !enabled);
+                visualCardEl.classList.toggle("hidden", !enabled);
+            }
             function parseResolution(value) {
                 const [res, mode] = String(value || "").split("|");
                 const parts = String(res || "1920x1080").split("x").map(Number);
@@ -1650,17 +1674,21 @@ function getSensitivityConverterHTML() {
                 resultEl.textContent = converted.toFixed(3);
                 edpiEl.textContent = edpi.toFixed(1);
                 winMetaEl.textContent = winEl.options[winEl.selectedIndex].textContent.replace(" Default", "");
-                visualResultEl.textContent = visualAdjusted.toFixed(3);
                 metaEl.textContent = `${val.toFixed(3)} sens at ${dpi} DPI with ${winMetaEl.textContent} Windows speed converts to about ${converted.toFixed(3)} in ${toEl.value}. True raw sensitivity does not actually change because of resolution alone.`;
-                if (srcVisualFactor === tgtVisualFactor) {
-                    visualMetaEl.textContent = "Source and target resolution modes have the same visual stretch feel, so the optional visual-match suggestion stays the same.";
-                } else {
-                    const diff = ((tgtVisualFactor / srcVisualFactor) - 1) * 100;
-                    visualMetaEl.textContent = `Target mode changes perceived horizontal feel by ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}%. The visual-match suggestion adjusts for that stretched-screen feel.`;
+                if (resolutionToggleEl.checked) {
+                    visualResultEl.textContent = visualAdjusted.toFixed(3);
+                    if (srcVisualFactor === tgtVisualFactor) {
+                        visualMetaEl.textContent = "Source and target resolution modes have the same visual stretch feel, so the optional visual-match suggestion stays the same.";
+                    } else {
+                        const diff = ((tgtVisualFactor / srcVisualFactor) - 1) * 100;
+                        visualMetaEl.textContent = `Target mode changes perceived horizontal feel by ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}%. The visual-match suggestion adjusts for that stretched-screen feel.`;
+                    }
                 }
             }
             [fromEl, toEl, valueEl, dpiEl, winEl, sourceResEl, targetResEl].forEach((el) => el.addEventListener("input", calc));
-            document.querySelectorAll("#sensPresets [data-from]").forEach((btn) => btn.addEventListener("click", () => { fromEl.value = btn.dataset.from; toEl.value = btn.dataset.to; valueEl.value = btn.dataset.value; dpiEl.value = btn.dataset.dpi; winEl.value = btn.dataset.win; sourceResEl.value = btn.dataset.srcres; targetResEl.value = btn.dataset.tgtres; calc(); }));
+            resolutionToggleEl.addEventListener("change", () => { syncResolutionUI(); calc(); });
+            document.querySelectorAll("#sensPresets [data-from]").forEach((btn) => btn.addEventListener("click", () => { fromEl.value = btn.dataset.from; toEl.value = btn.dataset.to; valueEl.value = btn.dataset.value; dpiEl.value = btn.dataset.dpi; winEl.value = btn.dataset.win; sourceResEl.value = btn.dataset.srcres; targetResEl.value = btn.dataset.tgtres; if (btn.dataset.srcres || btn.dataset.tgtres) resolutionToggleEl.checked = true; syncResolutionUI(); calc(); }));
+            syncResolutionUI();
             calc();
         })();
     </script>
