@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/backend/auth_helpers.php';
 require_once __DIR__ . '/backend/ad_helpers.php';
+require_once __DIR__ . '/backend/leaderboard_helpers.php';
 require_once __DIR__ . '/partials/site_chrome.php';
 authRequireLogin();
 
@@ -56,10 +57,78 @@ $favoriteStmt = $conn->prepare("
 $favoriteStmt->execute([$user['id']]);
 $favoriteTool = $favoriteStmt->fetch(PDO::FETCH_ASSOC);
 
+$recordsStmt = $conn->prepare("
+    SELECT tool_key, primary_score, secondary_score, score_label, score_meta, updated_at
+    FROM tool_leaderboards
+    WHERE user_id = ?
+    ORDER BY updated_at DESC
+");
+$recordsStmt->execute([$user['id']]);
+$records = $recordsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
 function dashboardFormatTool(string $tool): string
 {
     return ucwords(str_replace('_', ' ', $tool));
 }
+
+function dashboardFormatLeaderboardTool(string $toolKey): string
+{
+    $config = leaderboardGetConfig($toolKey);
+    return $config['label'] ?? dashboardFormatTool($toolKey);
+}
+
+function dashboardLeaderboardRank(PDO $conn, array $record): int
+{
+    $toolKey = (string) ($record['tool_key'] ?? '');
+    $primary = (float) ($record['primary_score'] ?? 0);
+    $secondary = isset($record['secondary_score']) ? (float) $record['secondary_score'] : null;
+
+    switch ($toolKey) {
+        case 'reaction_time_test':
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM tool_leaderboards WHERE tool_key = ? AND primary_score < ?");
+            $stmt->execute([$toolKey, $primary]);
+            return ((int) $stmt->fetchColumn()) + 1;
+
+        case 'cps_test':
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM tool_leaderboards WHERE tool_key = ? AND primary_score > ?");
+            $stmt->execute([$toolKey, $primary]);
+            return ((int) $stmt->fetchColumn()) + 1;
+
+        case 'memory_match_game':
+            $stmt = $conn->prepare("
+                SELECT COUNT(*)
+                FROM tool_leaderboards
+                WHERE tool_key = ?
+                  AND (
+                    primary_score < ?
+                    OR (primary_score = ? AND COALESCE(secondary_score, 999999999) < ?)
+                  )
+            ");
+            $stmt->execute([$toolKey, $primary, $primary, $secondary ?? 999999999]);
+            return ((int) $stmt->fetchColumn()) + 1;
+
+        case 'typing_speed_test':
+            $stmt = $conn->prepare("
+                SELECT COUNT(*)
+                FROM tool_leaderboards
+                WHERE tool_key = ?
+                  AND (
+                    primary_score > ?
+                    OR (primary_score = ? AND COALESCE(secondary_score, 0) > ?)
+                  )
+            ");
+            $stmt->execute([$toolKey, $primary, $primary, $secondary ?? 0]);
+            return ((int) $stmt->fetchColumn()) + 1;
+
+        default:
+            return 0;
+    }
+}
+
+$records = array_map(function (array $record) use ($conn): array {
+    $record['rank'] = dashboardLeaderboardRank($conn, $record);
+    return $record;
+}, $records);
 
 function dashboardPublicUserId(int $id): string
 {
@@ -455,6 +524,7 @@ function dashboardInitials(string $name): string
 
         <section class="mb-6 flex flex-wrap gap-3">
             <button type="button" class="tab-btn active" data-tab="overview">Overview</button>
+            <button type="button" class="tab-btn" data-tab="records">My Records</button>
             <button type="button" class="tab-btn" data-tab="history">History</button>
             <button type="button" class="tab-btn" data-tab="feedback">Feedback</button>
             <button type="button" class="tab-btn" data-tab="security">Security</button>
@@ -516,7 +586,67 @@ function dashboardInitials(string $name): string
                             </div>
                         </div>
                     </div>
+                    <div class="soft-card rounded-[1.7rem] p-5 mt-5">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--text-faint)]">My Records</p>
+                                <p class="font-bold mt-2"><?= count($records) ?> saved leaderboard <?= count($records) === 1 ? 'entry' : 'entries' ?></p>
+                            </div>
+                            <button type="button" class="cta-btn secondary" onclick="activateDashTab('records')">View All</button>
+                        </div>
+                        <div class="space-y-3 mt-4">
+                            <?php if (!$records): ?>
+                                <div class="soft-card rounded-[1rem] p-4 text-[color:var(--text-soft)] font-semibold">No saved records yet. Finish a leaderboard-enabled tool while logged in to see it here.</div>
+                            <?php else: ?>
+                                <?php foreach (array_slice($records, 0, 3) as $record): ?>
+                                    <div class="soft-card rounded-[1rem] p-4">
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div>
+                                                <p class="font-black"><?= htmlspecialchars(dashboardFormatLeaderboardTool((string) $record['tool_key'])) ?></p>
+                                                <p class="text-sm mt-1 text-[color:var(--text-soft)]"><?= htmlspecialchars((string) $record['score_meta']) ?></p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-black"><?= htmlspecialchars((string) $record['score_label']) ?></p>
+                                                <p class="text-xs mt-1 text-[color:var(--text-faint)]">Rank #<?= (int) $record['rank'] ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <section id="records" class="tab-pane">
+            <div class="glass rounded-[2rem] p-7">
+                <div class="mb-6">
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-[color:var(--text-faint)]">My Records</p>
+                    <h2 class="text-2xl font-black mt-2">Your best leaderboard scores</h2>
+                    <p class="mt-3 leading-7 text-[color:var(--text-soft)]">These are the best public scores saved from your logged-in runs across the competitive tools on Any2Convert.</p>
+                </div>
+                <?php if (!$records): ?>
+                    <div class="history-item text-center text-[color:var(--text-soft)] font-semibold">No saved records yet. Try Reaction Time, CPS Test, Memory Match, or Typing Speed Test while logged in.</div>
+                <?php else: ?>
+                    <div class="space-y-4">
+                        <?php foreach ($records as $record): ?>
+                            <div class="history-item">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <div>
+                                        <p class="text-lg font-black"><?= htmlspecialchars(dashboardFormatLeaderboardTool((string) $record['tool_key'])) ?></p>
+                                        <p class="text-sm mt-1 text-[color:var(--text-soft)]"><?= htmlspecialchars((string) $record['score_meta']) ?></p>
+                                        <p class="text-xs mt-2 font-bold uppercase tracking-[0.18em] text-[color:var(--text-faint)]">Updated <?= htmlspecialchars(date('d M Y, h:i A', strtotime((string) $record['updated_at']))) ?></p>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <span class="px-4 py-2 rounded-2xl soft-card text-sm font-black"><?= htmlspecialchars((string) $record['score_label']) ?></span>
+                                        <span class="px-4 py-2 rounded-2xl soft-card text-sm font-black text-[var(--accent-blue)]">Global Rank #<?= (int) $record['rank'] ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
