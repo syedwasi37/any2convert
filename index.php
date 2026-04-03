@@ -1101,7 +1101,7 @@ $categoryMeta = [
 <?php endif; ?>
 
 <!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
-<main style="max-width:1280px;margin:0 auto;padding:0 20px 100px;">
+<main id="tools" style="max-width:1280px;margin:0 auto;padding:0 20px 100px;">
     <?= adsRenderPosition($conn, 'top_content') ?>
     <div class="tool-search-wrap">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
@@ -1197,7 +1197,7 @@ $categoryMeta = [
     foreach ($tools as $catKey => $category):
         $cc = $catColors[$catKey];
     ?>
-    <section style="margin-bottom:56px;" class="tool-category-section" data-tool-category="<?= htmlspecialchars($catKey) ?>">
+    <section id="<?= $catKey === array_key_first($tools) ? 'categories' : 'category-' . htmlspecialchars($catKey) ?>" style="margin-bottom:56px;" class="tool-category-section" data-tool-category="<?= htmlspecialchars($catKey) ?>">
 
         <!-- Category header -->
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
@@ -1573,6 +1573,10 @@ function redirectToToolPage(toolId) {
     return true;
 }
 
+function isKnownToolId(toolId) {
+    return Object.prototype.hasOwnProperty.call(toolSlugMap, toolId);
+}
+
 // ── Theme (light default, dark optional, persisted) ──
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
@@ -1713,7 +1717,7 @@ function getToolName(toolId) {
 if (window.location.hash) {
     const toolId = window.location.hash.substring(1);
     setTimeout(() => {
-        if (!redirectToToolPage(toolId)) {
+        if (isKnownToolId(toolId) && !redirectToToolPage(toolId)) {
             openTool(toolId);
         }
     }, 100);
