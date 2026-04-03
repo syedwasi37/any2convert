@@ -1015,7 +1015,7 @@ $categoryMeta = [
         </h1>
 
         <p class="hero-sub" style="margin:20px auto 36px;">
-            40+ professional-grade tools for PDF, documents, images, and more. Free forever, no account required.
+            80+ professional-grade tools for PDF, documents, images, and more. Free forever, no account required.
         </p>
 
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;">
