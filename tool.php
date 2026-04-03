@@ -621,6 +621,73 @@ function ensureToolDependencies(toolId) {
     return Promise.all(dependencies.map(loadScriptOnce));
 }
 
+window.any2convertLeaderboard = {
+    escape(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+    async fetch(toolKey) {
+        const response = await fetch(`backend/leaderboard.php?tool=${encodeURIComponent(toolKey)}`, {
+            credentials: 'same-origin'
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Could not load leaderboard.');
+        }
+        return data;
+    },
+    async save(toolKey, payload) {
+        const response = await fetch('backend/save_leaderboard_score.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tool: toolKey, ...payload })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Could not save leaderboard score.');
+        }
+        return data;
+    },
+    render(container, data, options = {}) {
+        if (!container) return;
+        const emptyText = options.emptyText || 'No scores yet. Be the first to set one.';
+        const loginText = options.loginText || 'Log in to save your result on the public leaderboard.';
+        const entries = Array.isArray(data?.entries) ? data.entries : [];
+
+        if (!entries.length) {
+            container.innerHTML = `
+                <div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">
+                    ${this.escape(emptyText)}
+                    <div class="mt-2 text-xs uppercase tracking-[0.18em] ${data?.authenticated ? 'text-emerald-500 dark:text-emerald-300' : 'text-slate-400'}">
+                        ${this.escape(data?.authenticated ? 'Your next strong run can take the top spot.' : loginText)}
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = entries.map((entry) => `
+            <div class="flex items-start justify-between gap-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 px-4 py-3">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-xs font-black text-white dark:bg-white dark:text-slate-900">${entry.rank}</span>
+                        <span class="truncate text-sm font-bold text-slate-900 dark:text-white">${this.escape(entry.display_name)}</span>
+                    </div>
+                    ${entry.score_meta ? `<div class="mt-2 text-xs text-slate-500 dark:text-slate-400">${this.escape(entry.score_meta)}</div>` : ''}
+                </div>
+                <div class="shrink-0 text-right">
+                    <div class="text-sm font-black text-slate-900 dark:text-white">${this.escape(entry.score_label)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+};
+
 
 // Ensure dynamic javascript returned by backend actually executes
 async function executeScripts(container) {

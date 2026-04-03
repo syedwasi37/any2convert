@@ -1727,12 +1727,38 @@ function getReactionTimeTestHTML() {
                 <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Best Time</p>
                 <p id="reactionBest" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0 ms</p>
             </div>
+            <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                <div class="flex items-center justify-between gap-3">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Global Leaderboard</p>
+                    <span class="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-500 dark:text-lime-300">Top 10</span>
+                </div>
+                <div id="reactionLeaderboard" class="mt-4 grid gap-3"></div>
+            </div>
         </div>
     </div>
     <script>
         (() => {
-            const startBtn = document.getElementById("reactionStartBtn"), pad = document.getElementById("reactionPad"), resultEl = document.getElementById("reactionResult"), metaEl = document.getElementById("reactionMeta"), bestEl = document.getElementById("reactionBest");
+            const startBtn = document.getElementById("reactionStartBtn"), pad = document.getElementById("reactionPad"), resultEl = document.getElementById("reactionResult"), metaEl = document.getElementById("reactionMeta"), bestEl = document.getElementById("reactionBest"), leaderboardEl = document.getElementById("reactionLeaderboard");
             let startTime = 0, timeout = null, best = null, state = "idle";
+            function loadLeaderboard() {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.fetch("reaction_time_test")
+                    .then((data) => window.any2convertLeaderboard.render(leaderboardEl, data, {
+                        emptyText: "No reaction scores yet. The first sharp click can own the board.",
+                        loginText: "Log in to save your reaction time to the public leaderboard."
+                    }))
+                    .catch(() => {
+                        leaderboardEl.innerHTML = '<div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">Could not load the leaderboard right now.</div>';
+                    });
+            }
+            function saveScore(result) {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.save("reaction_time_test", {
+                    primary_score: result,
+                    score_label: `${result} ms`,
+                    score_meta: "Best reaction time"
+                }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
+            }
             function resetPad(text, classes) {
                 pad.className = `mt-6 rounded-[34px] border border-slate-200 dark:border-slate-800 min-h-[280px] flex items-center justify-center text-center text-white text-2xl font-black select-none cursor-pointer ${classes}`;
                 pad.textContent = text;
@@ -1763,6 +1789,7 @@ function getReactionTimeTestHTML() {
                     metaEl.textContent = result < 200 ? "Excellent reflexes." : result < 260 ? "Very solid reaction speed." : "Good baseline. Keep practicing.";
                     best = best === null ? result : Math.min(best, result);
                     bestEl.textContent = `${best} ms`;
+                    saveScore(result);
                     state = "done";
                     resetPad("Click Start Again", "bg-slate-900");
                 } else if (state === "waiting") {
@@ -1773,6 +1800,7 @@ function getReactionTimeTestHTML() {
                     resetPad("Too Early", "bg-rose-600");
                 }
             });
+            loadLeaderboard();
         })();
     </script>
 HTML;
@@ -1795,12 +1823,39 @@ function getCpsTestHTML() {
                 <p id="cpsMeta" class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">Your CPS score will appear here.</p>
             </div>
             <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Total Clicks</p><p id="cpsClicks" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
+            <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                <div class="flex items-center justify-between gap-3">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Global Leaderboard</p>
+                    <span class="text-[11px] font-bold uppercase tracking-[0.18em] text-fuchsia-500 dark:text-fuchsia-300">Top 10</span>
+                </div>
+                <div id="cpsLeaderboard" class="mt-4 grid gap-3"></div>
+            </div>
         </div>
     </div>
     <script>
         (() => {
-            const startBtn = document.getElementById("cpsStartBtn"), pad = document.getElementById("cpsPad"), resultEl = document.getElementById("cpsResult"), metaEl = document.getElementById("cpsMeta"), clicksEl = document.getElementById("cpsClicks");
+            const startBtn = document.getElementById("cpsStartBtn"), pad = document.getElementById("cpsPad"), resultEl = document.getElementById("cpsResult"), metaEl = document.getElementById("cpsMeta"), clicksEl = document.getElementById("cpsClicks"), leaderboardEl = document.getElementById("cpsLeaderboard");
             let clicks = 0, state = "idle", timer = null, lockedUntilRelease = false;
+            function loadLeaderboard() {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.fetch("cps_test")
+                    .then((data) => window.any2convertLeaderboard.render(leaderboardEl, data, {
+                        emptyText: "No CPS scores yet. Start clicking and claim the first spot.",
+                        loginText: "Log in to save your CPS score to the public leaderboard."
+                    }))
+                    .catch(() => {
+                        leaderboardEl.innerHTML = '<div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">Could not load the leaderboard right now.</div>';
+                    });
+            }
+            function saveScore(cps, totalClicks) {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.save("cps_test", {
+                    primary_score: cps,
+                    secondary_score: totalClicks,
+                    score_label: `${cps.toFixed(2)} CPS`,
+                    score_meta: `${totalClicks} clicks in 5 seconds`
+                }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
+            }
             function reset() { clearTimeout(timer); clicks = 0; state = "idle"; lockedUntilRelease = false; clicksEl.textContent = "0"; resultEl.textContent = "0.00"; metaEl.textContent = "Your CPS score will appear here."; pad.textContent = "Click when the test starts"; startBtn.textContent = "Start Test"; }
             function startTest() {
                 reset();
@@ -1824,6 +1879,7 @@ function getCpsTestHTML() {
                         const cps = clicks / 5;
                         resultEl.textContent = cps.toFixed(2);
                         metaEl.textContent = cps >= 8 ? "Very fast clicking speed." : cps >= 6 ? "Strong clicking speed." : "Good baseline. Practice for a higher score.";
+                        saveScore(cps, clicks);
                         pad.textContent = "Finished";
                         startBtn.textContent = "Start Again";
                     }, 5000);
@@ -1835,6 +1891,7 @@ function getCpsTestHTML() {
                 }
             });
             reset();
+            loadLeaderboard();
         })();
     </script>
 HTML;
@@ -2685,6 +2742,13 @@ function getMemoryMatchGameHTML() {
                 <div id="memoryBest" class="rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300">Best: --</div>
             </div>
             <div id="memoryBoard" class="grid grid-cols-4 gap-3"></div>
+            <div class="mt-5 rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                <div class="flex items-center justify-between gap-3">
+                    <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Global Leaderboard</p>
+                    <span class="text-[11px] font-bold uppercase tracking-[0.18em] text-fuchsia-500 dark:text-fuchsia-300">Top 10</span>
+                </div>
+                <div id="memoryLeaderboard" class="mt-4 grid gap-3"></div>
+            </div>
         </div>
     </div>
     <script>
@@ -2700,6 +2764,7 @@ function getMemoryMatchGameHTML() {
             const timerEl = document.getElementById("memoryTimer");
             const statusEl = document.getElementById("memoryStatus");
             const bestEl = document.getElementById("memoryBest");
+            const leaderboardEl = document.getElementById("memoryLeaderboard");
             const difficultyEl = document.getElementById("memoryDifficulty");
             const themeEl = document.getElementById("memoryTheme");
             const bestKey = "any2convert-memory-best";
@@ -2736,6 +2801,28 @@ function getMemoryMatchGameHTML() {
                     localStorage.setItem(bestKey, JSON.stringify(best));
                 }
                 updateBest();
+            }
+
+            function loadLeaderboard() {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.fetch("memory_match_game")
+                    .then((data) => window.any2convertLeaderboard.render(leaderboardEl, data, {
+                        emptyText: "No completed runs yet. Clear the board to set the first record.",
+                        loginText: "Log in to save your Memory Match result to the public leaderboard."
+                    }))
+                    .catch(() => {
+                        leaderboardEl.innerHTML = '<div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">Could not load the leaderboard right now.</div>';
+                    });
+            }
+
+            function saveLeaderboardRun() {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.save("memory_match_game", {
+                    primary_score: moves,
+                    secondary_score: seconds,
+                    score_label: `${moves} moves`,
+                    score_meta: `${formatTime(seconds)} · ${difficultyEl.options[difficultyEl.selectedIndex].text}`
+                }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
 
             function startTimer() {
@@ -2788,6 +2875,7 @@ function getMemoryMatchGameHTML() {
                 if (matches !== totalPairs) return;
                 stopTimer();
                 saveBest();
+                saveLeaderboardRun();
                 setStatus(`Board cleared in ${moves} moves and ${formatTime(seconds)}. Hit Start New Game for another shuffle.`, "success");
             }
 
@@ -2875,6 +2963,7 @@ function getMemoryMatchGameHTML() {
             difficultyEl.addEventListener("change", renderBoard);
             themeEl.addEventListener("change", renderBoard);
             renderBoard();
+            loadLeaderboard();
         })();
     </script>
 HTML;

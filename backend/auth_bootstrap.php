@@ -172,4 +172,24 @@ function any2convertBootstrapAuthSchema(PDO $conn): void
         ");
     } catch (Throwable $e) {
     }
+
+    try {
+        $conn->exec("
+            CREATE TABLE IF NOT EXISTS tool_leaderboards (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                tool_key VARCHAR(80) NOT NULL,
+                user_id INT NOT NULL,
+                primary_score DECIMAL(12,4) NOT NULL,
+                secondary_score DECIMAL(12,4) NULL,
+                score_label VARCHAR(120) NOT NULL,
+                score_meta VARCHAR(160) NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY uniq_tool_user (tool_key, user_id),
+                INDEX idx_tool_primary (tool_key, primary_score, secondary_score, updated_at),
+                INDEX idx_tool_user (user_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        ");
+    } catch (Throwable $e) {
+    }
 }
