@@ -336,6 +336,16 @@ $tool_html = renderToolHandlerHTML($tool_id);
         html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/[0.05]"] {
             background: rgba(255,255,255,0.78) !important;
         }
+        html:not(.dark) .tool-container.tool-container-wide [class*="from-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="from-slate-900"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="via-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="via-slate-900"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="to-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="to-slate-900"] {
+            --tw-gradient-from: rgba(255,255,255,0.98) var(--tw-gradient-from-position) !important;
+            --tw-gradient-via: rgba(244,247,255,0.94) var(--tw-gradient-via-position) !important;
+            --tw-gradient-to: rgba(234,240,255,0.9) var(--tw-gradient-to-position) !important;
+        }
         html:not(.dark) .tool-container.tool-container-wide [class*="text-white"] {
             color: #0f172a !important;
         }
@@ -345,6 +355,19 @@ $tool_html = renderToolHandlerHTML($tool_id);
         }
         html:not(.dark) .tool-container.tool-container-wide [class*="border-white/10"] {
             border-color: rgba(148,163,184,0.24) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide pre[class*="bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(244,247,255,0.98), rgba(233,239,252,0.94)) !important;
+            border-color: rgba(148,163,184,0.24) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 16px 30px rgba(15,23,42,0.08) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-50/85"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-50/80"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-50"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(246,248,255,0.9)) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="shadow-black/20"] {
+            box-shadow: 0 24px 60px rgba(15,23,42,0.08) !important;
         }
 
         /* Premium polish layer for the newer wide tools */

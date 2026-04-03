@@ -8,6 +8,13 @@ trackVisit('Home Page');
 $isAdminUser = isset($_SESSION['email']) && $_SESSION['email'] === 'syedwasiulhassanshah@any2convert.com';
 $dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
 
+$trustHighlights = [
+    ['slug' => 'no-file-uploads', 'label' => 'No file uploads', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'],
+    ['slug' => 'instant-processing', 'label' => 'Instant processing', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'],
+    ['slug' => 'free-forever', 'label' => 'Free forever', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'],
+    ['slug' => 'works-in-browser', 'label' => 'Works in browser', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'],
+];
+
 // Lookup table for slugs
 $tool_slugs = [
     'img_to_pdf' => 'image-to-pdf', 'pdf_to_img' => 'pdf-to-image', 'pdf_to_word' => 'pdf-to-word',
@@ -461,8 +468,65 @@ $categoryMeta = [
             font-size: 0.82rem;
             color: var(--text-secondary);
             white-space: nowrap;
+            text-decoration: none;
+            transition: transform 0.28s cubic-bezier(.22,1,.36,1), border-color 0.24s ease, background 0.24s ease, box-shadow 0.24s ease, color 0.24s ease;
         }
         .stat-item svg { flex-shrink: 0; }
+        .stat-item:hover {
+            transform: translateY(-3px);
+            border-color: rgba(108,99,255,0.28);
+            background: color-mix(in srgb, var(--bg-card) 85%, rgba(108,99,255,0.08));
+            color: var(--text-primary);
+            box-shadow: 0 18px 32px rgba(15,23,42,0.10);
+        }
+        .detail-card {
+            display: block;
+            text-decoration: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s cubic-bezier(.22,1,.36,1), border-color 0.24s ease, box-shadow 0.28s ease, background 0.24s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .detail-card::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -36px;
+            width: 180px;
+            height: 120px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(108,99,255,0.14), transparent 68%);
+            opacity: 0;
+            transform: translateX(-50%) scale(.84);
+            transition: opacity 0.28s ease, transform 0.32s cubic-bezier(.22,1,.36,1);
+        }
+        .detail-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(108,99,255,0.28);
+            box-shadow: 0 22px 44px rgba(15,23,42,0.12);
+        }
+        .detail-card:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) scale(1.03);
+        }
+        .detail-card > * { position: relative; z-index: 1; }
+        .detail-card-arrow {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            color: var(--text-muted);
+            opacity: 0;
+            transform: translate(-4px, 4px);
+            transition: opacity 0.24s ease, transform 0.28s cubic-bezier(.22,1,.36,1), color 0.24s ease;
+        }
+        .detail-card:hover .detail-card-arrow {
+            opacity: 1;
+            transform: translate(0, 0);
+            color: var(--accent);
+        }
 
         /* ── Section label ── */
         .section-label {
@@ -1020,22 +1084,12 @@ $categoryMeta = [
         </p>
 
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;">
-            <div class="stat-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                No file uploads
-            </div>
-            <div class="stat-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Instant processing
-            </div>
-            <div class="stat-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                Free forever
-            </div>
-            <div class="stat-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                Works in browser
-            </div>
+            <?php foreach ($trustHighlights as $highlight): ?>
+            <a href="highlights.php?topic=<?= urlencode($highlight['slug']) ?>" class="stat-item">
+                <?= $highlight['icon'] ?>
+                <?= htmlspecialchars($highlight['label']) ?>
+            </a>
+            <?php endforeach; ?>
         </div>
     </div>
 </header>
@@ -1229,19 +1283,23 @@ $categoryMeta = [
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <?php
             $features = [
-                ['icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 'color'=>'var(--green)', 'bg'=>'rgba(16,185,129,0.1)', 'title'=>'Files never leave your device', 'desc'=>'All processing runs directly in your browser using WebAssembly and JavaScript.'],
-                ['icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'color'=>'var(--accent)', 'bg'=>'rgba(108,99,255,0.1)', 'title'=>'Instant results', 'desc'=>'No server round-trips. Conversions happen in milliseconds, regardless of file size.'],
-                ['icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', 'color'=>'var(--amber)', 'bg'=>'rgba(245,158,11,0.1)', 'title'=>'Always free, no watermarks', 'desc'=>'No hidden fees, no paywalls, no branding added to your files.'],
+                ['slug'=>'files-never-leave-your-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 'color'=>'var(--green)', 'bg'=>'rgba(16,185,129,0.1)', 'title'=>'Files never leave your device', 'desc'=>'All processing runs directly in your browser using WebAssembly and JavaScript.'],
+                ['slug'=>'instant-results', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'color'=>'var(--accent)', 'bg'=>'rgba(108,99,255,0.1)', 'title'=>'Instant results', 'desc'=>'No server round-trips. Conversions happen in milliseconds, regardless of file size.'],
+                ['slug'=>'always-free-no-watermarks', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', 'color'=>'var(--amber)', 'bg'=>'rgba(245,158,11,0.1)', 'title'=>'Always free, no watermarks', 'desc'=>'No hidden fees, no paywalls, no branding added to your files.'],
                 ['icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>', 'color'=>'var(--blue)', 'bg'=>'rgba(59,130,246,0.1)', 'title'=>'Works on any device', 'desc'=>'Desktop, tablet, or phone — Any2Convert works everywhere, no app needed.'],
             ];
-            foreach($features as $f): ?>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;">
+            foreach($features as $f):
+                $featureSlug = $f['slug'] ?? 'works-on-any-device'; ?>
+            <a href="highlights.php?topic=<?= urlencode($featureSlug) ?>" class="detail-card" style="padding:24px;">
                 <div style="width:40px;height:40px;border-radius:10px;background:<?= $f['bg'] ?>;color:<?= $f['color'] ?>;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
                     <?= $f['icon'] ?>
                 </div>
                 <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);margin-bottom:6px;letter-spacing:-0.01em;"><?= $f['title'] ?></div>
                 <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.6;"><?= $f['desc'] ?></div>
-            </div>
+                <span class="detail-card-arrow">Read more
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+            </a>
             <?php endforeach; ?>
         </div>
     </section>
