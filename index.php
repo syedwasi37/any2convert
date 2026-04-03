@@ -840,13 +840,14 @@ $categoryMeta = [
         .tool-card::after {
             content: '';
             position: absolute;
-            inset: auto -10% -45% auto;
+            left: 50%;
+            top: 50%;
             width: 180px;
             height: 180px;
             border-radius: 999px;
             background: radial-gradient(circle, rgba(108,99,255,0.18), transparent 68%);
             opacity: 0;
-            transform: translate3d(18px, 18px, 0) scale(.92);
+            transform: translate(-50%, -50%) scale(.82);
             transition: opacity 0.34s ease, transform 0.38s cubic-bezier(.22,1,.36,1);
         }
         .tool-card:hover {
@@ -855,7 +856,7 @@ $categoryMeta = [
         }
         .tool-card:hover::after {
             opacity: 1;
-            transform: translate3d(0, 0, 0) scale(1);
+            transform: translate(-50%, -50%) scale(1.08);
         }
         .tool-card:active {
             transform: translateY(-2px) scale(1.005);

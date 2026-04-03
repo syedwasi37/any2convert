@@ -1628,10 +1628,10 @@ function getSensitivityConverterHTML() {
             </div>
         </div>
         <div class="grid gap-4">
-            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
-                <p class="text-xs uppercase tracking-[0.22em] text-cyan-300">True Engine Sensitivity</p>
+            <div class="rounded-[34px] border border-slate-200/80 dark:border-slate-800 bg-white/92 dark:bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.14)] dark:shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-slate-900 dark:text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-cyan-500 dark:text-cyan-300">True Engine Sensitivity</p>
                 <div id="sensResult" class="mt-4 text-6xl font-black tracking-tight">0.000</div>
-                <p id="sensMeta" class="mt-3 text-sm leading-6 text-slate-300">Choose your source and target game to convert sensitivity.</p>
+                <p id="sensMeta" class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">Choose your source and target game to convert sensitivity.</p>
             </div>
             <div class="grid sm:grid-cols-2 gap-4">
                 <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">eDPI</p><p id="sensEdpi" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
@@ -1675,9 +1675,9 @@ function getSensitivityConverterHTML() {
                 const val = parseFloat(valueEl.value) || 0;
                 const dpi = parseFloat(dpiEl.value) || 0;
                 const windowsFactor = parseFloat(winEl.value) || 1;
-                const effectiveSens = val * windowsFactor;
-                const converted = effectiveSens * (ratios[fromEl.value] / ratios[toEl.value]);
-                const edpi = dpi * effectiveSens;
+                const rawSens = val;
+                const converted = rawSens * (ratios[toEl.value] / ratios[fromEl.value]);
+                const edpi = dpi * rawSens * windowsFactor;
                 const srcRes = parseResolution(sourceResEl.value);
                 const tgtRes = parseResolution(targetResEl.value);
                 const srcVisualFactor = getVisualFactor(srcRes);
@@ -1686,7 +1686,7 @@ function getSensitivityConverterHTML() {
                 resultEl.textContent = converted.toFixed(3);
                 edpiEl.textContent = edpi.toFixed(1);
                 winMetaEl.textContent = winEl.options[winEl.selectedIndex].textContent.replace(" Default", "");
-                metaEl.textContent = `${val.toFixed(3)} sens at ${dpi} DPI with ${winMetaEl.textContent} Windows speed converts to about ${converted.toFixed(3)} in ${toEl.value}. True raw sensitivity does not actually change because of resolution alone.`;
+                metaEl.textContent = `${val.toFixed(3)} sens in ${fromEl.value} converts to about ${converted.toFixed(3)} in ${toEl.value}. DPI and Windows speed affect your eDPI feel, but the cross-game conversion itself is based on the in-game engine ratio.`;
                 if (resolutionToggleEl.checked) {
                     visualResultEl.textContent = visualAdjusted.toFixed(3);
                     if (srcVisualFactor === tgtVisualFactor) {
@@ -1718,10 +1718,10 @@ function getReactionTimeTestHTML() {
             <div id="reactionPad" class="mt-6 rounded-[34px] border border-slate-200 dark:border-slate-800 bg-rose-500/90 min-h-[280px] flex items-center justify-center text-center text-white text-2xl font-black select-none cursor-pointer">Click Start</div>
         </div>
         <div class="grid gap-4">
-            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
-                <p class="text-xs uppercase tracking-[0.22em] text-lime-300">Latest Result</p>
+            <div class="rounded-[34px] border border-slate-200/80 dark:border-slate-800 bg-white/92 dark:bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.14)] dark:shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-slate-900 dark:text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-lime-500 dark:text-lime-300">Latest Result</p>
                 <div id="reactionResult" class="mt-4 text-6xl font-black tracking-tight">0 ms</div>
-                <p id="reactionMeta" class="mt-3 text-sm leading-6 text-slate-300">Your reaction result will appear here.</p>
+                <p id="reactionMeta" class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">Your reaction result will appear here.</p>
             </div>
             <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
                 <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Best Time</p>
@@ -1732,35 +1732,44 @@ function getReactionTimeTestHTML() {
     <script>
         (() => {
             const startBtn = document.getElementById("reactionStartBtn"), pad = document.getElementById("reactionPad"), resultEl = document.getElementById("reactionResult"), metaEl = document.getElementById("reactionMeta"), bestEl = document.getElementById("reactionBest");
-            let startTime = 0, timeout = null, active = false, best = null;
+            let startTime = 0, timeout = null, best = null, state = "idle";
             function resetPad(text, classes) {
                 pad.className = `mt-6 rounded-[34px] border border-slate-200 dark:border-slate-800 min-h-[280px] flex items-center justify-center text-center text-white text-2xl font-black select-none cursor-pointer ${classes}`;
                 pad.textContent = text;
             }
-            startBtn.addEventListener("click", () => {
-                active = false;
+            function startRound() {
                 clearTimeout(timeout);
+                state = "waiting";
+                startBtn.textContent = "Restart Test";
                 resetPad("Wait for green...", "bg-amber-500");
                 const delay = 1200 + Math.random() * 2200;
                 timeout = setTimeout(() => {
                     startTime = performance.now();
-                    active = true;
+                    state = "ready";
                     resetPad("CLICK!", "bg-emerald-500");
                 }, delay);
+            }
+            startBtn.addEventListener("click", () => {
+                startRound();
             });
             pad.addEventListener("click", () => {
-                if (active) {
+                if (state === "idle" || state === "done") {
+                    startRound();
+                    return;
+                }
+                if (state === "ready") {
                     const result = Math.round(performance.now() - startTime);
                     resultEl.textContent = `${result} ms`;
                     metaEl.textContent = result < 200 ? "Excellent reflexes." : result < 260 ? "Very solid reaction speed." : "Good baseline. Keep practicing.";
                     best = best === null ? result : Math.min(best, result);
                     bestEl.textContent = `${best} ms`;
-                    active = false;
+                    state = "done";
                     resetPad("Click Start Again", "bg-slate-900");
-                } else if (pad.textContent === "Wait for green...") {
+                } else if (state === "waiting") {
                     clearTimeout(timeout);
                     resultEl.textContent = "Too soon";
                     metaEl.textContent = "You clicked before the signal. Start again.";
+                    state = "done";
                     resetPad("Too Early", "bg-rose-600");
                 }
             });
@@ -1776,43 +1785,56 @@ function getCpsTestHTML() {
             <p class="text-[11px] tracking-[0.34em] uppercase text-fuchsia-500 font-semibold">Gaming Tools</p>
             <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">CPS Test</h2>
             <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Click as fast as you can for 5 seconds to measure clicks per second.</p>
+            <button id="cpsStartBtn" class="mt-6 rounded-[28px] bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(217,70,239,0.28)]">Start Test</button>
             <div id="cpsPad" class="mt-6 rounded-[34px] border border-slate-200 dark:border-slate-800 bg-fuchsia-600 min-h-[280px] flex items-center justify-center text-center text-white text-2xl font-black select-none cursor-pointer">Click to Start</div>
         </div>
         <div class="grid gap-4">
-            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
-                <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-300">Clicks Per Second</p>
+            <div class="rounded-[34px] border border-slate-200/80 dark:border-slate-800 bg-white/92 dark:bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.14)] dark:shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-slate-900 dark:text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-500 dark:text-fuchsia-300">Clicks Per Second</p>
                 <div id="cpsResult" class="mt-4 text-6xl font-black tracking-tight">0.00</div>
-                <p id="cpsMeta" class="mt-3 text-sm leading-6 text-slate-300">Your CPS score will appear here.</p>
+                <p id="cpsMeta" class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">Your CPS score will appear here.</p>
             </div>
             <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Total Clicks</p><p id="cpsClicks" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
         </div>
     </div>
     <script>
         (() => {
-            const pad = document.getElementById("cpsPad"), resultEl = document.getElementById("cpsResult"), metaEl = document.getElementById("cpsMeta"), clicksEl = document.getElementById("cpsClicks");
-            let clicks = 0, started = false, ended = false, timer = null;
-            function reset() { clicks = 0; started = false; ended = false; clicksEl.textContent = "0"; resultEl.textContent = "0.00"; metaEl.textContent = "Your CPS score will appear here."; pad.textContent = "Click to Start"; }
+            const startBtn = document.getElementById("cpsStartBtn"), pad = document.getElementById("cpsPad"), resultEl = document.getElementById("cpsResult"), metaEl = document.getElementById("cpsMeta"), clicksEl = document.getElementById("cpsClicks");
+            let clicks = 0, state = "idle", timer = null, lockedUntilRelease = false;
+            function reset() { clearTimeout(timer); clicks = 0; state = "idle"; lockedUntilRelease = false; clicksEl.textContent = "0"; resultEl.textContent = "0.00"; metaEl.textContent = "Your CPS score will appear here."; pad.textContent = "Click when the test starts"; startBtn.textContent = "Start Test"; }
+            function startTest() {
+                reset();
+                state = "running";
+                startBtn.textContent = "Running...";
+                pad.textContent = "Click Here Fast!";
+            }
+            pad.addEventListener("mouseup", () => { lockedUntilRelease = false; });
+            pad.addEventListener("mouseleave", () => { lockedUntilRelease = false; });
+            startBtn.addEventListener("click", startTest);
             pad.addEventListener("click", () => {
-                if (ended) { reset(); return; }
-                if (!started) {
-                    started = true;
+                if (state === "idle" || state === "done") return;
+                if (lockedUntilRelease) return;
+                lockedUntilRelease = true;
+                if (state === "running" && !timer) {
                     clicks = 1;
                     clicksEl.textContent = "1";
                     pad.textContent = "Keep Clicking!";
                     timer = setTimeout(() => {
-                        ended = true;
+                        state = "done";
                         const cps = clicks / 5;
                         resultEl.textContent = cps.toFixed(2);
                         metaEl.textContent = cps >= 8 ? "Very fast clicking speed." : cps >= 6 ? "Strong clicking speed." : "Good baseline. Practice for a higher score.";
-                        pad.textContent = "Test Complete - Click to Reset";
+                        pad.textContent = "Finished";
+                        startBtn.textContent = "Start Again";
                     }, 5000);
                     return;
                 }
-                if (started && !ended) {
+                if (state === "running") {
                     clicks++;
                     clicksEl.textContent = String(clicks);
                 }
             });
+            reset();
         })();
     </script>
 HTML;
@@ -1830,8 +1852,8 @@ function getGamerTagGeneratorHTML() {
             </div>
             <button id="tagGenerateBtn" class="mt-6 rounded-[28px] bg-gradient-to-r from-violet-500 to-indigo-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(139,92,246,0.28)]">Generate Gamer Tags</button>
         </div>
-        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
-            <p class="text-xs uppercase tracking-[0.22em] text-violet-300">Suggestions</p>
+        <div class="rounded-[34px] border border-slate-200/80 dark:border-slate-800 bg-white/92 dark:bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.14)] dark:shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-slate-900 dark:text-white">
+            <p class="text-xs uppercase tracking-[0.22em] text-violet-500 dark:text-violet-300">Suggestions</p>
             <div id="tagResults" class="mt-4 grid gap-3"></div>
         </div>
     </div>
@@ -1849,7 +1871,7 @@ function getGamerTagGeneratorHTML() {
                 const style = document.getElementById("tagStyle").value;
                 const keyword = (document.getElementById("tagKeyword").value || "Shadow").replace(/\s+/g, "");
                 const list = Array.from({ length: 8 }, (_, i) => `${keyword}${styles[style][i % styles[style].length]}${endings[i % endings.length]}`);
-                results.innerHTML = list.map((tag) => `<button class="rounded-[24px] border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-4 text-left font-semibold" data-tag="${tag}">${tag}</button>`).join("");
+                results.innerHTML = list.map((tag) => `<button class="rounded-[24px] border border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-4 text-left font-semibold text-slate-900 dark:text-white transition" data-tag="${tag}">${tag}</button>`).join("");
                 results.querySelectorAll("[data-tag]").forEach((btn) => btn.addEventListener("click", async () => {
                     try { await navigator.clipboard.writeText(btn.dataset.tag); btn.textContent = `${btn.dataset.tag} - Copied`; } catch (e) {}
                 }));
@@ -2654,13 +2676,13 @@ function getMemoryMatchGameHTML() {
             </div>
         </div>
 
-        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-5 md:p-6 shadow-[0_24px_80px_rgba(15,23,42,0.35)]">
+        <div class="rounded-[34px] border border-slate-200/80 dark:border-slate-800 bg-white/92 dark:bg-slate-950 p-5 md:p-6 shadow-[0_24px_80px_rgba(15,23,42,0.14)] dark:shadow-[0_24px_80px_rgba(15,23,42,0.35)] text-slate-900 dark:text-white">
             <div class="flex items-center justify-between gap-4 mb-4">
                 <div>
-                    <p class="text-[11px] uppercase tracking-[0.24em] text-fuchsia-300">Live Board</p>
-                    <h3 class="mt-2 text-xl font-black text-white">Tap two cards to find a pair</h3>
+                    <p class="text-[11px] uppercase tracking-[0.24em] text-fuchsia-500 dark:text-fuchsia-300">Live Board</p>
+                    <h3 class="mt-2 text-xl font-black text-slate-900 dark:text-white">Tap two cards to find a pair</h3>
                 </div>
-                <div id="memoryBest" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300">Best: --</div>
+                <div id="memoryBest" class="rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300">Best: --</div>
             </div>
             <div id="memoryBoard" class="grid grid-cols-4 gap-3"></div>
         </div>
@@ -2826,9 +2848,9 @@ function getMemoryMatchGameHTML() {
                 const deck = createDeck();
                 board.className = `grid gap-3 ${deck.length >= 20 ? "grid-cols-4 md:grid-cols-5" : "grid-cols-4"}`;
                 board.innerHTML = deck.map((card) => `
-                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square rounded-[24px] border border-white/10 bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-fuchsia-400/40 hover:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35" style="perspective:1000px;">
-                        <span data-card-front class="absolute inset-0 rounded-[24px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-400 transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg);transform-style:preserve-3d;">Flip</span>
-                        <span data-card-back class="absolute inset-0 rounded-[24px] border border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/15 via-pink-500/10 to-indigo-500/15 flex items-center justify-center text-4xl transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(-180deg);transform-style:preserve-3d;">${card.symbol}</span>
+                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square overflow-hidden rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-slate-100 dark:bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-fuchsia-400/40 hover:bg-fuchsia-50 dark:hover:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35" style="perspective:1000px;">
+                        <span data-card-front class="absolute inset-[1px] rounded-[22px] border border-slate-200 dark:border-white/10 bg-gradient-to-br from-white via-fuchsia-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400 transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg);transform-style:preserve-3d;">Flip</span>
+                        <span data-card-back class="absolute inset-[1px] rounded-[22px] border border-fuchsia-200 dark:border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-100 via-pink-50 to-indigo-100 dark:from-fuchsia-500/15 dark:via-pink-500/10 dark:to-indigo-500/15 flex items-center justify-center text-4xl transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(-180deg);transform-style:preserve-3d;">${card.symbol}</span>
                     </button>
                 `).join("");
                 board.querySelectorAll("button").forEach((button) => button.addEventListener("click", handleCardClick));
