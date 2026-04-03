@@ -346,6 +346,27 @@ $tool_html = renderToolHandlerHTML($tool_id);
             --tw-gradient-via: rgba(244,247,255,0.94) var(--tw-gradient-via-position) !important;
             --tw-gradient-to: rgba(234,240,255,0.9) var(--tw-gradient-to-position) !important;
         }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-gradient-to-br"][class*="dark:from-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-gradient-to-br"][class*="dark:from-slate-900"] {
+            background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(243,247,255,0.96) 54%, rgba(231,244,255,0.92) 100%) !important;
+            border-color: rgba(186,205,255,0.5) !important;
+            box-shadow: 0 24px 68px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/92"][class*="dark:bg-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/85"][class*="dark:bg-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/80"][class*="dark:bg-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/75"][class*="dark:bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.94)) !important;
+            border-color: rgba(186,205,255,0.42) !important;
+            box-shadow: 0 18px 44px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.76) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-950"][class*="text-white"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-900"][class*="text-white"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(241,246,255,0.93)) !important;
+            color: #0f172a !important;
+            border-color: rgba(186,205,255,0.42) !important;
+            box-shadow: 0 20px 44px rgba(15,23,42,0.08) !important;
+        }
         html:not(.dark) .tool-container.tool-container-wide [class*="text-white"] {
             color: #0f172a !important;
         }

@@ -1286,7 +1286,7 @@ $categoryMeta = [
                 ['slug'=>'files-never-leave-your-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 'color'=>'var(--green)', 'bg'=>'rgba(16,185,129,0.1)', 'title'=>'Files never leave your device', 'desc'=>'All processing runs directly in your browser using WebAssembly and JavaScript.'],
                 ['slug'=>'instant-results', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'color'=>'var(--accent)', 'bg'=>'rgba(108,99,255,0.1)', 'title'=>'Instant results', 'desc'=>'No server round-trips. Conversions happen in milliseconds, regardless of file size.'],
                 ['slug'=>'always-free-no-watermarks', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', 'color'=>'var(--amber)', 'bg'=>'rgba(245,158,11,0.1)', 'title'=>'Always free, no watermarks', 'desc'=>'No hidden fees, no paywalls, no branding added to your files.'],
-                ['icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>', 'color'=>'var(--blue)', 'bg'=>'rgba(59,130,246,0.1)', 'title'=>'Works on any device', 'desc'=>'Desktop, tablet, or phone — Any2Convert works everywhere, no app needed.'],
+                ['slug'=>'works-on-any-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>', 'color'=>'var(--blue)', 'bg'=>'rgba(59,130,246,0.1)', 'title'=>'Works on any device', 'desc'=>'Desktop, tablet, or phone - Any2Convert works everywhere, no app needed.'],
             ];
             foreach($features as $f):
                 $featureSlug = $f['slug'] ?? 'works-on-any-device'; ?>
@@ -1484,6 +1484,95 @@ function ensureToolDependencies(toolId) {
     return Promise.all(dependencies.map(loadScriptOnce));
 }
 
+const toolSlugMap = {
+    img_to_pdf: 'image-to-pdf',
+    pdf_to_img: 'pdf-to-image',
+    pdf_to_word: 'pdf-to-word',
+    pdf_to_ppt: 'pdf-to-powerpoint',
+    pdf_to_excel: 'pdf-to-excel',
+    merge_pdf: 'merge-pdf',
+    compress_pdf: 'compress-pdf',
+    protect_pdf: 'protect-pdf',
+    word_to_pdf: 'word-to-pdf',
+    excel_to_pdf: 'excel-to-pdf',
+    ppt_to_pdf: 'powerpoint-to-pdf',
+    html_to_pdf: 'html-to-pdf',
+    split_pdf: 'split-pdf',
+    remove_pages: 'remove-pdf-pages',
+    extract_pages: 'extract-pdf-pages',
+    organize_pdf: 'organize-pdf',
+    scan_to_pdf: 'scan-to-pdf',
+    optimize_pdf: 'optimize-pdf',
+    repair_pdf: 'repair-pdf',
+    ocr_pdf: 'ocr-pdf',
+    rotate_pdf: 'rotate-pdf',
+    add_page_numbers: 'add-page-numbers',
+    add_watermark: 'add-watermark',
+    unlock_pdf: 'unlock-pdf',
+    sign_pdf: 'sign-pdf',
+    crop_pdf: 'crop-pdf',
+    compare_pdf: 'compare-pdf',
+    ai_summarizer: 'ai-summarizer',
+    pdf_to_pdfa: 'pdf-to-pdfa',
+    edit_pdf: 'edit-pdf',
+    redact_pdf: 'redact-pdf',
+    translate_pdf: 'translate-pdf',
+    json_to_csv: 'json-to-csv',
+    csv_to_json: 'csv-to-json',
+    qr_generator: 'qr-code-generator',
+    password_gen: 'password-generator',
+    word_counter: 'word-counter',
+    image_compressor: 'image-compressor',
+    bg_remover: 'background-remover',
+    image_to_dxf: 'image-to-dxf',
+    image_to_svg: 'image-to-svg',
+    resize_image: 'resize-image',
+    crop_image: 'crop-image',
+    image_enhancer: 'image-enhancer',
+    image_converter: 'image-converter',
+    video_to_audio: 'video-to-audio',
+    ai_image_generator: 'ai-image-generator',
+    ocr_tool: 'ocr-image-to-text',
+    currency_converter: 'currency-converter',
+    length_converter: 'length-converter',
+    weight_converter: 'weight-converter',
+    temperature_converter: 'temperature-converter',
+    area_converter: 'area-converter',
+    volume_converter: 'volume-converter',
+    speed_converter: 'speed-converter',
+    time_converter: 'time-converter',
+    invoice_generator: 'invoice-generator',
+    ats_resume_checker: 'ats-resume-checker',
+    social_image_resizer: 'social-image-resizer',
+    jwt_decoder: 'jwt-decoder',
+    bank_statement_to_excel: 'bank-statement-pdf-to-excel',
+    grammar_checker: 'grammar-checker',
+    paraphrase_tool: 'paraphrase-tool',
+    percentage_calculator: 'percentage-calculator',
+    loan_calculator: 'loan-calculator',
+    bmi_calculator: 'bmi-calculator',
+    age_calculator: 'age-calculator',
+    sensitivity_converter: 'sensitivity-converter',
+    reaction_time_test: 'reaction-time-test',
+    cps_test: 'cps-test',
+    gamer_tag_generator: 'gamer-tag-generator',
+    clip_to_gif: 'clip-to-gif',
+    tournament_bracket_generator: 'tournament-bracket-generator',
+    spin_wheel: 'spin-the-wheel',
+    random_name_picker: 'random-name-picker',
+    typing_speed_test: 'typing-speed-test',
+    meme_caption_generator: 'meme-caption-generator',
+    truth_or_dare_generator: 'truth-or-dare-generator',
+    memory_match_game: 'memory-match-game'
+};
+
+function redirectToToolPage(toolId) {
+    const slug = toolSlugMap[toolId];
+    if (!slug) return false;
+    window.location.href = `tool.php?slug=${encodeURIComponent(slug)}`;
+    return true;
+}
+
 // ── Theme (light default, dark optional, persisted) ──
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
@@ -1547,6 +1636,9 @@ async function executeScripts(container) {
 
 // ── Tool modal ──
 function openTool(toolId) {
+    if (redirectToToolPage(toolId)) {
+        return;
+    }
     const modal   = document.getElementById('toolModal');
     const title   = document.getElementById('modalTitle');
     const content = document.getElementById('modalContent');
@@ -1620,7 +1712,11 @@ function getToolName(toolId) {
 // URL hash routing
 if (window.location.hash) {
     const toolId = window.location.hash.substring(1);
-    setTimeout(() => openTool(toolId), 100);
+    setTimeout(() => {
+        if (!redirectToToolPage(toolId)) {
+            openTool(toolId);
+        }
+    }, 100);
 }
 
 // ESC to close
