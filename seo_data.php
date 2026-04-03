@@ -736,5 +736,50 @@ $seo_tools = [
         'icon' => 'BRACKET',
         'faqs' => [['q' => 'Does it support odd numbers of teams?', 'a' => 'Yes. Empty slots are filled as BYE entries to complete the bracket.']],
         'content' => 'Build quick brackets for custom lobbies, friendly tournaments, esports tryouts, and gaming nights.'
+    ],
+    'spin-the-wheel' => [
+        'id' => 'spin_wheel',
+        'h1' => 'Spin the Wheel Online',
+        'title' => 'Spin the Wheel - Random Picker Wheel | Any2Convert',
+        'meta_desc' => 'Create a colorful random wheel for names, food choices, dares, and quick decisions.',
+        'icon' => 'WHEEL',
+        'faqs' => [['q' => 'Can I add my own options?', 'a' => 'Yes. Enter your own list of choices and spin the wheel instantly.']],
+        'content' => 'A fun random choice wheel for deciding what to eat, who goes first, or what challenge comes next.'
+    ],
+    'random-name-picker' => [
+        'id' => 'random_name_picker',
+        'h1' => 'Random Name Picker Online',
+        'title' => 'Random Name Picker - Pick Winners and Teams | Any2Convert',
+        'meta_desc' => 'Paste a list of names and randomly choose a winner for giveaways, classes, or game lobbies.',
+        'icon' => 'PICK',
+        'faqs' => [['q' => 'Can I remove winners after picking them?', 'a' => 'Yes. The tool lets you remove the last winner from the remaining list.']],
+        'content' => 'Use the random name picker for giveaways, random team assignment, and quick classroom or event selections.'
+    ],
+    'typing-speed-test' => [
+        'id' => 'typing_speed_test',
+        'h1' => 'Typing Speed Test Online',
+        'title' => 'Typing Speed Test - WPM and Accuracy Checker | Any2Convert',
+        'meta_desc' => 'Measure typing speed, accuracy, elapsed time, and typed characters directly in your browser.',
+        'icon' => 'TYPE',
+        'faqs' => [['q' => 'Does it calculate WPM and accuracy?', 'a' => 'Yes. It shows live words per minute and accuracy while you type.']],
+        'content' => 'A quick typing challenge for students, gamers, and creators who want a clean browser-based WPM test.'
+    ],
+    'meme-caption-generator' => [
+        'id' => 'meme_caption_generator',
+        'h1' => 'Meme Caption Generator Online',
+        'title' => 'Meme Caption Generator - Add Top and Bottom Text | Any2Convert',
+        'meta_desc' => 'Upload an image and add classic meme-style captions with instant preview and download.',
+        'icon' => 'MEME',
+        'faqs' => [['q' => 'Can I download the meme image?', 'a' => 'Yes. After rendering, you can download the meme as a PNG image.']],
+        'content' => 'Create funny caption memes in seconds by adding bold top and bottom text to any image.'
+    ],
+    'truth-or-dare-generator' => [
+        'id' => 'truth_or_dare_generator',
+        'h1' => 'Truth or Dare Generator Online',
+        'title' => 'Truth or Dare Generator - Instant Party Prompts | Any2Convert',
+        'meta_desc' => 'Generate quick truth or dare prompts for parties, streams, and casual games.',
+        'icon' => 'TOD',
+        'faqs' => [['q' => 'Does it generate both truths and dares?', 'a' => 'Yes. You can instantly generate either a truth prompt or a dare prompt.']],
+        'content' => 'Keep party games moving with fast, simple truth and dare prompts that are fun to use on desktop or mobile.'
     ]
 ];

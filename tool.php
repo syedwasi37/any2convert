@@ -45,6 +45,11 @@ $wideToolIds = [
     'gamer_tag_generator',
     'clip_to_gif',
     'tournament_bracket_generator',
+    'spin_wheel',
+    'random_name_picker',
+    'typing_speed_test',
+    'meme_caption_generator',
+    'truth_or_dare_generator',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
 

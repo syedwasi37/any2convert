@@ -39,7 +39,12 @@ $tool_slugs = [
     'cps_test' => 'cps-test',
     'gamer_tag_generator' => 'gamer-tag-generator',
     'clip_to_gif' => 'clip-to-gif',
-    'tournament_bracket_generator' => 'tournament-bracket-generator'
+    'tournament_bracket_generator' => 'tournament-bracket-generator',
+    'spin_wheel' => 'spin-the-wheel',
+    'random_name_picker' => 'random-name-picker',
+    'typing_speed_test' => 'typing-speed-test',
+    'meme_caption_generator' => 'meme-caption-generator',
+    'truth_or_dare_generator' => 'truth-or-dare-generator'
 ];
 
 // Get all tools from database for dynamic display
@@ -170,6 +175,17 @@ $tools = [
             ['id' => 'clip_to_gif', 'name' => 'Clip to GIF', 'icon' => 'clip_to_gif', 'desc' => 'Turn short gaming clips into shareable GIFs'],
             ['id' => 'tournament_bracket_generator', 'name' => 'Tournament Bracket Generator', 'icon' => 'tournament_bracket_generator', 'desc' => 'Create a simple single-elimination bracket instantly'],
         ]
+    ],
+    'fun' => [
+        'title' => 'Fun Tools',
+        'icon' => 'FUN',
+        'tools' => [
+            ['id' => 'spin_wheel', 'name' => 'Spin the Wheel', 'icon' => 'spin_wheel', 'desc' => 'Spin a colorful random choice wheel for fast decisions'],
+            ['id' => 'random_name_picker', 'name' => 'Random Name Picker', 'icon' => 'random_name_picker', 'desc' => 'Pick random names for giveaways, classes, and lobbies'],
+            ['id' => 'typing_speed_test', 'name' => 'Typing Speed Test', 'icon' => 'typing_speed_test', 'desc' => 'Measure WPM and typing accuracy in the browser'],
+            ['id' => 'meme_caption_generator', 'name' => 'Meme Caption Generator', 'icon' => 'meme_caption_generator', 'desc' => 'Add classic top and bottom meme captions to any image'],
+            ['id' => 'truth_or_dare_generator', 'name' => 'Truth or Dare Generator', 'icon' => 'truth_or_dare_generator', 'desc' => 'Generate instant party prompts with one click'],
+        ]
     ]
 ];
 
@@ -183,6 +199,7 @@ $categoryMeta = [
     'writing' => ['label' => 'Writing Tools',         'accent' => 'indigo', 'hex' => '#6366F1'],
     'developer' => ['label' => 'Developer Tools',     'accent' => 'cyan', 'hex' => '#06B6D4'],
     'gaming' => ['label' => 'Gaming Tools',           'accent' => 'pink', 'hex' => '#EC4899'],
+    'fun' => ['label' => 'Fun Tools',                 'accent' => 'fuchsia', 'hex' => '#D946EF'],
 ];
 ?>
 <!DOCTYPE html>
@@ -947,6 +964,7 @@ $categoryMeta = [
             <button class="tool-filter-chip" data-tool-filter="writing" type="button">Writing</button>
             <button class="tool-filter-chip" data-tool-filter="developer" type="button">Developer</button>
             <button class="tool-filter-chip" data-tool-filter="gaming" type="button">Gaming</button>
+            <button class="tool-filter-chip" data-tool-filter="fun" type="button">Fun</button>
         </div>
     </div>
     <div id="toolNoResults" class="hidden-by-filter" style="margin:12px 0 24px;padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--text-secondary);text-align:center;">
@@ -1001,6 +1019,11 @@ $categoryMeta = [
         'gamer_tag_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l2 8H4l2-8Z"/><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16h4"/></svg>',
         'clip_to_gif' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 10h4"/><path d="M8 14h3"/><path d="M15 10v4"/><path d="M19 10h-3v4"/></svg>',
         'tournament_bracket_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10"/><path d="M7 17h10"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M12 7v10"/></svg>',
+        'spin_wheel' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5v8l5 3"/><path d="M12 2v3"/></svg>',
+        'random_name_picker' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s7-3.5 7-9V5l-7-3-7 3v6c0 5.5 7 9 7 9z"/><path d="M12 10h.01"/></svg>',
+        'typing_speed_test' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01"/><path d="M11 10h.01"/><path d="M15 10h.01"/><path d="M7 14h10"/></svg>',
+        'meme_caption_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-8 8"/></svg>',
+        'truth_or_dare_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4Z"/><path d="M10 10h4"/><path d="M12 8v4"/></svg>',
     ];
 
     $catColors = [
@@ -1013,6 +1036,7 @@ $categoryMeta = [
         'writing' => ['bg'=>'rgba(99,102,241,0.12)', 'color'=>'#818CF8', 'label-bg'=>'rgba(99,102,241,0.1)','label-color'=>'#818CF8'],
         'developer' => ['bg'=>'rgba(6,182,212,0.12)', 'color'=>'#22D3EE', 'label-bg'=>'rgba(6,182,212,0.1)','label-color'=>'#22D3EE'],
         'gaming' => ['bg'=>'rgba(236,72,153,0.12)', 'color'=>'#F472B6', 'label-bg'=>'rgba(236,72,153,0.1)','label-color'=>'#F472B6'],
+        'fun' => ['bg'=>'rgba(217,70,239,0.12)', 'color'=>'#E879F9', 'label-bg'=>'rgba(217,70,239,0.1)','label-color'=>'#E879F9'],
     ];
 
     foreach ($tools as $catKey => $category):
@@ -1136,6 +1160,7 @@ $categoryMeta = [
                 ['grammar_checker','Grammar Checker'],['jwt_decoder','JWT Decoder'],
                 ['reaction_time_test','Reaction Time Test'],['gamer_tag_generator','Gamer Tag Generator'],
                 ['clip_to_gif','Clip to GIF'],
+                ['spin_wheel','Spin the Wheel'],['typing_speed_test','Typing Speed Test'],
             ];
             foreach($popular as [$id,$label]): 
                 $slug = $tool_slugs[$id] ?? $id;
@@ -1421,7 +1446,9 @@ function getToolName(toolId) {
         'paraphrase_tool':'Paraphrase Tool','percentage_calculator':'Percentage Calculator','loan_calculator':'Loan Calculator',
         'bmi_calculator':'BMI Calculator','age_calculator':'Age Calculator',
         'sensitivity_converter':'Sensitivity Converter','reaction_time_test':'Reaction Time Test','cps_test':'CPS Test',
-        'gamer_tag_generator':'Gamer Tag Generator','clip_to_gif':'Clip to GIF','tournament_bracket_generator':'Tournament Bracket Generator'
+        'gamer_tag_generator':'Gamer Tag Generator','clip_to_gif':'Clip to GIF','tournament_bracket_generator':'Tournament Bracket Generator',
+        'spin_wheel':'Spin the Wheel','random_name_picker':'Random Name Picker','typing_speed_test':'Typing Speed Test',
+        'meme_caption_generator':'Meme Caption Generator','truth_or_dare_generator':'Truth or Dare Generator'
     };
     return names[toolId] || 'Tool';
 }

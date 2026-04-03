@@ -145,6 +145,16 @@ function renderToolHandlerHTML($tool) {
             return getClipToGifHTML();
         case 'tournament_bracket_generator':
             return getTournamentBracketGeneratorHTML();
+        case 'spin_wheel':
+            return getSpinWheelHTML();
+        case 'random_name_picker':
+            return getRandomNamePickerHTML();
+        case 'typing_speed_test':
+            return getTypingSpeedTestHTML();
+        case 'meme_caption_generator':
+            return getMemeCaptionGeneratorHTML();
+        case 'truth_or_dare_generator':
+            return getTruthOrDareGeneratorHTML();
         case 'ai_image_generator':
             return getAiImageGeneratorHTML();
         case 'ocr_tool':
@@ -1992,6 +2002,324 @@ function getTournamentBracketGeneratorHTML() {
             }
             document.getElementById("bracketGenerateBtn").addEventListener("click", generate);
             generate();
+        })();
+    </script>
+HTML;
+}
+
+function getSpinWheelHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[0.95fr_1.05fr] gap-6">
+        <div class="rounded-[34px] border border-fuchsia-200/60 dark:border-fuchsia-500/15 bg-gradient-to-br from-white via-fuchsia-50/70 to-violet-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(217,70,239,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-fuchsia-500 font-semibold">Fun Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Spin the Wheel</h2>
+            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Add your options, spin the wheel, and let chance pick the winner.</p>
+            <textarea id="wheelOptions" rows="10" class="mt-6 w-full rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white" placeholder="Pizza&#10;Burger&#10;Pasta&#10;Sushi">Pizza
+Burger
+Pasta
+Sushi
+Tacos
+Fries</textarea>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="wheelSpinBtn" class="rounded-[28px] bg-gradient-to-r from-fuchsia-500 to-violet-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(217,70,239,0.28)]">Spin Wheel</button>
+                <button id="wheelShuffleBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Shuffle Options</button>
+            </div>
+        </div>
+        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)]">
+            <p class="text-xs uppercase tracking-[0.22em] text-fuchsia-300">Result</p>
+            <div id="wheelWinner" class="mt-3 text-4xl font-black">Ready to spin</div>
+            <div class="mt-6 flex justify-center">
+                <canvas id="wheelCanvas" width="420" height="420" class="max-w-full"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const canvas = document.getElementById("wheelCanvas"), ctx = canvas.getContext("2d");
+            const textarea = document.getElementById("wheelOptions"), winnerEl = document.getElementById("wheelWinner");
+            let rotation = 0;
+            const colors = ["#ec4899","#8b5cf6","#06b6d4","#10b981","#f59e0b","#ef4444","#3b82f6","#14b8a6"];
+            function getOptions() { return textarea.value.split(/\r?\n/).map(v => v.trim()).filter(Boolean).slice(0, 12); }
+            function draw() {
+                const options = getOptions();
+                const total = options.length || 1;
+                const arc = (Math.PI * 2) / total;
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                ctx.save();
+                ctx.translate(canvas.width/2, canvas.height/2);
+                ctx.rotate(rotation);
+                for (let i = 0; i < total; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(0,0);
+                    ctx.arc(0,0,170,i*arc,(i+1)*arc);
+                    ctx.closePath();
+                    ctx.fillStyle = colors[i % colors.length];
+                    ctx.fill();
+                    ctx.save();
+                    ctx.rotate(i*arc + arc/2);
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "bold 16px DM Sans, sans-serif";
+                    ctx.textAlign = "right";
+                    ctx.fillText(options[i] || "Option", 145, 6);
+                    ctx.restore();
+                }
+                ctx.restore();
+                ctx.fillStyle = "#fff";
+                ctx.beginPath();
+                ctx.moveTo(canvas.width/2, 18);
+                ctx.lineTo(canvas.width/2 - 14, 48);
+                ctx.lineTo(canvas.width/2 + 14, 48);
+                ctx.closePath();
+                ctx.fill();
+            }
+            function pickWinner() {
+                const options = getOptions();
+                if (!options.length) return;
+                const total = options.length;
+                const arc = (Math.PI * 2) / total;
+                const normalized = ((Math.PI * 1.5 - rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+                const index = Math.floor(normalized / arc) % total;
+                winnerEl.textContent = options[index];
+            }
+            document.getElementById("wheelSpinBtn").addEventListener("click", () => {
+                const extra = Math.PI * 2 * (4 + Math.random() * 3);
+                const target = rotation + extra;
+                const start = performance.now();
+                const initial = rotation;
+                function animate(now) {
+                    const t = Math.min(1, (now - start) / 3200);
+                    const eased = 1 - Math.pow(1 - t, 4);
+                    rotation = initial + (target - initial) * eased;
+                    draw();
+                    if (t < 1) requestAnimationFrame(animate);
+                    else pickWinner();
+                }
+                requestAnimationFrame(animate);
+            });
+            document.getElementById("wheelShuffleBtn").addEventListener("click", () => {
+                const opts = getOptions().sort(() => Math.random() - 0.5);
+                textarea.value = opts.join("\n");
+                draw();
+            });
+            textarea.addEventListener("input", draw);
+            draw();
+        })();
+    </script>
+HTML;
+}
+
+function getRandomNamePickerHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
+        <div class="rounded-[34px] border border-emerald-200/60 dark:border-emerald-500/15 bg-gradient-to-br from-white via-emerald-50/70 to-teal-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(16,185,129,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-emerald-500 font-semibold">Fun Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Random Name Picker</h2>
+            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Paste names for giveaways, classrooms, lobbies, or team selection.</p>
+            <textarea id="pickerNames" rows="12" class="mt-6 w-full rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white" placeholder="Ali&#10;Sara&#10;Umair&#10;Hassan">Ali
+Sara
+Umair
+Hassan
+Ayesha</textarea>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="pickerPickBtn" class="rounded-[28px] bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(16,185,129,0.28)]">Pick Random Name</button>
+                <button id="pickerRemoveBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Remove Winner</button>
+            </div>
+        </div>
+        <div class="grid gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)]">
+                <p class="text-xs uppercase tracking-[0.22em] text-emerald-300">Selected Name</p>
+                <div id="pickerWinner" class="mt-3 text-5xl font-black">No pick yet</div>
+            </div>
+            <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+                <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Remaining Count</p>
+                <p id="pickerCount" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const textarea = document.getElementById("pickerNames"), winnerEl = document.getElementById("pickerWinner"), countEl = document.getElementById("pickerCount");
+            let lastWinner = "";
+            function getNames() { return textarea.value.split(/\r?\n/).map(v => v.trim()).filter(Boolean); }
+            function syncCount() { countEl.textContent = String(getNames().length); }
+            document.getElementById("pickerPickBtn").addEventListener("click", () => {
+                const names = getNames();
+                if (!names.length) return;
+                lastWinner = names[Math.floor(Math.random() * names.length)];
+                winnerEl.textContent = lastWinner;
+            });
+            document.getElementById("pickerRemoveBtn").addEventListener("click", () => {
+                if (!lastWinner) return;
+                const names = getNames().filter(name => name !== lastWinner);
+                textarea.value = names.join("\n");
+                lastWinner = "";
+                winnerEl.textContent = "Removed last winner";
+                syncCount();
+            });
+            textarea.addEventListener("input", syncCount);
+            syncCount();
+        })();
+    </script>
+HTML;
+}
+
+function getTypingSpeedTestHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.05fr_0.95fr] gap-6">
+        <div class="rounded-[34px] border border-orange-200/60 dark:border-orange-500/15 bg-gradient-to-br from-white via-orange-50/70 to-amber-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(249,115,22,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-orange-500 font-semibold">Fun Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Typing Speed Test</h2>
+            <p id="typingPrompt" class="mt-6 rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-5 py-5 text-lg leading-8 text-slate-900 dark:text-white"></p>
+            <textarea id="typingInput" rows="7" class="mt-6 w-full rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white" placeholder="Start typing here..."></textarea>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="typingResetBtn" class="rounded-[28px] bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(249,115,22,0.28)]">New Test</button>
+            </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)]"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">WPM</p><div id="typingWpm" class="mt-3 text-5xl font-black">0</div></div>
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)]"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Accuracy</p><div id="typingAccuracy" class="mt-3 text-5xl font-black">100%</div></div>
+            <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Time</p><p id="typingTime" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0s</p></div>
+            <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Characters</p><p id="typingChars" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const prompts = [
+                "Speed matters, but clarity always wins when you type under pressure.",
+                "The best fun tools are simple to use and surprisingly hard to stop trying.",
+                "Gamers, creators, and students all love tiny tools that solve one clear job well."
+            ];
+            const promptEl = document.getElementById("typingPrompt"), inputEl = document.getElementById("typingInput");
+            let currentPrompt = "", startTime = 0;
+            function reset() {
+                currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                promptEl.textContent = currentPrompt;
+                inputEl.value = "";
+                startTime = 0;
+                document.getElementById("typingWpm").textContent = "0";
+                document.getElementById("typingAccuracy").textContent = "100%";
+                document.getElementById("typingTime").textContent = "0s";
+                document.getElementById("typingChars").textContent = "0";
+            }
+            inputEl.addEventListener("input", () => {
+                if (!startTime && inputEl.value.length) startTime = Date.now();
+                const elapsedMin = Math.max((Date.now() - startTime) / 60000, 1 / 60000);
+                const typed = inputEl.value;
+                let correct = 0;
+                for (let i = 0; i < typed.length; i++) if (typed[i] === currentPrompt[i]) correct++;
+                const wpm = Math.round((typed.trim().length / 5) / elapsedMin);
+                const accuracy = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+                document.getElementById("typingWpm").textContent = String(Math.max(0, wpm));
+                document.getElementById("typingAccuracy").textContent = `${accuracy}%`;
+                document.getElementById("typingTime").textContent = `${Math.floor((Date.now() - startTime) / 1000)}s`;
+                document.getElementById("typingChars").textContent = String(typed.length);
+            });
+            document.getElementById("typingResetBtn").addEventListener("click", reset);
+            reset();
+        })();
+    </script>
+HTML;
+}
+
+function getMemeCaptionGeneratorHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[0.95fr_1.05fr] gap-6">
+        <div class="rounded-[34px] border border-sky-200/60 dark:border-sky-500/15 bg-gradient-to-br from-white via-sky-50/70 to-blue-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(14,165,233,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-sky-500 font-semibold">Fun Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Meme Caption Generator</h2>
+            <input id="memeImageInput" type="file" accept="image/*" class="mt-6 block w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white">
+            <div class="mt-5 grid gap-4">
+                <input id="memeTopText" class="w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white" placeholder="TOP TEXT">
+                <input id="memeBottomText" class="w-full rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white" placeholder="BOTTOM TEXT">
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="memeRenderBtn" class="rounded-[28px] bg-gradient-to-r from-sky-500 to-blue-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(14,165,233,0.28)]">Render Meme</button>
+                <button id="memeDownloadBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Download PNG</button>
+            </div>
+        </div>
+        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)]">
+            <p class="text-xs uppercase tracking-[0.22em] text-sky-300">Preview</p>
+            <div class="mt-4 min-h-[360px] rounded-[28px] border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
+                <canvas id="memeCanvas" class="max-w-full"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const input = document.getElementById("memeImageInput"), canvas = document.getElementById("memeCanvas"), ctx = canvas.getContext("2d");
+            let img = null;
+            function render() {
+                if (!img) return;
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#fff";
+                ctx.strokeStyle = "#000";
+                ctx.lineWidth = Math.max(4, canvas.width / 120);
+                ctx.font = `bold ${Math.max(28, canvas.width / 10)}px Impact, Arial Black, sans-serif`;
+                const top = (document.getElementById("memeTopText").value || "").toUpperCase();
+                const bottom = (document.getElementById("memeBottomText").value || "").toUpperCase();
+                if (top) { ctx.strokeText(top, canvas.width / 2, 60); ctx.fillText(top, canvas.width / 2, 60); }
+                if (bottom) { ctx.strokeText(bottom, canvas.width / 2, canvas.height - 30); ctx.fillText(bottom, canvas.width / 2, canvas.height - 30); }
+            }
+            input.addEventListener("change", () => {
+                const file = input.files?.[0];
+                if (!file) return;
+                const image = new Image();
+                image.onload = () => { img = image; render(); };
+                image.src = URL.createObjectURL(file);
+            });
+            document.getElementById("memeRenderBtn").addEventListener("click", render);
+            document.getElementById("memeDownloadBtn").addEventListener("click", () => {
+                if (!canvas.width) return;
+                const a = document.createElement("a");
+                a.href = canvas.toDataURL("image/png");
+                a.download = "meme.png";
+                a.click();
+            });
+            ["memeTopText","memeBottomText"].forEach(id => document.getElementById(id).addEventListener("input", render));
+        })();
+    </script>
+HTML;
+}
+
+function getTruthOrDareGeneratorHTML() {
+    return <<<'HTML'
+    <div class="max-w-5xl mx-auto grid xl:grid-cols-[1fr_0.95fr] gap-6">
+        <div class="rounded-[34px] border border-rose-200/60 dark:border-rose-500/15 bg-gradient-to-br from-white via-rose-50/70 to-pink-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(244,63,94,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-rose-500 font-semibold">Fun Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Truth or Dare Generator</h2>
+            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Need an instant party prompt? Generate fun truths and dares in one click.</p>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="truthBtn" class="rounded-[28px] bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(244,63,94,0.28)]">Truth</button>
+                <button id="dareBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Dare</button>
+            </div>
+        </div>
+        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)]">
+            <p class="text-xs uppercase tracking-[0.22em] text-rose-300">Prompt</p>
+            <div id="todType" class="mt-3 text-sm uppercase tracking-[0.28em] text-slate-400">Truth</div>
+            <div id="todPrompt" class="mt-4 text-3xl font-black leading-tight">Press a button to get started.</div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const truths = [
+                "What is one thing you have pretended to like just to fit in?",
+                "What is the most awkward message you have accidentally sent?",
+                "If you had to swap lives with one friend for a week, who would it be?"
+            ];
+            const dares = [
+                "Speak in a dramatic movie trailer voice for the next two minutes.",
+                "Send the funniest selfie you can make to a friend.",
+                "Do your best victory dance right now."
+            ];
+            function setPrompt(type, list) {
+                document.getElementById("todType").textContent = type;
+                document.getElementById("todPrompt").textContent = list[Math.floor(Math.random() * list.length)];
+            }
+            document.getElementById("truthBtn").addEventListener("click", () => setPrompt("Truth", truths));
+            document.getElementById("dareBtn").addEventListener("click", () => setPrompt("Dare", dares));
         })();
     </script>
 HTML;
