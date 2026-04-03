@@ -318,6 +318,35 @@ $tool_html = renderToolHandlerHTML($tool_id);
             transform: translateY(0);
         }
 
+        /* Bring newer wide tools closer to the homepage visual language in light mode */
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,255,0.92)) !important;
+            color: #0f172a !important;
+            border-color: rgba(148,163,184,0.24) !important;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.10) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-900"] {
+            background: linear-gradient(180deg, rgba(248,250,255,0.94), rgba(237,242,255,0.88)) !important;
+            color: #0f172a !important;
+            border-color: rgba(148,163,184,0.24) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/5"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/10"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/[0.03]"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/[0.05]"] {
+            background: rgba(255,255,255,0.78) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="text-white"] {
+            color: #0f172a !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="text-slate-300"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="text-slate-400"] {
+            color: #64748b !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="border-white/10"] {
+            border-color: rgba(148,163,184,0.24) !important;
+        }
+
         /* Need these libraries depending on tool */
     </style>
     <?php any2convertRenderChromeStyles(); ?>

@@ -841,13 +841,13 @@ $categoryMeta = [
             content: '';
             position: absolute;
             left: 50%;
-            top: 50%;
-            width: 180px;
-            height: 180px;
+            bottom: -44px;
+            width: 220px;
+            height: 140px;
             border-radius: 999px;
             background: radial-gradient(circle, rgba(108,99,255,0.18), transparent 68%);
             opacity: 0;
-            transform: translate(-50%, -50%) scale(.82);
+            transform: translateX(-50%) scale(.82);
             transition: opacity 0.34s ease, transform 0.38s cubic-bezier(.22,1,.36,1);
         }
         .tool-card:hover {
@@ -856,7 +856,7 @@ $categoryMeta = [
         }
         .tool-card:hover::after {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(1.08);
+            transform: translateX(-50%) scale(1.05);
         }
         .tool-card:active {
             transform: translateY(-2px) scale(1.005);
