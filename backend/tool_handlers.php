@@ -2863,7 +2863,7 @@ function getImageToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'imgToPdfInput\').click()">
             <input type="file" id="imgToPdfInput" class="hidden" accept="image/*" multiple>
-            <div class="text-5xl mb-3">ðŸ–¼ï¸</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="8.5" cy="10" r="1.5"></circle><path d="M21 15l-5-5-8 8"></path></svg></div>
             <p class="font-medium">Click to select images (JPG, PNG, WEBP)</p>
             <p class="text-sm text-gray-500 mt-2">Multiple files allowed | 100% client-side</p>
         </div>
@@ -2933,7 +2933,7 @@ function getPdfToImageHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToImgInput\').click()">
             <input type="file" id="pdfToImgInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ–¼ï¸</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><rect x="51" y="14" width="20" height="18" rx="3"></rect><circle cx="58" cy="21" r="1.5"></circle><path d="M71 28l-6-6-9 9"></path></svg></div>
             <p class="font-medium">Select PDF to convert to images</p>
             <p class="text-sm text-gray-500 mt-2">Each page will be converted to high-quality JPG</p>
         </div>
@@ -2998,7 +2998,7 @@ function getPdfToWordHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 17h13"></path><path d="M55 24h13"></path><path d="M55 31h9"></path></svg></div>
             <p class="font-medium">Select PDF file to convert to Word</p>
             <p class="text-sm text-gray-500 mt-2">Extract text with formatting preserved</p>
         </div>
@@ -3141,7 +3141,7 @@ function getPdfToPptHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToPptInput\').click()">
             <input type="file" id="pdfToPptInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“Š</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M56 34V22"></path><path d="M62 34V18"></path><path d="M68 34V25"></path></svg></div>
             <p class="font-medium">Select PDF to convert to PowerPoint</p>
             <p class="text-sm text-gray-500 mt-2">Each page becomes a slide with content preserved</p>
         </div>
@@ -3302,7 +3302,7 @@ function getPdfToExcelHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToExcelInput\').click()">
             <input type="file" id="pdfToExcelInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“ˆ</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 33 60 27l4 3 6-9"></path></svg></div>
             <p class="font-medium">Select PDF to extract data</p>
             <p class="text-sm text-gray-500 mt-2">Extract tables and structured data to Excel</p>
         </div>
@@ -3418,7 +3418,7 @@ function getMergePdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'mergePdfInput\').click()">
             <input type="file" id="mergePdfInput" class="hidden" accept=".pdf" multiple>
-            <div class="text-5xl mb-3">ðŸ“‘âž•ðŸ“‘</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="70" height="54" viewBox="0 0 70 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12h14l5 5v19a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3Z"></path><path d="M21 12v7h7"></path><path d="M50 12h14l5 5v19a3 3 0 0 1-3 3H50a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3Z"></path><path d="M64 12v7h7"></path><path d="M36 20v14"></path><path d="M29 27h14"></path></svg></div>
             <p class="font-medium">Select PDF files to merge</p>
             <p class="text-sm text-gray-500 mt-2">Combine multiple PDFs into one document</p>
         </div>
@@ -3477,7 +3477,7 @@ function getCompressPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'compressPdfInput\').click()">
             <input type="file" id="compressPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ—œï¸</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16"></path><path d="M7 7v10"></path><path d="M12 7v10"></path><path d="M17 7v10"></path><rect x="3" y="5" width="18" height="14" rx="2"></rect></svg></div>
             <p class="font-medium">Select PDF to compress</p>
             <p class="text-sm text-gray-500 mt-2">Reduce file size while maintaining quality</p>
         </div>
@@ -3548,7 +3548,7 @@ function getProtectPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'protectPdfInput\').click()">
             <input type="file" id="protectPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ”’</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 1 1 8 0v3"></path></svg></div>
             <p class="font-medium">Select PDF to protect</p>
             <p class="text-sm text-gray-500 mt-2">Add password protection to your PDF</p>
         </div>
@@ -3628,7 +3628,7 @@ function getWordToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'wordToPdfInput\').click()">
             <input type="file" id="wordToPdfInput" class="hidden" accept=".doc,.docx">
-            <div class="text-5xl mb-3">ðŸ“âž¡ï¸ðŸ“„</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16h13"></path><path d="M8 23h13"></path><path d="M8 30h9"></path><path d="M30 27h12"></path><path d="m37 21 6 6-6 6"></path><path d="M49 9h17l6 6v24a3 3 0 0 1-3 3H49a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M66 9v8h8"></path></svg></div>
             <p class="font-medium">Select Word file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">DOC/DOCX to PDF conversion with formatting preserved</p>
         </div>
@@ -3767,7 +3767,7 @@ function getExcelToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'excelToPdfInput\').click()">
             <input type="file" id="excelToPdfInput" class="hidden" accept=".xls,.xlsx,.csv">
-            <div class="text-5xl mb-3">ðŸ“Šâž¡ï¸ðŸ“„</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 34V20"></path><path d="M14 34V14"></path><path d="M20 34V24"></path><path d="M30 27h12"></path><path d="m37 21 6 6-6 6"></path><path d="M49 9h17l6 6v24a3 3 0 0 1-3 3H49a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M66 9v8h8"></path></svg></div>
             <p class="font-medium">Select Excel/CSV file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">XLS/XLSX/CSV to PDF conversion with table formatting</p>
         </div>
@@ -3934,7 +3934,7 @@ function getPptToPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pptToPdfInput\').click()">
             <input type="file" id="pptToPdfInput" class="hidden" accept=".ppt,.pptx">
-            <div class="text-5xl mb-3">ðŸ“½ï¸âž¡ï¸ðŸ“„</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
             <p class="font-medium">Select PowerPoint file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">PPT/PPTX to PDF conversion with slide layout preserved</p>
         </div>
@@ -4367,7 +4367,7 @@ function getImageCompressorHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'compressImageInput\').click()">
             <input type="file" id="compressImageInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">ðŸ–¼ï¸ðŸ—œï¸</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="68" height="54" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="26" height="20" rx="3"></rect><circle cx="12" cy="18" r="1.6"></circle><path d="M30 25l-7-7-11 11"></path><path d="M42 16h18"></path><path d="M42 23h14"></path><path d="M42 30h10"></path></svg></div>
             <p class="font-medium">Select image to compress</p>
             <p class="text-sm text-gray-500 mt-2">JPG, PNG, WEBP supported</p>
         </div>
@@ -4481,7 +4481,7 @@ function getBackgroundRemoverHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'bgRemoverInput\').click()">
             <input type="file" id="bgRemoverInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">ðŸª„</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c4-1 6-3 8-7"></path><path d="M14 4c3 0 6 3 6 6 0 6-6 10-12 10H4v-4C4 10 8 4 14 4Z"></path><path d="M14 10h.01"></path></svg></div>
             <p class="font-medium">Upload an image to remove the background</p>
             <p class="text-sm text-gray-500 mt-2">Best for product shots, logos, signatures, and clean backgrounds</p>
         </div>
@@ -4737,7 +4737,7 @@ function getImageToDxfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'imgToDxfInput\').click()">
             <input type="file" id="imgToDxfInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">ðŸ“</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19 19 4"></path><path d="M5 8V4h4"></path><path d="M15 20h5v-5"></path><path d="M8 21h8"></path></svg></div>
             <p class="font-medium">Upload an image to trace into DXF</p>
             <p class="text-sm text-gray-500 mt-2">Best for logos, silhouettes, stamps, line art, and high-contrast artwork</p>
         </div>
@@ -4885,7 +4885,7 @@ function getImageToDxfHTML() {
 
                     imgToDxfContent = imgToDxfBuildFile(lines);
                     document.getElementById("imgToDxfDownload").classList.remove("hidden");
-                    imgToDxfStatus.innerText = "DXF ready. Generated " + lines.length + " line segments from a " + width + "Ã—" + height + " trace.";
+                    imgToDxfStatus.innerText = "DXF ready. Generated " + lines.length + " line segments from a " + width + " x " + height + " trace.";
                 };
                 img.src = e.target.result;
             };
@@ -5385,7 +5385,7 @@ function getImageEnhancerHTML() {
         </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'enhancerInput\').click()">
             <input type="file" id="enhancerInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">âœ¨</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3Z"></path><path d="m19 15 .8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8.8-1.9Z"></path><path d="m5 14 1.1 2.6L8.7 17l-2.6 1.1L5 20.7l-1.1-2.6L1.3 17l2.6-1.1L5 14Z"></path></svg></div>
             <p class="font-medium">Choose an image to enhance</p>
             <p class="text-sm text-gray-500 mt-2">Best for blurry, low-resolution photos</p>
         </div>
@@ -5627,7 +5627,7 @@ function getAiImageGeneratorHTML() {
     return '
     <div class="space-y-6">
         <div class="text-center">
-            <div class="text-5xl mb-3">ðŸŽ¨</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.97 0 9-3.58 9-8 0-3.87-3.09-7.09-7.2-7.82A8 8 0 1 0 12 21Z"></path><circle cx="7.5" cy="11.5" r="1"></circle><circle cx="11" cy="7.5" r="1"></circle><circle cx="16.5" cy="10.5" r="1"></circle><path d="M15 15c.8 2.2-1.3 4-3.5 4"></path></svg></div>
             <p class="font-medium text-lg">AI Image Generator</p>
             <p class="text-sm text-gray-500 mt-2">Generate images from text prompts using the server-configured AI provider</p>
         </div>
@@ -6185,7 +6185,7 @@ function getOcrToolHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'ocrImageInput\').click()">
             <input type="file" id="ocrImageInput" class="hidden" accept="image/*">
-            <div class="text-5xl mb-3">ðŸ‘ï¸ðŸ“</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="68" height="54" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 27s7-10 16-10 16 10 16 10-7 10-16 10S4 27 4 27Z"></path><circle cx="20" cy="27" r="4"></circle><path d="M40 19h20"></path><path d="M40 26h20"></path><path d="M40 33h14"></path></svg></div>
             <p class="font-medium">Upload an image with text</p>
             <p class="text-sm text-gray-500 mt-2">We\'ll extract text using OCR (works best with clear images)</p>
         </div>
@@ -6249,7 +6249,7 @@ function getPdfToWordPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 17h13"></path><path d="M55 24h13"></path><path d="M55 31h9"></path></svg></div>
             <p class="font-medium">Select PDF file to convert to Word</p>
             <p class="text-sm text-gray-500 mt-2">100% Free & Offline (Client-Side)</p>
         </div>
@@ -6309,7 +6309,7 @@ function getPdfToPptPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToPptInput\').click()">
             <input type="file" id="pdfToPptInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“Š</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M56 34V22"></path><path d="M62 34V18"></path><path d="M68 34V25"></path></svg></div>
             <p class="font-medium">Select PDF file to convert to PPT</p>
             <p class="text-sm text-gray-500 mt-2">100% Free & Offline (Powerpoint Slide Generator)</p>
         </div>
@@ -6372,7 +6372,7 @@ function getPdfToExcelPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToExcelInput\').click()">
             <input type="file" id="pdfToExcelInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ“„âž¡ï¸ðŸ“ˆ</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 33 60 27l4 3 6-9"></path></svg></div>
             <p class="font-medium">Select PDF to extract tables to Excel</p>
             <p class="text-sm text-gray-500 mt-2">100% Free & Offline Array Builder</p>
         </div>
@@ -6439,7 +6439,7 @@ function getWordToPdfPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'wordToPdfInput\').click()">
             <input type="file" id="wordToPdfInput" class="hidden" accept=".doc,.docx">
-            <div class="text-5xl mb-3">ðŸ“âž¡ï¸ðŸ“„</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16h13"></path><path d="M8 23h13"></path><path d="M8 30h9"></path><path d="M30 27h12"></path><path d="m37 21 6 6-6 6"></path><path d="M49 9h17l6 6v24a3 3 0 0 1-3 3H49a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M66 9v8h8"></path></svg></div>
             <p class="font-medium">Select Word file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">100% Free HTML5 Canvas Porting</p>
         </div>
@@ -6496,7 +6496,7 @@ function getProtectPdfPureJS() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'protectPdfInput\').click()">
             <input type="file" id="protectPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">ðŸ”’</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 1 1 8 0v3"></path></svg></div>
             <p class="font-medium">Select PDF to protect</p>
             <p class="text-sm text-gray-500 mt-2">Protects document natively via JS Canvas flatten</p>
         </div>
@@ -6652,7 +6652,7 @@ function getSplitPdfHTML() {
     <div class="space-y-6">
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'splitPdfInput\').click()">
             <input type="file" id="splitPdfInput" class="hidden" accept=".pdf">
-            <div class="text-5xl mb-3">âœ‚ï¸</div>
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M20 4 8.12 15.88"></path><path d="M14.47 14.48 20 20"></path><path d="M8.12 8.12 12 12"></path></svg></div>
             <p class="font-medium">Select PDF to split</p>
             <p class="text-sm text-gray-500 mt-2">Split every page into a separate PDF file</p>
         </div>
