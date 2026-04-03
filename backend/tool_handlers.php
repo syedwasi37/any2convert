@@ -155,6 +155,8 @@ function renderToolHandlerHTML($tool) {
             return getMemeCaptionGeneratorHTML();
         case 'truth_or_dare_generator':
             return getTruthOrDareGeneratorHTML();
+        case 'memory_match_game':
+            return getMemoryMatchGameHTML();
         case 'ai_image_generator':
             return getAiImageGeneratorHTML();
         case 'ocr_tool':
@@ -2595,6 +2597,262 @@ function getTruthOrDareGeneratorHTML() {
             }
             document.getElementById("truthBtn").addEventListener("click", () => setPrompt("Truth", truths));
             document.getElementById("dareBtn").addEventListener("click", () => setPrompt("Dare", dares));
+        })();
+    </script>
+HTML;
+}
+
+function getMemoryMatchGameHTML() {
+    return <<<'HTML'
+    <div class="max-w-6xl mx-auto grid xl:grid-cols-[0.92fr_1.08fr] gap-6">
+        <div class="rounded-[34px] border border-fuchsia-200/70 dark:border-fuchsia-500/15 bg-gradient-to-br from-white via-fuchsia-50/70 to-indigo-50/70 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(217,70,239,0.12)] p-6 md:p-8">
+            <p class="text-[11px] tracking-[0.34em] uppercase text-fuchsia-500 font-semibold">Fun Tools</p>
+            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Memory Match Game</h2>
+            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Flip cards, match pairs, and try to finish the board in the fewest moves. Every restart shuffles the deck again.</p>
+
+            <div class="mt-6 grid sm:grid-cols-2 gap-4">
+                <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
+                    <span class="block text-[11px] uppercase tracking-[0.22em] text-slate-400 mb-2">Difficulty</span>
+                    <select id="memoryDifficulty" class="w-full min-h-[56px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 text-[15px] font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/30">
+                        <option value="12">Easy · 12 cards</option>
+                        <option value="16" selected>Normal · 16 cards</option>
+                        <option value="20">Hard · 20 cards</option>
+                    </select>
+                </label>
+                <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
+                    <span class="block text-[11px] uppercase tracking-[0.22em] text-slate-400 mb-2">Theme</span>
+                    <select id="memoryTheme" class="w-full min-h-[56px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 text-[15px] font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/30">
+                        <option value="emoji" selected>Emoji Party</option>
+                        <option value="gaming">Gaming Icons</option>
+                        <option value="space">Space Mix</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="mt-5 grid grid-cols-3 gap-3">
+                <div class="rounded-[22px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/75 p-4">
+                    <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Moves</p>
+                    <div id="memoryMoves" class="mt-2 text-2xl font-black text-slate-900 dark:text-white">0</div>
+                </div>
+                <div class="rounded-[22px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/75 p-4">
+                    <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Matches</p>
+                    <div id="memoryMatches" class="mt-2 text-2xl font-black text-slate-900 dark:text-white">0</div>
+                </div>
+                <div class="rounded-[22px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/75 p-4">
+                    <p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Timer</p>
+                    <div id="memoryTimer" class="mt-2 text-2xl font-black text-slate-900 dark:text-white">00:00</div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="memoryStartBtn" class="rounded-[24px] bg-gradient-to-r from-fuchsia-500 via-pink-500 to-indigo-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(217,70,239,0.24)]">Start New Game</button>
+                <button id="memoryPeekBtn" class="rounded-[24px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Quick Peek</button>
+            </div>
+
+            <div id="memoryStatus" class="mt-5 rounded-[24px] border border-fuchsia-200/70 dark:border-fuchsia-500/20 bg-fuchsia-50/80 dark:bg-fuchsia-500/10 px-5 py-4 text-sm text-fuchsia-700 dark:text-fuchsia-200">
+                Start a round and match every pair before the board beats your focus.
+            </div>
+        </div>
+
+        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 p-5 md:p-6 shadow-[0_24px_80px_rgba(15,23,42,0.35)]">
+            <div class="flex items-center justify-between gap-4 mb-4">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.24em] text-fuchsia-300">Live Board</p>
+                    <h3 class="mt-2 text-xl font-black text-white">Tap two cards to find a pair</h3>
+                </div>
+                <div id="memoryBest" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300">Best: --</div>
+            </div>
+            <div id="memoryBoard" class="grid grid-cols-4 gap-3"></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const themes = {
+                emoji: ["🎉","🎈","🎵","🎮","🚀","🍕","⚡","🌈","🎯","🔥"],
+                gaming: ["🎮","🕹️","🏆","💥","🎧","👾","⚔️","🛡️","🎯","🚩"],
+                space: ["🚀","🪐","🌙","⭐","☄️","🛸","🌌","🔭","👨‍🚀","🌠"]
+            };
+            const board = document.getElementById("memoryBoard");
+            const movesEl = document.getElementById("memoryMoves");
+            const matchesEl = document.getElementById("memoryMatches");
+            const timerEl = document.getElementById("memoryTimer");
+            const statusEl = document.getElementById("memoryStatus");
+            const bestEl = document.getElementById("memoryBest");
+            const difficultyEl = document.getElementById("memoryDifficulty");
+            const themeEl = document.getElementById("memoryTheme");
+            const bestKey = "any2convert-memory-best";
+            let firstCard = null;
+            let lockBoard = false;
+            let moves = 0;
+            let matches = 0;
+            let totalPairs = 0;
+            let seconds = 0;
+            let timer = null;
+
+            function formatTime(totalSeconds) {
+                const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+                const secs = String(totalSeconds % 60).padStart(2, "0");
+                return `${mins}:${secs}`;
+            }
+
+            function updateBest() {
+                const best = JSON.parse(localStorage.getItem(bestKey) || "{}");
+                const key = `${difficultyEl.value}-${themeEl.value}`;
+                if (best[key]) {
+                    bestEl.textContent = `Best: ${best[key].moves} moves · ${best[key].time}`;
+                } else {
+                    bestEl.textContent = "Best: --";
+                }
+            }
+
+            function saveBest() {
+                const key = `${difficultyEl.value}-${themeEl.value}`;
+                const best = JSON.parse(localStorage.getItem(bestKey) || "{}");
+                const current = { moves, time: formatTime(seconds), seconds };
+                if (!best[key] || current.moves < best[key].moves || (current.moves === best[key].moves && current.seconds < best[key].seconds)) {
+                    best[key] = current;
+                    localStorage.setItem(bestKey, JSON.stringify(best));
+                }
+                updateBest();
+            }
+
+            function startTimer() {
+                clearInterval(timer);
+                timer = setInterval(() => {
+                    seconds += 1;
+                    timerEl.textContent = formatTime(seconds);
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timer);
+                timer = null;
+            }
+
+            function setStatus(message, tone = "default") {
+                const tones = {
+                    default: "border-fuchsia-200/70 dark:border-fuchsia-500/20 bg-fuchsia-50/80 dark:bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-200",
+                    success: "border-emerald-200/70 dark:border-emerald-500/20 bg-emerald-50/80 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
+                    warn: "border-amber-200/70 dark:border-amber-500/20 bg-amber-50/80 dark:bg-amber-500/10 text-amber-700 dark:text-amber-200"
+                };
+                statusEl.className = `mt-5 rounded-[24px] px-5 py-4 text-sm ${tones[tone] || tones.default}`;
+                statusEl.textContent = message;
+            }
+
+            function createDeck() {
+                const cardCount = parseInt(difficultyEl.value, 10);
+                totalPairs = cardCount / 2;
+                const source = themes[themeEl.value] || themes.emoji;
+                const chosen = source.slice(0, totalPairs);
+                return [...chosen, ...chosen]
+                    .map((symbol, index) => ({ symbol, id: `${symbol}-${index}-${Math.random().toString(36).slice(2, 7)}` }))
+                    .sort(() => Math.random() - 0.5);
+            }
+
+            function resetBoardState() {
+                firstCard = null;
+                lockBoard = false;
+                moves = 0;
+                matches = 0;
+                seconds = 0;
+                movesEl.textContent = "0";
+                matchesEl.textContent = "0";
+                timerEl.textContent = "00:00";
+                stopTimer();
+                setStatus("Start matching pairs. Every new game shuffles the board.", "default");
+            }
+
+            function finishIfDone() {
+                if (matches !== totalPairs) return;
+                stopTimer();
+                saveBest();
+                setStatus(`Board cleared in ${moves} moves and ${formatTime(seconds)}. Hit Start New Game for another shuffle.`, "success");
+            }
+
+            function revealCard(button, force = false) {
+                if (button.dataset.matched === "1" || (!force && (lockBoard || button.dataset.flipped === "1"))) return;
+                button.dataset.flipped = "1";
+                button.querySelector("[data-card-front]").style.transform = "rotateY(180deg)";
+                button.querySelector("[data-card-back]").style.transform = "rotateY(0deg)";
+            }
+
+            function hideCard(button) {
+                button.dataset.flipped = "0";
+                button.querySelector("[data-card-front]").style.transform = "rotateY(0deg)";
+                button.querySelector("[data-card-back]").style.transform = "rotateY(-180deg)";
+            }
+
+            function handleCardClick(event) {
+                const button = event.currentTarget;
+                if (button.dataset.matched === "1" || lockBoard || button === firstCard) return;
+                if (!timer) startTimer();
+                revealCard(button);
+
+                if (!firstCard) {
+                    firstCard = button;
+                    setStatus("Nice. Now find its matching pair.", "default");
+                    return;
+                }
+
+                moves += 1;
+                movesEl.textContent = String(moves);
+
+                if (firstCard.dataset.symbol === button.dataset.symbol) {
+                    firstCard.dataset.matched = "1";
+                    button.dataset.matched = "1";
+                    firstCard.classList.add("ring-2","ring-emerald-400/70");
+                    button.classList.add("ring-2","ring-emerald-400/70");
+                    matches += 1;
+                    matchesEl.textContent = String(matches);
+                    setStatus("Pair locked in. Keep the streak going.", "success");
+                    firstCard = null;
+                    finishIfDone();
+                    return;
+                }
+
+                lockBoard = true;
+                setStatus("Not a match. Try to remember their positions.", "warn");
+                const previousFirst = firstCard;
+                firstCard = null;
+                setTimeout(() => {
+                    hideCard(previousFirst);
+                    hideCard(button);
+                    lockBoard = false;
+                }, 760);
+            }
+
+            function renderBoard() {
+                resetBoardState();
+                const deck = createDeck();
+                board.className = `grid gap-3 ${deck.length >= 20 ? "grid-cols-4 md:grid-cols-5" : "grid-cols-4"}`;
+                board.innerHTML = deck.map((card) => `
+                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square rounded-[24px] border border-white/10 bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-fuchsia-400/40 hover:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35">
+                        <span data-card-front class="absolute inset-0 rounded-[24px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-400 transition duration-500 [transform-style:preserve-3d]">Flip</span>
+                        <span data-card-back class="absolute inset-0 rounded-[24px] border border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/15 via-pink-500/10 to-indigo-500/15 flex items-center justify-center text-4xl transition duration-500 [transform-style:preserve-3d]" style="transform:rotateY(-180deg)">${card.symbol}</span>
+                    </button>
+                `).join("");
+                board.querySelectorAll("button").forEach((button) => button.addEventListener("click", handleCardClick));
+                updateBest();
+            }
+
+            document.getElementById("memoryStartBtn").addEventListener("click", renderBoard);
+            document.getElementById("memoryPeekBtn").addEventListener("click", () => {
+                const cards = Array.from(board.querySelectorAll("button"));
+                if (!cards.length || lockBoard) return;
+                setStatus("Quick peek activated. Memorize fast.", "warn");
+                cards.forEach((card) => revealCard(card, true));
+                lockBoard = true;
+                setTimeout(() => {
+                    cards.forEach((card) => {
+                        if (card.dataset.matched !== "1") hideCard(card);
+                    });
+                    lockBoard = false;
+                    setStatus("Peek finished. Start matching.", "default");
+                }, 1300);
+            });
+            difficultyEl.addEventListener("change", renderBoard);
+            themeEl.addEventListener("change", renderBoard);
+            renderBoard();
         })();
     </script>
 HTML;

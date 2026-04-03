@@ -44,7 +44,8 @@ $tool_slugs = [
     'random_name_picker' => 'random-name-picker',
     'typing_speed_test' => 'typing-speed-test',
     'meme_caption_generator' => 'meme-caption-generator',
-    'truth_or_dare_generator' => 'truth-or-dare-generator'
+    'truth_or_dare_generator' => 'truth-or-dare-generator',
+    'memory_match_game' => 'memory-match-game'
 ];
 
 // Get all tools from database for dynamic display
@@ -185,6 +186,7 @@ $tools = [
             ['id' => 'typing_speed_test', 'name' => 'Typing Speed Test', 'icon' => 'typing_speed_test', 'desc' => 'Measure WPM and typing accuracy in the browser'],
             ['id' => 'meme_caption_generator', 'name' => 'Meme Caption Generator', 'icon' => 'meme_caption_generator', 'desc' => 'Add classic top and bottom meme captions to any image'],
             ['id' => 'truth_or_dare_generator', 'name' => 'Truth or Dare Generator', 'icon' => 'truth_or_dare_generator', 'desc' => 'Generate instant party prompts with one click'],
+            ['id' => 'memory_match_game', 'name' => 'Memory Match Game', 'icon' => 'memory_match_game', 'desc' => 'Flip cards, match pairs, and beat your best time'],
         ]
     ]
 ];
@@ -820,6 +822,103 @@ $categoryMeta = [
 
         /* ── Separator ── */
         hr.sep { border: none; border-top: 1px solid var(--border); margin: 0 12px; }
+
+        body {
+            animation: homeFadeIn 0.65s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes homeFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tool-card {
+            transition: transform 0.34s cubic-bezier(.22,1,.36,1), border-color 0.28s ease, box-shadow 0.32s ease, background 0.28s ease;
+            will-change: transform;
+        }
+        .tool-card::before {
+            transition: opacity 0.34s ease;
+        }
+        .tool-card::after {
+            content: '';
+            position: absolute;
+            inset: auto -10% -45% auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(108,99,255,0.18), transparent 68%);
+            opacity: 0;
+            transform: translate3d(18px, 18px, 0) scale(.92);
+            transition: opacity 0.34s ease, transform 0.38s cubic-bezier(.22,1,.36,1);
+        }
+        .tool-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 20px 44px rgba(0,0,0,0.34), 0 0 0 1px rgba(108,99,255,0.12);
+        }
+        .tool-card:hover::after {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+        .tool-card:active {
+            transform: translateY(-2px) scale(1.005);
+        }
+        .tool-search-wrap {
+            transition: transform 0.28s cubic-bezier(.22,1,.36,1), border-color 0.24s ease, box-shadow 0.28s ease;
+        }
+        .tool-search-wrap:focus-within {
+            transform: translateY(-2px);
+            border-color: var(--border-hover);
+            box-shadow: 0 16px 34px rgba(15,23,42,0.12);
+        }
+        .tool-search-input {
+            transition: transform 0.24s cubic-bezier(.22,1,.36,1), border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .tool-search-input:focus {
+            transform: translateY(-1px);
+        }
+        .tool-filter-chip {
+            transition: transform 0.24s cubic-bezier(.22,1,.36,1), border-color 0.24s ease, background 0.24s ease, color 0.24s ease, box-shadow 0.24s ease;
+        }
+        .tool-filter-chip:hover {
+            transform: translateY(-2px);
+            border-color: rgba(108,99,255,0.25);
+            box-shadow: 0 12px 22px rgba(15,23,42,0.1);
+        }
+        .tool-filter-chip.active {
+            box-shadow: 0 14px 28px rgba(108,99,255,0.22);
+        }
+        .tool-arrow {
+            transition: opacity 0.24s ease, transform 0.28s cubic-bezier(.22,1,.36,1);
+        }
+        .upload-zone {
+            transition: transform 0.28s cubic-bezier(.22,1,.36,1), border-color 0.25s ease, background 0.25s ease, box-shadow 0.28s ease;
+        }
+        .upload-zone:hover, .upload-zone.dragging {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 34px rgba(15,23,42,0.12);
+        }
+        .stagger-in {
+            opacity: 0;
+            transform: translateY(18px) scale(.985);
+        }
+        .stagger-in.visible {
+            animation: fadeUp 0.58s cubic-bezier(.22,1,.36,1) forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .chip {
+            transition: transform 0.24s cubic-bezier(.22,1,.36,1), border-color 0.24s ease, background 0.24s ease, color 0.24s ease, box-shadow 0.24s ease;
+        }
+        .chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(15,23,42,0.08);
+        }
+        .blog-card {
+            transition: transform 0.34s cubic-bezier(.22,1,.36,1), border-color 0.28s ease, box-shadow 0.32s ease;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px) scale(1.008);
+            box-shadow: 0 18px 38px rgba(0,0,0,0.24);
+        }
     </style>
 </head>
 <body>
@@ -1024,6 +1123,7 @@ $categoryMeta = [
         'typing_speed_test' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01"/><path d="M11 10h.01"/><path d="M15 10h.01"/><path d="M7 14h10"/></svg>',
         'meme_caption_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-8 8"/></svg>',
         'truth_or_dare_generator' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4Z"/><path d="M10 10h4"/><path d="M12 8v4"/></svg>',
+        'memory_match_game' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
     ];
 
     $catColors = [
@@ -1160,7 +1260,7 @@ $categoryMeta = [
                 ['grammar_checker','Grammar Checker'],['jwt_decoder','JWT Decoder'],
                 ['reaction_time_test','Reaction Time Test'],['gamer_tag_generator','Gamer Tag Generator'],
                 ['clip_to_gif','Clip to GIF'],
-                ['spin_wheel','Spin the Wheel'],['typing_speed_test','Typing Speed Test'],
+                ['spin_wheel','Spin the Wheel'],['typing_speed_test','Typing Speed Test'],['memory_match_game','Memory Match Game'],
             ];
             foreach($popular as [$id,$label]): 
                 $slug = $tool_slugs[$id] ?? $id;
@@ -1347,12 +1447,17 @@ function toggleDarkMode() {
     const io = new IntersectionObserver((entries) => {
         entries.forEach(e => {
             if(e.isIntersecting){
+                const delay = e.target.dataset.staggerDelay || '0ms';
+                e.target.style.animationDelay = delay;
                 e.target.classList.add('visible');
                 io.unobserve(e.target);
             }
         });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.stagger-in').forEach(el => io.observe(el));
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.stagger-in').forEach((el, index) => {
+        el.dataset.staggerDelay = `${Math.min(index * 35, 280)}ms`;
+        io.observe(el);
+    });
 })();
 
 // ── Execute scripts in dynamically loaded HTML ──
@@ -1448,7 +1553,7 @@ function getToolName(toolId) {
         'sensitivity_converter':'Sensitivity Converter','reaction_time_test':'Reaction Time Test','cps_test':'CPS Test',
         'gamer_tag_generator':'Gamer Tag Generator','clip_to_gif':'Clip to GIF','tournament_bracket_generator':'Tournament Bracket Generator',
         'spin_wheel':'Spin the Wheel','random_name_picker':'Random Name Picker','typing_speed_test':'Typing Speed Test',
-        'meme_caption_generator':'Meme Caption Generator','truth_or_dare_generator':'Truth or Dare Generator'
+        'meme_caption_generator':'Meme Caption Generator','truth_or_dare_generator':'Truth or Dare Generator','memory_match_game':'Memory Match Game'
     };
     return names[toolId] || 'Tool';
 }

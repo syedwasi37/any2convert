@@ -50,6 +50,7 @@ $wideToolIds = [
     'typing_speed_test',
     'meme_caption_generator',
     'truth_or_dare_generator',
+    'memory_match_game',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
 
@@ -169,7 +170,16 @@ $tool_html = renderToolHandlerHTML($tool_id);
             --pill-text:      #F0F0F8;
         }
         * { font-family: 'DM Sans', sans-serif; box-sizing: border-box; }
-        body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            animation: toolPageFade 0.6s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes toolPageFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         
         .navbar { background: rgba(248,248,252,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
         html.dark .navbar { background: rgba(10,10,15,0.85); }
@@ -188,10 +198,30 @@ $tool_html = renderToolHandlerHTML($tool_id);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 12px 32px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease, border-color 0.28s ease;
         }
         .tool-container.tool-container-wide {
             max-width: 1180px;
             padding: 34px;
+        }
+        .tool-container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(108,99,255,0.08), transparent 24%, transparent 68%, rgba(59,130,246,0.08));
+            opacity: 0.9;
+        }
+        .tool-container > * {
+            position: relative;
+            z-index: 1;
+        }
+        .tool-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 58px rgba(15,23,42,0.12);
+            border-color: var(--border-hover);
         }
         @media (max-width: 768px) {
             .tool-container {
@@ -215,10 +245,19 @@ $tool_html = renderToolHandlerHTML($tool_id);
             color: var(--text-secondary);
             line-height: 1.8;
             font-size: 1.05rem;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
         .seo-content h2 { color: var(--text-primary); font-size: 1.6rem; font-weight: 700; margin-top: 40px; margin-bottom: 20px; }
         .seo-content p { margin-bottom: 20px; }
-        .faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            transition: transform 0.28s cubic-bezier(.22,1,.36,1), border-color 0.24s ease;
+        }
+        .faq-item:hover {
+            transform: translateX(4px);
+            border-color: var(--border-hover);
+        }
         .faq-q { font-weight: 600; color: var(--text-primary); font-size: 1.1rem; margin-bottom: 8px; }
 
         /* Shared tool form polish */
@@ -232,7 +271,7 @@ $tool_html = renderToolHandlerHTML($tool_id);
             color: var(--text-primary);
             border: 1px solid var(--border);
             border-radius: 14px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: transform 0.24s cubic-bezier(.22,1,.36,1), border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
         .tool-container input[type="file"]:focus,
         .tool-container input[type="text"]:focus,
@@ -242,6 +281,7 @@ $tool_html = renderToolHandlerHTML($tool_id);
             outline: none;
             border-color: var(--border-hover);
             box-shadow: 0 0 0 3px var(--accent-light);
+            transform: translateY(-1px);
         }
         .tool-container input[type="file"] {
             padding: 10px;
@@ -267,12 +307,12 @@ $tool_html = renderToolHandlerHTML($tool_id);
             letter-spacing: 0.01em;
             border-radius: 14px;
             box-shadow: 0 12px 22px rgba(59, 130, 246, 0.25);
-            transition: transform 0.16s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.24s ease, filter 0.2s ease;
         }
         .tool-container button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 16px 28px rgba(59, 130, 246, 0.3);
-            filter: saturate(1.05);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 18px 32px rgba(59, 130, 246, 0.28);
+            filter: saturate(1.06);
         }
         .tool-container button:active {
             transform: translateY(0);

@@ -781,5 +781,14 @@ $seo_tools = [
         'icon' => 'TOD',
         'faqs' => [['q' => 'Does it generate both truths and dares?', 'a' => 'Yes. You can instantly generate either a truth prompt or a dare prompt.']],
         'content' => 'Keep party games moving with fast, simple truth and dare prompts that are fun to use on desktop or mobile.'
+    ],
+    'memory-match-game' => [
+        'id' => 'memory_match_game',
+        'h1' => 'Memory Match Game Online',
+        'title' => 'Memory Match Game - Free Browser Card Game | Any2Convert',
+        'meta_desc' => 'Play a fun browser memory matching game with difficulty modes, themes, move tracking, and a live timer.',
+        'icon' => 'MATCH',
+        'faqs' => [['q' => 'Does it reshuffle every time?', 'a' => 'Yes. Each new game shuffles the board again so the round feels fresh every time.']],
+        'content' => 'A quick flip-and-match mini-game that is simple to learn, satisfying to replay, and great for casual visitors on desktop or mobile.'
     ]
 ];
