@@ -3149,6 +3149,11 @@ function getPptToPdfHTML() {
 function getJsonToCsvHTML() {
     return '
     <div class="space-y-6">
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Paste JSON or upload a file</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Upload a `.json` file or paste a JSON array below to convert it into CSV.</p>
+        </div>
+        <input type="file" id="jsonFileInput" accept=".json,application/json" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
         <textarea id="jsonInput" class="w-full h-64 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder=\'[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]\'></textarea>
         <button id="jsonToCsvBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to CSV</button>
         <div id="csvResult" class="hidden mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
@@ -3159,6 +3164,15 @@ function getJsonToCsvHTML() {
     </div>
     <script>
         let currentCSV = "";
+        document.getElementById("jsonFileInput").addEventListener("change", function() {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("jsonInput").value = e.target.result || "";
+            };
+            reader.readAsText(file);
+        });
         
         document.getElementById("jsonToCsvBtn").addEventListener("click", function() {
             try {
@@ -3198,6 +3212,11 @@ function getJsonToCsvHTML() {
 function getCsvToJsonHTML() {
     return '
     <div class="space-y-6">
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Paste CSV or upload a file</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Upload a `.csv` file or paste CSV text below to convert it into JSON.</p>
+        </div>
+        <input type="file" id="csvFileInput" accept=".csv,text/csv" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
         <textarea id="csvInput" class="w-full h-64 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder="name,age\\nJohn,30\\nJane,25"></textarea>
         <button id="csvToJsonBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to JSON</button>
         <div id="jsonResult" class="hidden mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
@@ -3208,6 +3227,15 @@ function getCsvToJsonHTML() {
     </div>
     <script>
         let currentJSON = "";
+        document.getElementById("csvFileInput").addEventListener("change", function() {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("csvInput").value = e.target.result || "";
+            };
+            reader.readAsText(file);
+        });
         
         document.getElementById("csvToJsonBtn").addEventListener("click", function() {
             try {
