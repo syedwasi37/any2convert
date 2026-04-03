@@ -2187,12 +2187,24 @@ function getTypingSpeedTestHTML() {
             const prompts = [
                 "Speed matters, but clarity always wins when you type under pressure.",
                 "The best fun tools are simple to use and surprisingly hard to stop trying.",
-                "Gamers, creators, and students all love tiny tools that solve one clear job well."
+                "Gamers, creators, and students all love tiny tools that solve one clear job well.",
+                "A focused workflow beats a complicated one when you just want quick results.",
+                "Creative people usually save more time when their tools stay lightweight and fast.",
+                "Short typing sprints are a fun way to sharpen accuracy and rhythm every day.",
+                "The internet rewards products that are useful first and delightful right after.",
+                "Good interfaces feel obvious before they feel impressive to the person using them.",
+                "Simple ideas often spread faster online because anyone can understand them instantly."
             ];
             const promptEl = document.getElementById("typingPrompt"), inputEl = document.getElementById("typingInput");
-            let currentPrompt = "", startTime = 0;
+            let currentPrompt = "", startTime = 0, promptPool = [];
+            function nextPrompt() {
+                if (!promptPool.length) {
+                    promptPool = prompts.slice().sort(() => Math.random() - 0.5);
+                }
+                currentPrompt = promptPool.pop();
+            }
             function reset() {
-                currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                nextPrompt();
                 promptEl.textContent = currentPrompt;
                 inputEl.value = "";
                 startTime = 0;
@@ -2307,16 +2319,33 @@ function getTruthOrDareGeneratorHTML() {
             const truths = [
                 "What is one thing you have pretended to like just to fit in?",
                 "What is the most awkward message you have accidentally sent?",
-                "If you had to swap lives with one friend for a week, who would it be?"
+                "If you had to swap lives with one friend for a week, who would it be?",
+                "What is a harmless lie you have told more than once?",
+                "What is the funniest reason you have ever been embarrassed?",
+                "What is one skill you wish people knew you were actually good at?",
+                "What is a totally irrational fear you still have?",
+                "What is one thing on your phone you hope nobody asks to see?"
             ];
             const dares = [
                 "Speak in a dramatic movie trailer voice for the next two minutes.",
                 "Send the funniest selfie you can make to a friend.",
-                "Do your best victory dance right now."
+                "Do your best victory dance right now.",
+                "Narrate everything you do for one minute like a sports commentator.",
+                "Try to balance on one foot while introducing yourself like a celebrity.",
+                "Make up a ridiculous product ad on the spot and perform it.",
+                "Text someone only using emojis for the next message you send.",
+                "Pretend you just won a championship and give a victory speech."
             ];
+            let truthPool = [], darePool = [];
+            function nextFrom(poolRef, list) {
+                if (!poolRef.length) {
+                    poolRef.push(...list.slice().sort(() => Math.random() - 0.5));
+                }
+                return poolRef.pop();
+            }
             function setPrompt(type, list) {
                 document.getElementById("todType").textContent = type;
-                document.getElementById("todPrompt").textContent = list[Math.floor(Math.random() * list.length)];
+                document.getElementById("todPrompt").textContent = type === "Truth" ? nextFrom(truthPool, list) : nextFrom(darePool, list);
             }
             document.getElementById("truthBtn").addEventListener("click", () => setPrompt("Truth", truths));
             document.getElementById("dareBtn").addEventListener("click", () => setPrompt("Dare", dares));
