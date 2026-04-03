@@ -347,6 +347,131 @@ $tool_html = renderToolHandlerHTML($tool_id);
             border-color: rgba(148,163,184,0.24) !important;
         }
 
+        /* Premium polish layer for the newer wide tools */
+        .tool-container.tool-container-wide {
+            background:
+                radial-gradient(circle at top left, rgba(108,99,255,0.12), transparent 22%),
+                radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 20%),
+                linear-gradient(180deg, rgba(255,255,255,0.82), rgba(248,250,255,0.74));
+        }
+        html.dark .tool-container.tool-container-wide {
+            background:
+                radial-gradient(circle at top left, rgba(108,99,255,0.12), transparent 22%),
+                radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 20%),
+                linear-gradient(180deg, rgba(15,23,42,0.78), rgba(2,6,23,0.92));
+        }
+        .tool-container.tool-container-wide > div[class*="max-w-"] {
+            gap: 1.5rem !important;
+        }
+        .tool-container.tool-container-wide :is(
+            div[class*="rounded-[34px]"],
+            div[class*="rounded-[32px]"],
+            div[class*="rounded-[28px]"],
+            div[class*="rounded-[24px]"],
+            label[class*="rounded-[28px]"],
+            label[class*="rounded-[24px]"]
+        ) {
+            backdrop-filter: blur(18px);
+            transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s ease, border-color 0.24s ease, background 0.24s ease;
+        }
+        .tool-container.tool-container-wide :is(
+            div[class*="rounded-[34px]"],
+            div[class*="rounded-[32px]"],
+            div[class*="rounded-[28px]"]
+        ):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 54px rgba(15,23,42,0.12);
+        }
+        html.dark .tool-container.tool-container-wide :is(
+            div[class*="rounded-[34px]"],
+            div[class*="rounded-[32px]"],
+            div[class*="rounded-[28px]"]
+        ):hover {
+            box-shadow: 0 26px 56px rgba(2,6,23,0.38);
+        }
+        .tool-container.tool-container-wide h2,
+        .tool-container.tool-container-wide h3 {
+            letter-spacing: -0.03em;
+        }
+        .tool-container.tool-container-wide p[class*="tracking-[0.34em]"],
+        .tool-container.tool-container-wide p[class*="tracking-[0.3em]"],
+        .tool-container.tool-container-wide p[class*="tracking-[0.28em]"] {
+            opacity: 0.98;
+        }
+        .tool-container.tool-container-wide :is(input, select, textarea) {
+            min-height: 54px;
+            border-radius: 20px !important;
+        }
+        .tool-container.tool-container-wide textarea {
+            line-height: 1.65;
+        }
+        .tool-container.tool-container-wide button {
+            min-height: 52px;
+            font-weight: 700;
+        }
+        .tool-container.tool-container-wide button[id*="Start"],
+        .tool-container.tool-container-wide button[id*="Analyze"],
+        .tool-container.tool-container-wide button[id*="Generate"],
+        .tool-container.tool-container-wide button[id*="Resize"],
+        .tool-container.tool-container-wide button[id*="Download"],
+        .tool-container.tool-container-wide button[id*="Extract"],
+        .tool-container.tool-container-wide button[id*="Decode"] {
+            box-shadow: 0 18px 34px rgba(59,130,246,0.18);
+        }
+        .tool-container.tool-container-wide pre {
+            border-radius: 26px;
+            border: 1px solid rgba(148,163,184,0.18);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .tool-container.tool-container-wide canvas,
+        .tool-container.tool-container-wide video,
+        .tool-container.tool-container-wide audio,
+        .tool-container.tool-container-wide img {
+            border-radius: 24px;
+        }
+        .tool-container.tool-container-wide table {
+            overflow: hidden;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .tool-container.tool-container-wide tbody tr {
+            transition: background 0.22s ease;
+        }
+        .tool-container.tool-container-wide tbody tr:hover {
+            background: rgba(108,99,255,0.05);
+        }
+        .tool-container.tool-container-wide [id*="Status"],
+        .tool-container.tool-container-wide [id*="status"] {
+            font-weight: 500;
+        }
+        .tool-container.tool-container-wide [id*="Result"],
+        .tool-container.tool-container-wide [id*="result"],
+        .tool-container.tool-container-wide [id*="Score"],
+        .tool-container.tool-container-wide [id*="score"] {
+            text-wrap: balance;
+        }
+        @media (max-width: 768px) {
+            .tool-container.tool-container-wide {
+                background:
+                    radial-gradient(circle at top center, rgba(108,99,255,0.10), transparent 24%),
+                    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,255,0.78));
+            }
+            html.dark .tool-container.tool-container-wide {
+                background:
+                    radial-gradient(circle at top center, rgba(108,99,255,0.10), transparent 24%),
+                    linear-gradient(180deg, rgba(15,23,42,0.82), rgba(2,6,23,0.94));
+            }
+            .tool-container.tool-container-wide :is(
+                div[class*="rounded-[34px]"],
+                div[class*="rounded-[32px]"],
+                div[class*="rounded-[28px]"],
+                label[class*="rounded-[28px]"],
+                label[class*="rounded-[24px]"]
+            ) {
+                border-radius: 24px !important;
+            }
+        }
+
         /* Need these libraries depending on tool */
     </style>
     <?php any2convertRenderChromeStyles(); ?>
