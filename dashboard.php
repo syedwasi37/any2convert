@@ -160,6 +160,7 @@ function dashboardInitials(string $name): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dashboard | Any2Convert</title>
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <script>
     tailwind.config = {
         darkMode: 'class'
@@ -428,7 +429,6 @@ function dashboardInitials(string $name): string
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body>
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -748,8 +748,6 @@ function dashboardInitials(string $name): string
     </main>
 
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
-
     <script>
         function activateDashTab(tabName) {
             const safeTab = document.getElementById(tabName) ? tabName : 'overview';

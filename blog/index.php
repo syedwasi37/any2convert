@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog | Any2Convert</title>
+    <meta name="description" content="Read Any2Convert guides about privacy, QR codes, document workflows, and practical ways to use browser-based tools.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://any2convert.com/blog/">
+    <meta property="og:title" content="Blog | Any2Convert">
+    <meta property="og:description" content="Read Any2Convert guides about privacy, QR codes, document workflows, and practical ways to use browser-based tools.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://any2convert.com/blog/">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog | Any2Convert">
+    <meta name="twitter:description" content="Read Any2Convert guides about privacy, QR codes, document workflows, and practical ways to use browser-based tools.">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script>
     tailwind.config = {
         darkMode: 'class'

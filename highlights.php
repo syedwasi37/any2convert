@@ -156,6 +156,12 @@ if ($data === null) {
 }
 
 $pageTitle = $data ? ($data['label'] . ' | Any2Convert') : 'Page not found | Any2Convert';
+$pageDescription = $data
+    ? trim(($data['intro'] ?? '') . ' Learn more about how Any2Convert approaches privacy, speed, and browser-based usability.')
+    : 'Learn more about Any2Convert features, privacy, speed, and browser-based workflows.';
+$canonicalUrl = $data
+    ? 'https://any2convert.com/highlights.php?topic=' . rawurlencode($topic)
+    : 'https://any2convert.com/highlights.php';
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['email']);
 $isAdminUser = isset($_SESSION['email']) && $_SESSION['email'] === 'syedwasiulhassanshah@any2convert.com';
 $dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
@@ -167,6 +173,18 @@ $dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <link rel="icon" type="image/png" href="mylogo.png">
+    <meta name="description" content="<?= htmlspecialchars($pageDescription) ?>">
+    <meta name="robots" content="<?= $data ? 'index, follow, max-image-preview:large' : 'noindex, follow' ?>">
+    <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($pageTitle) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($pageDescription) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= htmlspecialchars($canonicalUrl) ?>">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($pageDescription) ?>">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <?php any2convertRenderChromeStyles(); ?>
     <style>

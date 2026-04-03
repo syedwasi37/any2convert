@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>How to Create High-Quality QR Codes for Business | Any2Convert</title>
+    <meta name="description" content="Learn practical QR code tips for business use, including contrast, scan reliability, and better design decisions.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://any2convert.com/blog/qr-guide.php">
+    <meta property="og:title" content="How to Create High-Quality QR Codes for Business | Any2Convert">
+    <meta property="og:description" content="Learn practical QR code tips for business use, including contrast, scan reliability, and better design decisions.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://any2convert.com/blog/qr-guide.php">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Create High-Quality QR Codes for Business | Any2Convert">
+    <meta name="twitter:description" content="Learn practical QR code tips for business use, including contrast, scan reliability, and better design decisions.">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script>
     tailwind.config = {
         darkMode: 'class'

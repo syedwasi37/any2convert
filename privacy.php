@@ -6,6 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | Any2Convert</title>
+    <meta name="description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://any2convert.com/privacy.php">
+    <meta property="og:title" content="Privacy Policy | Any2Convert">
+    <meta property="og:description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://any2convert.com/privacy.php">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Privacy Policy | Any2Convert">
+    <meta name="twitter:description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script>
     tailwind.config = {
         darkMode: 'class'

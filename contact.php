@@ -21,6 +21,18 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact & Feedback | Any2Convert</title>
+    <meta name="description" content="Contact the Any2Convert team, submit feedback, report issues, and get support for the website and its browser-based tools.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://any2convert.com/contact.php">
+    <meta property="og:title" content="Contact & Feedback | Any2Convert">
+    <meta property="og:description" content="Contact the Any2Convert team, submit feedback, report issues, and get support for the website and its browser-based tools.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://any2convert.com/contact.php">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contact & Feedback | Any2Convert">
+    <meta name="twitter:description" content="Contact the Any2Convert team, submit feedback, report issues, and get support for the website and its browser-based tools.">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script>
     tailwind.config = {
         darkMode: 'class'

@@ -102,7 +102,9 @@ function adsSettingValue(PDO $conn, string $key, string $default = '1'): string
 
 function adsLegacyEnabled(PDO $conn, string $key): bool
 {
-    return adsSettingValue($conn, $key, '1') === '1';
+    // Keep legacy third-party network ads opt-in. This is safer for UX and
+    // reduces approval risk when the site is reviewed for premium ad programs.
+    return adsSettingValue($conn, $key, '0') === '1';
 }
 
 function adsLegacyDefinitions(): array

@@ -10,6 +10,8 @@ $flash = authGetFlash();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Any2Convert</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://any2convert.com/signup.php">
     <script>
     tailwind.config = {
         darkMode: 'class'
@@ -52,7 +54,6 @@ $flash = authGetFlash();
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body>
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -111,7 +112,6 @@ $flash = authGetFlash();
         </div>
     </main>
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

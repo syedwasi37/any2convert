@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Why Converting Images to PDF is Better for Security | Any2Convert</title>
+    <meta name="description" content="Learn why converting images to PDF can improve security, document integrity, and privacy, especially with browser-side processing.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://any2convert.com/blog/security-benefits.php">
+    <meta property="og:title" content="Why Converting Images to PDF is Better for Security | Any2Convert">
+    <meta property="og:description" content="Learn why converting images to PDF can improve security, document integrity, and privacy, especially with browser-side processing.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://any2convert.com/blog/security-benefits.php">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Why Converting Images to PDF is Better for Security | Any2Convert">
+    <meta name="twitter:description" content="Learn why converting images to PDF can improve security, document integrity, and privacy, especially with browser-side processing.">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script>
     tailwind.config = {
         darkMode: 'class'

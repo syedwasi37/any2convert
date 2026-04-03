@@ -16,6 +16,8 @@ $flash = authGetFlash();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP | Any2Convert</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://any2convert.com/otp_verify.php">
     <script>
     tailwind.config = {
         darkMode: 'class'

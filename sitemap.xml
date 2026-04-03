@@ -2,45 +2,161 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://any2convert.com/</loc>
-    <priority>1.00</priority>
+    <lastmod>2026-04-04</lastmod>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://any2convert.com/about.php</loc>
-    <priority>0.50</priority>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://any2convert.com/privacy.php</loc>
-    <priority>0.50</priority>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/terms.php</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://any2convert.com/contact.php</loc>
-    <priority>0.50</priority>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
   </url>
-  
-  <!-- SEO Tool Landing Pages -->
-  <url><loc>https://any2convert.com/image-to-pdf</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/pdf-to-image</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/pdf-to-word</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/pdf-to-powerpoint</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/pdf-to-excel</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/merge-pdf</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/compress-pdf</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/protect-pdf</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/word-to-pdf</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/json-to-csv</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/csv-to-json</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/qr-code-generator</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/password-generator</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/word-counter</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/image-compressor</loc><priority>0.90</priority></url>
-  <url><loc>https://any2convert.com/ocr-image-to-text</loc><priority>0.90</priority></url>
-
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=no-file-uploads</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=instant-processing</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=free-forever</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=works-in-browser</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=files-never-leave-your-device</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=instant-results</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=always-free-no-watermarks</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/highlights.php?topic=works-on-any-device</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://any2convert.com/blog/</loc>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://any2convert.com/blog/security-benefits.php</loc>
-    <priority>0.70</priority>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://any2convert.com/blog/qr-guide.php</loc>
-    <priority>0.70</priority>
+    <lastmod>2026-04-04</lastmod>
+    <priority>0.7</priority>
   </url>
+  <url><loc>https://any2convert.com/image-to-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-image</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-word</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-powerpoint</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-excel</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/merge-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/compress-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/protect-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/word-to-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/json-to-csv</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/csv-to-json</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/qr-code-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/password-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/word-counter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/image-compressor</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/background-remover</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/image-to-dxf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/image-to-svg</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/resize-image</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/crop-image</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/image-enhancer</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/image-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/video-to-audio</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/currency-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/length-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/weight-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/temperature-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/area-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/volume-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/speed-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/time-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/ai-image-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/ocr-image-to-text</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/excel-to-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/powerpoint-to-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/html-to-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/split-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/remove-pdf-pages</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/extract-pdf-pages</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/organize-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/scan-to-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/optimize-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/repair-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/ocr-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/rotate-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/add-page-numbers</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/add-watermark</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/unlock-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/sign-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/crop-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/compare-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/ai-summarizer</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/pdf-to-pdfa</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/edit-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/redact-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/translate-pdf</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/invoice-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/ats-resume-checker</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/social-image-resizer</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/jwt-decoder</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/bank-statement-pdf-to-excel</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/grammar-checker</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/paraphrase-tool</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/percentage-calculator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/loan-calculator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/bmi-calculator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/age-calculator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/sensitivity-converter</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/reaction-time-test</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/cps-test</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/gamer-tag-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/clip-to-gif</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/tournament-bracket-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/spin-the-wheel</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/random-name-picker</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/typing-speed-test</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/meme-caption-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/truth-or-dare-generator</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://any2convert.com/memory-match-game</loc><lastmod>2026-04-04</lastmod><priority>0.8</priority></url>
 </urlset>

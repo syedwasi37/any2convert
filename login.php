@@ -14,6 +14,8 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Any2Convert</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://any2convert.com/login.php">
     <script>
     tailwind.config = {
         darkMode: 'class'
@@ -213,7 +215,6 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body>
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -291,7 +292,6 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
     </main>
 
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

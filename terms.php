@@ -6,6 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service | Any2Convert</title>
+    <meta name="description" content="Review the Any2Convert terms of service, acceptable use expectations, account responsibilities, and platform availability terms.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://any2convert.com/terms.php">
+    <meta property="og:title" content="Terms of Service | Any2Convert">
+    <meta property="og:description" content="Review the Any2Convert terms of service, acceptable use expectations, account responsibilities, and platform availability terms.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://any2convert.com/terms.php">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Terms of Service | Any2Convert">
+    <meta name="twitter:description" content="Review the Any2Convert terms of service, acceptable use expectations, account responsibilities, and platform availability terms.">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <script>
     tailwind.config = {
         darkMode: 'class'
