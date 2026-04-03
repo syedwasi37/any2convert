@@ -1972,35 +1972,281 @@ HTML;
 
 function getTournamentBracketGeneratorHTML() {
     return <<<'HTML'
-    <div class="max-w-6xl mx-auto grid xl:grid-cols-[1fr_1fr] gap-6">
+    <div class="max-w-7xl mx-auto grid xl:grid-cols-[1.02fr_0.98fr] gap-6">
         <div class="rounded-[34px] border border-orange-200/60 dark:border-orange-500/15 bg-gradient-to-br from-white via-orange-50/70 to-amber-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(249,115,22,0.12)] p-6 md:p-8">
-            <p class="text-[11px] tracking-[0.34em] uppercase text-orange-500 font-semibold">Gaming Tools</p>
-            <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Tournament Bracket Generator</h2>
-            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Paste player or team names, then generate a quick single-elimination bracket layout.</p>
-            <textarea id="bracketNames" rows="12" class="mt-6 w-full rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 px-4 py-4 text-slate-900 dark:text-white" placeholder="Team Alpha&#10;Team Bravo&#10;Team Charlie&#10;Team Delta"></textarea>
-            <button id="bracketGenerateBtn" class="mt-6 rounded-[28px] bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(249,115,22,0.28)]">Generate Bracket</button>
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-orange-500 font-semibold">Gaming Tools</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Tournament Planner</h2>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">Set up a cleaner tournament sheet with team count, bracket size, start date, time slots, and randomized opening matches. It generates a more organized schedule instead of a basic bracket dump.</p>
+                </div>
+                <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-orange-500/15 text-orange-500 items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M7 7h10"/><path d="M7 17h10"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M12 7v10"/></svg>
+                </div>
+            </div>
+            <div class="mt-6 grid md:grid-cols-2 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Tournament Name</span>
+                    <input id="bracketTitle" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-lg font-semibold text-slate-900 shadow-sm dark:text-white" value="Weekend Showdown">
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Total Teams</span>
+                    <input id="bracketTeamCount" type="number" min="2" max="32" step="1" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-lg font-semibold text-slate-900 shadow-sm dark:text-white" value="8">
+                </label>
+            </div>
+            <div class="mt-4 grid md:grid-cols-3 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Bracket Size</span>
+                    <select id="bracketSize" class="mt-3 w-full appearance-none rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                        <option value="auto">Auto fit</option>
+                        <option value="4">4 teams</option>
+                        <option value="8" selected>8 teams</option>
+                        <option value="16">16 teams</option>
+                        <option value="32">32 teams</option>
+                    </select>
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Start Date</span>
+                    <input id="bracketDate" type="date" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">First Match Time</span>
+                    <input id="bracketTime" type="time" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white" value="18:00">
+                </label>
+            </div>
+            <div class="mt-4 grid md:grid-cols-2 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Match Slot Size</span>
+                    <select id="bracketInterval" class="mt-3 w-full appearance-none rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                        <option value="20">20 min</option>
+                        <option value="30" selected>30 min</option>
+                        <option value="45">45 min</option>
+                        <option value="60">60 min</option>
+                    </select>
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Tournament Format</span>
+                    <select id="bracketFormat" class="mt-3 w-full appearance-none rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                        <option value="single" selected>Single Elimination</option>
+                        <option value="showmatch">Showmatch Schedule</option>
+                        <option value="round-robin-lite">Round Robin Lite</option>
+                    </select>
+                </label>
+            </div>
+            <div class="mt-5 rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Team Names</span>
+                    <button id="bracketAutofillBtn" type="button" class="rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-300 px-4 py-2 text-sm font-semibold">Autofill Team Slots</button>
+                </div>
+                <textarea id="bracketNames" rows="12" class="w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-slate-900 shadow-sm dark:text-white" placeholder="Team Alpha&#10;Team Bravo&#10;Team Charlie&#10;Team Delta">Team Alpha
+Team Bravo
+Team Charlie
+Team Delta
+Team Echo
+Team Falcon
+Team Ghost
+Team Havoc</textarea>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="bracketGenerateBtn" class="rounded-[28px] bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(249,115,22,0.28)]">Build Tournament Plan</button>
+                <button id="bracketShuffleBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Shuffle Teams</button>
+            </div>
         </div>
-        <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
-            <p class="text-xs uppercase tracking-[0.22em] text-orange-300">Bracket Preview</p>
-            <div id="bracketOutput" class="mt-4 grid gap-4"></div>
+        <div class="grid gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-orange-300">Tournament Overview</p>
+                <div id="bracketOverview" class="mt-4 grid sm:grid-cols-2 gap-4"></div>
+            </div>
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-orange-300">Match Schedule</p>
+                <div id="bracketOutput" class="mt-4 grid gap-4"></div>
+            </div>
         </div>
     </div>
     <script>
         (() => {
             const output = document.getElementById("bracketOutput");
+            const overview = document.getElementById("bracketOverview");
+            const namesEl = document.getElementById("bracketNames");
+            const teamCountEl = document.getElementById("bracketTeamCount");
+            const sizeEl = document.getElementById("bracketSize");
+            const formatEl = document.getElementById("bracketFormat");
+            const dateEl = document.getElementById("bracketDate");
+            const timeEl = document.getElementById("bracketTime");
+            const intervalEl = document.getElementById("bracketInterval");
+            const titleEl = document.getElementById("bracketTitle");
+
+            dateEl.valueAsDate = new Date();
+
+            function getTeams() {
+                return namesEl.value.split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
+            }
+
+            function shuffle(list) {
+                const copy = list.slice();
+                for (let i = copy.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [copy[i], copy[j]] = [copy[j], copy[i]];
+                }
+                return copy;
+            }
+
+            function formatSlot(dateObj) {
+                return dateObj.toLocaleString([], {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                });
+            }
+
+            function getStartDateTime() {
+                const date = dateEl.value || new Date().toISOString().slice(0, 10);
+                const time = timeEl.value || "18:00";
+                return new Date(`${date}T${time}:00`);
+            }
+
+            function buildSingleElimination(teams, slotSize, start) {
+                const bracketSize = sizeEl.value === "auto" ? Math.pow(2, Math.ceil(Math.log2(Math.max(2, teams.length)))) : parseInt(sizeEl.value, 10);
+                const seeded = shuffle(teams).slice(0, bracketSize);
+                while (seeded.length < bracketSize) seeded.push("BYE");
+                const rounds = [];
+                let currentTeams = seeded.slice();
+                let matchCounter = 1;
+                let currentStart = new Date(start);
+                let roundNumber = 1;
+                while (currentTeams.length > 1) {
+                    const roundMatches = [];
+                    const nextTeams = [];
+                    for (let i = 0; i < currentTeams.length; i += 2) {
+                        const teamA = currentTeams[i];
+                        const teamB = currentTeams[i + 1];
+                        const winnerHint = teamA === "BYE" ? teamB : teamB === "BYE" ? teamA : `Winner M${matchCounter}`;
+                        roundMatches.push({
+                            id: matchCounter,
+                            round: roundNumber,
+                            teamA,
+                            teamB,
+                            time: formatSlot(currentStart)
+                        });
+                        nextTeams.push(winnerHint);
+                        currentStart = new Date(currentStart.getTime() + slotSize * 60000);
+                        matchCounter++;
+                    }
+                    rounds.push(roundMatches);
+                    currentTeams = nextTeams;
+                    roundNumber++;
+                    currentStart = new Date(currentStart.getTime() + 30 * 60000);
+                }
+                return { rounds, bracketSize };
+            }
+
+            function buildShowmatch(teams, slotSize, start) {
+                const shuffled = shuffle(teams);
+                const matches = [];
+                let currentStart = new Date(start);
+                let id = 1;
+                for (let i = 0; i < shuffled.length - 1; i += 2) {
+                    matches.push([{
+                        id,
+                        round: 1,
+                        teamA: shuffled[i],
+                        teamB: shuffled[i + 1] || "TBD",
+                        time: formatSlot(currentStart)
+                    }]);
+                    currentStart = new Date(currentStart.getTime() + slotSize * 60000);
+                    id++;
+                }
+                return { rounds: matches, bracketSize: shuffled.length };
+            }
+
+            function buildRoundRobinLite(teams, slotSize, start) {
+                const shuffled = shuffle(teams).slice(0, Math.min(6, teams.length));
+                const rounds = [];
+                let currentStart = new Date(start);
+                let id = 1;
+                for (let i = 0; i < shuffled.length; i++) {
+                    for (let j = i + 1; j < shuffled.length; j++) {
+                        rounds.push([{
+                            id,
+                            round: 1,
+                            teamA: shuffled[i],
+                            teamB: shuffled[j],
+                            time: formatSlot(currentStart)
+                        }]);
+                        currentStart = new Date(currentStart.getTime() + slotSize * 60000);
+                        id++;
+                    }
+                }
+                return { rounds, bracketSize: shuffled.length };
+            }
+
+            function renderPlan(plan, teams) {
+                const totalMatches = plan.rounds.reduce((sum, round) => sum + round.length, 0);
+                overview.innerHTML = `
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Tournament</p><p class="mt-2 text-2xl font-black">${titleEl.value || "Tournament"}</p></div>
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Teams</p><p class="mt-2 text-2xl font-black">${teams.length}</p></div>
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Bracket Size</p><p class="mt-2 text-2xl font-black">${plan.bracketSize}</p></div>
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Matches</p><p class="mt-2 text-2xl font-black">${totalMatches}</p></div>
+                `;
+                output.innerHTML = plan.rounds.map((round, idx) => `
+                    <section class="rounded-[28px] border border-white/10 bg-white/5 p-5">
+                        <div class="flex items-center justify-between gap-4 mb-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.22em] text-orange-300">${formatEl.value === "single" ? "Round " + (idx + 1) : formatEl.value === "showmatch" ? "Showmatch Set " + (idx + 1) : "Fixture " + (idx + 1)}</p>
+                                <h3 class="mt-1 text-xl font-black text-white">${formatEl.value === "single" ? (idx === plan.rounds.length - 1 ? "Final" : idx === plan.rounds.length - 2 ? "Semifinal / Penultimate" : "Bracket Stage") : formatEl.value === "showmatch" ? "Featured Match" : "Round Robin Fixture"}</h3>
+                            </div>
+                            <div class="text-xs text-slate-400">${round.length} match${round.length === 1 ? "" : "es"}</div>
+                        </div>
+                        <div class="grid gap-3">
+                            ${round.map(match => `
+                                <article class="rounded-[22px] border border-white/10 bg-slate-950/70 p-4">
+                                    <div class="flex items-center justify-between gap-3 mb-3">
+                                        <p class="text-xs uppercase tracking-[0.22em] text-slate-400">Match ${match.id}</p>
+                                        <p class="text-sm text-orange-300 font-semibold">${match.time}</p>
+                                    </div>
+                                    <div class="grid gap-2">
+                                        <div class="rounded-2xl bg-white/10 px-4 py-3 font-semibold">${match.teamA}</div>
+                                        <div class="rounded-2xl bg-white/10 px-4 py-3 font-semibold">${match.teamB}</div>
+                                    </div>
+                                </article>
+                            `).join("")}
+                        </div>
+                    </section>
+                `).join("");
+            }
+
             function generate() {
-                const teams = document.getElementById("bracketNames").value.split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
-                if (!teams.length) {
-                    output.innerHTML = '<div class="rounded-[24px] border border-white/10 bg-white/5 px-4 py-4 text-slate-300">Add at least two names to build a bracket.</div>';
+                const requestedCount = Math.max(2, parseInt(teamCountEl.value, 10) || 2);
+                const teams = getTeams().slice(0, requestedCount);
+                if (teams.length < 2) {
+                    overview.innerHTML = '<div class="rounded-[24px] border border-white/10 bg-white/5 p-4 text-slate-300">Add at least two team names to build a schedule.</div>';
+                    output.innerHTML = "";
                     return;
                 }
-                const slots = Math.pow(2, Math.ceil(Math.log2(teams.length)));
-                while (teams.length < slots) teams.push("BYE");
-                const pairs = [];
-                for (let i = 0; i < teams.length; i += 2) pairs.push([teams[i], teams[i + 1]]);
-                output.innerHTML = pairs.map((pair, index) => `<div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Match ${index + 1}</p><div class="mt-3 grid gap-2"><div class="rounded-2xl bg-white/10 px-4 py-3 font-semibold">${pair[0]}</div><div class="rounded-2xl bg-white/10 px-4 py-3 font-semibold">${pair[1]}</div></div></div>`).join("");
+                const slotSize = parseInt(intervalEl.value, 10) || 30;
+                const start = getStartDateTime();
+                let plan;
+                if (formatEl.value === "showmatch") plan = buildShowmatch(teams, slotSize, start);
+                else if (formatEl.value === "round-robin-lite") plan = buildRoundRobinLite(teams, slotSize, start);
+                else plan = buildSingleElimination(teams, slotSize, start);
+                renderPlan(plan, teams);
             }
+
+            document.getElementById("bracketAutofillBtn").addEventListener("click", () => {
+                const count = Math.max(2, parseInt(teamCountEl.value, 10) || 2);
+                const names = Array.from({ length: count }, (_, i) => `Team ${i + 1}`);
+                namesEl.value = names.join("\n");
+            });
+
+            document.getElementById("bracketShuffleBtn").addEventListener("click", () => {
+                namesEl.value = shuffle(getTeams()).join("\n");
+                generate();
+            });
+
             document.getElementById("bracketGenerateBtn").addEventListener("click", generate);
+            [teamCountEl, sizeEl, formatEl, dateEl, timeEl, intervalEl].forEach((el) => el.addEventListener("input", generate));
             generate();
         })();
     </script>
