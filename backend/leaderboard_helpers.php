@@ -20,6 +20,11 @@ function leaderboardToolConfigs(): array
             'primary_order' => 'ASC',
             'secondary_order' => 'ASC',
         ],
+        'typing_speed_test' => [
+            'label' => 'Typing Speed Test',
+            'primary_order' => 'DESC',
+            'secondary_order' => 'DESC',
+        ],
     ];
 }
 
@@ -59,6 +64,21 @@ function leaderboardIsBetter(string $toolKey, float $primary, ?float $secondary,
                 return true;
             }
             return $secondary < $currentSecondary;
+
+        case 'typing_speed_test':
+            if ($primary > $currentPrimary) {
+                return true;
+            }
+            if ($primary < $currentPrimary) {
+                return false;
+            }
+            if ($secondary === null) {
+                return false;
+            }
+            if ($currentSecondary === null) {
+                return true;
+            }
+            return $secondary > $currentSecondary;
     }
 
     return false;

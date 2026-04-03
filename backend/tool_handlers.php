@@ -2508,6 +2508,13 @@ function getTypingSpeedTestHTML() {
             <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Time</p><p id="typingTime" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0s</p></div>
             <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5"><p class="text-xs uppercase tracking-[0.22em] text-slate-500">Characters</p><p id="typingChars" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</p></div>
         </div>
+        <div class="mt-4 rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
+            <div class="flex items-center justify-between gap-3">
+                <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Global Leaderboard</p>
+                <span class="text-[11px] font-bold uppercase tracking-[0.18em] text-orange-500 dark:text-orange-300">Top 10</span>
+            </div>
+            <div id="typingLeaderboard" class="mt-4 grid gap-3"></div>
+        </div>
     </div>
     <script>
         (() => {
@@ -2522,8 +2529,29 @@ function getTypingSpeedTestHTML() {
                 "Good interfaces feel obvious before they feel impressive to the person using them.",
                 "Simple ideas often spread faster online because anyone can understand them instantly."
             ];
-            const promptEl = document.getElementById("typingPrompt"), inputEl = document.getElementById("typingInput");
-            let currentPrompt = "", startTime = 0, promptPool = [];
+            const promptEl = document.getElementById("typingPrompt"), inputEl = document.getElementById("typingInput"), leaderboardEl = document.getElementById("typingLeaderboard");
+            let currentPrompt = "", startTime = 0, promptPool = [], runSaved = false;
+            function loadLeaderboard() {
+                if (!window.any2convertLeaderboard) return;
+                window.any2convertLeaderboard.fetch("typing_speed_test")
+                    .then((data) => window.any2convertLeaderboard.render(leaderboardEl, data, {
+                        emptyText: "No typing records yet. Finish a clean run to set the pace.",
+                        loginText: "Log in to save your typing result to the public leaderboard."
+                    }))
+                    .catch(() => {
+                        leaderboardEl.innerHTML = '<div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">Could not load the leaderboard right now.</div>';
+                    });
+            }
+            function saveRun(wpm, accuracy, elapsedSeconds) {
+                if (runSaved || !window.any2convertLeaderboard) return;
+                runSaved = true;
+                window.any2convertLeaderboard.save("typing_speed_test", {
+                    primary_score: wpm,
+                    secondary_score: accuracy,
+                    score_label: `${wpm} WPM`,
+                    score_meta: `${accuracy}% accuracy · ${elapsedSeconds}s`
+                }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
+            }
             function nextPrompt() {
                 if (!promptPool.length) {
                     promptPool = prompts.slice().sort(() => Math.random() - 0.5);
@@ -2535,6 +2563,7 @@ function getTypingSpeedTestHTML() {
                 promptEl.textContent = currentPrompt;
                 inputEl.value = "";
                 startTime = 0;
+                runSaved = false;
                 document.getElementById("typingWpm").textContent = "0";
                 document.getElementById("typingAccuracy").textContent = "100%";
                 document.getElementById("typingTime").textContent = "0s";
@@ -2548,13 +2577,18 @@ function getTypingSpeedTestHTML() {
                 for (let i = 0; i < typed.length; i++) if (typed[i] === currentPrompt[i]) correct++;
                 const wpm = Math.round((typed.trim().length / 5) / elapsedMin);
                 const accuracy = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
                 document.getElementById("typingWpm").textContent = String(Math.max(0, wpm));
                 document.getElementById("typingAccuracy").textContent = `${accuracy}%`;
-                document.getElementById("typingTime").textContent = `${Math.floor((Date.now() - startTime) / 1000)}s`;
+                document.getElementById("typingTime").textContent = `${elapsedSeconds}s`;
                 document.getElementById("typingChars").textContent = String(typed.length);
+                if (typed === currentPrompt) {
+                    saveRun(Math.max(0, wpm), accuracy, elapsedSeconds);
+                }
             });
             document.getElementById("typingResetBtn").addEventListener("click", reset);
             reset();
+            loadLeaderboard();
         })();
     </script>
 HTML;
