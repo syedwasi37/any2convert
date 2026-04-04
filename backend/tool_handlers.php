@@ -6865,7 +6865,7 @@ function getSplitPdfHTML() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         document.getElementById("splitPdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("splitPdfInput").files;
+            const file = document.getElementById("splitPdfInput").files[0];
             if (!file) return alert("Please select a PDF file");
             const status = document.getElementById("splitPdfStatus");
             status.classList.remove("hidden");
@@ -7707,4 +7707,3 @@ if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
 }
 
 ?>
-
