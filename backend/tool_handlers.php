@@ -3250,7 +3250,7 @@ function getPdfToWordHTML() {
         <div class="space-y-4">
             <label class="block text-sm font-medium">Output Format:</label>
             <select id="wordFormat" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-                <option value="docx">DOCX (Microsoft Word)</option>
+                <option value="docx">Word Layout Copy</option>
                 <option value="rtf">RTF (Rich Text Format)</option>
                 <option value="txt">TXT (Plain Text)</option>
             </select>
@@ -3259,9 +3259,10 @@ function getPdfToWordHTML() {
         <div id="wordProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+        }
 
         const pdfToWordInput = document.getElementById("pdfToWordInput");
         const pdfPreview = document.getElementById("pdfPreview");
@@ -3282,108 +3283,65 @@ function getPdfToWordHTML() {
             return String(value || "").replace(/\s+/g, " ").trim();
         }
 
-        function buildParagraphs(items) {
-            const positioned = items
-                .filter(item => normalizeText(item.str))
-                .map(item => ({
-                    text: normalizeText(item.str),
-                    x: item.transform[4] || 0,
-                    y: item.transform[5] || 0,
-                    width: item.width || 0,
-                    height: Math.abs(item.height || item.transform[0] || 12)
-                }))
-                .sort((a, b) => {
-                    if (Math.abs(b.y - a.y) > 2) return b.y - a.y;
-                    return a.x - b.x;
-                });
-
-            const lines = [];
-
-            positioned.forEach(item => {
-                const tolerance = Math.max(3, item.height * 0.45);
-                let targetLine = null;
-
-                for (const line of lines) {
-                    if (Math.abs(line.y - item.y) <= tolerance) {
-                        targetLine = line;
-                        break;
-                    }
-                }
-
-                if (!targetLine) {
-                    targetLine = { y: item.y, height: item.height, items: [] };
-                    lines.push(targetLine);
-                }
-
-                targetLine.items.push(item);
-                targetLine.height = Math.max(targetLine.height, item.height);
-            });
-
-            lines.sort((a, b) => b.y - a.y);
-
-            const textLines = lines.map(line => {
-                line.items.sort((a, b) => a.x - b.x);
-                let assembled = "";
-                let lastRight = null;
-
-                line.items.forEach(item => {
-                    if (lastRight !== null) {
-                        const gap = item.x - lastRight;
-                        if (gap > Math.max(2, item.height * 0.2)) {
-                            assembled += " ";
-                        }
-                    }
-
-                    if (assembled && !/\s$/.test(assembled) && !/^[,.;:!?%)\]}]/.test(item.text)) {
-                        assembled += " ";
-                    }
-
-                    assembled += item.text;
-                    lastRight = item.x + item.width;
-                });
-
-                return {
-                    text: normalizeText(assembled),
-                    y: line.y,
-                    height: line.height
-                };
-            }).filter(line => line.text);
-
-            const paragraphs = [];
-            let current = [];
-
-            textLines.forEach((line, index) => {
-                if (!current.length) {
-                    current.push(line.text);
-                    return;
-                }
-
-                const previousLine = textLines[index - 1];
-                const verticalGap = previousLine.y - line.y;
-                const shouldBreak = verticalGap > Math.max(previousLine.height, line.height) * 1.2;
-
-                if (shouldBreak) {
-                    paragraphs.push(normalizeText(current.join(" ")));
-                    current = [line.text];
-                } else {
-                    current.push(line.text);
-                }
-            });
-
-            if (current.length) {
-                paragraphs.push(normalizeText(current.join(" ")));
-            }
-
-            return paragraphs.filter(Boolean);
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        function makePlainText(pageParagraphs) {
-            return pageParagraphs
-                .map(paragraphs => paragraphs.join("\n\n"))
-                .join("\n\n");
+        function buildPlainTextPage(items) {
+            const rows = {};
+
+            items.forEach(item => {
+                const text = normalizeText(item.str);
+                if (!text) return;
+
+                const y = Math.round(item.transform[5] || 0);
+                if (!rows[y]) rows[y] = [];
+                rows[y].push({
+                    text,
+                    x: item.transform[4] || 0
+                });
+            });
+
+            return Object.keys(rows)
+                .map(Number)
+                .sort((a, b) => b - a)
+                .map(y => rows[y].sort((a, b) => a.x - b.x).map(part => part.text).join(" "))
+                .join("\n")
+                .trim();
         }
 
-        
+        function makeHtmlDoc(title, renderedPages) {
+            const body = renderedPages.map((page, index) => {
+                const style = index < renderedPages.length - 1 ? "page-break-after: always;" : "";
+                return `<div style="${style} margin: 0 0 12px 0; text-align: center;"><img src="${page.dataUrl}" style="max-width: 100%; width: ${page.widthPx}px; height: ${page.heightPx}px; display: block; margin: 0 auto;" /></div>`;
+            }).join("");
+
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${escapeHtml(title)}</title>
+    <style>
+        @page { margin: 0.5in; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
+        img { border: 0; }
+    </style>
+</head>
+<body>${body}</body>
+</html>`;
+        }
+
+        function toRtf(text) {
+            return text
+                .replace(/\\/g, "\\\\")
+                .replace(/{/g, "\\{")
+                .replace(/}/g, "\\}")
+                .replace(/\r?\n\r?\n/g, "\\par\\par ")
+                .replace(/\r?\n/g, "\\line ");
+        }
+
         function fitWithinBox(width, height, maxWidth, maxHeight) {
             const ratio = Math.min(maxWidth / width, maxHeight / height);
             return {
@@ -3399,18 +3357,23 @@ function getPdfToWordHTML() {
             progress.classList.remove("hidden", "text-red-500");
             
             try {
+                if (!window.pdfjsLib) {
+                    throw new Error("PDF library failed to load.");
+                }
+
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
                 const file = input.files[0];
                 const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const format = document.getElementById("wordFormat").value;
-                const allPages = [];
+                const textPages = [];
                 const renderedPages = [];
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     progress.innerHTML = "Processing page " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent({ normalizeWhitespace: true });
-                    allPages.push(buildParagraphs(textContent.items));
+                    textPages.push(buildPlainTextPage(textContent.items));
 
                     if (format === "docx") {
                         const viewport = page.getViewport({ scale: 2 });
@@ -3427,56 +3390,26 @@ function getPdfToWordHTML() {
                             viewport
                         }).promise;
 
+                        const fitted = fitWithinBox(canvas.width, canvas.height, 720, 980);
                         renderedPages.push({
                             dataUrl: canvas.toDataURL("image/png"),
-                            width: canvas.width,
-                            height: canvas.height
+                            widthPx: fitted.width,
+                            heightPx: fitted.height
                         });
                     }
                 }
 
                 const baseName = file.name.replace(/\.pdf$/i, "") || "converted";
-                const plainText = makePlainText(allPages);
+                const plainText = textPages.filter(Boolean).join("\n\n");
 
                 if (format === "docx") {
-                    progress.innerHTML = "Preparing Word document with original PDF layout...";
-                    const sectionChildren = renderedPages.flatMap((pageImage, pageIndex) => {
-                        const fitted = fitWithinBox(pageImage.width, pageImage.height, 560, 760);
-                        const imageParagraph = new docx.Paragraph({
-                            spacing: { after: 0, before: 0 },
-                            children: [
-                                new docx.ImageRun({
-                                    data: pageImage.dataUrl,
-                                    transformation: {
-                                        width: fitted.width,
-                                        height: fitted.height
-                                    }
-                                })
-                            ]
-                        });
-
-                        if (pageIndex < renderedPages.length - 1) {
-                            return [
-                                imageParagraph,
-                                new docx.Paragraph({ pageBreakBefore: true, text: "" })
-                            ];
-                        }
-
-                        return [imageParagraph];
-                    });
-
-                    const doc = new docx.Document({
-                        sections: [{
-                            properties: {},
-                            children: sectionChildren
-                        }]
-                    });
-
-                    const blob = await docx.Packer.toBlob(doc);
+                    progress.innerHTML = "Preparing Word layout copy...";
+                    const htmlDoc = makeHtmlDoc(baseName, renderedPages);
+                    const blob = new Blob([htmlDoc], { type: "application/msword" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = baseName + ".docx";
+                    a.download = baseName + ".doc";
                     a.click();
                     URL.revokeObjectURL(url);
                 } else if (format === "rtf") {
