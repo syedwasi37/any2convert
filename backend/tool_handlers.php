@@ -6822,21 +6822,50 @@ function getHtmlToPdfHTML() {
 
 function getSplitPdfHTML() {
     return '
-    <div class="space-y-6">
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'splitPdfInput\').click()">
-            <input type="file" id="splitPdfInput" class="hidden" accept=".pdf">
-            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M20 4 8.12 15.88"></path><path d="M14.47 14.48 20 20"></path><path d="M8.12 8.12 12 12"></path></svg></div>
-            <p class="font-medium">Select PDF to split</p>
-            <p class="text-sm text-gray-500 mt-2">Split every page into a separate PDF file</p>
+    <div class="space-y-6" role="main" aria-label="Split PDF Online Free Tool">
+        
+        <div style="display:none;">
+            <h1>Split PDF Online Free - Best Tool to Split PDF Files</h1>
+            <p>Learn how to split pdf pages or how to split pdf into multiple files instantly. Our split pdf free online tool is the best alternative to Adobe Acrobat split pdf.</p>
         </div>
-        <button id="splitPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Split PDF</button>
+
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" 
+             onclick="document.getElementById(\'splitPdfInput\').click()"
+             title="Click to split pdf online">
+            
+            <input type="file" id="splitPdfInput" class="hidden" accept=".pdf">
+            
+            <div class="mb-3 flex justify-center text-blue-500">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <path d="M20 4 8.12 15.88"></path>
+                    <path d="M14.47 14.48 20 20"></path>
+                    <path d="M8.12 8.12 12 12"></path>
+                </svg>
+            </div>
+
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Split PDF Online</h2>
+            <p class="font-medium mt-1">Select PDF to split into individual pages</p>
+            <p class="text-sm text-gray-500 mt-2">Split pdf pages instantly | 100% Private & Free</p>
+        </div>
+
+        <button id="splitPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+            Split PDF Files (Free Online)
+        </button>
+
         <div id="splitPdfStatus" class="text-sm text-gray-500 text-center hidden"></div>
+
+        <footer class="text-center text-xs text-gray-400 mt-2">
+            <p>Fastest way to split pdf document into multiple files.</p>
+        </footer>
     </div>
+
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         document.getElementById("splitPdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("splitPdfInput").files[0];
+            const file = document.getElementById("splitPdfInput").files;
             if (!file) return alert("Please select a PDF file");
             const status = document.getElementById("splitPdfStatus");
             status.classList.remove("hidden");
@@ -6854,13 +6883,15 @@ function getSplitPdfHTML() {
             const zipBlob = await zip.generateAsync({ type: "blob" });
             const a = document.createElement("a");
             a.href = URL.createObjectURL(zipBlob);
-            a.download = "split-pdf-pages.zip";
+            
+            // Optimized Download Name
+            a.download = "Any2Convert-split-pdf-pages.zip";
+            
             a.click();
             status.textContent = "Done. ZIP downloaded.";
         });
     </script>';
 }
-
 function getRemovePagesHTML() {
     return '
     <div class="space-y-6">
