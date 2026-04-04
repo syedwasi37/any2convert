@@ -3235,7 +3235,7 @@ function getImageToPdfHTML() {
 function getPdfToWordHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div class="text-gray-900">
             <h1>PDF to Word Converter - Convert PDF to Word Online Free</h1>
             <p>Looking for a free pdf to word converter? Learn how to convert pdf to word doc easily. High-quality pdf to word free tool with formatting preserved.</p>
         </div>
