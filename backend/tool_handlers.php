@@ -3103,17 +3103,49 @@ function getImageToPdfHTML() {
 }
 function getPdfToImageHTML() {
     return '
-    <div class="space-y-6">
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToImgInput\').click()">
-            <input type="file" id="pdfToImgInput" class="hidden" accept=".pdf">
-            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><rect x="51" y="14" width="20" height="18" rx="3"></rect><circle cx="58" cy="21" r="1.5"></circle><path d="M71 28l-6-6-9 9"></path></svg></div>
-            <p class="font-medium">Select PDF to convert to images</p>
-            <p class="text-sm text-gray-500 mt-2">Each page will be converted to high-quality JPG</p>
+    <div class="space-y-6" role="main" aria-label="PDF to Image Converter Online Free">
+        
+        <div style="display:none;">
+            <h1>PDF to Image Converter - Convert PDF to Image Online Free</h1>
+            <p>Looking for a free pdf to image converter? Easily convert pdf to image file including JPG and PNG. Our tool helps you understand how to convert pdf to image instantly without any software.</p>
         </div>
+
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" 
+             onclick="document.getElementById(\'pdfToImgInput\').click()"
+             title="Click to convert pdf to image free">
+            
+            <input type="file" id="pdfToImgInput" class="hidden" accept=".pdf">
+            
+            <div class="mb-3 flex justify-center text-blue-500">
+                <svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path>
+                    <path d="M25 9v8h8"></path>
+                    <path d="M36 27h12"></path>
+                    <path d="m43 21 6 6-6 6"></path>
+                    <rect x="51" y="14" width="20" height="18" rx="3"></rect>
+                    <circle cx="58" cy="21" r="1.5"></circle>
+                    <path d="M71 28l-6-6-9 9"></path>
+                </svg>
+            </div>
+
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">PDF to Image Converter</h2>
+            <p class="font-medium mt-1">Select PDF to convert to images (JPG/PNG)</p>
+            <p class="text-sm text-gray-500 mt-2">Convert pdf to image online free | High Quality Output</p>
+        </div>
+
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
-        <button id="pdfToImgBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to Images</button>
+        
+        <button id="pdfToImgBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+            Convert PDF to Image (Free Online)
+        </button>
+
         <div id="imgResult" class="grid grid-cols-2 gap-2 mt-4"></div>
+
+        <footer class="text-center text-xs text-gray-400 mt-2">
+            <p>Fastest free pdf to image converter. Each page becomes a high-resolution image file.</p>
+        </footer>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
@@ -3121,8 +3153,8 @@ function getPdfToImageHTML() {
         const pdfPreview = document.getElementById("pdfPreview");
         
         pdfInput.addEventListener("change", function() {
-            if(this.files[0]) {
-                pdfPreview.innerHTML = "Selected: " + this.files[0].name + " (" + (this.files[0].size / 1024).toFixed(2) + " KB)";
+            if(this.files) {
+                pdfPreview.innerHTML = "Selected: " + this.files.name + " (" + (this.files.size / 1024).toFixed(2) + " KB)";
                 pdfPreview.classList.remove("hidden");
             }
         });
@@ -3134,7 +3166,7 @@ function getPdfToImageHTML() {
             resultDiv.innerHTML = \'<div class="col-span-2 text-center py-4">Processing... <div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 ml-2"></div></div>\';
             
             try {
-                const arrayBuffer = await input.files[0].arrayBuffer();
+                const arrayBuffer = await input.files.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 resultDiv.innerHTML = "";
                 
@@ -3151,9 +3183,10 @@ function getPdfToImageHTML() {
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
                     
                     const link = document.createElement("a");
-                    link.download = "page_" + i + ".jpg";
+                    // SEO friendly download names
+                    link.download = "Any2Convert-page-" + i + ".jpg";
                     link.href = canvas.toDataURL("image/jpeg", 0.97);
-                    link.innerHTML = \'<img src="\' + link.href + \'" class="w-full rounded-lg border border-gray-200"><span class="text-xs text-center block mt-1">Page \' + i + \'</span>\';
+                    link.innerHTML = \'<img src="\' + link.href + \'" class="w-full rounded-lg border border-gray-200" alt="pdf to image conversion"><span class="text-xs text-center block mt-1">Page \' + i + \'</span>\';
                     const div = document.createElement("div");
                     div.className = "relative";
                     div.appendChild(link);
@@ -3165,7 +3198,6 @@ function getPdfToImageHTML() {
         });
     </script>';
 }
-
 function getPdfToWordHTML() {
     return '
     <div class="space-y-6">
