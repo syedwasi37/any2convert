@@ -3383,15 +3383,7 @@ function getPdfToWordHTML() {
                 .join("\n\n");
         }
 
-        function toRtf(text) {
-            return text
-                .replace(/\\/g, "\\\\")
-                .replace(/{/g, "\\{")
-                .replace(/}/g, "\\}")
-                .replace(/\r?\n\r?\n/g, "\\par\\par ")
-                .replace(/\r?\n/g, "\\line ");
-        }
-
+        
         function fitWithinBox(width, height, maxWidth, maxHeight) {
             const ratio = Math.min(maxWidth / width, maxHeight / height);
             return {
