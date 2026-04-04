@@ -3347,15 +3347,15 @@ function getPdfToWordHTML() {
         }
 
         function toRtf(text) {
-            return String(text || "")
-                .split("\\").join("\\\\")
-                .split("{").join("\\{")
-                .split("}").join("\\}")
-                .split("\r\n\r\n").join("\\par\\par ")
-                .split("\n\n").join("\\par\\par ")
-                .split("\r\n").join("\\line ")
-                .split("\n").join("\\line ");
-        }
+    return String(text || "")
+        // We use quadruple backslashes because this code 
+        // lives inside a string returned by another function.
+        .split("\\\\").join("\\\\\\\\") 
+        .split("{").join("\\\\{")
+        .split("}").join("\\\\}")
+        .split("\\n\\n").join("\\\\par\\\\par ")
+        .split("\\n").join("\\\\line ");
+}
 
         function fitWithinBox(width, height, maxWidth, maxHeight) {
             var ratio = Math.min(maxWidth / width, maxHeight / height);
