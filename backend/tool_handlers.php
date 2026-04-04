@@ -3233,16 +3233,17 @@ function getImageToPdfHTML() {
 
 }
 function getPdfToWordHTML() {
-    return '
+    // 1. Changed single quote to backtick (`) for multi-line support
+    return `
     <div class="space-y-6">
         <div style="display:none;">
             <h1>PDF to Word Converter - Convert PDF to Word Online Free</h1>
             <p>Looking for a free pdf to word converter? Learn how to convert pdf to word doc easily. High-quality pdf to word free tool with formatting preserved.</p>
         </div>
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById('pdfToWordInput').click()">
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 17h13"></path><path d="M55 24h13"></path><path d="M55 31h9"></path></svg></div>
-           <h2 class="text-lg font-semibold">PDF to Word Converter</h2>
+            <h2 class="text-lg font-semibold">PDF to Word Converter</h2>
             <p class="font-medium">Select PDF file to convert PDF to Word</p>
             <p class="text-sm text-gray-900 mt-2">Convert PDF to Word Free | Extract PDF to Word DOC</p>
         </div>
@@ -3260,6 +3261,7 @@ function getPdfToWordHTML() {
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
+        // Use window check to ensure library is available
         if (window.pdfjsLib) {
             window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
         }
@@ -3274,16 +3276,15 @@ function getPdfToWordHTML() {
                 pdfPreview.classList.add("hidden");
                 return;
             }
-
-            pdfPreview.textContent = this.files[0].name + " selected";
+            pdfPreview.textContent = this.files.name + " selected";
             pdfPreview.classList.remove("hidden");
         });
 
         function normalizeText(value) {
             return String(value || "")
-                .replaceAll("\r", " ")
-                .replaceAll("\n", " ")
-                .replaceAll("\t", " ")
+                .replaceAll("\\r", " ")
+                .replaceAll("\\n", " ")
+                .replaceAll("\\t", " ")
                 .split(" ")
                 .filter(Boolean)
                 .join(" ")
@@ -3298,164 +3299,86 @@ function getPdfToWordHTML() {
 
         function buildPlainTextPage(items) {
             const rows = {};
-
             items.forEach(item => {
                 const text = normalizeText(item.str);
                 if (!text) return;
-
-                const y = Math.round(item.transform[5] || 0);
+                const y = Math.round(item.transform || 0);
                 if (!rows[y]) rows[y] = [];
-                rows[y].push({
-                    text,
-                    x: item.transform[4] || 0
-                });
+                rows[y].push({ text, x: item.transform || 0 });
             });
-
             return Object.keys(rows)
                 .map(Number)
                 .sort((a, b) => b - a)
                 .map(y => rows[y].sort((a, b) => a.x - b.x).map(part => part.text).join(" "))
-                .join("\n")
+                .join("\\n")
                 .trim();
         }
 
         function makeHtmlDoc(title, renderedPages) {
             const body = renderedPages.map((page, index) => {
                 const style = index < renderedPages.length - 1 ? "page-break-after: always;" : "";
-                return `<div style="${style} margin: 0 0 12px 0; text-align: center;"><img src="${page.dataUrl}" style="max-width: 100%; width: ${page.widthPx}px; height: ${page.heightPx}px; display: block; margin: 0 auto;" /></div>`;
+                return \`<div style="\${style} margin: 0 0 12px 0; text-align: center;"><img src="\${page.dataUrl}" style="max-width: 100%; width: \${page.widthPx}px; height: \${page.heightPx}px; display: block; margin: 0 auto;" /></div>\`;
             }).join("");
 
-            return `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>${escapeHtml(title)}</title>
-    <style>
-        @page { margin: 0.5in; }
-        body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
-        img { border: 0; }
-    </style>
-</head>
-<body>${body}</body>
-</html>`;
+            return \`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>\${escapeHtml(title)}</title><style>@page { margin: 0.5in; } body { margin: 0; font-family: Arial, sans-serif; } img { border: 0; }</style></head><body>\${body}</body></html>\`;
         }
 
         function toRtf(text) {
             return String(text || "")
-                .replaceAll("\\", "\\\\")
-                .replaceAll("{", "\\{")
-                .replaceAll("}", "\\}")
-                .replaceAll("\r\n\r\n", "\\par\\par ")
-                .replaceAll("\n\n", "\\par\\par ")
-                .replaceAll("\r\n", "\\line ")
-                .replaceAll("\n", "\\line ");
-        }
-
-        function fitWithinBox(width, height, maxWidth, maxHeight) {
-            const ratio = Math.min(maxWidth / width, maxHeight / height);
-            return {
-                width: Math.max(1, Math.round(width * ratio)),
-                height: Math.max(1, Math.round(height * ratio))
-            };
+                .replaceAll("\\\\", "\\\\\\\\")
+                .replaceAll("{", "\\\\{")
+                .replaceAll("}", "\\\\}")
+                .replaceAll("\\n\\n", "\\\\par\\\\par ")
+                .replaceAll("\\n", "\\\\line ");
         }
 
         document.getElementById("pdfToWordBtn").addEventListener("click", async function() {
-            const input = pdfToWordInput;
-            if (!input.files.length) return alert("Please select a PDF file");
-            const progress = wordProgress;
-            progress.classList.remove("hidden", "text-red-500");
+            if (!pdfToWordInput.files.length) return alert("Please select a PDF file");
+            wordProgress.classList.remove("hidden", "text-red-500");
             
             try {
-                if (!window.pdfjsLib) {
-                    throw new Error("PDF library failed to load.");
-                }
-
-                window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-                const file = input.files[0];
+                const file = pdfToWordInput.files;
                 const arrayBuffer = await file.arrayBuffer();
-                const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const format = document.getElementById("wordFormat").value;
                 const textPages = [];
                 const renderedPages = [];
 
                 for (let i = 1; i <= pdf.numPages; i++) {
-                    progress.innerHTML = "Processing page " + i + " of " + pdf.numPages + "...";
+                    wordProgress.innerHTML = "Processing page " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent({ normalizeWhitespace: true });
+                    const textContent = await page.getTextContent();
                     textPages.push(buildPlainTextPage(textContent.items));
 
                     if (format === "docx") {
-                        const viewport = page.getViewport({ scale: 2 });
+                        const viewport = page.getViewport({ scale: 1.5 });
                         const canvas = document.createElement("canvas");
-                        const context = canvas.getContext("2d", { alpha: false });
-
-                        canvas.width = Math.ceil(viewport.width);
-                        canvas.height = Math.ceil(viewport.height);
-                        context.fillStyle = "#FFFFFF";
-                        context.fillRect(0, 0, canvas.width, canvas.height);
-
-                        await page.render({
-                            canvasContext: context,
-                            viewport
-                        }).promise;
-
-                        const fitted = fitWithinBox(canvas.width, canvas.height, 720, 980);
-                        renderedPages.push({
-                            dataUrl: canvas.toDataURL("image/png"),
-                            widthPx: fitted.width,
-                            heightPx: fitted.height
-                        });
+                        const context = canvas.getContext("2d");
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        await page.render({ canvasContext: context, viewport }).promise;
+                        renderedPages.push({ dataUrl: canvas.toDataURL("image/png"), widthPx: 700, heightPx: 900 });
                     }
                 }
 
-                let baseName = file.name || "converted.pdf";
-                if (baseName.toLowerCase().endsWith(".pdf")) {
-                    baseName = baseName.slice(0, -4);
-                }
-                if (!baseName) {
-                    baseName = "converted";
-                }
-                const plainText = textPages.filter(Boolean).join("\n\n");
+                let baseName = file.name.replace(".pdf", "");
+                const blob = format === "docx" 
+                    ? new Blob([makeHtmlDoc(baseName, renderedPages)], { type: "application/msword" })
+                    : new Blob([textPages.join("\\n\\n")], { type: "text/plain" });
 
-                if (format === "docx") {
-                    progress.innerHTML = "Preparing Word layout copy...";
-                    const htmlDoc = makeHtmlDoc(baseName, renderedPages);
-                    const blob = new Blob([htmlDoc], { type: "application/msword" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = baseName + ".doc";
-                    a.click();
-                    URL.revokeObjectURL(url);
-                } else if (format === "rtf") {
-                    const rtfHeader = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ";
-                    const rtfContent = toRtf(plainText);
-                    const rtfFooter = "}";
-                    const blob = new Blob([rtfHeader + rtfContent + rtfFooter], { type: "application/rtf" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = baseName + ".rtf";
-                    a.click();
-                    URL.revokeObjectURL(url);
-                } else {
-                    const blob = new Blob([plainText], { type: "text/plain" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = baseName + ".txt";
-                    a.click();
-                    URL.revokeObjectURL(url);
-                }
-
-                alert("Conversion complete! File downloaded.");
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = baseName + "." + (format === "docx" ? "doc" : format);
+                a.click();
+                alert("Conversion complete!");
             } catch(e) {
-                progress.classList.add("text-red-500");
-                alert("Error converting PDF: " + e.message);
+                alert("Error: " + e.message);
+            } finally {
+                wordProgress.classList.add("hidden");
             }
-            progress.classList.add("hidden");
         });
-    </script>';
+    </script>`;
 }
 
 function getPdfToPptHTML() {
