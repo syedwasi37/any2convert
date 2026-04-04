@@ -3261,133 +3261,7 @@ function getPdfToWordHTML() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-
-        function escapeHtml(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function extractStructuredParagraphs(textItems) {
-            const positionedItems = textItems
-                .filter(item => item.str && item.str.trim())
-                .map(item => {
-                    const x = item.transform[4] || 0;
-                    const y = item.transform[5] || 0;
-                    const width = item.width || 0;
-                    const height = Math.abs(item.height || item.transform[0] || 12);
-                    return {
-                        text: item.str,
-                        x,
-                        y,
-                        width,
-                        height
-                    };
-                })
-                .sort((a, b) => {
-                    if (Math.abs(b.y - a.y) > 2) return b.y - a.y;
-                    return a.x - b.x;
-                });
-
-            const lines = [];
-            positionedItems.forEach(item => {
-                const tolerance = Math.max(3, item.height * 0.45);
-                let line = lines.find(existing => Math.abs(existing.y - item.y) <= tolerance);
-
-                if (!line) {
-                    line = {
-                        y: item.y,
-                        height: item.height,
-                        items: []
-                    };
-                    lines.push(line);
-                }
-
-                line.items.push(item);
-                line.height = Math.max(line.height, item.height);
-            });
-
-            lines.sort((a, b) => b.y - a.y);
-
-            const renderedLines = lines.map(line => {
-                line.items.sort((a, b) => a.x - b.x);
-                let lineText = "";
-                let previousRight = null;
-
-                line.items.forEach(item => {
-                    const trimmed = item.text.replace(/\s+/g, " ").trim();
-                    if (!trimmed) return;
-
-                    if (previousRight !== null) {
-                        const gap = item.x - previousRight;
-                        if (gap > Math.max(2, item.height * 0.18)) {
-                            lineText += " ";
-                        }
-                    }
-
-                    if (lineText && !/\s$/.test(lineText) && !/^[,.;:!?%)\]}]/.test(trimmed)) {
-                        lineText += " ";
-                    }
-
-                    lineText += trimmed;
-                    previousRight = item.x + item.width;
-                });
-
-                return {
-                    text: lineText.replace(/\s+/g, " ").trim(),
-                    y: line.y,
-                    height: line.height
-                };
-            }).filter(line => line.text);
-
-            const paragraphs = [];
-            let currentParagraph = [];
-
-            renderedLines.forEach((line, index) => {
-                if (!currentParagraph.length) {
-                    currentParagraph.push(line.text);
-                    return;
-                }
-
-                const previousLine = renderedLines[index - 1];
-                const verticalGap = previousLine.y - line.y;
-                const gapThreshold = Math.max(previousLine.height, line.height) * 1.15;
-                const endsSentence = /[.!?:]$/.test(currentParagraph[currentParagraph.length - 1]);
-
-                if (verticalGap > gapThreshold || endsSentence) {
-                    paragraphs.push(currentParagraph.join(" ").replace(/\s+/g, " ").trim());
-                    currentParagraph = [line.text];
-                } else {
-                    currentParagraph.push(line.text);
-                }
-            });
-
-            if (currentParagraph.length) {
-                paragraphs.push(currentParagraph.join(" ").replace(/\s+/g, " ").trim());
-            }
-
-            return paragraphs.filter(Boolean);
-        }
-
-        function stripHtmlToText(html) {
-            const container = document.createElement("div");
-            container.innerHTML = html;
-            return (container.textContent || container.innerText || "")
-                .replace(/\u00a0/g, " ")
-                .replace(/[ \t]+\n/g, "\n")
-                .replace(/\n{3,}/g, "\n\n")
-                .trim();
-        }
-
-        function toRtf(text) {
-            return text
-                .replace(/\\/g, "\\\\")
-                .replace(/{/g, "\\{")
-                .replace(/}/g, "\\}")
-                .replace(/\r?\n\r?\n/g, "\\par\\par ")
-                .replace(/\r?\n/g, "\\line ");
-        }
-
+        
         document.getElementById("pdfToWordBtn").addEventListener("click", async function() {
             const input = document.getElementById("pdfToWordInput");
             if (!input.files.length) return alert("Please select a PDF file");
@@ -3403,18 +3277,35 @@ function getPdfToWordHTML() {
                 for (let i = 1; i <= pdf.numPages; i++) {
                     progress.innerHTML = "Processing page " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent({ normalizeWhitespace: true });
-                    const paragraphs = extractStructuredParagraphs(textContent.items);
-                    let pageHtml = `<div class="page"${i < pdf.numPages ? " style=\"page-break-after: always;\"" : ""}>`;
-
-                    if (paragraphs.length) {
-                        paragraphs.forEach(paragraph => {
-                            pageHtml += `<p>${escapeHtml(paragraph)}</p>`;
-                        });
-                    } else {
-                        pageHtml += `<p></p>`;
+                    const textContent = await page.getTextContent();
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    
+                    // Extract text with positioning for better formatting
+                    let pageHtml = `<div class="page" style="margin-bottom: 20px; page-break-after: always;">`;
+                    pageHtml += `<h3 style="color: #333; border-bottom: 1px solid #ccc;">Page ${i}</h3>`;
+                    
+                    const items = textContent.items;
+                    let lastY = null;
+                    let currentParagraph = "";
+                    
+                    for (let j = 0; j < items.length; j++) {
+                        const item = items[j];
+                        const y = Math.round(item.transform[5]);
+                        
+                        if (lastY !== null && Math.abs(y - lastY) > 15) {
+                            if (currentParagraph.trim()) {
+                                pageHtml += `<p style="margin: 0 0 10px 0; line-height: 1.5;">${escapeHtml(currentParagraph)}</p>`;
+                                currentParagraph = "";
+                            }
+                        }
+                        currentParagraph += item.str + " ";
+                        lastY = y;
                     }
-
+                    
+                    if (currentParagraph.trim()) {
+                        pageHtml += `<p style="margin: 0 0 10px 0; line-height: 1.5;">${escapeHtml(currentParagraph)}</p>`;
+                    }
+                    
                     pageHtml += `</div>`;
                     fullHtml += pageHtml;
                 }
@@ -3433,11 +3324,15 @@ function getPdfToWordHTML() {
                             color: #000;
                         }
                         .page {
-                            margin: 0;
+                            margin-bottom: 30px;
+                        }
+                        h3 {
+                            color: #2c3e50;
+                            margin-top: 20px;
+                            margin-bottom: 15px;
                         }
                         p {
                             margin: 0 0 12px 0;
-                            white-space: normal;
                         }
                     </style>
                 </head>
@@ -3447,19 +3342,19 @@ function getPdfToWordHTML() {
                 </html>`;
                 
                 let blob;
-                let filename = input.files[0].name.replace(/\.pdf$/i, "") || "converted";
-                const plainText = stripHtmlToText(fullHtml);
+                let filename = "converted";
                 
                 if (format === "docx") {
                     blob = new Blob([completeHtml], { type: "application/msword" });
                     filename += ".doc";
                 } else if (format === "rtf") {
                     const rtfHeader = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ";
-                    const rtfContent = toRtf(plainText);
+                    const rtfContent = fullHtml.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ");
                     const rtfFooter = "}";
                     blob = new Blob([rtfHeader + rtfContent + rtfFooter], { type: "application/rtf" });
                     filename += ".rtf";
                 } else {
+                    const plainText = fullHtml.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
                     blob = new Blob([plainText], { type: "text/plain" });
                     filename += ".txt";
                 }
@@ -3476,6 +3371,12 @@ function getPdfToWordHTML() {
             }
             progress.classList.add("hidden");
         });
+        
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>';
 }
 
