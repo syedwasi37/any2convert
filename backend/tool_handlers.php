@@ -3235,19 +3235,12 @@ function getImageToPdfHTML() {
 function getPdfToWordHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
-            <h1>PDF to Word Converter - Convert PDF to Word Online Free</h1>
-            <p>Looking for a free pdf to word converter? Learn how to convert pdf to word doc easily. High-quality pdf to word free tool with formatting preserved.</p>
-        </div>
-
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 17h13"></path><path d="M55 24h13"></path><path d="M55 31h9"></path></svg></div>
-            <h2 class="text-lg font-semibold">PDF to Word Converter</h2>
             <p class="font-medium">Select PDF file to convert to Word</p>
-            <p class="text-sm text-gray-500 mt-2">Convert PDF to Word Free | Extract PDF to Word DOC</p>
+            <p class="text-sm text-gray-500 mt-2">Extract text with formatting preserved</p>
         </div>
-
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <div class="space-y-4">
             <label class="block text-sm font-medium">Output Format:</label>
@@ -3257,9 +3250,7 @@ function getPdfToWordHTML() {
                 <option value="txt">TXT (Plain Text)</option>
             </select>
         </div>
-        <button id="pdfToWordBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
-            Convert PDF to Word (Free Online)
-        </button>
+        <button id="pdfToWordBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to Word</button>
         <div id="wordProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -3273,7 +3264,7 @@ function getPdfToWordHTML() {
             progress.classList.remove("hidden");
             
             try {
-                const arrayBuffer = await input.files.arrayBuffer();
+                const arrayBuffer = await input.files[0].arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const format = document.getElementById("wordFormat").value;
                 let fullHtml = "";
@@ -3284,6 +3275,7 @@ function getPdfToWordHTML() {
                     const textContent = await page.getTextContent();
                     const viewport = page.getViewport({ scale: 1.5 });
                     
+                    // Extract text with positioning for better formatting
                     let pageHtml = `<div class="page" style="margin-bottom: 20px; page-break-after: always;">`;
                     pageHtml += `<h3 style="color: #333; border-bottom: 1px solid #ccc;">Page ${i}</h3>`;
                     
@@ -3293,7 +3285,7 @@ function getPdfToWordHTML() {
                     
                     for (let j = 0; j < items.length; j++) {
                         const item = items[j];
-                        const y = Math.round(item.transform);
+                        const y = Math.round(item.transform[5]);
                         
                         if (lastY !== null && Math.abs(y - lastY) > 15) {
                             if (currentParagraph.trim()) {
@@ -3345,7 +3337,7 @@ function getPdfToWordHTML() {
                 </html>`;
                 
                 let blob;
-                let filename = "Any2Convert_Converted";
+                let filename = "converted";
                 
                 if (format === "docx") {
                     blob = new Blob([completeHtml], { type: "application/msword" });
