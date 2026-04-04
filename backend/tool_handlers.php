@@ -3387,7 +3387,7 @@ function getPdfToPptHTML() {
             <input type="file" id="pdfToPptInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M56 34V22"></path><path d="M62 34V18"></path><path d="M68 34V25"></path></svg></div>
             <p class="font-medium">Select PDF to convert to PowerPoint</p>
-            <p class="text-sm text-gray-500 mt-2">Each page becomes a slide with content preserved</p>
+            <p class="text-sm text-gray-500 mt-2">Each PDF page is placed into PowerPoint as an exact full-slide page image to preserve the original layout</p>
         </div>
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <button id="pdfToPptBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PowerPoint</button>
@@ -3397,74 +3397,111 @@ function getPdfToPptHTML() {
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-        
+
+        const pdfToPptInput = document.getElementById("pdfToPptInput");
+        const pdfPreview = document.getElementById("pdfPreview");
+        const pptProgress = document.getElementById("pptProgress");
+
+        pdfToPptInput.addEventListener("change", function() {
+            if (!this.files.length) {
+                pdfPreview.classList.add("hidden");
+                pdfPreview.textContent = "";
+                return;
+            }
+
+            const file = this.files[0];
+            pdfPreview.textContent = file.name + " selected";
+            pdfPreview.classList.remove("hidden");
+        });
+
+        function fitIntoSlide(pageWidth, pageHeight, slideWidth, slideHeight) {
+            const pageRatio = pageWidth / pageHeight;
+            const slideRatio = slideWidth / slideHeight;
+
+            let width = slideWidth;
+            let height = slideHeight;
+            let x = 0;
+            let y = 0;
+
+            if (pageRatio > slideRatio) {
+                height = slideWidth / pageRatio;
+                y = (slideHeight - height) / 2;
+            } else {
+                width = slideHeight * pageRatio;
+                x = (slideWidth - width) / 2;
+            }
+
+            return { x, y, width, height };
+        }
+
         document.getElementById("pdfToPptBtn").addEventListener("click", async function() {
-            const input = document.getElementById("pdfToPptInput");
+            const input = pdfToPptInput;
             if (!input.files.length) return alert("Please select a PDF file");
-            const progress = document.getElementById("pptProgress");
-            progress.classList.remove("hidden");
+            pptProgress.classList.remove("hidden");
             
             try {
-                const arrayBuffer = await input.files[0].arrayBuffer();
+                const file = input.files[0];
+                const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const firstPage = await pdf.getPage(1);
+                const firstViewport = firstPage.getViewport({ scale: 1 });
                 const pptx = new PptxGenJS();
-                
+                const baseSlideWidth = 10;
+                const baseSlideHeight = baseSlideWidth * (firstViewport.height / firstViewport.width);
+
+                pptx.defineLayout({ name: "PDF_PAGE_LAYOUT", width: baseSlideWidth, height: baseSlideHeight });
+                pptx.layout = "PDF_PAGE_LAYOUT";
+                pptx.author = "Any2Convert";
+                pptx.company = "Any2Convert";
+                pptx.subject = "PDF to PowerPoint conversion";
+                pptx.title = file.name.replace(/\.pdf$/i, "") || "Converted PDF";
+
                 for (let i = 1; i <= pdf.numPages; i++) {
-                    progress.innerHTML = "Processing slide " + i + " of " + pdf.numPages + "...";
+                    pptProgress.textContent = "Processing page " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    
-                    // Extract text content for slide
-                    let slideText = "";
-                    const items = textContent.items;
-                    let lastY = null;
-                    let currentParagraph = "";
-                    
-                    for (let j = 0; j < items.length; j++) {
-                        const item = items[j];
-                        const y = Math.round(item.transform[5]);
-                        
-                        if (lastY !== null && Math.abs(y - lastY) > 15) {
-                            if (currentParagraph.trim()) {
-                                slideText += currentParagraph.trim() + "\n\n";
-                                currentParagraph = "";
-                            }
-                        }
-                        currentParagraph += item.str + " ";
-                        lastY = y;
-                    }
-                    
-                    if (currentParagraph.trim()) {
-                        slideText += currentParagraph.trim();
-                    }
-                    
-                    // Create slide
+                    const viewport = page.getViewport({ scale: 2 });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d", { alpha: false });
+
+                    canvas.width = Math.ceil(viewport.width);
+                    canvas.height = Math.ceil(viewport.height);
+
+                    context.fillStyle = "#FFFFFF";
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport
+                    }).promise;
+
+                    const pageViewport = page.getViewport({ scale: 1 });
+                    const bounds = fitIntoSlide(pageViewport.width, pageViewport.height, baseSlideWidth, baseSlideHeight);
                     const slide = pptx.addSlide();
-                    slide.addText(`Slide ${i}`, { x: 0.5, y: 0.5, w: 9, h: 1, fontSize: 24, bold: true });
-                    slide.addText(slideText || "No text content found on this slide.", { x: 0.5, y: 1.5, w: 9, h: 5, fontSize: 16, autoFit: true, shrinkText: true });
+                    slide.background = { color: "FFFFFF" };
+                    slide.addImage({
+                        data: canvas.toDataURL("image/png"),
+                        x: bounds.x,
+                        y: bounds.y,
+                        w: bounds.width,
+                        h: bounds.height
+                    });
                 }
                 
-                // Export as PPTX
+                pptProgress.textContent = "Preparing PowerPoint download...";
                 const blob = await pptx.write({ outputType: "blob" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "presentation.pptx";
+                a.download = (file.name.replace(/\.pdf$/i, "") || "converted-pdf") + ".pptx";
                 a.click();
                 URL.revokeObjectURL(url);
                 
-                alert("Conversion complete! PowerPoint presentation downloaded.");
+                alert("Conversion complete! The PowerPoint keeps each PDF page as an exact slide image.");
             } catch(e) {
                 alert("Error converting PDF: " + e.message);
             }
-            progress.classList.add("hidden");
+            pptProgress.classList.add("hidden");
         });
-        
-        function escapeHtml(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
     </script>';
 }
 
