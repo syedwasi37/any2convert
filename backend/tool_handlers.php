@@ -3235,7 +3235,7 @@ function getImageToPdfHTML() {
 function getPdfToWordHTML() {
     return '
     <div class="space-y-6">
-    <div style="display:none;">
+        <div style="display:none;">
             <h1>PDF to Word Converter - Convert PDF to Word Online Free</h1>
             <p>Looking for a free pdf to word converter? Learn how to convert pdf to word doc easily. High-quality pdf to word free tool with formatting preserved.</p>
         </div>
@@ -3259,124 +3259,262 @@ function getPdfToWordHTML() {
         <div id="wordProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-        
+
+        const pdfToWordInput = document.getElementById("pdfToWordInput");
+        const pdfPreview = document.getElementById("pdfPreview");
+        const wordProgress = document.getElementById("wordProgress");
+
+        pdfToWordInput.addEventListener("change", function() {
+            if (!this.files.length) {
+                pdfPreview.textContent = "";
+                pdfPreview.classList.add("hidden");
+                return;
+            }
+
+            pdfPreview.textContent = this.files[0].name + " selected";
+            pdfPreview.classList.remove("hidden");
+        });
+
+        function normalizeText(value) {
+            return String(value || "").replace(/\s+/g, " ").trim();
+        }
+
+        function buildParagraphs(items) {
+            const positioned = items
+                .filter(item => normalizeText(item.str))
+                .map(item => ({
+                    text: normalizeText(item.str),
+                    x: item.transform[4] || 0,
+                    y: item.transform[5] || 0,
+                    width: item.width || 0,
+                    height: Math.abs(item.height || item.transform[0] || 12)
+                }))
+                .sort((a, b) => {
+                    if (Math.abs(b.y - a.y) > 2) return b.y - a.y;
+                    return a.x - b.x;
+                });
+
+            const lines = [];
+
+            positioned.forEach(item => {
+                const tolerance = Math.max(3, item.height * 0.45);
+                let targetLine = null;
+
+                for (const line of lines) {
+                    if (Math.abs(line.y - item.y) <= tolerance) {
+                        targetLine = line;
+                        break;
+                    }
+                }
+
+                if (!targetLine) {
+                    targetLine = { y: item.y, height: item.height, items: [] };
+                    lines.push(targetLine);
+                }
+
+                targetLine.items.push(item);
+                targetLine.height = Math.max(targetLine.height, item.height);
+            });
+
+            lines.sort((a, b) => b.y - a.y);
+
+            const textLines = lines.map(line => {
+                line.items.sort((a, b) => a.x - b.x);
+                let assembled = "";
+                let lastRight = null;
+
+                line.items.forEach(item => {
+                    if (lastRight !== null) {
+                        const gap = item.x - lastRight;
+                        if (gap > Math.max(2, item.height * 0.2)) {
+                            assembled += " ";
+                        }
+                    }
+
+                    if (assembled && !/\s$/.test(assembled) && !/^[,.;:!?%)\]}]/.test(item.text)) {
+                        assembled += " ";
+                    }
+
+                    assembled += item.text;
+                    lastRight = item.x + item.width;
+                });
+
+                return {
+                    text: normalizeText(assembled),
+                    y: line.y,
+                    height: line.height
+                };
+            }).filter(line => line.text);
+
+            const paragraphs = [];
+            let current = [];
+
+            textLines.forEach((line, index) => {
+                if (!current.length) {
+                    current.push(line.text);
+                    return;
+                }
+
+                const previousLine = textLines[index - 1];
+                const verticalGap = previousLine.y - line.y;
+                const shouldBreak = verticalGap > Math.max(previousLine.height, line.height) * 1.2;
+
+                if (shouldBreak) {
+                    paragraphs.push(normalizeText(current.join(" ")));
+                    current = [line.text];
+                } else {
+                    current.push(line.text);
+                }
+            });
+
+            if (current.length) {
+                paragraphs.push(normalizeText(current.join(" ")));
+            }
+
+            return paragraphs.filter(Boolean);
+        }
+
+        function makePlainText(pageParagraphs) {
+            return pageParagraphs
+                .map(paragraphs => paragraphs.join("\n\n"))
+                .join("\n\n");
+        }
+
+        function toRtf(text) {
+            return text
+                .replace(/\\/g, "\\\\")
+                .replace(/{/g, "\\{")
+                .replace(/}/g, "\\}")
+                .replace(/\r?\n\r?\n/g, "\\par\\par ")
+                .replace(/\r?\n/g, "\\line ");
+        }
+
+        function fitWithinBox(width, height, maxWidth, maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            return {
+                width: Math.max(1, Math.round(width * ratio)),
+                height: Math.max(1, Math.round(height * ratio))
+            };
+        }
+
         document.getElementById("pdfToWordBtn").addEventListener("click", async function() {
-            const input = document.getElementById("pdfToWordInput");
+            const input = pdfToWordInput;
             if (!input.files.length) return alert("Please select a PDF file");
-            const progress = document.getElementById("wordProgress");
-            progress.classList.remove("hidden");
+            const progress = wordProgress;
+            progress.classList.remove("hidden", "text-red-500");
             
             try {
-                const arrayBuffer = await input.files[0].arrayBuffer();
+                const file = input.files[0];
+                const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const format = document.getElementById("wordFormat").value;
-                let fullHtml = "";
-                
+                const allPages = [];
+                const renderedPages = [];
+
                 for (let i = 1; i <= pdf.numPages; i++) {
                     progress.innerHTML = "Processing page " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    
-                    // Extract text with positioning for better formatting
-                    let pageHtml = `<div class="page" style="margin-bottom: 20px; page-break-after: always;">`;
-                    pageHtml += `<h3 style="color: #333; border-bottom: 1px solid #ccc;">Page ${i}</h3>`;
-                    
-                    const items = textContent.items;
-                    let lastY = null;
-                    let currentParagraph = "";
-                    
-                    for (let j = 0; j < items.length; j++) {
-                        const item = items[j];
-                        const y = Math.round(item.transform[5]);
-                        
-                        if (lastY !== null && Math.abs(y - lastY) > 15) {
-                            if (currentParagraph.trim()) {
-                                pageHtml += `<p style="margin: 0 0 10px 0; line-height: 1.5;">${escapeHtml(currentParagraph)}</p>`;
-                                currentParagraph = "";
-                            }
-                        }
-                        currentParagraph += item.str + " ";
-                        lastY = y;
+                    const textContent = await page.getTextContent({ normalizeWhitespace: true });
+                    allPages.push(buildParagraphs(textContent.items));
+
+                    if (format === "docx") {
+                        const viewport = page.getViewport({ scale: 2 });
+                        const canvas = document.createElement("canvas");
+                        const context = canvas.getContext("2d", { alpha: false });
+
+                        canvas.width = Math.ceil(viewport.width);
+                        canvas.height = Math.ceil(viewport.height);
+                        context.fillStyle = "#FFFFFF";
+                        context.fillRect(0, 0, canvas.width, canvas.height);
+
+                        await page.render({
+                            canvasContext: context,
+                            viewport
+                        }).promise;
+
+                        renderedPages.push({
+                            dataUrl: canvas.toDataURL("image/png"),
+                            width: canvas.width,
+                            height: canvas.height
+                        });
                     }
-                    
-                    if (currentParagraph.trim()) {
-                        pageHtml += `<p style="margin: 0 0 10px 0; line-height: 1.5;">${escapeHtml(currentParagraph)}</p>`;
-                    }
-                    
-                    pageHtml += `</div>`;
-                    fullHtml += pageHtml;
                 }
-                
-                const completeHtml = `<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Converted Document</title>
-                    <style>
-                        body {
-                            font-family: "Times New Roman", Times, serif;
-                            font-size: 12pt;
-                            line-height: 1.5;
-                            margin: 1in;
-                            color: #000;
-                        }
-                        .page {
-                            margin-bottom: 30px;
-                        }
-                        h3 {
-                            color: #2c3e50;
-                            margin-top: 20px;
-                            margin-bottom: 15px;
-                        }
-                        p {
-                            margin: 0 0 12px 0;
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${fullHtml}
-                </body>
-                </html>`;
-                
-                let blob;
-                let filename = "converted";
-                
+
+                const baseName = file.name.replace(/\.pdf$/i, "") || "converted";
+                const plainText = makePlainText(allPages);
+
                 if (format === "docx") {
-                    blob = new Blob([completeHtml], { type: "application/msword" });
-                    filename += ".doc";
+                    progress.innerHTML = "Preparing Word document with original PDF layout...";
+                    const sectionChildren = renderedPages.flatMap((pageImage, pageIndex) => {
+                        const fitted = fitWithinBox(pageImage.width, pageImage.height, 560, 760);
+                        const imageParagraph = new docx.Paragraph({
+                            spacing: { after: 0, before: 0 },
+                            children: [
+                                new docx.ImageRun({
+                                    data: pageImage.dataUrl,
+                                    transformation: {
+                                        width: fitted.width,
+                                        height: fitted.height
+                                    }
+                                })
+                            ]
+                        });
+
+                        if (pageIndex < renderedPages.length - 1) {
+                            return [
+                                imageParagraph,
+                                new docx.Paragraph({ pageBreakBefore: true, text: "" })
+                            ];
+                        }
+
+                        return [imageParagraph];
+                    });
+
+                    const doc = new docx.Document({
+                        sections: [{
+                            properties: {},
+                            children: sectionChildren
+                        }]
+                    });
+
+                    const blob = await docx.Packer.toBlob(doc);
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = baseName + ".docx";
+                    a.click();
+                    URL.revokeObjectURL(url);
                 } else if (format === "rtf") {
                     const rtfHeader = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ";
-                    const rtfContent = fullHtml.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ");
+                    const rtfContent = toRtf(plainText);
                     const rtfFooter = "}";
-                    blob = new Blob([rtfHeader + rtfContent + rtfFooter], { type: "application/rtf" });
-                    filename += ".rtf";
+                    const blob = new Blob([rtfHeader + rtfContent + rtfFooter], { type: "application/rtf" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = baseName + ".rtf";
+                    a.click();
+                    URL.revokeObjectURL(url);
                 } else {
-                    const plainText = fullHtml.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
-                    blob = new Blob([plainText], { type: "text/plain" });
-                    filename += ".txt";
+                    const blob = new Blob([plainText], { type: "text/plain" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = baseName + ".txt";
+                    a.click();
+                    URL.revokeObjectURL(url);
                 }
-                
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = filename;
-                a.click();
-                URL.revokeObjectURL(url);
+
                 alert("Conversion complete! File downloaded.");
             } catch(e) {
+                progress.classList.add("text-red-500");
                 alert("Error converting PDF: " + e.message);
             }
             progress.classList.add("hidden");
         });
-        
-        function escapeHtml(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
     </script>';
 }
 
