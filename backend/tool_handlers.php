@@ -3396,7 +3396,7 @@ function getPdfToPptHTML() {
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <button id="pdfToPptBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PowerPoint</button>
                     <p class="font-medium">Select PDF file to convert PDF to Powerpoint</p>
-            <p class="text-sm text-gray-900 mt-2">Convert Pdf to Powerpoint Free | Extract PDF to Powerpoint PPT | Best pdf to powerpoint converter</p>
+            <p class="text-sm text-gray-400 mt-2">Convert Pdf to Powerpoint Free | Extract PDF to Powerpoint PPT | Best pdf to powerpoint converter</p>
 
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
