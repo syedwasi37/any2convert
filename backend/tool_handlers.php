@@ -3264,9 +3264,9 @@ function getPdfToWordHTML() {
             window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
         }
 
-        const pdfToWordInput = document.getElementById("pdfToWordInput");
-        const pdfPreview = document.getElementById("pdfPreview");
-        const wordProgress = document.getElementById("wordProgress");
+        var pdfToWordInput = document.getElementById("pdfToWordInput");
+        var pdfPreview = document.getElementById("pdfPreview");
+        var wordProgress = document.getElementById("wordProgress");
 
         pdfToWordInput.addEventListener("change", function() {
             if (!this.files.length) {
@@ -3281,9 +3281,9 @@ function getPdfToWordHTML() {
 
         function normalizeText(value) {
             return String(value || "")
-                .replaceAll("\r", " ")
-                .replaceAll("\n", " ")
-                .replaceAll("\t", " ")
+                .split("\r").join(" ")
+                .split("\n").join(" ")
+                .split("\t").join(" ")
                 .split(" ")
                 .filter(Boolean)
                 .join(" ")
@@ -3291,68 +3291,74 @@ function getPdfToWordHTML() {
         }
 
         function escapeHtml(text) {
-            const div = document.createElement("div");
+            var div = document.createElement("div");
             div.textContent = text;
             return div.innerHTML;
         }
 
         function buildPlainTextPage(items) {
-            const rows = {};
+            var rows = {};
+            var keys;
 
-            items.forEach(item => {
-                const text = normalizeText(item.str);
+            items.forEach(function(item) {
+                var text = normalizeText(item.str);
+                var y;
                 if (!text) return;
 
-                const y = Math.round(item.transform[5] || 0);
+                y = Math.round(item.transform[5] || 0);
                 if (!rows[y]) rows[y] = [];
                 rows[y].push({
-                    text,
+                    text: text,
                     x: item.transform[4] || 0
                 });
             });
 
-            return Object.keys(rows)
-                .map(Number)
-                .sort((a, b) => b - a)
-                .map(y => rows[y].sort((a, b) => a.x - b.x).map(part => part.text).join(" "))
-                .join("\n")
-                .trim();
+            keys = Object.keys(rows).map(function(key) {
+                return Number(key);
+            }).sort(function(a, b) {
+                return b - a;
+            });
+
+            return keys.map(function(y) {
+                return rows[y]
+                    .sort(function(a, b) { return a.x - b.x; })
+                    .map(function(part) { return part.text; })
+                    .join(" ");
+            }).join("\n").trim();
         }
 
         function makeHtmlDoc(title, renderedPages) {
-            const body = renderedPages.map((page, index) => {
-                const style = index < renderedPages.length - 1 ? "page-break-after: always;" : "";
-                return `<div style="${style} margin: 0 0 12px 0; text-align: center;"><img src="${page.dataUrl}" style="max-width: 100%; width: ${page.widthPx}px; height: ${page.heightPx}px; display: block; margin: 0 auto;" /></div>`;
-            }).join("");
+            var parts = [];
+            var i;
 
-            return `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>${escapeHtml(title)}</title>
-    <style>
-        @page { margin: 0.5in; }
-        body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
-        img { border: 0; }
-    </style>
-</head>
-<body>${body}</body>
-</html>`;
+            parts.push("<!DOCTYPE html>");
+            parts.push("<html><head><meta charset=\"UTF-8\"><title>" + escapeHtml(title) + "</title>");
+            parts.push("<style>@page { margin: 0.5in; } body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; } img { border: 0; }</style>");
+            parts.push("</head><body>");
+
+            for (i = 0; i < renderedPages.length; i++) {
+                parts.push("<div style=\"" + (i < renderedPages.length - 1 ? "page-break-after: always; " : "") + "margin: 0 0 12px 0; text-align: center;\">");
+                parts.push("<img src=\"" + renderedPages[i].dataUrl + "\" style=\"max-width: 100%; width: " + renderedPages[i].widthPx + "px; height: " + renderedPages[i].heightPx + "px; display: block; margin: 0 auto;\" />");
+                parts.push("</div>");
+            }
+
+            parts.push("</body></html>");
+            return parts.join("");
         }
 
         function toRtf(text) {
             return String(text || "")
-                .replaceAll("\\", "\\\\")
-                .replaceAll("{", "\\{")
-                .replaceAll("}", "\\}")
-                .replaceAll("\r\n\r\n", "\\par\\par ")
-                .replaceAll("\n\n", "\\par\\par ")
-                .replaceAll("\r\n", "\\line ")
-                .replaceAll("\n", "\\line ");
+                .split("\\").join("\\\\")
+                .split("{").join("\\{")
+                .split("}").join("\\}")
+                .split("\r\n\r\n").join("\\par\\par ")
+                .split("\n\n").join("\\par\\par ")
+                .split("\r\n").join("\\line ")
+                .split("\n").join("\\line ");
         }
 
         function fitWithinBox(width, height, maxWidth, maxHeight) {
-            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            var ratio = Math.min(maxWidth / width, maxHeight / height);
             return {
                 width: Math.max(1, Math.round(width * ratio)),
                 height: Math.max(1, Math.round(height * ratio))
@@ -3360,9 +3366,21 @@ function getPdfToWordHTML() {
         }
 
         document.getElementById("pdfToWordBtn").addEventListener("click", async function() {
-            const input = pdfToWordInput;
+            var input = pdfToWordInput;
+            var progress = wordProgress;
+            var file;
+            var arrayBuffer;
+            var pdf;
+            var format;
+            var textPages = [];
+            var renderedPages = [];
+            var i;
+            var baseName;
+            var plainText;
+            var url;
+            var a;
+
             if (!input.files.length) return alert("Please select a PDF file");
-            const progress = wordProgress;
             progress.classList.remove("hidden", "text-red-500");
             
             try {
@@ -3371,23 +3389,24 @@ function getPdfToWordHTML() {
                 }
 
                 window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-                const file = input.files[0];
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                const format = document.getElementById("wordFormat").value;
-                const textPages = [];
-                const renderedPages = [];
+                file = input.files[0];
+                arrayBuffer = await file.arrayBuffer();
+                pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                format = document.getElementById("wordFormat").value;
 
-                for (let i = 1; i <= pdf.numPages; i++) {
+                for (i = 1; i <= pdf.numPages; i++) {
+                    var page = await pdf.getPage(i);
+                    var textContent;
+
                     progress.innerHTML = "Processing page " + i + " of " + pdf.numPages + "...";
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent({ normalizeWhitespace: true });
+                    textContent = await page.getTextContent({ normalizeWhitespace: true });
                     textPages.push(buildPlainTextPage(textContent.items));
 
                     if (format === "docx") {
-                        const viewport = page.getViewport({ scale: 2 });
-                        const canvas = document.createElement("canvas");
-                        const context = canvas.getContext("2d", { alpha: false });
+                        var viewport = page.getViewport({ scale: 2 });
+                        var canvas = document.createElement("canvas");
+                        var context = canvas.getContext("2d", { alpha: false });
+                        var fitted;
 
                         canvas.width = Math.ceil(viewport.width);
                         canvas.height = Math.ceil(viewport.height);
@@ -3396,10 +3415,10 @@ function getPdfToWordHTML() {
 
                         await page.render({
                             canvasContext: context,
-                            viewport
+                            viewport: viewport
                         }).promise;
 
-                        const fitted = fitWithinBox(canvas.width, canvas.height, 720, 980);
+                        fitted = fitWithinBox(canvas.width, canvas.height, 720, 980);
                         renderedPages.push({
                             dataUrl: canvas.toDataURL("image/png"),
                             widthPx: fitted.width,
@@ -3408,40 +3427,43 @@ function getPdfToWordHTML() {
                     }
                 }
 
-                let baseName = file.name || "converted.pdf";
-                if (baseName.toLowerCase().endsWith(".pdf")) {
+                baseName = file.name || "converted.pdf";
+                if (baseName.toLowerCase().slice(-4) === ".pdf") {
                     baseName = baseName.slice(0, -4);
                 }
                 if (!baseName) {
                     baseName = "converted";
                 }
-                const plainText = textPages.filter(Boolean).join("\n\n");
+                plainText = textPages.filter(Boolean).join("\n\n");
 
                 if (format === "docx") {
+                    var htmlDoc = makeHtmlDoc(baseName, renderedPages);
+                    var wordBlob = new Blob([htmlDoc], { type: "application/msword" });
+
                     progress.innerHTML = "Preparing Word layout copy...";
-                    const htmlDoc = makeHtmlDoc(baseName, renderedPages);
-                    const blob = new Blob([htmlDoc], { type: "application/msword" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
+                    url = URL.createObjectURL(wordBlob);
+                    a = document.createElement("a");
                     a.href = url;
                     a.download = baseName + ".doc";
                     a.click();
                     URL.revokeObjectURL(url);
                 } else if (format === "rtf") {
-                    const rtfHeader = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ";
-                    const rtfContent = toRtf(plainText);
-                    const rtfFooter = "}";
-                    const blob = new Blob([rtfHeader + rtfContent + rtfFooter], { type: "application/rtf" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
+                    var rtfHeader = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ";
+                    var rtfContent = toRtf(plainText);
+                    var rtfFooter = "}";
+                    var rtfBlob = new Blob([rtfHeader + rtfContent + rtfFooter], { type: "application/rtf" });
+
+                    url = URL.createObjectURL(rtfBlob);
+                    a = document.createElement("a");
                     a.href = url;
                     a.download = baseName + ".rtf";
                     a.click();
                     URL.revokeObjectURL(url);
                 } else {
-                    const blob = new Blob([plainText], { type: "text/plain" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
+                    var textBlob = new Blob([plainText], { type: "text/plain" });
+
+                    url = URL.createObjectURL(textBlob);
+                    a = document.createElement("a");
                     a.href = url;
                     a.download = baseName + ".txt";
                     a.click();
@@ -3453,6 +3475,7 @@ function getPdfToWordHTML() {
                 progress.classList.add("text-red-500");
                 alert("Error converting PDF: " + e.message);
             }
+
             progress.classList.add("hidden");
         });
     </script>';
