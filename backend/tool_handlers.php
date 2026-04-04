@@ -3205,7 +3205,7 @@ function getImageToPdfHTML() {
 
                     const link = document.createElement("a");
 
-                    link.download = "page_" + i + ".jpg";
+                    link.download = "page_" + i + ".jpg " + "(click image to download)" + ";
 
                     link.href = canvas.toDataURL("image/jpeg", 0.97);
 
