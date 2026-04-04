@@ -3280,7 +3280,14 @@ function getPdfToWordHTML() {
         });
 
         function normalizeText(value) {
-            return String(value || "").replace(/\s+/g, " ").trim();
+            return String(value || "")
+                .replaceAll("\r", " ")
+                .replaceAll("\n", " ")
+                .replaceAll("\t", " ")
+                .split(" ")
+                .filter(Boolean)
+                .join(" ")
+                .trim();
         }
 
         function escapeHtml(text) {
@@ -3334,12 +3341,14 @@ function getPdfToWordHTML() {
         }
 
         function toRtf(text) {
-            return text
-                .replace(/\\/g, "\\\\")
-                .replace(/{/g, "\\{")
-                .replace(/}/g, "\\}")
-                .replace(/\r?\n\r?\n/g, "\\par\\par ")
-                .replace(/\r?\n/g, "\\line ");
+            return String(text || "")
+                .replaceAll("\\", "\\\\")
+                .replaceAll("{", "\\{")
+                .replaceAll("}", "\\}")
+                .replaceAll("\r\n\r\n", "\\par\\par ")
+                .replaceAll("\n\n", "\\par\\par ")
+                .replaceAll("\r\n", "\\line ")
+                .replaceAll("\n", "\\line ");
         }
 
         function fitWithinBox(width, height, maxWidth, maxHeight) {
@@ -3399,7 +3408,13 @@ function getPdfToWordHTML() {
                     }
                 }
 
-                const baseName = file.name.replace(/\.pdf$/i, "") || "converted";
+                let baseName = file.name || "converted.pdf";
+                if (baseName.toLowerCase().endsWith(".pdf")) {
+                    baseName = baseName.slice(0, -4);
+                }
+                if (!baseName) {
+                    baseName = "converted";
+                }
                 const plainText = textPages.filter(Boolean).join("\n\n");
 
                 if (format === "docx") {
