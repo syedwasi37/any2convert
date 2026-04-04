@@ -3119,7 +3119,7 @@ function getImageToPdfHTML() {
 <h2 class="text-lg font-semibold">PDF to Image Converter</h2>
             <p class="font-medium">Select PDF to convert to images</p>
             <p class="text-sm text-gray-500 mt-2">Convert pdf to image online free | High-quality JPG</p>
-            <p class="text-sm text-gray-500 mt-2">Each page will be converted to high-quality JPG</p>
+            <p class="text-sm text-gray-800 mt-2">Each page will be converted to high-quality JPG</p>
 
         </div>
 
