@@ -3139,7 +3139,7 @@ function getPdfToImageHTML() {
             Convert PDF to Image (Free Online)
         </button>
 
-        <div id="imgResult" class="grid grid-cols-2 gap-2 mt-4"></div>
+        <div id="imgResult" class="grid grid-cols-2 gap-4 mt-4"></div>
 
         <footer class="text-center text-xs text-gray-400 mt-2">
             <p>Fastest free pdf to image converter. Each page becomes a high-resolution image file.</p>
@@ -3153,7 +3153,8 @@ function getPdfToImageHTML() {
         const pdfPreview = document.getElementById("pdfPreview");
         
         pdfInput.addEventListener("change", function() {
-            if(this.files) {
+            // FIX 1: input.files use kiya taake pehli file ki detail milay
+            if(this.files && this.files) {
                 pdfPreview.innerHTML = "Selected: " + this.files.name + " (" + (this.files.size / 1024).toFixed(2) + " KB)";
                 pdfPreview.classList.remove("hidden");
             }
@@ -3161,11 +3162,13 @@ function getPdfToImageHTML() {
         
         document.getElementById("pdfToImgBtn").addEventListener("click", async function() {
             const input = document.getElementById("pdfToImgInput");
-            if (!input.files.length) return alert("Please select a PDF file");
+            if (!input.files || !input.files.length) return alert("Please select a PDF file");
+            
             const resultDiv = document.getElementById("imgResult");
             resultDiv.innerHTML = \'<div class="col-span-2 text-center py-4">Processing... <div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 ml-2"></div></div>\';
             
             try {
+                // FIX 2: input.files.arrayBuffer() use kiya
                 const arrayBuffer = await input.files.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 resultDiv.innerHTML = "";
@@ -3182,17 +3185,25 @@ function getPdfToImageHTML() {
                     
                     await page.render({ canvasContext: context, viewport: viewport }).promise;
                     
-                    const link = document.createElement("a");
-                    // SEO friendly download names
-                    link.download = "Any2Convert-page-" + i + ".jpg";
-                    link.href = canvas.toDataURL("image/jpeg", 0.97);
-                    link.innerHTML = \'<img src="\' + link.href + \'" class="w-full rounded-lg border border-gray-200" alt="pdf to image conversion"><span class="text-xs text-center block mt-1">Page \' + i + \'</span>\';
+                    const imgData = canvas.toDataURL("image/jpeg", 0.97);
+                    
                     const div = document.createElement("div");
-                    div.className = "relative";
-                    div.appendChild(link);
+                    div.className = "relative bg-gray-50 dark:bg-gray-800 p-2 rounded-lg border flex flex-col items-center";
+                    
+                    // Added a clear Download Link/Button per image
+                    div.innerHTML = `
+                        <img src="${imgData}" class="w-full rounded-lg border border-gray-200" alt="pdf to image conversion">
+                        <span class="text-xs text-center block mt-1 mb-2 font-medium">Page ${i}</span>
+                        <a href="${imgData}" download="Any2Convert-page-${i}.jpg" 
+                           class="w-full bg-green-500 hover:bg-green-600 text-white text-[10px] py-1 rounded text-center transition font-bold">
+                           DOWNLOAD JPG
+                        </a>
+                    `;
+                    
                     resultDiv.appendChild(div);
                 }
             } catch(e) {
+                console.error(e);
                 resultDiv.innerHTML = \'<div class="col-span-2 text-center text-red-500 py-4">Error: \' + e.message + \'</div>\';
             }
         });
