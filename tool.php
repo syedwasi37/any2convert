@@ -245,26 +245,6 @@ $dynamic_keywords = implode(', ', array_unique(array_filter(explode(' ', $clean_
             }
         }
         
-        .seo-content {
-            max-width: 800px; margin: 40px auto;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            font-size: 1.05rem;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .seo-content h2 { color: var(--text-primary); font-size: 1.6rem; font-weight: 700; margin-top: 40px; margin-bottom: 20px; }
-        .seo-content p { margin-bottom: 20px; }
-        .faq-item {
-            border-bottom: 1px solid var(--border);
-            padding: 16px 0;
-            transition: transform 0.28s cubic-bezier(.22,1,.36,1), border-color 0.24s ease;
-        }
-        .faq-item:hover {
-            transform: translateX(4px);
-            border-color: var(--border-hover);
-        }
-        .faq-q { font-weight: 600; color: var(--text-primary); font-size: 1.1rem; margin-bottom: 8px; }
-
         /* Shared tool form polish */
         .tool-container input[type="file"],
         .tool-container input[type="text"],
@@ -543,12 +523,12 @@ if (isset($_SESSION['user_name'])) {
     'cta_html' => $toolTopbarCta,
 ]); ?>
 
-<header style="text-align:center; padding: 60px 20px 20px;">
-    <h1 style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;"><?= htmlspecialchars($tool_data['h1']) ?></h1>
-    <p style="color: var(--text-secondary); font-size: 1.1rem;">Fast, secure, and powered locally in your browser.</p>
+<header class="text-center pt-16 pb-10 px-6">
+    <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight"><?= htmlspecialchars($tool_data['h1']) ?></h1>
+    <p class="text-lg text-slate-500 dark:text-slate-400">Fast, secure, and powered locally in your browser.</p>
 </header>
 
-<main style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>; margin: 0 auto; padding: 0 20px;">
+<main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
     <?= adsRenderPosition($conn, 'top_content') ?>
     <!-- TOOL INTERFACE -->
     <div class="tool-container<?= $isWideTool ? ' tool-container-wide' : '' ?>" id="modalContent">
@@ -556,45 +536,45 @@ if (isset($_SESSION['user_name'])) {
     </div>
     
     <!-- SEO CONTENT -->
-    <div class="seo-content">
-        <h2>What is this tool?</h2>
+    <div class="max-w-4xl mx-auto mt-20 text-slate-600 dark:text-slate-400 text-lg leading-relaxed space-y-6">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">What is this tool?</h2>
         <p><?= $tool_data['content'] ?></p>
         
-        <h2>Why use Any2Convert?</h2>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
-            <div style="border: 1px solid var(--border); padding: 20px; border-radius: 12px; background: var(--bg-card);">
-                <strong style="color:var(--text-primary); font-size:1.1rem; display:block; margin-bottom:8px;">100% Privacy</strong>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Why use Any2Convert?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2">100% Privacy</strong>
                 All operations execute using Javascript and WebAssembly right on your machine. Your files are not uploaded to our cloud servers.
             </div>
-            <div style="border: 1px solid var(--border); padding: 20px; border-radius: 12px; background: var(--bg-card);">
-                <strong style="color:var(--text-primary); font-size:1.1rem; display:block; margin-bottom:8px;">Unlimited Free Usage</strong>
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Unlimited Free Usage</strong>
                 Enjoy lifetime free conversions. We do not enforce paid tiers, size limits, or watermarks on your generated files.
             </div>
         </div>
         
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-container">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Frequently Asked Questions</h2>
+        <div class="space-y-4 mt-6">
             <?php foreach ($tool_data['faqs'] as $faq): ?>
-            <div class="faq-item">
-                <div class="faq-q"><?= htmlspecialchars($faq['q']) ?></div>
-                <div class="faq-a"><?= htmlspecialchars($faq['a']) ?></div>
+            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                <div class="font-bold text-slate-900 dark:text-white text-lg mb-2"><?= htmlspecialchars($faq['q']) ?></div>
+                <div class="text-base"><?= htmlspecialchars($faq['a']) ?></div>
             </div>
             <?php endforeach; ?>
         </div>
         
         <!-- Read Full Guide CTA (Internal Blog Link) -->
-        <div style="margin-top: 40px; padding: 24px; background: var(--accent-light); border: 1px solid var(--border-strong); border-radius: 16px; text-align: center;">
-            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">Want to learn more?</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 16px;">Read our comprehensive guide and step-by-step tutorial on how to get the most out of <?= htmlspecialchars($tool_data['title']) ?>.</p>
-            <a href="blog/guide.php?slug=<?= urlencode($slug) ?>" class="btn-primary" style="display: inline-flex; text-decoration: none;">Read the Full Guide</a>
+        <div class="mt-12 p-8 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800 text-center">
+            <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">Want to learn more?</h3>
+            <p class="text-blue-700 dark:text-blue-300 mb-6 max-w-2xl mx-auto text-base">Read our comprehensive guide and step-by-step tutorial on how to get the most out of <?= htmlspecialchars($tool_data['title']) ?>.</p>
+            <a href="blog/guide.php?slug=<?= urlencode($slug) ?>" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 dark:shadow-none text-base">Read the Full Guide</a>
         </div>
         
         <!-- SEO Tags / Keywords -->
-        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border);">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">Related Keywords</h3>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <div class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Related Keywords</h3>
+            <div class="flex flex-wrap gap-2">
                 <?php foreach (array_slice(explode(',', $dynamic_keywords), 0, 10) as $tag): ?>
-                    <span style="background: var(--bg-card); border: 1px solid var(--border); padding: 5px 14px; border-radius: 999px; font-size: 0.85rem; color: var(--text-secondary); text-transform: capitalize; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><?= htmlspecialchars(trim($tag)) ?></span>
+                    <span class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm capitalize hover:text-blue-600 dark:hover:text-blue-400 transition cursor-default border border-slate-200 dark:border-slate-700"><?= htmlspecialchars(trim($tag)) ?></span>
                 <?php endforeach; ?>
             </div>
         </div>

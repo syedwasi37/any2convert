@@ -3005,16 +3005,43 @@ HTML;
 
 function getImageToPdfHTML() {
     return '
-    <div class="space-y-6">
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'imgToPdfInput\').click()">
-            <input type="file" id="imgToPdfInput" class="hidden" accept="image/*" multiple>
-            <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="8.5" cy="10" r="1.5"></circle><path d="M21 15l-5-5-8 8"></path></svg></div>
-            <p class="font-medium">Click to select images (JPG, PNG, WEBP)</p>
-            <p class="text-sm text-gray-500 mt-2">Multiple files allowed | 100% client-side</p>
+    <div class="space-y-6" role="main" aria-label="Image to PDF Converter Tool">
+        
+        <div style="display:none;">
+            <h1>Image to PDF Converter - Convert Image to PDF Online Free</h1>
+            <p>Use our free image to pdf converter to add image to pdf without uploading files. Best tool to convert an image to pdf for free download.</p>
         </div>
+
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" 
+             onclick="document.getElementById(\'imgToPdfInput\').click()" 
+             title="Click to convert image to pdf free">
+            
+            <input type="file" id="imgToPdfInput" class="hidden" accept="image/*" multiple>
+            
+            <div class="mb-3 flex justify-center text-blue-500">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <circle cx="8.5" cy="10" r="1.5"></circle>
+                    <path d="M21 15l-5-5-8 8"></path>
+                </svg>
+            </div>
+
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Image to PDF Converter</h2>
+            <p class="font-medium mt-1">Click to select images (JPG, PNG, WEBP)</p>
+            <p class="text-sm text-gray-500 mt-2">100% Client-Side | Convert image to pdf free</p>
+        </div>
+
         <div id="imgPreview" class="grid grid-cols-3 gap-2 mt-4"></div>
-        <button id="convertImagesBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF (High Quality)</button>
+        
+        <button id="convertImagesBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+            Convert Image to PDF (High Quality)
+        </button>
+
+        <footer class="text-center text-xs text-gray-400 mt-2">
+            <p>Fastest online image to pdf converter for free. No file upload required.</p>
+        </footer>
     </div>
+
     <script>
         const imgInput = document.getElementById("imgToPdfInput");
         const imgPreview = document.getElementById("imgPreview");
@@ -3026,7 +3053,8 @@ function getImageToPdfHTML() {
                 reader.onload = function(e) {
                     const div = document.createElement("div");
                     div.className = "relative";
-                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">âœ“</span>`;
+                    // Added alt tag for SEO on preview images
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg" alt="convert image to pdf"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">✓</span>`;
                     imgPreview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
@@ -3068,11 +3096,11 @@ function getImageToPdfHTML() {
 
                 doc.addImage(imgData, "JPEG", x, y, finalWidth, finalHeight, undefined, "NONE");
             }
-            doc.save("Any2Convert_HQ.pdf");
+            // SEO Optimized Filename
+            doc.save("Any2Convert-image-to-pdf.pdf");
         });
     </script>';
 }
-
 function getPdfToImageHTML() {
     return '
     <div class="space-y-6">
