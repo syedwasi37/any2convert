@@ -8,4 +8,4 @@ Disallow: /forgot_password.php
 Disallow: /reset_password.php
 Disallow: /otp_verify.php
 
-Sitemap: https://any2convert.com/sitemap.xml
+Sitemap: https://any2convert.com/sitemap.php

@@ -57,6 +57,10 @@ $isWideTool = in_array($tool_id, $wideToolIds, true);
 require_once 'backend/tool_handlers.php';
 $tool_html = renderToolHandlerHTML($tool_id);
 
+// Generate dynamic keywords for SEO from H1 and Title
+$clean_h1 = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($tool_data['h1'] . ' ' . $tool_data['title']));
+$dynamic_keywords = implode(', ', array_unique(array_filter(explode(' ', $clean_h1), fn($w) => strlen($w) > 2))) . ', free, online, tool, any2convert';
+
 // Get the rest of index.css and navbar
 ?>
 <!DOCTYPE html>
@@ -67,6 +71,7 @@ $tool_html = renderToolHandlerHTML($tool_id);
     <title><?= htmlspecialchars($tool_data['title']) ?></title>
     <link rel="icon" type="image/png" href="mylogo.png">
     <meta name="description" content="<?= htmlspecialchars($tool_data['meta_desc']) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($dynamic_keywords) ?>">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta property="og:title" content="<?= htmlspecialchars($tool_data['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($tool_data['meta_desc']) ?>">
@@ -576,6 +581,23 @@ if (isset($_SESSION['user_name'])) {
             </div>
             <?php endforeach; ?>
         </div>
+        
+        <!-- Read Full Guide CTA (Internal Blog Link) -->
+        <div style="margin-top: 40px; padding: 24px; background: var(--accent-light); border: 1px solid var(--border-strong); border-radius: 16px; text-align: center;">
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">Want to learn more?</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">Read our comprehensive guide and step-by-step tutorial on how to get the most out of <?= htmlspecialchars($tool_data['title']) ?>.</p>
+            <a href="blog/guide.php?slug=<?= urlencode($slug) ?>" class="btn-primary" style="display: inline-flex; text-decoration: none;">Read the Full Guide</a>
+        </div>
+        
+        <!-- SEO Tags / Keywords -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border);">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">Related Keywords</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <?php foreach (array_slice(explode(',', $dynamic_keywords), 0, 10) as $tag): ?>
+                    <span style="background: var(--bg-card); border: 1px solid var(--border); padding: 5px 14px; border-radius: 999px; font-size: 0.85rem; color: var(--text-secondary); text-transform: capitalize; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><?= htmlspecialchars(trim($tag)) ?></span>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </div>
 </main>
 <?= adsRenderPosition($conn, 'under_content') ?>
@@ -727,4 +749,3 @@ document.addEventListener('DOMContentLoaded', () => {
 <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>
-

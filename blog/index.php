@@ -1,4 +1,7 @@
-<?php require_once __DIR__ . '/../backend/ad_helpers.php'; ?>
+<?php 
+require_once __DIR__ . '/../backend/ad_helpers.php'; 
+require_once __DIR__ . '/../seo_data.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,12 +94,49 @@
                     <div class="mt-6 text-blue-600 font-bold">Read article</div>
                 </a>
             </section>
+            
+            <!-- Dynamically Generated Tool Guides -->
+            <section class="mt-16 mb-10" id="all-guides">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-white">Tool Guides & Tutorials</h2>
+                        <p class="text-slate-500 mt-2">Step-by-step guides for all 80+ free utilities available on Any2Convert.</p>
+                    </div>
+                    <input type="text" id="guideSearch" placeholder="Search guides..." class="px-4 py-3 rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] text-[var(--text-main)] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition w-full sm:w-64 font-medium">
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="guideGrid">
+                    <?php foreach($seo_tools as $slug => $data): ?>
+                    <a href="guide.php?slug=<?= urlencode($slug) ?>" class="guide-card panel rounded-3xl p-5 hover:-translate-y-1 transition-transform flex items-center gap-4" data-title="<?= htmlspecialchars(strtolower($data['h1'])) ?>">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-2xl flex-shrink-0">
+                            <?= $data['icon'] ?? '💡' ?>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white leading-snug line-clamp-2"><?= htmlspecialchars($data['h1']) ?></h3>
+                            <p class="text-xs text-blue-500 mt-1 font-semibold uppercase tracking-wider">Read Guide</p>
+                        </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
         </div>
     </main>
 
     <?= adsRenderPosition($conn, 'under_content') ?>
     <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <script>
+        // Live Search for Guides
+        document.getElementById('guideSearch').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.guide-card').forEach(card => {
+                if (card.dataset.title.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');
         const themeToggle = document.getElementById('themeToggle');
