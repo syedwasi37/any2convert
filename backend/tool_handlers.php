@@ -3441,7 +3441,7 @@ function getPdfToPptHTML() {
                     // Create slide
                     const slide = pptx.addSlide();
                     slide.addText(`Slide ${i}`, { x: 0.5, y: 0.5, w: 9, h: 1, fontSize: 24, bold: true });
-                    slide.addText(slideText || "No text content found on this slide.", { x: 0.5, y: 1.5, w: 9, h: 5, fontSize: 18 });
+                    slide.addText(slideText || "No text content found on this slide.", { x: 0.5, y: 1.5, w: 9, h: 5, fontSize: 16, autoFit: true, shrinkText: true });
                 }
                 
                 // Export as PPTX
