@@ -3118,7 +3118,6 @@ function getImageToPdfHTML() {
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><rect x="51" y="14" width="20" height="18" rx="3"></rect><circle cx="58" cy="21" r="1.5"></circle><path d="M71 28l-6-6-9 9"></path></svg></div>
 <h2 class="text-lg font-semibold">PDF to Image Converter</h2>
             <p class="font-medium">Select PDF to convert to images</p>
-<p class="font-medium">Select PDF to convert to images</p>
             <p class="text-sm text-gray-500 mt-2">Convert pdf to image online free | High-quality JPG</p>
             <p class="text-sm text-gray-500 mt-2">Each page will be converted to high-quality JPG</p>
 
