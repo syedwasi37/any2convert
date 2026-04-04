@@ -3391,12 +3391,12 @@ function getPdfToPptHTML() {
             <input type="file" id="pdfToPptInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M56 34V22"></path><path d="M62 34V18"></path><path d="M68 34V25"></path></svg></div>
             <p class="font-medium">Select PDF to convert to PowerPoint</p>
-            <p class="text-sm text-gray-900 mt-2">Each PDF page is placed into PowerPoint as an exact full-slide page image to preserve the original layout</p>
+            <p class="text-sm text-gray-400 mt-2">Each PDF page is placed into PowerPoint as an exact full-slide page image to preserve the original layout</p>
         </div>
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <button id="pdfToPptBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PowerPoint</button>
                     <p class="font-medium">Select PDF file to convert PDF to Powerpoint</p>
-            <p class="text-sm text-gray-400 mt-2">Convert Pdf to Powerpoint Free | Extract PDF to Powerpoint PPT | Best pdf to powerpoint converter</p>
+            <p class="text-sm text-gray-900 mt-2">Convert Pdf to Powerpoint Free | Extract PDF to Powerpoint PPT | Best pdf to powerpoint converter</p>
 
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
