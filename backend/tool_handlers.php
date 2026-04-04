@@ -3243,7 +3243,7 @@ function getPdfToWordHTML() {
             <input type="file" id="pdfToWordInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 17h13"></path><path d="M55 24h13"></path><path d="M55 31h9"></path></svg></div>
            <h2 class="text-lg font-semibold">PDF to Word Converter</h2>
-            <p class="font-medium">Select PDF file to convert to Word</p>
+            <p class="font-medium">Select PDF file to convert PDF to Word</p>
             <p class="text-sm text-gray-900 mt-2">Convert PDF to Word Free | Extract PDF to Word DOC</p>
         </div>
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
