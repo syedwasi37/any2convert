@@ -3394,6 +3394,7 @@ function getPdfToPptHTML() {
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
         
@@ -3406,16 +3407,15 @@ function getPdfToPptHTML() {
             try {
                 const arrayBuffer = await input.files[0].arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                let slides = [];
+                const pptx = new PptxGenJS();
                 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     progress.innerHTML = "Processing slide " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
                     const textContent = await page.getTextContent();
-                    const viewport = page.getViewport({ scale: 1 });
                     
                     // Extract text content for slide
-                    let slideContent = "";
+                    let slideText = "";
                     const items = textContent.items;
                     let lastY = null;
                     let currentParagraph = "";
@@ -3426,7 +3426,7 @@ function getPdfToPptHTML() {
                         
                         if (lastY !== null && Math.abs(y - lastY) > 15) {
                             if (currentParagraph.trim()) {
-                                slideContent += `<p style="margin: 0 0 10px 0;">${escapeHtml(currentParagraph)}</p>`;
+                                slideText += currentParagraph.trim() + "\n\n";
                                 currentParagraph = "";
                             }
                         }
@@ -3435,98 +3435,25 @@ function getPdfToPptHTML() {
                     }
                     
                     if (currentParagraph.trim()) {
-                        slideContent += `<p style="margin: 0 0 10px 0;">${escapeHtml(currentParagraph)}</p>`;
+                        slideText += currentParagraph.trim();
                     }
                     
-                    slides.push({
-                        number: i,
-                        content: slideContent || "<p>No text content found on this slide.</p>"
-                    });
+                    // Create slide
+                    const slide = pptx.addSlide();
+                    slide.addText(`Slide ${i}`, { x: 0.5, y: 0.5, w: 9, h: 1, fontSize: 24, bold: true });
+                    slide.addText(slideText || "No text content found on this slide.", { x: 0.5, y: 1.5, w: 9, h: 5, fontSize: 18 });
                 }
                 
-                // Generate HTML presentation
-                let presentationHtml = `<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>PDF to PowerPoint Presentation</title>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            font-family: Arial, sans-serif;
-                        }
-                        .slide {
-                            width: 100%;
-                            height: 100vh;
-                            page-break-after: always;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            padding: 50px;
-                            box-sizing: border-box;
-                            background: white;
-                            border-bottom: 1px solid #eee;
-                        }
-                        .slide-title {
-                            font-size: 36px;
-                            font-weight: bold;
-                            color: #2c3e50;
-                            margin-bottom: 30px;
-                            border-left: 5px solid #3498db;
-                            padding-left: 20px;
-                        }
-                        .slide-content {
-                            font-size: 24px;
-                            line-height: 1.6;
-                            color: #34495e;
-                        }
-                        .slide-content p {
-                            margin: 15px 0;
-                        }
-                        .slide-number {
-                            position: fixed;
-                            bottom: 20px;
-                            right: 20px;
-                            font-size: 12px;
-                            color: #95a5a6;
-                        }
-                        @media print {
-                            .slide {
-                                page-break-after: always;
-                                height: auto;
-                                min-height: 100vh;
-                            }
-                            .slide-number {
-                                position: absolute;
-                            }
-                        }
-                    </style>
-                </head>
-                <body>`;
-                
-                for (let i = 0; i < slides.length; i++) {
-                    presentationHtml += `
-                    <div class="slide">
-                        <div class="slide-title">Slide ${slides[i].number}</div>
-                        <div class="slide-content">${slides[i].content}</div>
-                        <div class="slide-number">${i + 1} / ${slides.length}</div>
-                    </div>`;
-                }
-                
-                presentationHtml += `
-                </body>
-                </html>`;
-                
-                const blob = new Blob([presentationHtml], { type: "text/html" });
+                // Export as PPTX
+                const blob = await pptx.write({ outputType: "blob" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "presentation.html";
+                a.download = "presentation.pptx";
                 a.click();
                 URL.revokeObjectURL(url);
                 
-                alert("Conversion complete! HTML presentation downloaded. You can open in browser and print as PDF or use with PowerPoint.");
+                alert("Conversion complete! PowerPoint presentation downloaded.");
             } catch(e) {
                 alert("Error converting PDF: " + e.message);
             }
