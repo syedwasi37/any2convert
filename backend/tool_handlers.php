@@ -93,6 +93,8 @@ function renderToolHandlerHTML($tool) {
             return getImageEnhancerHTML();
         case 'image_converter':
             return getImageConverterHTML();
+        case 'heic_converter':
+            return getHeicConverterHTML();
         case 'video_to_audio':
             return getVideoToAudioHTML();
         case 'currency_converter':
@@ -6471,6 +6473,138 @@ function getImageConverterHTML() {
                 URL.revokeObjectURL(url);
             });
         })();
+    </script>';
+}
+
+function getHeicConverterHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Convert HEIC to JPG PNG or PDF Online</h1>
+            <p>Convert HEIC and HEIF images to JPG, PNG, or PDF directly in your browser with fast client-side processing.</p>
+        </div>
+        <div class="rounded-2xl border border-cyan-200/70 bg-cyan-50/80 dark:bg-cyan-950/30 dark:border-cyan-900 p-4">
+            <div class="font-semibold text-cyan-900 dark:text-cyan-100">HEIC Converter</div>
+            <p class="mt-1 text-sm text-cyan-800 dark:text-cyan-200">Upload a HEIC image, choose JPG, PNG, or PDF, preview it, and download the converted file.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <input type="file" id="heicInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".heic,.heif,image/heic,image/heif">
+            <select id="heicOutputFormat" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                <option value="jpg">Convert to JPG</option>
+                <option value="png">Convert to PNG</option>
+                <option value="pdf">Convert to PDF</option>
+            </select>
+            <button id="heicConvertBtn" class="w-full bg-cyan-600 text-white py-3 rounded-xl font-semibold hover:bg-cyan-700 transition">Convert HEIC</button>
+            <div id="heicStatus" class="hidden text-sm text-gray-500 text-center"></div>
+        </div>
+        <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
+            <div class="text-sm text-gray-500 mb-3">Preview</div>
+            <div id="heicPreviewWrap" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500 min-h-[260px] flex items-center justify-center">Converted HEIC preview will appear here.</div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <script>
+        const heicInput = document.getElementById("heicInput");
+        const heicOutputFormat = document.getElementById("heicOutputFormat");
+        const heicConvertBtn = document.getElementById("heicConvertBtn");
+        const heicStatus = document.getElementById("heicStatus");
+        const heicPreviewWrap = document.getElementById("heicPreviewWrap");
+
+        function setHeicStatus(message, isError) {
+            if (!message) {
+                heicStatus.textContent = "";
+                heicStatus.classList.add("hidden");
+                heicStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            heicStatus.textContent = message;
+            heicStatus.classList.remove("hidden");
+            heicStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function getHeicBaseName(name) {
+            let base = name || "converted";
+            base = base.replace(/\\.(heic|heif)$/i, "");
+            return base || "converted";
+        }
+
+        async function blobToImage(blob) {
+            return new Promise(function(resolve, reject) {
+                const url = URL.createObjectURL(blob);
+                const image = new Image();
+                image.onload = function() {
+                    URL.revokeObjectURL(url);
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Could not load converted image preview."));
+                };
+                image.src = url;
+            });
+        }
+
+        async function renderHeicPreview(blob) {
+            const image = await blobToImage(blob);
+            heicPreviewWrap.innerHTML = "";
+            image.className = "max-w-full max-h-[520px] mx-auto rounded-xl shadow";
+            heicPreviewWrap.appendChild(image);
+        }
+
+        heicConvertBtn.addEventListener("click", async function() {
+            const file = heicInput.files && heicInput.files[0] ? heicInput.files[0] : null;
+            if (!file) {
+                alert("Please select a HEIC file");
+                return;
+            }
+
+            try {
+                setHeicStatus("Converting HEIC file...");
+                const targetFormat = heicOutputFormat.value;
+                const imageType = targetFormat === "png" ? "image/png" : "image/jpeg";
+                const converted = await heic2any({
+                    blob: file,
+                    toType: imageType,
+                    quality: 0.95
+                });
+                const imageBlob = Array.isArray(converted) ? converted[0] : converted;
+
+                await renderHeicPreview(imageBlob);
+
+                const baseName = getHeicBaseName(file.name);
+                if (targetFormat === "pdf") {
+                    const image = await blobToImage(imageBlob);
+                    const orientation = image.width > image.height ? "landscape" : "portrait";
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: orientation,
+                        unit: "pt",
+                        format: [image.width, image.height]
+                    });
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    ctx.drawImage(image, 0, 0);
+                    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+                    pdf.addImage(dataUrl, "JPEG", 0, 0, image.width, image.height);
+                    pdf.save(baseName + ".pdf");
+                } else {
+                    const extension = targetFormat === "png" ? "png" : "jpg";
+                    const url = URL.createObjectURL(imageBlob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = baseName + "." + extension;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }
+
+                setHeicStatus("Conversion complete. File downloaded.");
+            } catch (error) {
+                setHeicStatus("Could not convert this HEIC file: " + error.message, true);
+            }
+        });
     </script>';
 }
 

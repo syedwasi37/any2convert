@@ -252,6 +252,18 @@ $seo_tools = [
         ],
         'content' => 'Use the image converter to quickly change photos and graphics into the format you need for websites, uploads, or sharing. The conversion runs entirely in your browser, so your image stays on your device while you preview the result and download it in JPG, PNG, or WEBP format.'
     ],
+    'heic-to-jpg-png-pdf' => [
+        'id' => 'heic_converter',
+        'h1' => 'Convert HEIC to JPG PNG or PDF Online',
+        'title' => 'HEIC to JPG, PNG, PDF Converter Free | Any2Convert',
+        'meta_desc' => 'Convert HEIC and HEIF photos to JPG, PNG, or PDF directly in your browser. Fast, private, and free.',
+        'icon' => 'HEIC',
+        'faqs' => [
+            ['q' => 'Can I convert HEIC to JPG?', 'a' => 'Yes. Choose JPG as the output format and the tool will convert your HEIC image into a standard JPG file.'],
+            ['q' => 'Can I turn a HEIC image into a PDF?', 'a' => 'Yes. Select PDF as the output format to create a one-page PDF from your HEIC image.']
+        ],
+        'content' => 'HEIC images are common on Apple devices, but many websites and apps still prefer JPG, PNG, or PDF. This browser-based HEIC converter lets you open a HEIC or HEIF image and export it in a more compatible format without uploading your file to a server.'
+    ],
     'video-to-audio' => [
         'id' => 'video_to_audio',
         'h1' => 'Convert Video to Audio Online Free',
