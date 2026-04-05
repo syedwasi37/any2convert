@@ -8558,8 +8558,23 @@ function getRotatePdfHTML() {
 function getAddPageNumbersHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="pageNumbersInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <button id="pageNumbersBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Add Page Numbers</button>
+        <div style="display:none;">
+            <h1>Add Page Number to PDF Online Free</h1>
+            <p>Use this tool to add page number to PDF online free, number PDF pages in your browser, and download the updated PDF file with page numbering applied.</p>
+            <p>Learn how to add page number to PDF document files on Mac, Windows, and mobile using a simple add page number to PDF free workflow.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Add Page Number to PDF</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, add page numbers automatically, and download the updated file in seconds.</p>
+            </div>
+            <input type="file" id="pageNumbersInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <button id="pageNumbersBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Add Page Number to PDF Free</button>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to add page number to PDF:
+            Upload the PDF file, click the button to add page numbers, and download the numbered document.
+        </div>
     </div>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
