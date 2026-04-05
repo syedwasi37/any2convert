@@ -3908,26 +3908,38 @@ function getMergePdfHTML() {
 function getCompressPdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Compress PDF Free - Compress PDF Online</h1>
+            <p>Use this compress PDF tool to compress PDF online free, reduce PDF file size, and learn how to compress PDF file size while keeping pages readable.</p>
+            <p>Compress PDF files, compress PDF file size for free, and optimize documents on Mac, Windows, and mobile browsers.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'compressPdfInput\').click()">
             <input type="file" id="compressPdfInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16"></path><path d="M7 7v10"></path><path d="M12 7v10"></path><path d="M17 7v10"></path><rect x="3" y="5" width="18" height="14" rx="2"></rect></svg></div>
-            <p class="font-medium">Select PDF to compress</p>
-            <p class="text-sm text-gray-500 mt-2">Reduce file size while maintaining quality</p>
+            <h2 class="text-lg font-semibold">Compress PDF File</h2>
+            <p class="font-medium">Select PDF to compress PDF file size</p>
+            <p class="text-sm text-gray-500 mt-2">Compress PDF online free, reduce PDF file size, and save a smaller document for sharing</p>
         </div>
         <div id="compressPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <div class="space-y-4">
             <label class="block text-sm font-medium">Compression Level:</label>
             <select id="compressLevel" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-                <option value="low">Low (Minimal compression)</option>
-                <option value="medium" selected>Medium (Recommended)</option>
-                <option value="high">High (Maximum compression)</option>
+                <option value="low">Low Compression (Best quality)</option>
+                <option value="medium" selected>Medium Compression (Recommended)</option>
+                <option value="high">High Compression (Smallest file)</option>
             </select>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to compress PDF:
+            Upload your file, choose the compression level, and compress PDF for free with a smaller downloadable file.
         </div>
         <button id="compressPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Compress PDF</button>
         <div id="compressProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
         const compressInput = document.getElementById("compressPdfInput");
         const compressPreview = document.getElementById("compressPreview");
         
@@ -3946,28 +3958,75 @@ function getCompressPdfHTML() {
             progress.classList.remove("hidden");
             
             try {
-                const { PDFDocument } = PDFLib;
-                const arrayBuffer = await input.files[0].arrayBuffer();
-                const pdf = await PDFDocument.load(arrayBuffer);
+                const file = input.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const level = document.getElementById("compressLevel").value;
-                
-                const pdfBytes = await pdf.save({
-                    useObjectStreams: level !== "low",
-                    addDefaultPage: false
-                });
-                
+                const settings = {
+                    low: { scale: 1.45, quality: 0.88 },
+                    medium: { scale: 1.15, quality: 0.72 },
+                    high: { scale: 0.9, quality: 0.52 }
+                };
+                const config = settings[level] || settings.medium;
+                const { jsPDF } = window.jspdf;
+                let doc = null;
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    progress.textContent = "Compressing page " + i + " of " + pdf.numPages + "...";
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: config.scale });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d", { alpha: false });
+                    canvas.width = Math.ceil(viewport.width);
+                    canvas.height = Math.ceil(viewport.height);
+                    context.fillStyle = "#FFFFFF";
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+
+                    const orientation = viewport.width > viewport.height ? "landscape" : "portrait";
+                    const pageFormat = [Math.ceil(viewport.width), Math.ceil(viewport.height)];
+
+                    if (!doc) {
+                        doc = new jsPDF({
+                            orientation: orientation,
+                            unit: "pt",
+                            format: pageFormat,
+                            compress: true
+                        });
+                    } else {
+                        doc.addPage(pageFormat, orientation);
+                    }
+
+                    const imageData = canvas.toDataURL("image/jpeg", config.quality);
+                    doc.addImage(imageData, "JPEG", 0, 0, pageFormat[0], pageFormat[1], undefined, "FAST");
+                }
+
+                if (!doc) {
+                    throw new Error("Could not read any pages from this PDF.");
+                }
+
+                progress.textContent = "Preparing compressed PDF...";
+                const pdfBytes = doc.output("arraybuffer");
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "compressed.pdf";
+                const baseName = file.name.replace(/\.pdf$/i, "") || "compressed";
+                a.download = baseName + "-compressed.pdf";
                 a.click();
                 URL.revokeObjectURL(url);
                 
-                const originalSize = (input.files[0].size / 1024).toFixed(2);
-                const compressedSize = (pdfBytes.length / 1024).toFixed(2);
-                const saved = (originalSize - compressedSize).toFixed(2);
-                alert("Compression complete!\\nOriginal: " + originalSize + " KB\\nCompressed: " + compressedSize + " KB\\nSaved: " + saved + " KB (" + ((saved/originalSize)*100).toFixed(0) + "%)");
+                const originalSize = file.size / 1024;
+                const compressedSize = blob.size / 1024;
+                const saved = Math.max(0, originalSize - compressedSize);
+                const percentSaved = originalSize > 0 ? (saved / originalSize) * 100 : 0;
+                alert(
+                    "Compression complete!\\nOriginal: " + originalSize.toFixed(2) + " KB\\nCompressed: " + compressedSize.toFixed(2) + " KB\\nSaved: " + saved.toFixed(2) + " KB (" + percentSaved.toFixed(0) + "%)"
+                );
             } catch(e) {
                 alert("Error compressing PDF: " + e.message);
             }
