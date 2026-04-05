@@ -7208,10 +7208,15 @@ function getExtractPagesHTML() {
 function getOrganizePdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Organize PDF Online Free - Organize PDF Pages</h1>
+            <p>Use this organize PDF tool to organize PDF pages, reorder documents, and learn how to organize PDF pages online free in a visual editor.</p>
+            <p>Organize PDF files free, organize PDF files online free, and manage page order, deletion, and blank page insertion in one place.</p>
+        </div>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
             <div>
                 <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Organize PDF Pages</div>
-                <p class="text-sm text-gray-500 mt-1">Upload a PDF to preview all pages, drag and drop to reorder, delete pages, insert blank pages, and save the updated PDF.</p>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF to organize PDF pages online, drag and drop to reorder pages, delete pages, insert blank pages, and save the updated file.</p>
             </div>
             <input type="file" id="organizePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
             <div id="organizePdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
@@ -7221,7 +7226,11 @@ function getOrganizePdfHTML() {
                 <button id="organizePdfBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Save Organized PDF</button>
             </div>
         </div>
-        <div id="organizePdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF page thumbnails will appear here after upload.</div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to organize PDF pages:
+            Upload your file, preview every page, drag and drop to reorder, remove pages you do not need, and save your organize PDF file online free.
+        </div>
+        <div id="organizePdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF page thumbnails will appear here after upload so you can organize PDF files free.</div>
         <div id="organizePdfGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
