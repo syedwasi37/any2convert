@@ -4448,7 +4448,7 @@ function getExcelToPdfHTML() {
 }
 
 function getPptToPdfHTML() {
-    return `
+    return '
     <div class="space-y-6">
         <div style="display:none;">
             <h1>Power Point to PDF Converter Online</h1>
@@ -4456,7 +4456,7 @@ function getPptToPdfHTML() {
             <p>Common searches include power point to pdf, convert power point to pdf, power point to pdf conversion, turn power point to pdf, and export power point to pdf.</p>
             <p>If you need microsoft power point to pdf conversion, how to convert power point to pdf, or how to save power point to pdf, this tool helps with PPT and PPTX files.</p>
         </div>
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById('pptToPdfInput').click()">
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById("pptToPdfInput").click()">
             <input type="file" id="pptToPdfInput" class="hidden" accept=".ppt,.pptx">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
             <p class="font-medium">Select PowerPoint file to convert to PDF</p>
@@ -4519,8 +4519,8 @@ function getPptToPdfHTML() {
                                 .replace(/&amp;/g, "&")
                                 .replace(/&lt;/g, "<")
                                 .replace(/&gt;/g, ">")
-                                .replace(/&quot;/g, '"')
-                                .replace(/&apos;/g, "'")
+                                .replace(/&quot;/g, """)
+                                .replace(/&apos;/g, """)
                                 .replace(/&#(\\d+);/g, function(_, n) {
                                     return String.fromCharCode(parseInt(n, 10));
                                 })
@@ -4747,7 +4747,7 @@ function getPptToPdfHTML() {
             }
             progress.classList.add("hidden");
         });
-    <\/script>`;
+    <\/script>';
 }
 
 function getJsonToCsvHTML() {
