@@ -443,12 +443,15 @@ $seo_tools = [
     ],
     'powerpoint-to-pdf' => [
         'id' => 'ppt_to_pdf',
-        'h1' => 'Convert PowerPoint to PDF Online',
-        'title' => 'PowerPoint to PDF Converter - PPT, PPTX to PDF | Any2Convert',
-        'meta_desc' => 'Convert PowerPoint slides to PDF in your browser.',
+        'h1' => 'Power Point to PDF Converter Online',
+        'title' => 'Power Point to PDF Converter Online Free | Any2Convert',
+        'meta_desc' => 'Convert PowerPoint slides to PDF online free. Fast power point to pdf conversion for PPT and PPTX files directly in your browser.',
         'icon' => 'PPT',
-        'faqs' => [['q' => 'Does it work with PPTX?', 'a' => 'Yes, both PPT and PPTX are supported.']],
-        'content' => 'Create shareable PDF handouts from PowerPoint decks without leaving your browser.'
+        'faqs' => [
+            ['q' => 'Does it work with PPTX?', 'a' => 'Yes, both PPT and PPTX are supported.'],
+            ['q' => 'How do I convert power point to pdf?', 'a' => 'Upload your PPT or PPTX file, choose the page layout, and run the conversion to create a PDF version of your slides.']
+        ],
+        'content' => 'Use this power point to pdf converter when you need to convert power point to pdf online, turn power point to pdf, export power point to pdf, or save a presentation as a shareable PDF file. It supports searches such as power point to pdf, convert power point to pdf, power point to pdf converter, how to convert power point to pdf, power point to pdf free, convert power point to pdf online, power point to pdf conversion, power point to pdf convertor, microsoft power point to pdf, and how to save power point to pdf.'
     ],
     'html-to-pdf' => [
         'id' => 'html_to_pdf',

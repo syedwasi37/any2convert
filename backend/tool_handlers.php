@@ -4450,6 +4450,12 @@ function getExcelToPdfHTML() {
 function getPptToPdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Power Point to PDF Converter Online</h1>
+            <p>Use this power point to pdf converter to convert PowerPoint slides into PDF online free in your browser.</p>
+            <p>Common searches include power point to pdf, convert power point to pdf, power point to pdf conversion, turn power point to pdf, and export power point to pdf.</p>
+            <p>If you need microsoft power point to pdf conversion, how to convert power point to pdf, or how to save power point to pdf, this tool helps with PPT and PPTX files.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pptToPdfInput\').click()">
             <input type="file" id="pptToPdfInput" class="hidden" accept=".ppt,.pptx">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
@@ -4464,6 +4470,7 @@ function getPptToPdfHTML() {
                 <option value="landscape" selected>Landscape (Widescreen)</option>
             </select>
         </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">This power point to pdf free tool is useful when you want to convert PowerPoint to PDF online, convert from power point to pdf, or save a presentation as a shareable PDF handout.</div>
         <button id="pptToPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF</button>
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
@@ -4498,32 +4505,124 @@ function getPptToPdfHTML() {
                     try {
                         const JSZip = window.JSZip;
                         const zip = await JSZip.loadAsync(arrayBuffer);
-                        const slideFiles = Object.keys(zip.files).filter(name => name.match(/ppt\/slides\/slide\d+\.xml/));
+                        const parser = new DOMParser();
+                        const slideFiles = Object.keys(zip.files)
+                            .filter(name => /ppt\/slides\/slide\d+\.xml$/i.test(name))
+                            .sort(function(a, b) {
+                                const aNum = parseInt((a.match(/slide(\d+)\.xml/i) || [0, 0])[1], 10);
+                                const bNum = parseInt((b.match(/slide(\d+)\.xml/i) || [0, 0])[1], 10);
+                                return aNum - bNum;
+                            });
+
+                        function xmlTextToParagraphs(xmlString) {
+                            const xml = parser.parseFromString(xmlString, "application/xml");
+                            const paragraphs = Array.from(xml.getElementsByTagNameNS("*", "p"));
+                            const lines = [];
+
+                            paragraphs.forEach(function(paragraph) {
+                                const runs = Array.from(paragraph.getElementsByTagNameNS("*", "t"));
+                                const line = runs
+                                    .map(function(node) { return (node.textContent || "").trim(); })
+                                    .filter(Boolean)
+                                    .join(" ");
+                                if (line) {
+                                    lines.push(line);
+                                }
+                            });
+
+                            if (!lines.length) {
+                                const fallbackRuns = Array.from(xml.getElementsByTagNameNS("*", "t"))
+                                    .map(function(node) { return (node.textContent || "").trim(); })
+                                    .filter(Boolean);
+                                if (fallbackRuns.length) {
+                                    lines.push(fallbackRuns.join(" "));
+                                }
+                            }
+
+                            return lines;
+                        }
+
+                        function normalizeZipPath(basePath, targetPath) {
+                            const baseParts = basePath.split("/");
+                            baseParts.pop();
+                            const targetParts = targetPath.split("/");
+                            targetParts.forEach(function(part) {
+                                if (!part || part === ".") return;
+                                if (part === "..") {
+                                    baseParts.pop();
+                                } else {
+                                    baseParts.push(part);
+                                }
+                            });
+                            return baseParts.join("/");
+                        }
+
+                        async function extractSlideImages(slideFile) {
+                            const relPath = slideFile.replace(/ppt\/slides\/(slide\d+)\.xml$/i, "ppt/slides/_rels/$1.xml.rels");
+                            const relEntry = zip.files[relPath];
+                            if (!relEntry) return [];
+
+                            const relXml = parser.parseFromString(await relEntry.async("string"), "application/xml");
+                            const relationships = Array.from(relXml.getElementsByTagName("Relationship"));
+                            const images = [];
+
+                            for (const rel of relationships) {
+                                const target = rel.getAttribute("Target") || "";
+                                const type = rel.getAttribute("Type") || "";
+                                if (!/image/i.test(type) && !/\.(png|jpe?g|gif|bmp|svg|webp)$/i.test(target)) {
+                                    continue;
+                                }
+
+                                const normalized = normalizeZipPath(relPath, target);
+                                const mediaFile = zip.files[normalized];
+                                if (!mediaFile) continue;
+
+                                const ext = (normalized.split(".").pop() || "png").toLowerCase();
+                                const mimeMap = {
+                                    png: "image/png",
+                                    jpg: "image/jpeg",
+                                    jpeg: "image/jpeg",
+                                    gif: "image/gif",
+                                    bmp: "image/bmp",
+                                    webp: "image/webp",
+                                    svg: "image/svg+xml"
+                                };
+                                const mime = mimeMap[ext] || "application/octet-stream";
+                                const base64 = await mediaFile.async("base64");
+                                images.push("data:" + mime + ";base64," + base64);
+                            }
+
+                            return images;
+                        }
                         
                         for (const slideFile of slideFiles) {
+                            progress.innerHTML = "Reading " + slideFile.split("/").pop() + "...";
                             const content = await zip.files[slideFile].async("string");
-                            const textMatches = content.match(/>([^<]+)</g);
-                            let slideText = "";
-                            if (textMatches) {
-                                slideText = textMatches.map(m => m.replace(/[<>]/g, "")).join(" ");
-                            }
-                            
-                            // Try to extract images if possible
+                            const textLines = xmlTextToParagraphs(content);
+                            const images = await extractSlideImages(slideFile);
+
                             slides.push({
                                 number: slides.length + 1,
-                                content: slideText || "Slide content not available"
+                                lines: textLines,
+                                images: images
                             });
+                        }
+
+                        if (!slides.length) {
+                            throw new Error("No slides were found in this PPTX file.");
                         }
                     } catch(e) {
                         slides.push({
                             number: 1,
-                            content: "Unable to extract content. The presentation may be protected or corrupted."
+                            lines: ["Unable to extract slide content. The presentation may be protected, highly complex, or corrupted."],
+                            images: []
                         });
                     }
                 } else {
                     slides.push({
                         number: 1,
-                        content: "PPT files are not fully supported. Please convert to PPTX format first for better results."
+                        lines: ["Legacy .ppt files are not reliably supported in the browser. Please save the presentation as .pptx and try again for better results."],
+                        images: []
                     });
                 }
                 
@@ -4533,13 +4632,24 @@ function getPptToPdfHTML() {
                 const slideHeight = layout === "landscape" ? "7.5in" : "11in";
                 
                 for (let i = 0; i < slides.length; i++) {
+                    const textHtml = (slides[i].lines || []).length
+                        ? slides[i].lines.map(function(line) {
+                            return "<p style=\"margin:0 0 14px;\">" + escapeHtml(line) + "</p>";
+                        }).join("")
+                        : "<p style=\"margin:0;color:#64748b;\">No readable text was found on this slide.</p>";
+
+                    const imageHtml = (slides[i].images || []).map(function(src) {
+                        return "<div style=\"margin:18px 0 0;\"><img src=\"" + src + "\" style=\"max-width:100%;max-height:4.6in;object-fit:contain;border-radius:12px;border:1px solid #e2e8f0;display:block;margin:0 auto;\" /></div>";
+                    }).join("");
+
                     slidesHtml += `
-                        <div class="slide" style="page-break-after: always; width: ${slideWidth}; height: ${slideHeight}; display: flex; flex-direction: column; justify-content: center; padding: 40px; box-sizing: border-box;">
-                            <div class="slide-title" style="font-size: 32px; font-weight: bold; color: #2c3e50; margin-bottom: 30px; border-left: 5px solid #3498db; padding-left: 20px;">
+                        <div class="slide" style="page-break-after: always; width: ${slideWidth}; min-height: ${slideHeight}; display: flex; flex-direction: column; justify-content: flex-start; padding: 34px; box-sizing: border-box; background: white;">
+                            <div class="slide-title" style="font-size: 28px; font-weight: bold; color: #1e293b; margin-bottom: 22px; border-left: 5px solid #3498db; padding-left: 18px;">
                                 Slide ${slides[i].number}
                             </div>
-                            <div class="slide-content" style="font-size: 20px; line-height: 1.6; color: #34495e;">
-                                <p>${escapeHtml(slides[i].content)}</p>
+                            <div class="slide-content" style="font-size: 18px; line-height: 1.6; color: #334155; flex: 1;">
+                                ${textHtml}
+                                ${imageHtml}
                             </div>
                         </div>
                     `;
@@ -4582,12 +4692,13 @@ function getPptToPdfHTML() {
                 
                 const element = document.createElement("div");
                 element.innerHTML = completeHtml;
+                element.style.background = "#ffffff";
                 document.body.appendChild(element);
                 
                 await new Promise(resolve => setTimeout(resolve, 100));
                 await html2pdf().set(opt).from(element).save();
                 element.remove();
-                alert("Conversion complete! PDF downloaded with slide layout.");
+                alert("Conversion complete! PDF downloaded with extracted slide content.");
             } catch(e) {
                 alert("Error converting PowerPoint file: " + e.message);
             }
