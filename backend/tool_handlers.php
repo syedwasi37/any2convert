@@ -10072,13 +10072,22 @@ function getAiSummarizerHTML() {
 function getPdfToPdfaHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Convert PDF to PDF/A Online Free</h1>
+            <p>Use this PDF to PDF/A tool to create a PDF/A style export online, improve long-term document compatibility, and rebuild PDF files for archival-focused use.</p>
+            <p>Convert PDF to PDF/A free in your browser, create an archival PDF export, and generate a cleaner PDF/A-style document for storage and sharing.</p>
+        </div>
         <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
-            <div class="font-semibold text-blue-900 dark:text-blue-100">Archival-style PDF export</div>
-            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">This browser tool rebuilds your PDF with cleaner metadata for compatibility-focused archiving. It is a best-effort PDF/A-style export, not formal PDF/A certification.</p>
+            <div class="font-semibold text-blue-900 dark:text-blue-100">PDF to PDF/A-style Export</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Convert PDF to PDF/A-style output with cleaner archival metadata for compatibility-focused storage. This is a best-effort PDF/A-style export, not formal PDF/A certification.</p>
         </div>
         <input type="file" id="pdfaInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
         <input type="text" id="pdfaTitle" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Optional document title">
-        <button id="pdfaBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Create PDF/A-style Export</button>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to convert PDF to PDF/A:
+            Upload the PDF file, optionally set a document title, and create a PDF/A-style export for archival-focused use.
+        </div>
+        <button id="pdfaBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert PDF to PDF/A-style Export</button>
     </div>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
