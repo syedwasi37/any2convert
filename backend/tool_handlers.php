@@ -7155,10 +7155,15 @@ function getSplitPdfHTML() {
 function getRemovePagesHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Remove Pages from PDF Free - Remove Pages from PDF Online</h1>
+            <p>Use this remove pages from PDF tool to remove pages from PDF online free, learn how to remove pages from PDF files, and clean up your document in seconds.</p>
+            <p>Remove pages from PDF free on Windows, Mac, Android, iPhone, and other devices with a simple browser-based workflow.</p>
+        </div>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
             <div>
                 <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Remove PDF Pages</div>
-                <p class="text-sm text-gray-500 mt-1">Upload a PDF, preview every page, click pages to mark them with a cross for removal, and then download the cleaned PDF.</p>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, preview every page, click pages to mark them with a cross, and remove pages from PDF online free before downloading the cleaned file.</p>
             </div>
             <input type="file" id="removePagesInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
             <div id="removePagesStatus" class="hidden text-sm text-gray-500 text-center"></div>
@@ -7167,7 +7172,11 @@ function getRemovePagesHTML() {
                 <button id="removePagesBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Remove Selected Pages</button>
             </div>
         </div>
-        <div id="removePagesEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF pages will appear here after upload.</div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to remove pages from PDF:
+            Upload your file, select the pages you want to remove, and download the updated PDF after removing unwanted pages.
+        </div>
+        <div id="removePagesEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF pages will appear here after upload so you can remove pages from PDF file visually.</div>
         <div id="removePagesGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
