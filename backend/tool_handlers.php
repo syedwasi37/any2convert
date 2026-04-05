@@ -24,7 +24,7 @@ function renderToolHandlerHTML($tool) {
         case 'excel_to_pdf':
             return getExcelToPdfHTML();
         case 'ppt_to_pdf':
-            return getPptToPdfHTML();
+            return getPptToPdfHTMLBackend();
         case 'html_to_pdf':
             return getHtmlToPdfHTML();
         case 'split_pdf':
@@ -4753,6 +4753,88 @@ function getPptToPdfHTML() {
             }
             progress.classList.add("hidden");
         });
+    <\/script>';
+}
+
+function getPptToPdfHTMLBackend() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Power Point to PDF Converter Online</h1>
+            <p>Use this power point to pdf converter to convert PowerPoint slides into PDF online free with backend document conversion.</p>
+        </div>
+        <label for="pptToPdfBackendInput" class="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer">
+            <input type="file" id="pptToPdfBackendInput" class="hidden" accept=".ppt,.pptx">
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
+            <p class="font-medium">Select PowerPoint file to convert to PDF</p>
+            <p class="text-sm text-gray-500 mt-2">Reliable backend conversion for PPT and PPTX files</p>
+        </label>
+        <div id="pptToPdfBackendPreview" class="text-sm text-gray-500 text-center hidden"></div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">This version uses backend document conversion instead of browser-only slide parsing. It is the right approach if you want the PDF to match the original PowerPoint more closely.</div>
+        <button id="pptToPdfBackendBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF</button>
+        <div id="pptToPdfBackendStatus" class="text-sm text-gray-500 text-center hidden">Processing...</div>
+    </div>
+    <script>
+        (function () {
+            const input = document.getElementById("pptToPdfBackendInput");
+            const preview = document.getElementById("pptToPdfBackendPreview");
+            const button = document.getElementById("pptToPdfBackendBtn");
+            const status = document.getElementById("pptToPdfBackendStatus");
+
+            if (!input || !preview || !button || !status) {
+                return;
+            }
+
+            input.addEventListener("change", function () {
+                const file = this.files && this.files[0] ? this.files[0] : null;
+                if (!file) {
+                    preview.textContent = "";
+                    preview.classList.add("hidden");
+                    return;
+                }
+                preview.textContent = "Selected: " + file.name;
+                preview.classList.remove("hidden");
+            });
+
+            button.addEventListener("click", async function () {
+                const file = input.files && input.files[0] ? input.files[0] : null;
+                if (!file) {
+                    alert("Please select a PowerPoint file.");
+                    return;
+                }
+
+                status.classList.remove("hidden", "text-red-500");
+                status.textContent = "Uploading PowerPoint and converting to PDF...";
+
+                try {
+                    const formData = new FormData();
+                    formData.append("action", "ppt_to_pdf");
+                    formData.append("file", file);
+
+                    const response = await fetch("backend/process_document.php", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.error || "Conversion failed.");
+                    }
+
+                    const link = document.createElement("a");
+                    link.href = result.fileData;
+                    link.download = result.fileName || (file.name.replace(/\.(ppt|pptx)$/i, "") + ".pdf");
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+
+                    status.textContent = "Conversion complete. Your PDF download should start automatically.";
+                } catch (error) {
+                    status.textContent = "Error: " + error.message;
+                    status.classList.add("text-red-500");
+                }
+            });
+        })();
     <\/script>';
 }
 

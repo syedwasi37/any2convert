@@ -32,6 +32,7 @@ $map = [
     'pdf_to_ppt'  => ['from' => 'pdf', 'to' => 'pptx'],
     'pdf_to_excel'=> ['from' => 'pdf', 'to' => 'xlsx'],
     'word_to_pdf' => ['from' => 'docx', 'to' => 'pdf'],
+    'ppt_to_pdf'  => ['from' => 'pptx', 'to' => 'pdf'],
     'protect_pdf' => ['from' => 'pdf', 'to' => 'encrypt']
 ];
 
@@ -48,6 +49,13 @@ if ($action === 'word_to_pdf') {
     $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
     if ($ext === 'doc') {
         $from = 'doc';
+    }
+}
+
+if ($action === 'ppt_to_pdf') {
+    $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    if ($ext === 'ppt') {
+        $from = 'ppt';
     }
 }
 
