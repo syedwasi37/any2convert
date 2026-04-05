@@ -264,6 +264,18 @@ $seo_tools = [
         ],
         'content' => 'HEIC images are common on Apple devices, but many websites and apps still prefer JPG, PNG, or PDF. This browser-based HEIC converter lets you open a HEIC or HEIF image and export it in a more compatible format without uploading your file to a server.'
     ],
+    'jpg-to-png-jpeg-pdf' => [
+        'id' => 'jpg_converter',
+        'h1' => 'Convert JPG to PNG JPEG or PDF Online',
+        'title' => 'JPG to PNG, JPEG, PDF Converter Free | Any2Convert',
+        'meta_desc' => 'Convert JPG and JPEG images to PNG, JPEG, or PDF directly in your browser. Fast, private, and free.',
+        'icon' => 'JPG',
+        'faqs' => [
+            ['q' => 'Can I convert JPG to PNG?', 'a' => 'Yes. Choose PNG as the output format and the tool will convert your JPG image into a PNG file.'],
+            ['q' => 'Can I create a PDF from a JPG image?', 'a' => 'Yes. Select PDF as the output format to generate a one-page PDF from your JPG or JPEG image.']
+        ],
+        'content' => 'JPG images are widely used, but sometimes you need a transparent-friendly PNG, a fresh JPEG export, or a PDF version for documents and sharing. This browser-based JPG converter makes it easy to open a JPG or JPEG file and export it in the format you need without uploading it to a server.'
+    ],
     'video-to-audio' => [
         'id' => 'video_to_audio',
         'h1' => 'Convert Video to Audio Online Free',

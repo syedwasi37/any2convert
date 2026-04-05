@@ -95,6 +95,8 @@ function renderToolHandlerHTML($tool) {
             return getImageConverterHTML();
         case 'heic_converter':
             return getHeicConverterHTML();
+        case 'jpg_converter':
+            return getJpgConverterHTML();
         case 'video_to_audio':
             return getVideoToAudioHTML();
         case 'currency_converter':
@@ -6613,6 +6615,164 @@ function getHeicConverterHTML() {
             } finally {
                 heicConvertBtn.disabled = false;
                 heicConvertBtn.textContent = "Convert HEIC to JPG PNG PDF";
+            }
+        });
+    </script>';
+}
+
+function getJpgConverterHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>JPG to PNG JPEG PDF Converter Online Free</h1>
+            <p>Convert JPG and JPEG images to PNG, JPEG, or PDF directly in your browser with fast client-side processing.</p>
+        </div>
+        <div class="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 dark:bg-emerald-950/30 dark:border-emerald-900 p-4">
+            <div class="font-semibold text-emerald-900 dark:text-emerald-100">JPG Converter</div>
+            <p class="mt-1 text-sm text-emerald-800 dark:text-emerald-200">Upload a JPG or JPEG image, choose PNG, JPEG, or PDF, preview it, and download the converted file.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <input type="file" id="jpgInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".jpg,.jpeg,image/jpeg">
+            <select id="jpgOutputFormat" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                <option value="png">Convert to PNG</option>
+                <option value="jpeg">Convert to JPEG</option>
+                <option value="pdf">Convert to PDF</option>
+            </select>
+            <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                Upload the JPG image, choose the output format, and download the converted PNG, JPEG, or PDF file.
+            </div>
+            <button id="jpgConvertBtn" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition">Convert JPG</button>
+            <div id="jpgStatus" class="hidden text-sm text-gray-500 text-center"></div>
+        </div>
+        <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
+            <div class="text-sm text-gray-500 mb-3">Preview</div>
+            <div id="jpgPreviewWrap" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500 min-h-[260px] flex items-center justify-center">Converted JPG preview will appear here.</div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const jpgInput = document.getElementById("jpgInput");
+        const jpgOutputFormat = document.getElementById("jpgOutputFormat");
+        const jpgConvertBtn = document.getElementById("jpgConvertBtn");
+        const jpgStatus = document.getElementById("jpgStatus");
+        const jpgPreviewWrap = document.getElementById("jpgPreviewWrap");
+
+        function setJpgStatus(message, isError) {
+            if (!message) {
+                jpgStatus.textContent = "";
+                jpgStatus.classList.add("hidden");
+                jpgStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            jpgStatus.textContent = message;
+            jpgStatus.classList.remove("hidden");
+            jpgStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function getJpgBaseName(name) {
+            let base = name || "converted";
+            base = base.replace(/\\.(jpg|jpeg)$/i, "");
+            return base || "converted";
+        }
+
+        async function fileToImage(file) {
+            return new Promise(function(resolve, reject) {
+                const url = URL.createObjectURL(file);
+                const image = new Image();
+                image.onload = function() {
+                    URL.revokeObjectURL(url);
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Could not load the JPG image."));
+                };
+                image.src = url;
+            });
+        }
+
+        async function blobToImage(blob) {
+            return new Promise(function(resolve, reject) {
+                const url = URL.createObjectURL(blob);
+                const image = new Image();
+                image.onload = function() {
+                    URL.revokeObjectURL(url);
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Could not load converted preview."));
+                };
+                image.src = url;
+            });
+        }
+
+        function canvasFromImage(image, mimeType, quality) {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+            return new Promise(function(resolve) {
+                canvas.toBlob(function(blob) {
+                    resolve({ blob: blob, canvas: canvas });
+                }, mimeType, quality);
+            });
+        }
+
+        async function renderJpgPreview(blob) {
+            const image = await blobToImage(blob);
+            jpgPreviewWrap.innerHTML = "";
+            image.className = "max-w-full max-h-[520px] mx-auto rounded-xl shadow";
+            jpgPreviewWrap.appendChild(image);
+        }
+
+        jpgConvertBtn.addEventListener("click", async function() {
+            const file = jpgInput.files && jpgInput.files[0] ? jpgInput.files[0] : null;
+            if (!file) {
+                alert("Please select a JPG file");
+                return;
+            }
+
+            try {
+                jpgConvertBtn.disabled = true;
+                jpgConvertBtn.textContent = "Converting...";
+                setJpgStatus("Converting JPG file. Please wait...");
+
+                const image = await fileToImage(file);
+                const targetFormat = jpgOutputFormat.value;
+                const baseName = getJpgBaseName(file.name);
+
+                if (targetFormat === "pdf") {
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: image.width > image.height ? "landscape" : "portrait",
+                        unit: "pt",
+                        format: [image.width, image.height]
+                    });
+                    const prepared = await canvasFromImage(image, "image/jpeg", 0.95);
+                    const dataUrl = prepared.canvas.toDataURL("image/jpeg", 0.95);
+                    await renderJpgPreview(prepared.blob);
+                    pdf.addImage(dataUrl, "JPEG", 0, 0, image.width, image.height);
+                    pdf.save(baseName + ".pdf");
+                } else {
+                    const mimeType = targetFormat === "png" ? "image/png" : "image/jpeg";
+                    const prepared = await canvasFromImage(image, mimeType, 0.95);
+                    await renderJpgPreview(prepared.blob);
+                    const url = URL.createObjectURL(prepared.blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = baseName + "." + (targetFormat === "png" ? "png" : "jpeg");
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }
+
+                setJpgStatus("Conversion complete. File downloaded.");
+            } catch (error) {
+                setJpgStatus("Could not convert this JPG file: " + error.message, true);
+            } finally {
+                jpgConvertBtn.disabled = false;
+                jpgConvertBtn.textContent = "Convert JPG";
             }
         });
     </script>';
