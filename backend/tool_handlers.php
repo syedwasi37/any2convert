@@ -10368,17 +10368,22 @@ function getEditPdfHTML() {
             editPdfStage.innerHTML = "";
 
             const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
-            const viewport = page.getViewport({ scale: 1.15 });
+            const baseViewport = page.getViewport({ scale: 1 });
+            const availableWidth = Math.max(320, editPdfStageWrap.clientWidth - 32);
+            const availableHeight = Math.max(420, Math.min(window.innerHeight * 0.72, 920));
+            const fitScale = Math.min(1.2, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
+            const viewport = page.getViewport({ scale: Math.max(0.45, fitScale) });
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d", { alpha: false });
             canvas.width = Math.ceil(viewport.width);
             canvas.height = Math.ceil(viewport.height);
-            canvas.className = "max-w-full h-auto block bg-white";
+            canvas.className = "block bg-white";
             context.fillStyle = "#ffffff";
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             editPdfStage.style.width = canvas.width + "px";
             editPdfStage.style.height = canvas.height + "px";
+            editPdfStage.style.maxWidth = "none";
             editPdfStage.appendChild(canvas);
 
             await page.render({
