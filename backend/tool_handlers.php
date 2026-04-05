@@ -4477,9 +4477,14 @@ function getPptToPdfHTML() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
+        (function() {
         const pptInput = document.getElementById("pptToPdfInput");
         const pptPreview = document.getElementById("pptPreview");
         
+        if (!pptInput || !pptPreview) {
+            return;
+        }
+
         pptInput.addEventListener("change", function() {
             if(this.files[0]) {
                 pptPreview.innerHTML = "Selected: " + this.files[0].name;
@@ -4746,10 +4751,10 @@ function getPptToPdfHTML() {
             div.textContent = text;
             return div.innerHTML;
         }
+        })();
     </script>';
 }
 
-// ... (keep the rest of the functions for JSON, CSV, QR, Password, Word Counter, Image Compressor, OCR as they are working well)
 
 function getJsonToCsvHTML() {
     return '
