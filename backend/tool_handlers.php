@@ -4789,6 +4789,16 @@ function getQrGeneratorHTML() {
 function getPasswordGenHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Password Generator Free Online</h1>
+            <p>Use this password generator to create a strong password, secure password, or random password generator result directly in your browser.</p>
+            <p>Generate a password with 8, 12, 14, 15, or 16 characters using this strong random password generator free tool.</p>
+            <p>If you need a password generator online, random password generator, or strong password generator for safer accounts, this tool helps instantly.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Strong Password Generator</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Create a secure password, random password, or strong password generator result with adjustable length and character types.</p>
+        </div>
         <div class="flex flex-wrap gap-6 mb-4">
             <label class="flex items-center gap-2"><input type="radio" name="passType" value="strong" checked> <span>Strong (letters+numbers+symbols)</span></label>
             <label class="flex items-center gap-2"><input type="radio" name="passType" value="numbers"> <span>Numbers Only</span></label>
@@ -4798,6 +4808,7 @@ function getPasswordGenHTML() {
             <label class="block text-sm font-medium">Password Length: <span id="lengthValue">16</span></label>
             <input type="range" id="passLength" min="6" max="32" value="16" class="w-full">
         </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 p-4 text-sm text-gray-600 dark:text-gray-300">Use this password generator free tool to create a password generator 12 characters result, a password generator 15 characters result, or a strong random password generator output for your accounts.</div>
         <button id="generatePassBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Generate Password</button>
         <div id="passResult" class="hidden mt-6 text-center">
             <div id="generatedPass" class="text-2xl font-mono font-bold bg-gray-100 dark:bg-gray-700 p-4 rounded-xl break-all"></div>

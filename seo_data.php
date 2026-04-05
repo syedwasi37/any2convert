@@ -137,14 +137,15 @@ $seo_tools = [
     ],
     'password-generator' => [
         'id' => 'password_gen',
-        'h1' => 'Secure Random Password Generator',
-        'title' => 'Random Password Generator - Create Strong Passwords',
-        'meta_desc' => 'Generate highly secure, random passwords directly in your browser. Protect your online accounts.',
+        'h1' => 'Password Generator Free Online',
+        'title' => 'Password Generator - Strong Random Password Generator | Any2Convert',
+        'meta_desc' => 'Generate strong random passwords online free with adjustable length like 8, 12, 14, 15, and 16 characters. Create secure passwords directly in your browser.',
         'icon' => '🔑',
         'faqs' => [
-            ['q' => 'Do you save my generated passwords?', 'a' => 'Absolutely not. The password is created using JavaScript crypto functions locally and is never sent over the internet.']
+            ['q' => 'Do you save my generated passwords?', 'a' => 'Absolutely not. The password is created using JavaScript locally in your browser and is never sent to our server.'],
+            ['q' => 'Can I generate passwords with different lengths?', 'a' => 'Yes. You can create short or long passwords and use common lengths like 8, 12, 14, 15, or 16 characters.']
         ],
-        'content' => 'Cybersecurity starts with strong passwords. Our random password generator creates complex strings of characters, numbers, and symbols to ensure maximum entropy. Since it works locally, hackers cannot intercept your new password during generation.'
+        'content' => 'Use this password generator to create a secure password for email, banking, apps, social media, and work accounts. The strong password generator creates random combinations of letters, numbers, and symbols directly in your browser so you can make safer passwords without sending them anywhere.'
     ],
     'word-counter' => [
         'id' => 'word_counter',
