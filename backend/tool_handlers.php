@@ -71,6 +71,8 @@ function renderToolHandlerHTML($tool) {
             return getJsonToCsvHTML();
         case 'csv_to_json':
             return getCsvToJsonHTML();
+        case 'sql_to_json':
+            return getSqlToJsonHTML();
         case 'qr_generator':
             return getQrGeneratorPureJS();
         case 'password_gen':
@@ -4605,55 +4607,154 @@ function getPptToPdfHTML() {
 function getJsonToCsvHTML() {
     return '
     <div class="space-y-6">
-        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
-            <div class="font-semibold text-blue-900 dark:text-blue-100">Paste JSON or upload a file</div>
-            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Upload a `.json` file or paste a JSON array below to convert it into CSV.</p>
+        <div style="display:none;">
+            <h1>JSON to CSV Converter Online</h1>
+            <p>Convert JSON to CSV online, convert JSON to CSV format for Excel, and download spreadsheet-ready files in your browser.</p>
+            <p>Useful for developers, analysts, Python JSON to CSV workflows, PowerShell convert JSON to CSV tasks, and data exports.</p>
         </div>
-        <input type="file" id="jsonFileInput" accept=".json,application/json" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-        <textarea id="jsonInput" class="w-full h-64 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder=\'[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]\'></textarea>
-        <button id="jsonToCsvBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to CSV</button>
-        <div id="csvResult" class="hidden mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
-            <h4 class="font-bold mb-2">CSV Preview:</h4>
-            <pre id="csvPreview" class="text-xs overflow-x-auto whitespace-pre-wrap"></pre>
-            <button id="downloadCsvBtn" class="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hidden">Download CSV</button>
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">JSON to CSV / Excel</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert JSON into CSV or Excel-ready rows</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Paste JSON, upload a `.json` file, flatten nested objects, preview the table, and download CSV or Excel output. Great for data scientists, analysts, and developers.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">{ }</div>
+                </div>
+
+                <input type="file" id="jsonFileInput" accept=".json,application/json" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600">
+                <textarea id="jsonInput" class="w-full h-72 mt-4 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder=\'[{"name":"John","age":30,"address":{"city":"Lahore"}},{"name":"Jane","age":25,"address":{"city":"Karachi"}}]\'></textarea>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="jsonToCsvBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Convert JSON to CSV</button>
+                    <button id="downloadCsvBtn" type="button" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition hidden">Download CSV</button>
+                    <button id="downloadExcelBtn" type="button" class="px-5 py-3 rounded-2xl bg-amber-500 text-slate-950 font-semibold hover:bg-amber-400 transition hidden">Download Excel</button>
+                </div>
+
+                <p id="jsonToCsvStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Convert JSON to CSV online or prepare JSON data for Excel with one click.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Preview</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <pre id="csvPreview" class="text-xs overflow-x-auto whitespace-pre-wrap text-gray-700 dark:text-slate-100 min-h-[260px]">CSV preview will appear here after conversion.</pre>
+                </div>
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Good for</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">API responses, analytics exports, Python JSON to CSV tasks, PowerShell conversions, and convert JSON to CSV in Excel workflows.</p>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Output</p>
+                        <p id="jsonToCsvMeta" class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">No output yet. Paste JSON and run the converter.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         let currentCSV = "";
+        let currentRows = [];
+        const jsonInput = document.getElementById("jsonInput");
+        const jsonStatus = document.getElementById("jsonToCsvStatus");
+        const csvPreview = document.getElementById("csvPreview");
+        const jsonMeta = document.getElementById("jsonToCsvMeta");
+        const downloadCsvBtn = document.getElementById("downloadCsvBtn");
+        const downloadExcelBtn = document.getElementById("downloadExcelBtn");
+
+        function setJsonStatus(message, isError) {
+            jsonStatus.textContent = message || "";
+            jsonStatus.classList.toggle("text-red-500", !!isError);
+            jsonStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                jsonStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function flattenObject(value, prefix, output) {
+            if (Array.isArray(value)) {
+                if (!value.length) {
+                    output[prefix] = "";
+                    return;
+                }
+                const primitiveArray = value.every(function(item) {
+                    return item === null || ["string", "number", "boolean"].includes(typeof item);
+                });
+                if (primitiveArray) {
+                    output[prefix] = value.join(" | ");
+                    return;
+                }
+                output[prefix] = JSON.stringify(value);
+                return;
+            }
+
+            if (value && typeof value === "object") {
+                Object.keys(value).forEach(function(key) {
+                    const nextKey = prefix ? prefix + "." + key : key;
+                    flattenObject(value[key], nextKey, output);
+                });
+                return;
+            }
+
+            output[prefix] = value === null || value === undefined ? "" : value;
+        }
+
+        function normalizeRows(parsed) {
+            if (Array.isArray(parsed)) return parsed;
+            if (parsed && typeof parsed === "object") return [parsed];
+            throw new Error("JSON must be an object or array of objects.");
+        }
+
         document.getElementById("jsonFileInput").addEventListener("change", function() {
             const file = this.files && this.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById("jsonInput").value = e.target.result || "";
+                jsonInput.value = e.target.result || "";
+                setJsonStatus("JSON file loaded. Click convert to generate CSV or Excel.");
             };
             reader.readAsText(file);
         });
         
         document.getElementById("jsonToCsvBtn").addEventListener("click", function() {
             try {
-                const json = JSON.parse(document.getElementById("jsonInput").value);
-                if (!Array.isArray(json)) throw new Error("JSON must be an array");
-                if (json.length === 0) throw new Error("JSON array is empty");
-                const headers = Object.keys(json[0]);
-                const csv = [headers.join(","), ...json.map(row => headers.map(h => {
-                    let val = row[h];
-                    if (val === undefined || val === null) val = "";
-                    if (typeof val === "string" && (val.includes(",") || val.includes("\""))) {
-                        val = "\"" + val.replace(/"/g, "\"\"") + "\"";
+                const parsed = JSON.parse(jsonInput.value);
+                const rows = normalizeRows(parsed);
+                if (!rows.length) throw new Error("JSON array is empty.");
+
+                currentRows = rows.map(function(row) {
+                    if (!row || typeof row !== "object" || Array.isArray(row)) {
+                        return { value: JSON.stringify(row) };
                     }
-                    return val;
-                }).join(","))].join("\\n");
-                currentCSV = csv;
-                document.getElementById("csvPreview").innerText = csv.slice(0, 500) + (csv.length > 500 ? "..." : "");
-                document.getElementById("csvResult").classList.remove("hidden");
-                document.getElementById("downloadCsvBtn").classList.remove("hidden");
-            } catch(e) {
-                alert("Invalid JSON: " + e.message);
+                    const flattened = {};
+                    Object.keys(row).forEach(function(key) {
+                        flattenObject(row[key], key, flattened);
+                    });
+                    return flattened;
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(currentRows);
+                currentCSV = XLSX.utils.sheet_to_csv(worksheet);
+                csvPreview.textContent = currentCSV || "No CSV output generated.";
+                jsonMeta.textContent = currentRows.length + " row(s) prepared with " + Object.keys(currentRows[0] || {}).length + " column(s). Ready for CSV or Excel download.";
+                downloadCsvBtn.classList.remove("hidden");
+                downloadExcelBtn.classList.remove("hidden");
+                setJsonStatus("JSON converted successfully. Download CSV or Excel.");
+            } catch (e) {
+                currentCSV = "";
+                currentRows = [];
+                downloadCsvBtn.classList.add("hidden");
+                downloadExcelBtn.classList.add("hidden");
+                csvPreview.textContent = "CSV preview will appear here after conversion.";
+                jsonMeta.textContent = "No output yet. Paste JSON and run the converter.";
+                setJsonStatus("Invalid JSON: " + e.message, true);
             }
         });
         
-        document.getElementById("downloadCsvBtn").addEventListener("click", function() {
+        downloadCsvBtn.addEventListener("click", function() {
+            if (!currentCSV) return;
             const blob = new Blob([currentCSV], { type: "text/csv" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -4661,6 +4762,14 @@ function getJsonToCsvHTML() {
             a.download = "converted.csv";
             a.click();
             URL.revokeObjectURL(url);
+        });
+
+        downloadExcelBtn.addEventListener("click", function() {
+            if (!currentRows.length || !window.XLSX) return;
+            const worksheet = XLSX.utils.json_to_sheet(currentRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "JSON");
+            XLSX.writeFile(workbook, "converted.xlsx");
         });
     </script>';
 }
@@ -4725,6 +4834,243 @@ function getCsvToJsonHTML() {
             a.href = url;
             a.download = "converted.json";
             a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>';
+}
+
+function getSqlToJsonHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>SQL to JSON Converter Online</h1>
+            <p>Convert SQL to JSON online, parse SQL INSERT statements, and export database rows into JSON for development and database management.</p>
+        </div>
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">SQL to JSON</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert SQL INSERT rows into clean JSON</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Paste SQL dump content with `INSERT INTO ... VALUES (...)` statements and convert it into JSON objects for APIs, apps, testing, and database management.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">SQL</div>
+                </div>
+
+                <textarea id="sqlToJsonInput" class="w-full h-72 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder="INSERT INTO users (id, name, email) VALUES (1, &quot;Ali&quot;, &quot;ali@example.com&quot;), (2, &quot;Sara&quot;, &quot;sara@example.com&quot;);"></textarea>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="sqlToJsonBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Convert SQL to JSON</button>
+                    <button id="copySqlJsonBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition hidden">Copy JSON</button>
+                    <button id="downloadSqlJsonBtn" type="button" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition hidden">Download JSON</button>
+                </div>
+
+                <p id="sqlToJsonStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Best for SQL to JSON conversion from INSERT statements and SQL dump samples.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">JSON Output</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <textarea id="sqlToJsonOutput" class="w-full h-72 bg-transparent text-sm leading-7 text-gray-800 dark:text-slate-100 resize-none outline-none" placeholder="Converted JSON will appear here."></textarea>
+                </div>
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Supported</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">Standard `INSERT INTO table (columns) VALUES (...)` statements with multiple rows.</p>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Use cases</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">Database management, API seeding, fixtures, migrations, quick data cleanup, and SQL to JSON online checks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const sqlToJsonInput = document.getElementById("sqlToJsonInput");
+        const sqlToJsonOutput = document.getElementById("sqlToJsonOutput");
+        const sqlToJsonStatus = document.getElementById("sqlToJsonStatus");
+        const copySqlJsonBtn = document.getElementById("copySqlJsonBtn");
+        const downloadSqlJsonBtn = document.getElementById("downloadSqlJsonBtn");
+
+        function setSqlJsonStatus(message, isError) {
+            sqlToJsonStatus.textContent = message || "";
+            sqlToJsonStatus.classList.toggle("text-red-500", !!isError);
+            sqlToJsonStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                sqlToJsonStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function splitSqlValues(rowText) {
+            const values = [];
+            let current = "";
+            let quote = "";
+            let depth = 0;
+
+            for (let i = 0; i < rowText.length; i++) {
+                const char = rowText[i];
+                const next = rowText[i + 1] || "";
+
+                if (quote) {
+                    current += char;
+                    if (char === "\\\\") {
+                        current += next;
+                        i++;
+                        continue;
+                    }
+                    if (char === quote) {
+                        quote = "";
+                    }
+                    continue;
+                }
+
+                if (char === "\\"" || char === "\'") {
+                    quote = char;
+                    current += char;
+                    continue;
+                }
+
+                if (char === "(") depth++;
+                if (char === ")") depth--;
+
+                if (char === "," && depth === 0) {
+                    values.push(current.trim());
+                    current = "";
+                    continue;
+                }
+
+                current += char;
+            }
+
+            if (current.trim() !== "") {
+                values.push(current.trim());
+            }
+            return values;
+        }
+
+        function parseSqlValue(raw) {
+            const value = String(raw || "").trim();
+            if (/^null$/i.test(value)) return null;
+            if (/^(true|false)$/i.test(value)) return /^true$/i.test(value);
+            if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+            if ((value.startsWith("\'") && value.endsWith("\'")) || (value.startsWith("\\"") && value.endsWith("\\""))) {
+                return value.slice(1, -1).replace(/\\\\\'/g, "\'").replace(/\\\\\\"/g, "\\"").replace(/\\\\n/g, "\n").replace(/\\\\r/g, "\r").replace(/\\\\t/g, "\t").replace(/\\\\\\\\/g, "\\\\");
+            }
+            return value;
+        }
+
+        function extractRows(valuesSection) {
+            const rows = [];
+            let current = "";
+            let depth = 0;
+            let quote = "";
+
+            for (let i = 0; i < valuesSection.length; i++) {
+                const char = valuesSection[i];
+                const next = valuesSection[i + 1] || "";
+
+                if (quote) {
+                    current += char;
+                    if (char === "\\\\") {
+                        current += next;
+                        i++;
+                        continue;
+                    }
+                    if (char === quote) {
+                        quote = "";
+                    }
+                    continue;
+                }
+
+                if (char === "\\"" || char === "\'") {
+                    quote = char;
+                    current += char;
+                    continue;
+                }
+
+                if (char === "(") {
+                    depth++;
+                    if (depth === 1) continue;
+                }
+
+                if (char === ")") {
+                    depth--;
+                    if (depth === 0) {
+                        rows.push(current);
+                        current = "";
+                        continue;
+                    }
+                }
+
+                if (depth >= 1) {
+                    current += char;
+                }
+            }
+
+            return rows;
+        }
+
+        function parseInsertStatements(sql) {
+            const regex = /INSERT\\s+INTO\\s+[`"\\w.]+\\s*\\(([^)]+)\\)\\s*VALUES\\s*([\\s\\S]*?);/gi;
+            const output = [];
+            let match;
+
+            while ((match = regex.exec(sql)) !== null) {
+                const columns = match[1].split(",").map(function(column) {
+                    return column.trim().replace(/^[`"\\[]+|[`"\\]]+$/g, "");
+                });
+                const rows = extractRows(match[2]);
+
+                rows.forEach(function(rowText) {
+                    const values = splitSqlValues(rowText);
+                    const item = {};
+                    columns.forEach(function(column, index) {
+                        item[column] = parseSqlValue(values[index] || "");
+                    });
+                    output.push(item);
+                });
+            }
+
+            return output;
+        }
+
+        document.getElementById("sqlToJsonBtn").addEventListener("click", function() {
+            try {
+                const sql = sqlToJsonInput.value.trim();
+                if (!sql) throw new Error("Please paste SQL INSERT statements first.");
+                const rows = parseInsertStatements(sql);
+                if (!rows.length) throw new Error("No supported INSERT INTO ... VALUES statements were found.");
+                sqlToJsonOutput.value = JSON.stringify(rows, null, 2);
+                copySqlJsonBtn.classList.remove("hidden");
+                downloadSqlJsonBtn.classList.remove("hidden");
+                setSqlJsonStatus("SQL converted successfully. " + rows.length + " row(s) exported to JSON.");
+            } catch (error) {
+                sqlToJsonOutput.value = "";
+                copySqlJsonBtn.classList.add("hidden");
+                downloadSqlJsonBtn.classList.add("hidden");
+                setSqlJsonStatus(error.message, true);
+            }
+        });
+
+        copySqlJsonBtn.addEventListener("click", async function() {
+            if (!sqlToJsonOutput.value.trim()) return;
+            try {
+                await navigator.clipboard.writeText(sqlToJsonOutput.value);
+                setSqlJsonStatus("JSON copied to clipboard.");
+            } catch (error) {
+                setSqlJsonStatus("Could not copy automatically. Please copy the JSON manually.", true);
+            }
+        });
+
+        downloadSqlJsonBtn.addEventListener("click", function() {
+            if (!sqlToJsonOutput.value.trim()) return;
+            const blob = new Blob([sqlToJsonOutput.value], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "converted.json";
+            link.click();
             URL.revokeObjectURL(url);
         });
     </script>';
@@ -8076,26 +8422,107 @@ function getQrGeneratorPureJS() {
 function getHtmlToPdfHTML() {
     return '
     <div class="space-y-6">
-        <textarea id="htmlToPdfInput" class="w-full h-56 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="<h1>Hello</h1><p>Paste HTML here...</p>"></textarea>
-        <button id="htmlToPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert HTML to PDF</button>
-        <div id="htmlToPdfPreview" class="hidden rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900"></div>
+        <div style="display:none;">
+            <h1>HTML to PDF Converter Online Free</h1>
+            <p>Convert HTML to PDF online free, change HTML to PDF for invoices and reports, and export `.html` layouts as PDF files in your browser.</p>
+        </div>
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">HTML to PDF</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert HTML markup into a polished PDF</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Paste HTML for invoices, reports, receipts, letters, or printable layouts and convert it into PDF instantly. Great for HTML to PDF free workflows and browser-based report generation.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">&lt;/&gt;</div>
+                </div>
+
+                <textarea id="htmlToPdfInput" class="w-full h-72 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600 font-mono text-sm" placeholder="&lt;section style=&quot;font-family: Arial, sans-serif; padding: 24px;&quot;&gt;&lt;h1&gt;Invoice #1001&lt;/h1&gt;&lt;p&gt;Client: Any2Convert&lt;/p&gt;&lt;/section&gt;"></textarea>
+
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <input id="htmlToPdfFileName" type="text" value="html-to-pdf" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600" placeholder="File name">
+                    <select id="htmlToPdfFormat" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600">
+                        <option value="a4" selected>A4 PDF</option>
+                        <option value="letter">Letter PDF</option>
+                    </select>
+                </div>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="htmlToPdfPreviewBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Preview HTML</button>
+                    <button id="htmlToPdfBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Convert HTML to PDF</button>
+                </div>
+
+                <p id="htmlToPdfStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Paste HTML and convert it to PDF for invoices, reports, and printable layouts.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Live Preview</p>
+                <div id="htmlToPdfPreview" class="mt-4 min-h-[340px] rounded-[1.8rem] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 overflow-auto text-gray-800 dark:text-slate-100 shadow-sm">HTML preview will appear here.</div>
+                <div class="mt-4 rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                    <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Use cases</p>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">Invoices, receipts, business reports, proposal pages, printable letters, embedded HTML snippets, and online HTML to PDF converter free workflows.</p>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
+        const htmlInput = document.getElementById("htmlToPdfInput");
+        const htmlPreview = document.getElementById("htmlToPdfPreview");
+        const htmlStatus = document.getElementById("htmlToPdfStatus");
+
+        function setHtmlToPdfStatus(message, isError) {
+            htmlStatus.textContent = message || "";
+            htmlStatus.classList.toggle("text-red-500", !!isError);
+            htmlStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                htmlStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function renderHtmlPreview() {
+            const markup = htmlInput.value.trim();
+            if (!markup) {
+                htmlPreview.textContent = "HTML preview will appear here.";
+                setHtmlToPdfStatus("Paste HTML first to preview or convert.", true);
+                return null;
+            }
+            htmlPreview.innerHTML = markup;
+            setHtmlToPdfStatus("HTML preview updated.");
+            return markup;
+        }
+
+        document.getElementById("htmlToPdfPreviewBtn").addEventListener("click", function() {
+            renderHtmlPreview();
+        });
+
         document.getElementById("htmlToPdfBtn").addEventListener("click", async function() {
-            const markup = document.getElementById("htmlToPdfInput").value.trim();
-            if (!markup) return alert("Please paste some HTML.");
-            const preview = document.getElementById("htmlToPdfPreview");
-            preview.innerHTML = markup;
-            preview.classList.remove("hidden");
+            const markup = renderHtmlPreview();
+            if (!markup) return;
             const wrapper = document.createElement("div");
             wrapper.style.padding = "32px";
             wrapper.style.background = "#ffffff";
             wrapper.style.color = "#111827";
+            wrapper.style.fontFamily = "Arial, sans-serif";
+            wrapper.style.width = "100%";
             wrapper.innerHTML = markup;
             document.body.appendChild(wrapper);
-            await html2pdf().set({ margin: 0.4, filename: "html-to-pdf.pdf", html2canvas: { scale: 2 }, jsPDF: { unit: "in", format: "a4", orientation: "portrait" } }).from(wrapper).save();
-            wrapper.remove();
+            try {
+                const fileName = (document.getElementById("htmlToPdfFileName").value.trim() || "html-to-pdf") + ".pdf";
+                const format = document.getElementById("htmlToPdfFormat").value || "a4";
+                setHtmlToPdfStatus("Converting HTML to PDF...");
+                await html2pdf().set({
+                    margin: 0.4,
+                    filename: fileName,
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: "in", format: format, orientation: "portrait" }
+                }).from(wrapper).save();
+                setHtmlToPdfStatus("PDF created successfully.");
+            } catch (error) {
+                setHtmlToPdfStatus("Error converting HTML to PDF: " + error.message, true);
+            } finally {
+                wrapper.remove();
+            }
         });
     </script>';
 }

@@ -104,14 +104,15 @@ $seo_tools = [
     ],
     'json-to-csv' => [
         'id' => 'json_to_csv',
-        'h1' => 'Convert JSON Data to CSV File',
-        'title' => 'JSON to CSV Converter Online Free | Any2Convert',
-        'meta_desc' => 'Transform nested JSON arrays into flat CSV spreadsheets instantly. Perfect for developers and data analysts.',
+        'h1' => 'JSON to CSV Converter Online',
+        'title' => 'JSON to CSV Converter Online Free for Excel | Any2Convert',
+        'meta_desc' => 'Convert JSON to CSV online free and prepare JSON data for CSV or Excel instantly. Great for developers, analysts, and data exports.',
         'icon' => '⚡',
         'faqs' => [
-            ['q' => 'Does it handle nested JSON?', 'a' => 'Depending on complexity, it flattens standard JSON array relationships into columns for easy viewing in Excel.']
+            ['q' => 'How do I convert JSON to CSV?', 'a' => 'Paste a JSON array or object, run the converter, preview the flattened result, and download the output as CSV or Excel-ready data.'],
+            ['q' => 'Does it handle nested JSON?', 'a' => 'Yes. Standard nested objects are flattened into dot-notated columns for easier CSV and Excel export.']
         ],
-        'content' => 'Data analysts and developers frequently need to convert API responses or database backups from JSON format into a readable CSV file. Our instant JSON to CSV parser flattens your data entirely in your browser. Paste your JSON or upload a file, and get your spreadsheet in milliseconds.'
+        'content' => 'Use this JSON to CSV converter online when you need to convert JSON to CSV format for reporting, Excel imports, analytics, API responses, and developer workflows. The tool works well for queries like convert JSON to CSV, JSON to CSV online, online JSON to CSV converter, convert JSON to CSV in Excel, Python JSON to CSV, and PowerShell convert JSON to CSV style use cases.'
     ],
     'csv-to-json' => [
         'id' => 'csv_to_json',
@@ -449,12 +450,27 @@ $seo_tools = [
     ],
     'html-to-pdf' => [
         'id' => 'html_to_pdf',
-        'h1' => 'Convert HTML to PDF Online',
-        'title' => 'HTML to PDF Converter - Free Online | Any2Convert',
-        'meta_desc' => 'Paste HTML markup and export it as a PDF instantly.',
+        'h1' => 'HTML to PDF Converter Online Free',
+        'title' => 'HTML to PDF Converter Online Free | Any2Convert',
+        'meta_desc' => 'Convert HTML to PDF online free for invoices, reports, receipts, and printable layouts directly in your browser.',
         'icon' => 'HTML',
-        'faqs' => [['q' => 'Can I paste raw HTML?', 'a' => 'Yes, you can paste HTML markup and export it as PDF.']],
-        'content' => 'A quick way to turn simple HTML snippets and layouts into downloadable PDF files.'
+        'faqs' => [
+            ['q' => 'How do I convert HTML to PDF?', 'a' => 'Paste your HTML markup, preview the layout, choose a PDF size, and export it directly in the browser.'],
+            ['q' => 'What is this useful for?', 'a' => 'It works well for invoices, reports, printable templates, receipts, and quick HTML-based documents.']
+        ],
+        'content' => 'This HTML to PDF converter is useful when you need to convert HTML to PDF for invoices, reports, printable business documents, or quick exports from web markup. It supports common searches like HTML to PDF, convert HTML to PDF, HTML to PDF converter, HTML to PDF free, HTML to PDF converter online free, and convert HTML to PDF online free.'
+    ],
+    'sql-to-json' => [
+        'id' => 'sql_to_json',
+        'h1' => 'SQL to JSON Converter Online',
+        'title' => 'SQL to JSON Converter Online Free | Any2Convert',
+        'meta_desc' => 'Convert SQL to JSON online by parsing SQL INSERT statements into clean JSON for apps, APIs, and database workflows.',
+        'icon' => 'SQL',
+        'faqs' => [
+            ['q' => 'What SQL format does it support?', 'a' => 'It supports common INSERT INTO table (columns) VALUES (...) statements, including multi-row inserts.'],
+            ['q' => 'What is SQL to JSON useful for?', 'a' => 'It helps with database management, API payload creation, fixtures, test data, and data migration workflows.']
+        ],
+        'content' => 'Use this SQL to JSON converter when you need to convert SQL to JSON from INSERT statements in dumps, seed files, or copied database rows. It is useful for SQL to JSON online, convert SQL to JSON, SQL to JSON converter, how to convert SQL to JSON, and developer workflows that move relational data into JSON structures.'
     ],
     'split-pdf' => [
         'id' => 'split_pdf',

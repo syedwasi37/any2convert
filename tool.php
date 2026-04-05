@@ -35,6 +35,7 @@ $wideToolIds = [
     'bank_statement_to_excel',
     'grammar_checker',
     'paraphrase_tool',
+    'sql_to_json',
     'percentage_calculator',
     'loan_calculator',
     'bmi_calculator',
