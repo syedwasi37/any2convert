@@ -6953,15 +6953,21 @@ function getWebpConverterHTML() {
 function getVideoToAudioHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Video to MP3 Converter Free Online</h1>
+            <p>Use this video to MP3 converter to convert video to MP3, turn video to MP3, and extract audio from MP4, MOV, WEBM, AVI, MKV, and more.</p>
+            <p>This online video to MP3 converter free tool helps you convert video to MP3 locally in your browser with no upload required.</p>
+            <p>Looking for how to convert video to MP3, iPhone video to MP3, TikTok video to MP3, or Instagram video to MP3? Upload your file, choose a format, and download the audio.</p>
+        </div>
         <div class="rounded-2xl border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-4">
-            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Extract audio from video</div>
-            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Convert MP4, MOV, WEBM, AVI, MKV, and more into MP3, WAV, OGG, AAC, or FLAC directly in your browser.</p>
+            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Video to MP3 Converter</div>
+            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Convert video to MP3, WAV, OGG, AAC, or FLAC directly in your browser. This free video to MP3 converter works with MP4, MOV, WEBM, AVI, MKV, and more.</p>
         </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'videoToAudioInput\').click()">
             <input type="file" id="videoToAudioInput" class="hidden" accept="video/*,.mkv,.avi,.mov,.mp4,.webm,.m4v">
             <div class="text-5xl mb-3">VIDEO</div>
             <p class="font-medium">Upload a video file</p>
-            <p class="text-sm text-gray-500 mt-2">Audio is extracted locally with FFmpeg WebAssembly</p>
+            <p class="text-sm text-gray-500 mt-2">Extract MP3 audio locally with FFmpeg WebAssembly</p>
         </div>
         <div id="videoToAudioMetaWrap" class="hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/30 p-4 space-y-2">
             <div class="font-medium text-sm">Selected file</div>
@@ -6991,10 +6997,20 @@ function getVideoToAudioHTML() {
             </div>
         </div>
         <div class="grid sm:grid-cols-2 gap-3">
-            <button id="videoToAudioRunBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to Audio</button>
+            <button id="videoToAudioRunBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert Video to Audio</button>
             <button id="videoToAudioDownloadBtn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition hidden">Download Audio</button>
         </div>
+        <div id="videoToAudioProgressWrap" class="hidden rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/20 p-4">
+            <div class="flex items-center justify-between gap-3 text-sm">
+                <span id="videoToAudioProgressLabel" class="font-medium text-blue-900 dark:text-blue-100">Preparing conversion...</span>
+                <span id="videoToAudioProgressPercent" class="font-semibold text-blue-700 dark:text-blue-200">0%</span>
+            </div>
+            <div class="mt-3 h-3 rounded-full bg-blue-100 dark:bg-blue-900/60 overflow-hidden">
+                <div id="videoToAudioProgressBar" class="h-full rounded-full bg-blue-600 transition-all duration-300" style="width:0%"></div>
+            </div>
+        </div>
         <audio id="videoToAudioPlayer" class="w-full hidden" controls></audio>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 p-4 text-sm text-gray-600 dark:text-gray-300">Use this free video to MP3 converter online to extract audio from video files quickly. It is useful if you want to turn video to MP3 for podcasts, voice notes, reels, or short clips.</div>
         <p id="videoToAudioStatus" class="text-sm text-gray-500 text-center"></p>
     </div>
     <script src="assets/vendor/ffmpeg/ffmpeg.js"></script>
@@ -7007,25 +7023,46 @@ function getVideoToAudioHTML() {
             const runBtn = document.getElementById("videoToAudioRunBtn");
             const downloadBtn = document.getElementById("videoToAudioDownloadBtn");
             const status = document.getElementById("videoToAudioStatus");
-            const metaWrap = document.getElementById("videoToAudioMetaWrap");
-            const fileMeta = document.getElementById("videoToAudioFileMeta");
-            const preview = document.getElementById("videoToAudioPreview");
-            const player = document.getElementById("videoToAudioPlayer");
+              const metaWrap = document.getElementById("videoToAudioMetaWrap");
+              const fileMeta = document.getElementById("videoToAudioFileMeta");
+              const preview = document.getElementById("videoToAudioPreview");
+              const player = document.getElementById("videoToAudioPlayer");
+              const progressWrap = document.getElementById("videoToAudioProgressWrap");
+              const progressLabel = document.getElementById("videoToAudioProgressLabel");
+              const progressPercent = document.getElementById("videoToAudioProgressPercent");
+              const progressBar = document.getElementById("videoToAudioProgressBar");
 
-            let ffmpeg = null;
-            let ffmpegLoaded = false;
-            let outputBlob = null;
-            let outputName = "";
+              let ffmpeg = null;
+              let ffmpegLoaded = false;
+              let outputBlob = null;
+              let outputName = "";
             let previewUrl = "";
             let audioUrl = "";
 
-            function setStatus(message) {
-                status.textContent = message;
-            }
+              function setStatus(message) {
+                  status.textContent = message;
+              }
 
-            function revokeUrls() {
-                if (previewUrl) {
-                    URL.revokeObjectURL(previewUrl);
+              function setProgress(percent, message) {
+                  const safePercent = Math.max(0, Math.min(100, Math.round(percent || 0)));
+                  progressWrap.classList.remove("hidden");
+                  progressBar.style.width = safePercent + "%";
+                  progressPercent.textContent = safePercent + "%";
+                  if (message) {
+                      progressLabel.textContent = message;
+                  }
+              }
+
+              function resetProgress() {
+                  progressBar.style.width = "0%";
+                  progressPercent.textContent = "0%";
+                  progressLabel.textContent = "Preparing conversion...";
+                  progressWrap.classList.add("hidden");
+              }
+
+              function revokeUrls() {
+                  if (previewUrl) {
+                      URL.revokeObjectURL(previewUrl);
                     previewUrl = "";
                 }
                 if (audioUrl) {
@@ -7036,25 +7073,32 @@ function getVideoToAudioHTML() {
 
             async function ensureFFmpegLoaded() {
                 if (ffmpegLoaded) return ffmpeg;
-                const { FFmpeg } = FFmpegWASM;
-                const { toBlobURL } = FFmpegUtil;
-                ffmpeg = new FFmpeg();
-                ffmpeg.on("log", function(event) {
-                    if (event && event.message) {
-                        setStatus("Processing: " + event.message);
-                    }
-                });
+                  const { FFmpeg } = FFmpegWASM;
+                  const { toBlobURL } = FFmpegUtil;
+                  ffmpeg = new FFmpeg();
+                  ffmpeg.on("log", function(event) {
+                      if (event && event.message) {
+                          setStatus("Processing: " + event.message);
+                      }
+                  });
+                  ffmpeg.on("progress", function(event) {
+                      if (event && typeof event.progress === "number" && isFinite(event.progress)) {
+                          setProgress(event.progress * 100, "Extracting audio...");
+                      }
+                  });
 
-                const baseURL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd";
-                setStatus("Loading video conversion engine...");
-                await ffmpeg.load({
-                    coreURL: await toBlobURL(baseURL + "/ffmpeg-core.js", "text/javascript"),
-                    wasmURL: await toBlobURL(baseURL + "/ffmpeg-core.wasm", "application/wasm")
-                });
-                ffmpegLoaded = true;
-                setStatus("Converter ready.");
-                return ffmpeg;
-            }
+                  const baseURL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd";
+                  setStatus("Loading video conversion engine...");
+                  setProgress(8, "Loading video conversion engine...");
+                  await ffmpeg.load({
+                      coreURL: await toBlobURL(baseURL + "/ffmpeg-core.js", "text/javascript"),
+                      wasmURL: await toBlobURL(baseURL + "/ffmpeg-core.wasm", "application/wasm")
+                  });
+                  ffmpegLoaded = true;
+                  setStatus("Converter ready.");
+                  setProgress(15, "Converter ready.");
+                  return ffmpeg;
+              }
 
             function getOutputSettings(format, bitrate) {
                 switch (format) {
@@ -7077,73 +7121,81 @@ function getVideoToAudioHTML() {
                 outputBlob = null;
                 outputName = "";
                 downloadBtn.classList.add("hidden");
-                player.classList.add("hidden");
-                player.removeAttribute("src");
-                revokeUrls();
-                if (!file) return;
+                  player.classList.add("hidden");
+                  player.removeAttribute("src");
+                  revokeUrls();
+                  resetProgress();
+                  if (!file) return;
 
                 previewUrl = URL.createObjectURL(file);
                 preview.src = previewUrl;
                 preview.classList.remove("hidden");
                 metaWrap.classList.remove("hidden");
-                fileMeta.textContent = file.name + " • " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
-                setStatus("Video loaded. Choose a format and click Convert to Audio.");
-            });
+                  fileMeta.textContent = file.name + " • " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
+                  setStatus("Video loaded. Choose a format and click Convert to Audio.");
+              });
 
             runBtn.addEventListener("click", async function() {
                 const file = input.files[0];
-                if (!file) return alert("Please select a video first");
+                  if (!file) return alert("Please select a video first");
 
-                runBtn.disabled = true;
-                runBtn.classList.add("opacity-50", "cursor-not-allowed");
-                downloadBtn.classList.add("hidden");
-                player.classList.add("hidden");
-                player.removeAttribute("src");
-                outputBlob = null;
-                outputName = "";
-                if (audioUrl) {
-                    URL.revokeObjectURL(audioUrl);
-                    audioUrl = "";
-                }
+                  runBtn.disabled = true;
+                  runBtn.classList.add("opacity-50", "cursor-not-allowed");
+                  runBtn.textContent = "Converting...";
+                  downloadBtn.classList.add("hidden");
+                  player.classList.add("hidden");
+                  player.removeAttribute("src");
+                  outputBlob = null;
+                  outputName = "";
+                  resetProgress();
+                  if (audioUrl) {
+                      URL.revokeObjectURL(audioUrl);
+                      audioUrl = "";
+                  }
 
-                try {
-                    const engine = await ensureFFmpegLoaded();
+                  try {
+                      const engine = await ensureFFmpegLoaded();
                     const { fetchFile } = FFmpegUtil;
                     const extMatch = file.name.match(/\.([^.]+)$/);
                     const inputExt = extMatch ? extMatch[1].toLowerCase() : "mp4";
                     const safeInputName = "input." + inputExt;
                     const baseName = file.name.replace(/\.[^.]+$/, "") || "audio";
                     const format = formatSelect.value;
-                    const bitrate = bitrateSelect.value;
-                    const settings = getOutputSettings(format, bitrate);
-                    const outputFileName = "output." + settings.extension;
+                      const bitrate = bitrateSelect.value;
+                      const settings = getOutputSettings(format, bitrate);
+                      const outputFileName = "output." + settings.extension;
 
-                    setStatus("Preparing video file...");
-                    await engine.writeFile(safeInputName, await fetchFile(file));
+                      setStatus("Preparing video file...");
+                      setProgress(20, "Preparing video file...");
+                      await engine.writeFile(safeInputName, await fetchFile(file));
 
-                    setStatus("Extracting audio...");
-                    await engine.exec(["-i", safeInputName].concat(settings.args, [outputFileName]));
+                      setStatus("Extracting audio...");
+                      setProgress(28, "Extracting audio...");
+                      await engine.exec(["-i", safeInputName].concat(settings.args, [outputFileName]));
 
-                    const data = await engine.readFile(outputFileName);
-                    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data.buffer || data);
-                    outputBlob = new Blob([bytes], { type: settings.mime });
+                      const data = await engine.readFile(outputFileName);
+                      const bytes = data instanceof Uint8Array ? data : new Uint8Array(data.buffer || data);
+                      outputBlob = new Blob([bytes], { type: settings.mime });
                     outputName = baseName + "." + settings.extension;
                     audioUrl = URL.createObjectURL(outputBlob);
-                    player.src = audioUrl;
-                    player.classList.remove("hidden");
-                    downloadBtn.classList.remove("hidden");
-                    setStatus("Audio extracted successfully.");
+                      player.src = audioUrl;
+                      player.classList.remove("hidden");
+                      downloadBtn.classList.remove("hidden");
+                      setStatus("Audio extracted successfully.");
+                      setProgress(100, "Conversion complete.");
 
-                    try { await engine.deleteFile(safeInputName); } catch (e) {}
-                    try { await engine.deleteFile(outputFileName); } catch (e) {}
-                } catch (error) {
-                    console.error("Video to audio conversion failed:", error);
-                    setStatus("Conversion failed: " + (error && error.message ? error.message : "Unknown error"));
-                } finally {
-                    runBtn.disabled = false;
-                    runBtn.classList.remove("opacity-50", "cursor-not-allowed");
-                }
-            });
+                      try { await engine.deleteFile(safeInputName); } catch (e) {}
+                      try { await engine.deleteFile(outputFileName); } catch (e) {}
+                  } catch (error) {
+                      console.error("Video to audio conversion failed:", error);
+                      setStatus("Conversion failed: " + (error && error.message ? error.message : "Unknown error"));
+                      setProgress(0, "Conversion failed.");
+                  } finally {
+                      runBtn.disabled = false;
+                      runBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                      runBtn.textContent = "Convert Video to Audio";
+                  }
+              });
 
             downloadBtn.addEventListener("click", function() {
                 if (!outputBlob) return;
