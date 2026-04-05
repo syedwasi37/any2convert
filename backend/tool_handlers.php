@@ -6804,7 +6804,7 @@ function getWebpConverterHTML() {
             <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
                 Upload the WEBP image, choose the output format, and download the converted PNG, JPG, JPEG, or PDF file.
             </div>
-            <button id="webpConvertBtn" class="w-full bg-fuchsia-600 text-white py-3 rounded-xl font-semibold hover:bg-fuchsia-700 transition">Convert WEBP</button>
+            <button id="webpConvertBtn" class="w-full  text-white py-3 rounded-xl font-semibold hover:bg-fuchsia-700 transition">Convert WEBP</button>
             <div id="webpStatus" class="hidden text-sm text-gray-500 text-center"></div>
         </div>
         <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
