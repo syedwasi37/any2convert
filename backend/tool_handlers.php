@@ -8598,29 +8598,347 @@ function getAddPageNumbersHTML() {
 function getAddWatermarkHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="watermarkPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <input type="text" id="watermarkText" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter watermark text">
-        <button id="watermarkPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Add Watermark</button>
+        <div style="display:none;">
+            <h1>Add Watermark to PDF Online Free</h1>
+            <p>Add watermark to PDF online free with text or image watermark placement, choose a position visually, and download the updated PDF in your browser.</p>
+            <p>Use this PDF watermark tool to add watermark to PDF files, place text or logo marks on every page, and preview the watermark before downloading.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Add Watermark to PDF</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, preview all pages, choose watermark text or image, pick a position, and download the watermarked PDF.</p>
+            </div>
+            <input type="file" id="watermarkPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="watermarkStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="watermarkControls" class="hidden grid md:grid-cols-2 gap-4">
+                <select id="watermarkType" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="text">Text Watermark</option>
+                    <option value="image">Image Watermark</option>
+                </select>
+                <select id="watermarkPosition" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="center">Center</option>
+                    <option value="top-left">Top Left</option>
+                    <option value="top-center">Top Center</option>
+                    <option value="top-right">Top Right</option>
+                    <option value="middle-left">Middle Left</option>
+                    <option value="middle-right">Middle Right</option>
+                    <option value="bottom-left">Bottom Left</option>
+                    <option value="bottom-center">Bottom Center</option>
+                    <option value="bottom-right">Bottom Right</option>
+                </select>
+                <input type="text" id="watermarkText" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter watermark text">
+                <input type="file" id="watermarkImageInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
+                <input type="number" id="watermarkFontSize" min="12" max="96" value="36" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
+                <input type="number" id="watermarkOpacity" min="10" max="100" value="35" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Opacity percent">
+            </div>
+            <button id="watermarkPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Add Watermark to PDF Free</button>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to add watermark to PDF:
+            Upload the PDF, choose text or image watermark content, pick a position, preview the watermark on all pages, and download the updated PDF.
+        </div>
+        <div id="watermarkEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF page previews will appear here after upload so you can place the watermark visually before download.</div>
+        <div id="watermarkGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("watermarkPdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("watermarkPdfInput").files[0];
-            const watermark = document.getElementById("watermarkText").value.trim();
-            if (!file) return alert("Please select a PDF file");
-            if (!watermark) return alert("Please enter watermark text.");
-            const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-            const font = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
-            pdf.getPages().forEach(page => {
-                const size = Math.min(36, page.getWidth() / 10);
-                page.drawText(watermark, { x: page.getWidth() * 0.2, y: page.getHeight() * 0.5, size, font, color: PDFLib.rgb(0.7, 0.7, 0.7), rotate: PDFLib.degrees(35), opacity: 0.35 });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const watermarkPdfInput = document.getElementById("watermarkPdfInput");
+        const watermarkType = document.getElementById("watermarkType");
+        const watermarkPosition = document.getElementById("watermarkPosition");
+        const watermarkTextInput = document.getElementById("watermarkText");
+        const watermarkImageInput = document.getElementById("watermarkImageInput");
+        const watermarkFontSize = document.getElementById("watermarkFontSize");
+        const watermarkOpacity = document.getElementById("watermarkOpacity");
+        const watermarkPdfBtn = document.getElementById("watermarkPdfBtn");
+        const watermarkStatus = document.getElementById("watermarkStatus");
+        const watermarkControls = document.getElementById("watermarkControls");
+        const watermarkGrid = document.getElementById("watermarkGrid");
+        const watermarkEmpty = document.getElementById("watermarkEmpty");
+
+        let watermarkPdfBytes = null;
+        let watermarkPdfDoc = null;
+        let watermarkViewDoc = null;
+        let watermarkPages = [];
+        let watermarkImageBytes = null;
+        let watermarkImageUrl = "";
+
+        function setWatermarkStatus(message, isError) {
+            if (!message) {
+                watermarkStatus.textContent = "";
+                watermarkStatus.classList.add("hidden");
+                watermarkStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            watermarkStatus.textContent = message;
+            watermarkStatus.classList.remove("hidden");
+            watermarkStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function updateWatermarkVisibility() {
+            const hasPages = watermarkPages.length > 0;
+            watermarkControls.classList.toggle("hidden", !hasPages);
+            watermarkGrid.classList.toggle("hidden", !hasPages);
+            watermarkEmpty.classList.toggle("hidden", hasPages);
+        }
+
+        function getWatermarkBaseName(name) {
+            let baseName = name || "watermarked";
+            if (baseName.toLowerCase().slice(-4) === ".pdf") {
+                baseName = baseName.slice(0, -4);
+            }
+            return baseName || "watermarked";
+        }
+
+        function getWatermarkPositionClass(position) {
+            const map = {
+                "center": "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+                "top-left": "top-4 left-4",
+                "top-center": "top-4 left-1/2 -translate-x-1/2",
+                "top-right": "top-4 right-4",
+                "middle-left": "top-1/2 left-4 -translate-y-1/2",
+                "middle-right": "top-1/2 right-4 -translate-y-1/2",
+                "bottom-left": "bottom-4 left-4",
+                "bottom-center": "bottom-4 left-1/2 -translate-x-1/2",
+                "bottom-right": "bottom-4 right-4"
+            };
+            return map[position] || map.center;
+        }
+
+        function getWatermarkCoordinates(pageWidth, pageHeight, boxWidth, boxHeight, position) {
+            const marginX = Math.max(18, pageWidth * 0.04);
+            const marginY = Math.max(18, pageHeight * 0.04);
+
+            if (position === "top-left") return { x: marginX, y: pageHeight - marginY - boxHeight };
+            if (position === "top-center") return { x: (pageWidth - boxWidth) / 2, y: pageHeight - marginY - boxHeight };
+            if (position === "top-right") return { x: pageWidth - marginX - boxWidth, y: pageHeight - marginY - boxHeight };
+            if (position === "middle-left") return { x: marginX, y: (pageHeight - boxHeight) / 2 };
+            if (position === "middle-right") return { x: pageWidth - marginX - boxWidth, y: (pageHeight - boxHeight) / 2 };
+            if (position === "bottom-left") return { x: marginX, y: marginY };
+            if (position === "bottom-center") return { x: (pageWidth - boxWidth) / 2, y: marginY };
+            if (position === "bottom-right") return { x: pageWidth - marginX - boxWidth, y: marginY };
+            return { x: (pageWidth - boxWidth) / 2, y: (pageHeight - boxHeight) / 2 };
+        }
+
+        async function renderWatermarkThumbnail(item, canvas) {
+            if (!watermarkViewDoc) return;
+
+            const page = await watermarkViewDoc.getPage(item.pageNumber);
+            const viewport = page.getViewport({ scale: 0.34 });
+            const context = canvas.getContext("2d");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+        }
+
+        function buildWatermarkPreviewElement() {
+            const type = watermarkType.value;
+            const positionClass = getWatermarkPositionClass(watermarkPosition.value);
+            const opacityValue = Math.max(10, Math.min(100, parseInt(watermarkOpacity.value || "35", 10))) / 100;
+
+            const overlay = document.createElement("div");
+            overlay.className = "absolute pointer-events-none z-10 max-w-[80%] " + positionClass;
+            overlay.style.opacity = String(opacityValue);
+
+            if (type === "image" && watermarkImageUrl) {
+                const image = document.createElement("img");
+                image.src = watermarkImageUrl;
+                image.className = "max-w-[150px] max-h-[150px] object-contain";
+                overlay.appendChild(image);
+                return overlay;
+            }
+
+            const text = (watermarkTextInput.value || "").trim() || "Sample Watermark";
+            const textBox = document.createElement("div");
+            textBox.className = "px-3 py-2 rounded-lg bg-slate-900/10 text-slate-700 font-semibold text-center break-words";
+            textBox.style.fontSize = Math.max(12, Math.min(96, parseInt(watermarkFontSize.value || "36", 10))) / 3 + "px";
+            textBox.style.transform = "rotate(-25deg)";
+            textBox.textContent = text;
+            overlay.appendChild(textBox);
+            return overlay;
+        }
+
+        function createWatermarkCard(item) {
+            const card = document.createElement("div");
+            card.className = "rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden";
+
+            const preview = document.createElement("div");
+            preview.className = "relative aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden";
+
+            const canvas = document.createElement("canvas");
+            canvas.className = "w-full h-full object-contain bg-white";
+            preview.appendChild(canvas);
+            preview.appendChild(buildWatermarkPreviewElement());
+
+            const body = document.createElement("div");
+            body.className = "p-4";
+            body.innerHTML = "<div class=\"text-xs uppercase tracking-[0.18em] text-gray-400\">Page " + item.pageNumber + "</div><div class=\"mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100\">Watermark preview</div>";
+
+            card.appendChild(preview);
+            card.appendChild(body);
+            renderWatermarkThumbnail(item, canvas);
+            return card;
+        }
+
+        function renderWatermarkGrid() {
+            watermarkGrid.innerHTML = "";
+            updateWatermarkVisibility();
+
+            watermarkPages.forEach(function(item) {
+                watermarkGrid.appendChild(createWatermarkCard(item));
             });
-            const bytes = await pdf.save();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-            a.download = "watermarked.pdf";
-            a.click();
+        }
+
+        function refreshWatermarkPreview() {
+            if (!watermarkPages.length) return;
+            renderWatermarkGrid();
+        }
+
+        watermarkType.addEventListener("change", function() {
+            const isImage = watermarkType.value === "image";
+            watermarkTextInput.disabled = isImage;
+            watermarkImageInput.disabled = !isImage;
+            refreshWatermarkPreview();
         });
+
+        watermarkPosition.addEventListener("change", refreshWatermarkPreview);
+        watermarkTextInput.addEventListener("input", refreshWatermarkPreview);
+        watermarkFontSize.addEventListener("input", refreshWatermarkPreview);
+        watermarkOpacity.addEventListener("input", refreshWatermarkPreview);
+
+        watermarkImageInput.addEventListener("change", async function() {
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            watermarkImageBytes = null;
+            watermarkImageUrl = "";
+
+            if (!file) {
+                refreshWatermarkPreview();
+                return;
+            }
+
+            watermarkImageBytes = await file.arrayBuffer();
+            watermarkImageUrl = URL.createObjectURL(file);
+            refreshWatermarkPreview();
+        });
+
+        watermarkPdfInput.addEventListener("change", async function() {
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            watermarkPages = [];
+            watermarkPdfBytes = null;
+            watermarkPdfDoc = null;
+            watermarkViewDoc = null;
+            renderWatermarkGrid();
+
+            if (!file) {
+                setWatermarkStatus("");
+                return;
+            }
+
+            try {
+                setWatermarkStatus("Loading PDF pages...");
+                watermarkPdfBytes = await file.arrayBuffer();
+                watermarkPdfDoc = await PDFLib.PDFDocument.load(watermarkPdfBytes);
+                watermarkViewDoc = await pdfjsLib.getDocument({ data: watermarkPdfBytes }).promise;
+                for (let i = 1; i <= watermarkPdfDoc.getPageCount(); i++) {
+                    watermarkPages.push({ pageNumber: i });
+                }
+                renderWatermarkGrid();
+                setWatermarkStatus("Choose the watermark content and position, then download the watermarked PDF.");
+            } catch (error) {
+                setWatermarkStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        watermarkPdfBtn.addEventListener("click", async function() {
+            const file = watermarkPdfInput.files && watermarkPdfInput.files[0] ? watermarkPdfInput.files[0] : null;
+            if (!file) {
+                alert("Please select a PDF file");
+                return;
+            }
+
+            const type = watermarkType.value;
+            const watermarkText = (watermarkTextInput.value || "").trim();
+            if (type === "text" && !watermarkText) {
+                alert("Please enter watermark text.");
+                return;
+            }
+            if (type === "image" && !watermarkImageBytes) {
+                alert("Please choose a watermark image.");
+                return;
+            }
+
+            try {
+                setWatermarkStatus("Applying watermark to PDF...");
+                const pdf = await PDFLib.PDFDocument.load(watermarkPdfBytes);
+                const opacityValue = Math.max(10, Math.min(100, parseInt(watermarkOpacity.value || "35", 10))) / 100;
+                const position = watermarkPosition.value;
+                let embeddedImage = null;
+                let font = null;
+
+                if (type === "image") {
+                    const imageFile = watermarkImageInput.files && watermarkImageInput.files[0] ? watermarkImageInput.files[0] : null;
+                    if (!imageFile) throw new Error("Watermark image is missing.");
+                    if ((imageFile.type || "").toLowerCase().indexOf("png") !== -1) {
+                        embeddedImage = await pdf.embedPng(watermarkImageBytes);
+                    } else {
+                        embeddedImage = await pdf.embedJpg(watermarkImageBytes);
+                    }
+                } else {
+                    font = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+                }
+
+                pdf.getPages().forEach(function(page) {
+                    const pageWidth = page.getWidth();
+                    const pageHeight = page.getHeight();
+
+                    if (type === "image" && embeddedImage) {
+                        const maxWidth = pageWidth * 0.28;
+                        const scale = Math.min(maxWidth / embeddedImage.width, (pageHeight * 0.22) / embeddedImage.height, 1);
+                        const width = embeddedImage.width * scale;
+                        const height = embeddedImage.height * scale;
+                        const point = getWatermarkCoordinates(pageWidth, pageHeight, width, height, position);
+                        page.drawImage(embeddedImage, {
+                            x: point.x,
+                            y: point.y,
+                            width: width,
+                            height: height,
+                            opacity: opacityValue
+                        });
+                    } else {
+                        const fontSizeValue = Math.max(12, Math.min(96, parseInt(watermarkFontSize.value || "36", 10)));
+                        const size = Math.min(fontSizeValue, pageWidth / 6);
+                        const textWidth = font.widthOfTextAtSize(watermarkText, size);
+                        const textHeight = size;
+                        const point = getWatermarkCoordinates(pageWidth, pageHeight, textWidth, textHeight, position);
+                        page.drawText(watermarkText, {
+                            x: point.x,
+                            y: point.y,
+                            size: size,
+                            font: font,
+                            color: PDFLib.rgb(0.45, 0.45, 0.45),
+                            rotate: PDFLib.degrees(position === "center" ? 325 : 0),
+                            opacity: opacityValue
+                        });
+                    }
+                });
+
+                const bytes = await pdf.save();
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+                a.download = getWatermarkBaseName(file.name) + "_watermarked.pdf";
+                a.click();
+                setWatermarkStatus("Watermark added successfully. PDF downloaded.");
+            } catch (error) {
+                setWatermarkStatus("Could not add watermark: " + error.message, true);
+            }
+        });
+
+        watermarkType.dispatchEvent(new Event("change"));
     </script>';
 }
 
