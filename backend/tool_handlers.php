@@ -4753,7 +4753,7 @@ function getPptToPdfHTML() {
             }
             progress.classList.add("hidden");
         });
-    <\/script>';
+    </script>';
 }
 
 function getPptToPdfHTMLBackend() {
