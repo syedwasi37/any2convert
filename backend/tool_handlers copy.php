@@ -179,7 +179,7 @@ function getGenericUnitConverterHTML(array $config): string
     $defaultTo = htmlspecialchars((string) ($config['default_to'] ?? ''), ENT_QUOTES);
     $inputPlaceholder = htmlspecialchars((string) ($config['input_placeholder'] ?? 'Enter a value'), ENT_QUOTES);
     $badge = htmlspecialchars((string) ($config['badge'] ?? 'Smart Converter'), ENT_QUOTES);
-    $icon = htmlspecialchars((string) ($config['icon'] ?? '<>'), ENT_QUOTES);
+    $icon = htmlspecialchars((string) ($config['icon'] ?? '⇄'), ENT_QUOTES);
 
     return '
     <div class="space-y-6">
@@ -214,7 +214,7 @@ function getGenericUnitConverterHTML(array $config): string
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert from</label>
                         <select id="unitConverterFrom" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
                     </div>
-                    <button id="unitConverterSwap" class="h-[62px] w-[62px] rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">&#8646;</button>
+                    <button id="unitConverterSwap" class="h-[62px] w-[62px] rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">⇄</button>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">Convert to</label>
                         <select id="unitConverterTo" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"></select>
@@ -370,7 +370,7 @@ function getLengthConverterHTML(): string
         'title' => 'Length Converter',
         'description' => 'Convert between kilometers, meters, centimeters, millimeters, inches, feet, yards, and miles instantly.',
         'badge' => 'Distance & Size',
-        'icon' => 'LEN',
+        'icon' => '↔',
         'input_placeholder' => 'Example: 1.5',
         'default_value' => '1',
         'default_from' => 'km',
@@ -400,7 +400,7 @@ function getWeightConverterHTML(): string
         'title' => 'Weight Converter',
         'description' => 'Convert mass between kilograms, grams, milligrams, pounds, ounces, and tonnes.',
         'badge' => 'Mass & Weight',
-        'icon' => 'WT',
+        'icon' => '⚖',
         'input_placeholder' => 'Example: 72',
         'default_value' => '1',
         'default_from' => 'kg',
@@ -427,7 +427,7 @@ function getTemperatureConverterHTML(): string
         'title' => 'Temperature Converter',
         'description' => 'Switch between Celsius, Fahrenheit, and Kelvin with the correct formulas applied automatically.',
         'badge' => 'Weather & Science',
-        'icon' => 'TMP',
+        'icon' => '°',
         'input_placeholder' => 'Example: 25',
         'default_value' => '25',
         'default_from' => 'c',
@@ -451,7 +451,7 @@ function getAreaConverterHTML(): string
         'title' => 'Area Converter',
         'description' => 'Convert square units for plots, rooms, land, and map dimensions.',
         'badge' => 'Land & Space',
-        'icon' => 'AREA',
+        'icon' => '▢',
         'input_placeholder' => 'Example: 1200',
         'default_value' => '1',
         'default_from' => 'sqft',
@@ -480,7 +480,7 @@ function getVolumeConverterHTML(): string
         'title' => 'Volume Converter',
         'description' => 'Convert liters, milliliters, cubic meters, gallons, quarts, pints, and cups.',
         'badge' => 'Liquid & Capacity',
-        'icon' => 'VOL',
+        'icon' => '◔',
         'input_placeholder' => 'Example: 2.5',
         'default_value' => '1',
         'default_from' => 'l',
@@ -508,7 +508,7 @@ function getSpeedConverterHTML(): string
         'title' => 'Speed Converter',
         'description' => 'Convert speed values between km/h, m/s, mph, knots, and feet per second.',
         'badge' => 'Travel & Motion',
-        'icon' => 'SPD',
+        'icon' => '→',
         'input_placeholder' => 'Example: 60',
         'default_value' => '60',
         'default_from' => 'kmh',
@@ -534,7 +534,7 @@ function getTimeConverterHTML(): string
         'title' => 'Time Converter',
         'description' => 'Convert seconds, minutes, hours, days, weeks, months, and years in one place.',
         'badge' => 'Duration & Time',
-        'icon' => 'TIME',
+        'icon' => '◷',
         'input_placeholder' => 'Example: 3',
         'default_value' => '1',
         'default_from' => 'hour',
@@ -589,7 +589,7 @@ function getCurrencyConverterHTML(): string
                         <div id="currencyFromDisplay" class="mb-3"></div>
                         <select id="currencyFrom" class="w-full min-h-[62px] px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-[15px] font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></select>
                     </div>
-                    <button id="currencySwapBtn" class="h-[62px] w-[62px] rounded-2xl bg-emerald-600 text-white font-black text-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">&#8646;</button>
+                    <button id="currencySwapBtn" class="h-[62px] w-[62px] rounded-2xl bg-emerald-600 text-white font-black text-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20">⇄</button>
                     <div class="rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
                         <label class="block text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400 mb-2">To currency</label>
                         <div id="currencyToDisplay" class="mb-3"></div>
@@ -889,7 +889,7 @@ function getInvoiceGeneratorHTML() {
             function addItemRow(data = {}) {
                 const row = document.createElement("div");
                 row.className = "grid md:grid-cols-[1.6fr_120px_140px_52px] gap-3";
-                row.innerHTML = `<input class="item-desc rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Design package" value="${data.desc || ""}"><input class="item-qty rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="1" step="1" value="${data.qty || 1}"><input class="item-price rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="0" step="0.01" value="${data.price || 0}"><button class="remove-item rounded-2xl bg-rose-500/12 text-rose-500 font-bold">�</button>`;
+                row.innerHTML = `<input class="item-desc rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Design package" value="${data.desc || ""}"><input class="item-qty rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="1" step="1" value="${data.qty || 1}"><input class="item-price rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="0" step="0.01" value="${data.price || 0}"><button class="remove-item rounded-2xl bg-rose-500/12 text-rose-500 font-bold">×</button>`;
                 row.querySelectorAll("input").forEach((el) => el.addEventListener("input", renderInvoice));
                 row.querySelector(".remove-item").addEventListener("click", () => { row.remove(); renderInvoice(); });
                 itemsWrap.appendChild(row);
@@ -975,7 +975,7 @@ function getSocialImageResizerHTML() {
             <div class="flex flex-wrap gap-3"><button id="socialResize" class="rounded-2xl bg-cyan-600 text-white px-5 py-3 font-semibold">Resize Image</button><button id="socialDownload" class="rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 font-semibold">Download PNG</button><p id="socialStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Choose a platform preset to generate the output.</p></div>
         </div>
         <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-5 text-white">
-            <div class="flex items-center justify-between"><div><p class="text-[11px] tracking-[0.3em] uppercase text-cyan-300">Preview</p><h3 id="socialMeta" class="mt-2 text-xl font-black">Ready for export</h3></div><div id="socialDims" class="text-sm text-slate-300">0 � 0</div></div>
+            <div class="flex items-center justify-between"><div><p class="text-[11px] tracking-[0.3em] uppercase text-cyan-300">Preview</p><h3 id="socialMeta" class="mt-2 text-xl font-black">Ready for export</h3></div><div id="socialDims" class="text-sm text-slate-300">0 × 0</div></div>
             <div class="mt-5 rounded-[28px] overflow-hidden bg-slate-900 border border-white/10 min-h-[420px] flex items-center justify-center"><canvas id="socialCanvas" class="max-w-full max-h-[480px]"></canvas></div>
         </div>
     </div>
@@ -983,10 +983,10 @@ function getSocialImageResizerHTML() {
         (() => {
             const presets = { instagram_post: { label: "Instagram Post", width: 1080, height: 1080 }, instagram_story: { label: "Instagram Story", width: 1080, height: 1920 }, youtube_thumb: { label: "YouTube Thumbnail", width: 1280, height: 720 }, linkedin_post: { label: "LinkedIn Post", width: 1200, height: 627 }, facebook_post: { label: "Facebook Post", width: 1200, height: 630 }, x_post: { label: "X / Twitter Post", width: 1600, height: 900 }, whatsapp_status: { label: "WhatsApp Status", width: 1080, height: 1920 } };
             const presetSelect = document.getElementById("socialPreset"), input = document.getElementById("socialImageInput"), fitSelect = document.getElementById("socialFit"), bgInput = document.getElementById("socialBg"), canvas = document.getElementById("socialCanvas"), ctx = canvas.getContext("2d"), status = document.getElementById("socialStatus"), dims = document.getElementById("socialDims"), meta = document.getElementById("socialMeta"); let image = null;
-            Object.entries(presets).forEach(([value, preset]) => { const option = document.createElement("option"); option.value = value; option.textContent = `${preset.label} (${preset.width}�${preset.height})`; presetSelect.appendChild(option); });
+            Object.entries(presets).forEach(([value, preset]) => { const option = document.createElement("option"); option.value = value; option.textContent = `${preset.label} (${preset.width}×${preset.height})`; presetSelect.appendChild(option); });
             function draw() {
                 const preset = presets[presetSelect.value]; if (!preset) return;
-                canvas.width = preset.width; canvas.height = preset.height; ctx.fillStyle = bgInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height); dims.textContent = `${preset.width} � ${preset.height}`; meta.textContent = preset.label;
+                canvas.width = preset.width; canvas.height = preset.height; ctx.fillStyle = bgInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height); dims.textContent = `${preset.width} × ${preset.height}`; meta.textContent = preset.label;
                 if (!image) { status.textContent = "Upload an image first."; return; }
                 const scale = fitSelect.value === "cover" ? Math.max(canvas.width / image.width, canvas.height / image.height) : Math.min(canvas.width / image.width, canvas.height / image.height);
                 const drawWidth = image.width * scale, drawHeight = image.height * scale, x = (canvas.width - drawWidth) / 2, y = (canvas.height - drawHeight) / 2;
@@ -1286,7 +1286,7 @@ function getPercentageCalculatorHTML() {
                 </div>
                 <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
                     <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Formula</p>
-                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300"><strong class="text-slate-900 dark:text-white">Value / Base � 100</strong></p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300"><strong class="text-slate-900 dark:text-white">Value / Base × 100</strong></p>
                 </div>
             </div>
         </div>
@@ -2053,127 +2053,287 @@ HTML;
 
 function getTournamentBracketGeneratorHTML() {
     return <<<'HTML'
-    <style>
-        .bq{max-width:98rem;margin:0 auto;display:grid;grid-template-columns:minmax(300px,332px) minmax(0,1fr);gap:1.15rem}
-        .bq-side,.bq-board{border:1px solid rgba(148,163,184,.12);box-shadow:0 24px 80px rgba(15,23,42,.28)}
-        .bq-side{border-radius:2rem;padding:1.2rem;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(15,23,42,.98));color:#f8fafc;backdrop-filter:blur(16px)}
-        .bq-card{border-radius:1.4rem;padding:1rem;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
-        .bq-field{width:100%;margin-top:.7rem;border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(15,23,42,.76));color:#f8fafc;padding:.9rem .95rem;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .22s ease, box-shadow .22s ease, transform .22s ease}
-        .bq-field:focus{border-color:rgba(56,189,248,.42);box-shadow:0 0 0 4px rgba(56,189,248,.12), inset 0 1px 0 rgba(255,255,255,.03)}
-        .bq-side textarea.bq-field{min-height:14rem;line-height:1.65}
-        .bq-side button{transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease}
-        .bq-side button:hover{transform:translateY(-1px)}
-        .bq-board{border-radius:2rem;padding:1.2rem;min-height:44rem;color:#fff;background:
-            radial-gradient(circle at top left,rgba(59,130,246,.1),transparent 22rem),
-            radial-gradient(circle at bottom right,rgba(34,211,238,.08),transparent 20rem),
-            linear-gradient(180deg,#1d2128 0%,#141821 100%)}
-        .bq-board-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.08)}
-        .bq-board-head h3{line-height:1}
-        .bq-board-head p{max-width:38rem}
-        .bq-board-stats{display:flex;flex-wrap:wrap;gap:.75rem}
-        .bq-canvas{overflow:auto;margin-top:1rem;padding:1.05rem 4.75rem 2rem 1rem;border-radius:1.6rem;border:1px solid rgba(255,255,255,.06);background:
-            linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.015)),
-            linear-gradient(transparent 31px,rgba(255,255,255,.03) 32px),
-            linear-gradient(90deg,transparent 31px,rgba(255,255,255,.03) 32px);
-            background-size:auto,32px 32px,32px 32px;
-            box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
-        .bq-rounds{display:flex;gap:2.1rem;align-items:flex-start;min-width:max-content;padding-right:8rem;padding-bottom:1rem}
-        .bq-round{min-width:15.4rem;display:flex;flex-direction:column}
-        .bq-stage{margin-bottom:1rem;padding-left:.15rem}
-        .bq-match{position:relative;width:13.75rem;height:5.1rem}.bq-box{height:100%;display:grid;grid-template-rows:1fr 1fr;background:rgba(18,22,31,.98);border:1px solid rgba(255,255,255,.1);border-radius:1.05rem;overflow:hidden;position:relative;z-index:2;box-shadow:0 12px 30px rgba(2,8,23,.22)}
-        .bq-row{display:grid;grid-template-columns:auto 1fr auto;gap:.55rem;align-items:center;padding:.58rem .72rem}.bq-row+.bq-row{border-top:1px solid rgba(255,255,255,.08)}
-        .bq-row.win{background:linear-gradient(90deg,rgba(34,197,94,.12),transparent 85%)}.bq-row.dim .bq-name{color:rgba(148,163,184,.8);font-weight:700}
-        .bq-seed,.bq-score{font-size:.8rem;font-weight:900}.bq-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem;font-weight:800}
-        .bq-pill{position:absolute;top:-.72rem;left:.7rem;z-index:3;padding:.22rem .5rem;border-radius:999px;font-size:.61rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(14,165,233,.16);border:1px solid rgba(56,189,248,.18);color:#7dd3fc;font-weight:800}
-        .bq-h,.bq-v{position:absolute;background:rgba(255,255,255,.72);z-index:1}.bq-h{top:calc(50% - 1px);left:calc(100% + .15rem);width:1.35rem;height:2px}.bq-v{left:calc(100% + 1.48rem);width:2px;height:var(--span)}.bq-v.down{top:50%}.bq-v.up{top:calc(50% - var(--span))}
-        .bq-stat{border-radius:1.1rem;padding:.9rem 1rem;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);min-width:8.5rem}
-        .bq-bar{height:.9rem;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bq-bar>span{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#4ade80)}
-        .bq-sched-wrap{margin-top:1.05rem;border-radius:1.55rem;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));padding:1rem 1rem 1.05rem}
-        .bq-sched{border-radius:1rem;padding:.95rem 1rem;background:rgba(15,23,42,.48);border:1px solid rgba(255,255,255,.06);transition:transform .22s ease,border-color .22s ease,background .22s ease}
-        .bq-sched:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.2);background:rgba(15,23,42,.62)}
-        .bq-canvas::-webkit-scrollbar{height:12px;width:12px}
-        .bq-canvas::-webkit-scrollbar-track{background:rgba(15,23,42,.55);border-radius:999px}
-        .bq-canvas::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(56,189,248,.8),rgba(59,130,246,.82));border-radius:999px;border:2px solid rgba(15,23,42,.55)}
-        @media (min-width:1280px){.bq-side{position:sticky;top:6.4rem;align-self:start;max-height:calc(100vh - 7.4rem);overflow:auto}}
-        @media (max-width:1279px){.bq{grid-template-columns:1fr}.bq-canvas{padding-right:1rem}.bq-rounds{padding-right:1.5rem}}
-        @media (max-width:767px){.bq-side,.bq-board{border-radius:1.55rem}.bq-side{padding:1rem}.bq-board{padding:1rem}.bq-card{padding:.9rem}.bq-board-top{padding-bottom:.85rem}.bq-canvas{padding:.85rem .85rem 1.35rem}.bq-rounds{gap:1.6rem;padding-right:1rem}.bq-round{min-width:14.2rem}.bq-match{width:12.75rem}}
-    </style>
-    <div class="bq">
-        <aside class="bq-side">
-            <p class="text-[11px] tracking-[0.32em] uppercase text-cyan-300 font-semibold">Gaming Tools</p>
-            <h2 class="mt-2 text-3xl font-black">Bracket HQ</h2>
-            <p class="mt-3 text-sm leading-6 text-slate-300">Generate a real single-elimination bracket board with seeded matchups, match times, and a clean stream-style layout.</p>
-            <div class="mt-6 space-y-4">
-                <div class="bq-card">
-                    <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Tournament Name<input id="bracketTitle" class="bq-field" value="Valorant Tourney"></label>
-                    <div class="grid grid-cols-2 gap-3 mt-3">
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Total Teams<input id="bracketTeamCount" type="number" min="2" max="32" step="1" class="bq-field" value="8"></label>
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Bracket Size<select id="bracketSize" class="bq-field"><option value="auto">Auto Fit</option><option value="4">4</option><option value="8" selected>8</option><option value="16">16</option><option value="32">32</option></select></label>
-                    </div>
+    <div class="max-w-7xl mx-auto grid xl:grid-cols-[1.02fr_0.98fr] gap-6">
+        <div class="rounded-[34px] border border-orange-200/60 dark:border-orange-500/15 bg-gradient-to-br from-white via-orange-50/70 to-amber-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 shadow-[0_24px_80px_rgba(249,115,22,0.12)] p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.34em] uppercase text-orange-500 font-semibold">Gaming Tools</p>
+                    <h2 class="mt-2 text-3xl font-black text-slate-900 dark:text-white">Tournament Planner</h2>
+                    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">Set up a cleaner tournament sheet with team count, bracket size, start date, time slots, and randomized opening matches. It generates a more organized schedule instead of a basic bracket dump.</p>
                 </div>
-                <div class="bq-card">
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Start Date<input id="bracketDate" type="date" class="bq-field"></label>
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">First Match<input id="bracketTime" type="time" class="bq-field" value="18:00"></label>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mt-3">
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Match Slot<select id="bracketInterval" class="bq-field"><option value="20">20 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></label>
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Status<select id="bracketStatus" class="bq-field"><option value="open">Open</option><option value="check-in">Check-in</option><option value="in-progress" selected>In Progress</option><option value="complete">Complete</option></select></label>
-                    </div>
+                <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-orange-500/15 text-orange-500 items-center justify-center">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M7 7h10"/><path d="M7 17h10"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M12 7v10"/></svg>
                 </div>
-                <div class="bq-card">
-                    <div class="flex items-center justify-between gap-3 mb-3"><span class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Team Names</span><button id="bracketAutofillBtn" type="button" class="rounded-full bg-cyan-400/10 text-cyan-300 px-4 py-2 text-sm font-semibold border border-cyan-400/12">Autofill</button></div>
-                    <textarea id="bracketNames" rows="10" class="bq-field min-h-[15rem] resize-y" placeholder="Team Agent&#10;Team Lacy">Team Agent
-Team A
-Team B
-Team C
-Team D
-Team E
-Team F
-Team G</textarea>
-                    <div class="mt-4 flex flex-wrap gap-3"><button id="bracketGenerateBtn" class="rounded-[1rem] bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-5 py-3.5 font-semibold shadow-[0_18px_40px_rgba(14,165,233,.26)]">Generate Bracket</button><button id="bracketShuffleBtn" class="rounded-[1rem] bg-white/8 text-white px-5 py-3.5 font-semibold border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">Shuffle Seeds</button></div>
-                </div>
-                <div id="bracketOverview" class="grid grid-cols-2 gap-3"></div>
-                <div class="bq-card"><div class="flex items-center justify-between gap-3"><div><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Bracket Status</p><p id="bracketStatusLabel" class="mt-2 text-xl font-black">In Progress</p></div><p id="bracketProgressText" class="text-sm font-semibold text-slate-300">57%</p></div><div class="bq-bar mt-4"><span id="bracketProgressFill" style="width:57%;"></span></div></div>
             </div>
-        </aside>
-        <section class="bq-board">
-            <div class="bq-board-top"><div class="bq-board-head"><p class="text-[11px] tracking-[0.28em] uppercase text-cyan-300 font-semibold">Single Elimination</p><h3 id="bracketBoardTitle" class="mt-2 text-3xl font-black">Valorant Tourney</h3><p id="bracketBoardMeta" class="mt-2 text-sm text-slate-300">8 teams, randomized seeds, opening matches scheduled automatically.</p></div><div class="bq-board-stats"><div class="bq-stat"><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Bracket Size</p><p id="bracketBoardSize" class="mt-2 text-2xl font-black">8</p></div><div class="bq-stat"><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Matches</p><p id="bracketBoardMatches" class="mt-2 text-2xl font-black">7</p></div></div></div>
-            <div class="bq-canvas"><div id="bracketCanvas" class="bq-rounds"></div></div>
-            <div class="bq-sched-wrap"><div class="flex flex-wrap items-center justify-between gap-4"><div><p class="text-[11px] uppercase tracking-[0.22em] text-cyan-300">Schedule Feed</p><h4 class="mt-1 text-xl font-black text-white">Randomized Match Schedule</h4></div><p id="bracketScheduleMeta" class="text-sm text-slate-400">Generated from team list and match slot length</p></div><div id="bracketSchedule" class="mt-4 grid lg:grid-cols-2 gap-3"></div></div>
-        </section>
+            <div class="mt-6 grid md:grid-cols-2 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Tournament Name</span>
+                    <input id="bracketTitle" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-lg font-semibold text-slate-900 shadow-sm dark:text-white" value="Weekend Showdown">
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Total Teams</span>
+                    <input id="bracketTeamCount" type="number" min="2" max="32" step="1" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-lg font-semibold text-slate-900 shadow-sm dark:text-white" value="8">
+                </label>
+            </div>
+            <div class="mt-4 grid md:grid-cols-3 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Bracket Size</span>
+                    <select id="bracketSize" class="mt-3 w-full appearance-none rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                        <option value="auto">Auto fit</option>
+                        <option value="4">4 teams</option>
+                        <option value="8" selected>8 teams</option>
+                        <option value="16">16 teams</option>
+                        <option value="32">32 teams</option>
+                    </select>
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Start Date</span>
+                    <input id="bracketDate" type="date" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">First Match Time</span>
+                    <input id="bracketTime" type="time" class="mt-3 w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white" value="18:00">
+                </label>
+            </div>
+            <div class="mt-4 grid md:grid-cols-2 gap-4">
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Match Slot Size</span>
+                    <select id="bracketInterval" class="mt-3 w-full appearance-none rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                        <option value="20">20 min</option>
+                        <option value="30" selected>30 min</option>
+                        <option value="45">45 min</option>
+                        <option value="60">60 min</option>
+                    </select>
+                </label>
+                <label class="block rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Tournament Format</span>
+                    <select id="bracketFormat" class="mt-3 w-full appearance-none rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-base font-semibold text-slate-900 shadow-sm dark:text-white">
+                        <option value="single" selected>Single Elimination</option>
+                        <option value="showmatch">Showmatch Schedule</option>
+                        <option value="round-robin-lite">Round Robin Lite</option>
+                    </select>
+                </label>
+            </div>
+            <div class="mt-5 rounded-[28px] border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 p-4">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <span class="text-[11px] uppercase tracking-[0.22em] text-slate-500">Team Names</span>
+                    <button id="bracketAutofillBtn" type="button" class="rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-300 px-4 py-2 text-sm font-semibold">Autofill Team Slots</button>
+                </div>
+                <textarea id="bracketNames" rows="12" class="w-full rounded-[24px] border border-orange-200/70 dark:border-slate-800 bg-gradient-to-b from-white to-orange-50/60 dark:from-slate-900 dark:to-slate-950 px-5 py-4 text-slate-900 shadow-sm dark:text-white" placeholder="Team Alpha&#10;Team Bravo&#10;Team Charlie&#10;Team Delta">Team Alpha
+Team Bravo
+Team Charlie
+Team Delta
+Team Echo
+Team Falcon
+Team Ghost
+Team Havoc</textarea>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button id="bracketGenerateBtn" class="rounded-[28px] bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-4 font-semibold shadow-[0_20px_45px_rgba(249,115,22,0.28)]">Build Tournament Plan</button>
+                <button id="bracketShuffleBtn" class="rounded-[28px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 font-semibold">Shuffle Teams</button>
+            </div>
+        </div>
+        <div class="grid gap-4">
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-orange-300">Tournament Overview</p>
+                <div id="bracketOverview" class="mt-4 grid sm:grid-cols-2 gap-4"></div>
+            </div>
+            <div class="rounded-[34px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-[0_24px_80px_rgba(15,23,42,0.35)] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.22em] text-orange-300">Match Schedule</p>
+                <div id="bracketOutput" class="mt-4 grid gap-4"></div>
+            </div>
+        </div>
     </div>
     <script>
         (() => {
-            const H=88,G=22,byId=(id)=>document.getElementById(id);
-            const namesEl=byId("bracketNames"), teamCountEl=byId("bracketTeamCount"), sizeEl=byId("bracketSize"), dateEl=byId("bracketDate"), timeEl=byId("bracketTime"), intervalEl=byId("bracketInterval"), statusEl=byId("bracketStatus"), titleEl=byId("bracketTitle");
-            const canvas=byId("bracketCanvas"), scheduleEl=byId("bracketSchedule"), overviewEl=byId("bracketOverview");
-            const boardTitleEl=byId("bracketBoardTitle"), boardMetaEl=byId("bracketBoardMeta"), boardSizeEl=byId("bracketBoardSize"), boardMatchesEl=byId("bracketBoardMatches");
-            const statusLabelEl=byId("bracketStatusLabel"), progressTextEl=byId("bracketProgressText"), progressFillEl=byId("bracketProgressFill"), scheduleMetaEl=byId("bracketScheduleMeta");
-            const statusMap={open:["Open",18],"check-in":["Check-in",36],"in-progress":["In Progress",57],complete:["Complete",100]};
-            dateEl.valueAsDate=new Date();
-            const getTeams=()=>namesEl.value.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
-            const shuffle=(list)=>{const copy=list.slice();for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;};
-            const slotTime=(d)=>d.toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-            const startAt=()=>new Date(`${dateEl.value||new Date().toISOString().slice(0,10)}T${timeEl.value||"18:00"}:00`);
-            const bracketSize=(count)=>sizeEl.value==="auto"?Math.pow(2,Math.ceil(Math.log2(Math.max(2,count)))):Math.max(parseInt(sizeEl.value,10)||2,count);
-            const roundTitle=(i,total)=>i===total-1?"Final":i===total-2&&total>2?"Semifinal":i===total-3?"Quarterfinal":`Round ${i+1}`;
-            function build(rawTeams){const limit=bracketSize(rawTeams.length), seeded=shuffle(rawTeams).slice(0,limit).map((name,index)=>({seed:index+1,name})); while(seeded.length<limit) seeded.push({seed:seeded.length+1,name:"BYE",bye:true}); const rounds=[], schedule=[]; let current=seeded, now=startAt(), id=1; while(current.length>1){const round=[], next=[]; for(let i=0;i<current.length;i+=2){const top=current[i], bottom=current[i+1], adv=top?.bye?bottom:bottom?.bye?top:null; round.push({id,time:slotTime(now),top:{seed:top?.seed??"",name:top?.name??"TBD",bye:!!top?.bye,win:adv===top},bottom:{seed:bottom?.seed??"",name:bottom?.name??"TBD",bye:!!bottom?.bye,win:adv===bottom}}); schedule.push({id,time:slotTime(now),round:rounds.length+1,top:top?.name??"TBD",bottom:bottom?.name??"TBD"}); next.push({seed:adv?.seed??Math.min(top?.seed??99,bottom?.seed??99),name:adv?.name??`Winner M${id}`}); now=new Date(now.getTime()+(parseInt(intervalEl.value,10)||30)*60000); id++; } rounds.push(round); current=next; } return {rounds,schedule,size:seeded.length,matches:schedule.length}; }
-            function renderStatus(){const c=statusMap[statusEl.value]||statusMap["in-progress"]; statusLabelEl.textContent=c[0]; progressTextEl.textContent=`${c[1]}%`; progressFillEl.style.width=`${c[1]}%`;}
-            function renderOverview(plan,count){overviewEl.innerHTML=`<div class="bq-stat"><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Teams</p><p class="mt-2 text-2xl font-black">${count}</p></div><div class="bq-stat"><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Rounds</p><p class="mt-2 text-2xl font-black">${plan.rounds.length}</p></div><div class="bq-stat"><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Byes</p><p class="mt-2 text-2xl font-black">${Math.max(0,plan.size-count)}</p></div><div class="bq-stat"><p class="text-[11px] uppercase tracking-[0.22em] text-slate-400">First Match</p><p class="mt-2 text-xl font-black">${plan.schedule[0]?.time||"TBD"}</p></div>`;}
-            function renderBoard(plan,count){canvas.innerHTML=""; plan.rounds.forEach((round,ri)=>{const spacing=(H+G)*Math.pow(2,ri), gap=Math.max(G,spacing-H), offset=ri===0?0:((H+G)*Math.pow(2,ri-1))/2, span=(H+gap)/2; const col=document.createElement("section"); col.className="bq-round"; col.style.paddingTop=`${offset}px`; col.style.gap=`${gap}px`; col.innerHTML=`<div class="bq-stage"><p class="text-[11px] uppercase tracking-[0.22em] text-cyan-300">Stage ${ri+1}</p><h4 class="mt-1 text-xl font-black text-white">${roundTitle(ri,plan.rounds.length)}</h4></div>`; round.forEach((match,mi)=>{const final=ri===plan.rounds.length-1; const row=(team)=>`<div class="bq-row ${team.win?"win":""} ${team.bye||String(team.name).startsWith("Winner M")?"dim":""}"><span class="bq-seed">${team.seed}</span><span class="bq-name">${team.name}</span><span class="bq-score">${team.win?"ADV":""}</span></div>`; const wrap=document.createElement("article"); wrap.className="bq-match"; wrap.style.setProperty("--span",`${span}px`); wrap.innerHTML=`<span class="bq-pill">M${match.id} - ${match.time}</span><div class="bq-box">${row(match.top)}${row(match.bottom)}</div>${final?"":'<span class="bq-h"></span>'}${final?"":mi%2===0?'<span class="bq-v down"></span>':'<span class="bq-v up"></span>'}`; col.appendChild(wrap);}); canvas.appendChild(col);}); boardTitleEl.textContent=titleEl.value.trim()||"Tournament Bracket"; boardMetaEl.textContent=`${count} teams, randomized seeds, opening matches scheduled automatically.`; boardSizeEl.textContent=String(plan.size); boardMatchesEl.textContent=String(plan.matches); }
-            function renderSchedule(plan){scheduleEl.innerHTML=plan.schedule.map(m=>`<article class="bq-sched"><p class="text-[11px] uppercase tracking-[0.22em] text-cyan-300">Round ${m.round} - Match ${m.id}</p><h5 class="mt-1 text-base font-black text-white">${m.top} <span class="text-slate-500">vs</span> ${m.bottom}</h5><p class="mt-2 text-sm font-semibold text-slate-300">${m.time}</p></article>`).join(""); scheduleMetaEl.textContent=`${plan.matches} matches built from randomized seeds and your time slot length.`;}
-            function generate(){const count=Math.max(2,parseInt(teamCountEl.value,10)||2), teams=getTeams().slice(0,count); if(teams.length<2){canvas.innerHTML='<div class="bq-sched text-slate-300">Add at least two team names to generate the bracket.</div>'; scheduleEl.innerHTML=""; overviewEl.innerHTML=""; boardTitleEl.textContent="Tournament Bracket"; boardMetaEl.textContent="Add more teams to render the bracket board."; boardSizeEl.textContent="0"; boardMatchesEl.textContent="0"; renderStatus(); return;} const plan=build(teams); renderOverview(plan,teams.length); renderBoard(plan,teams.length); renderSchedule(plan); renderStatus();}
-            byId("bracketAutofillBtn").addEventListener("click",()=>{const count=Math.max(2,parseInt(teamCountEl.value,10)||2); namesEl.value=Array.from({length:count},(_,i)=>`Team ${i+1}`).join("\n"); generate();});
-            byId("bracketShuffleBtn").addEventListener("click",()=>{namesEl.value=shuffle(getTeams()).join("\n"); generate();});
-            byId("bracketGenerateBtn").addEventListener("click",generate);
-            [teamCountEl,sizeEl,dateEl,timeEl,intervalEl,statusEl].forEach(el=>el.addEventListener("input",generate));
-            titleEl.addEventListener("input",generate);
+            const output = document.getElementById("bracketOutput");
+            const overview = document.getElementById("bracketOverview");
+            const namesEl = document.getElementById("bracketNames");
+            const teamCountEl = document.getElementById("bracketTeamCount");
+            const sizeEl = document.getElementById("bracketSize");
+            const formatEl = document.getElementById("bracketFormat");
+            const dateEl = document.getElementById("bracketDate");
+            const timeEl = document.getElementById("bracketTime");
+            const intervalEl = document.getElementById("bracketInterval");
+            const titleEl = document.getElementById("bracketTitle");
+
+            dateEl.valueAsDate = new Date();
+
+            function getTeams() {
+                return namesEl.value.split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
+            }
+
+            function shuffle(list) {
+                const copy = list.slice();
+                for (let i = copy.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [copy[i], copy[j]] = [copy[j], copy[i]];
+                }
+                return copy;
+            }
+
+            function formatSlot(dateObj) {
+                return dateObj.toLocaleString([], {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                });
+            }
+
+            function getStartDateTime() {
+                const date = dateEl.value || new Date().toISOString().slice(0, 10);
+                const time = timeEl.value || "18:00";
+                return new Date(`${date}T${time}:00`);
+            }
+
+            function buildSingleElimination(teams, slotSize, start) {
+                const bracketSize = sizeEl.value === "auto" ? Math.pow(2, Math.ceil(Math.log2(Math.max(2, teams.length)))) : parseInt(sizeEl.value, 10);
+                const seeded = shuffle(teams).slice(0, bracketSize);
+                while (seeded.length < bracketSize) seeded.push("BYE");
+                const rounds = [];
+                let currentTeams = seeded.slice();
+                let matchCounter = 1;
+                let currentStart = new Date(start);
+                let roundNumber = 1;
+                while (currentTeams.length > 1) {
+                    const roundMatches = [];
+                    const nextTeams = [];
+                    for (let i = 0; i < currentTeams.length; i += 2) {
+                        const teamA = currentTeams[i];
+                        const teamB = currentTeams[i + 1];
+                        const winnerHint = teamA === "BYE" ? teamB : teamB === "BYE" ? teamA : `Winner M${matchCounter}`;
+                        roundMatches.push({
+                            id: matchCounter,
+                            round: roundNumber,
+                            teamA,
+                            teamB,
+                            time: formatSlot(currentStart)
+                        });
+                        nextTeams.push(winnerHint);
+                        currentStart = new Date(currentStart.getTime() + slotSize * 60000);
+                        matchCounter++;
+                    }
+                    rounds.push(roundMatches);
+                    currentTeams = nextTeams;
+                    roundNumber++;
+                    currentStart = new Date(currentStart.getTime() + 30 * 60000);
+                }
+                return { rounds, bracketSize };
+            }
+
+            function buildShowmatch(teams, slotSize, start) {
+                const shuffled = shuffle(teams);
+                const matches = [];
+                let currentStart = new Date(start);
+                let id = 1;
+                for (let i = 0; i < shuffled.length - 1; i += 2) {
+                    matches.push([{
+                        id,
+                        round: 1,
+                        teamA: shuffled[i],
+                        teamB: shuffled[i + 1] || "TBD",
+                        time: formatSlot(currentStart)
+                    }]);
+                    currentStart = new Date(currentStart.getTime() + slotSize * 60000);
+                    id++;
+                }
+                return { rounds: matches, bracketSize: shuffled.length };
+            }
+
+            function buildRoundRobinLite(teams, slotSize, start) {
+                const shuffled = shuffle(teams).slice(0, Math.min(6, teams.length));
+                const rounds = [];
+                let currentStart = new Date(start);
+                let id = 1;
+                for (let i = 0; i < shuffled.length; i++) {
+                    for (let j = i + 1; j < shuffled.length; j++) {
+                        rounds.push([{
+                            id,
+                            round: 1,
+                            teamA: shuffled[i],
+                            teamB: shuffled[j],
+                            time: formatSlot(currentStart)
+                        }]);
+                        currentStart = new Date(currentStart.getTime() + slotSize * 60000);
+                        id++;
+                    }
+                }
+                return { rounds, bracketSize: shuffled.length };
+            }
+
+            function renderPlan(plan, teams) {
+                const totalMatches = plan.rounds.reduce((sum, round) => sum + round.length, 0);
+                overview.innerHTML = `
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Tournament</p><p class="mt-2 text-2xl font-black">${titleEl.value || "Tournament"}</p></div>
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Teams</p><p class="mt-2 text-2xl font-black">${teams.length}</p></div>
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Bracket Size</p><p class="mt-2 text-2xl font-black">${plan.bracketSize}</p></div>
+                    <div class="rounded-[24px] border border-white/10 bg-white/5 p-4"><p class="text-xs uppercase tracking-[0.22em] text-orange-300">Matches</p><p class="mt-2 text-2xl font-black">${totalMatches}</p></div>
+                `;
+                output.innerHTML = plan.rounds.map((round, idx) => `
+                    <section class="rounded-[28px] border border-white/10 bg-white/5 p-5">
+                        <div class="flex items-center justify-between gap-4 mb-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.22em] text-orange-300">${formatEl.value === "single" ? "Round " + (idx + 1) : formatEl.value === "showmatch" ? "Showmatch Set " + (idx + 1) : "Fixture " + (idx + 1)}</p>
+                                <h3 class="mt-1 text-xl font-black text-white">${formatEl.value === "single" ? (idx === plan.rounds.length - 1 ? "Final" : idx === plan.rounds.length - 2 ? "Semifinal / Penultimate" : "Bracket Stage") : formatEl.value === "showmatch" ? "Featured Match" : "Round Robin Fixture"}</h3>
+                            </div>
+                            <div class="text-xs text-slate-400">${round.length} match${round.length === 1 ? "" : "es"}</div>
+                        </div>
+                        <div class="grid gap-3">
+                            ${round.map(match => `
+                                <article class="rounded-[22px] border border-white/10 bg-slate-950/70 p-4">
+                                    <div class="flex items-center justify-between gap-3 mb-3">
+                                        <p class="text-xs uppercase tracking-[0.22em] text-slate-400">Match ${match.id}</p>
+                                        <p class="text-sm text-orange-300 font-semibold">${match.time}</p>
+                                    </div>
+                                    <div class="grid gap-2">
+                                        <div class="rounded-2xl bg-white/10 px-4 py-3 font-semibold">${match.teamA}</div>
+                                        <div class="rounded-2xl bg-white/10 px-4 py-3 font-semibold">${match.teamB}</div>
+                                    </div>
+                                </article>
+                            `).join("")}
+                        </div>
+                    </section>
+                `).join("");
+            }
+
+            function generate() {
+                const requestedCount = Math.max(2, parseInt(teamCountEl.value, 10) || 2);
+                const teams = getTeams().slice(0, requestedCount);
+                if (teams.length < 2) {
+                    overview.innerHTML = '<div class="rounded-[24px] border border-white/10 bg-white/5 p-4 text-slate-300">Add at least two team names to build a schedule.</div>';
+                    output.innerHTML = "";
+                    return;
+                }
+                const slotSize = parseInt(intervalEl.value, 10) || 30;
+                const start = getStartDateTime();
+                let plan;
+                if (formatEl.value === "showmatch") plan = buildShowmatch(teams, slotSize, start);
+                else if (formatEl.value === "round-robin-lite") plan = buildRoundRobinLite(teams, slotSize, start);
+                else plan = buildSingleElimination(teams, slotSize, start);
+                renderPlan(plan, teams);
+            }
+
+            document.getElementById("bracketAutofillBtn").addEventListener("click", () => {
+                const count = Math.max(2, parseInt(teamCountEl.value, 10) || 2);
+                const names = Array.from({ length: count }, (_, i) => `Team ${i + 1}`);
+                namesEl.value = names.join("\n");
+            });
+
+            document.getElementById("bracketShuffleBtn").addEventListener("click", () => {
+                namesEl.value = shuffle(getTeams()).join("\n");
+                generate();
+            });
+
+            document.getElementById("bracketGenerateBtn").addEventListener("click", generate);
+            [teamCountEl, sizeEl, formatEl, dateEl, timeEl, intervalEl].forEach((el) => el.addEventListener("input", generate));
             generate();
         })();
     </script>
 HTML;
 }
+
 function getSpinWheelHTML() {
     return <<<'HTML'
     <div class="max-w-6xl mx-auto grid xl:grid-cols-[0.95fr_1.05fr] gap-6">
@@ -2389,7 +2549,7 @@ function getTypingSpeedTestHTML() {
                     primary_score: wpm,
                     secondary_score: accuracy,
                     score_label: `${wpm} WPM`,
-                    score_meta: `${accuracy}% accuracy � ${elapsedSeconds}s`
+                    score_meta: `${accuracy}% accuracy · ${elapsedSeconds}s`
                 }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
             function nextPrompt() {
@@ -2567,9 +2727,9 @@ function getMemoryMatchGameHTML() {
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
                     <span class="block text-[11px] uppercase tracking-[0.22em] text-slate-400 mb-2">Difficulty</span>
                     <select id="memoryDifficulty" class="w-full min-h-[56px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 text-[15px] font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/30">
-                        <option value="12">Easy � 12 cards</option>
-                        <option value="16" selected>Normal � 16 cards</option>
-                        <option value="20">Hard � 20 cards</option>
+                        <option value="12">Easy · 12 cards</option>
+                        <option value="16" selected>Normal · 16 cards</option>
+                        <option value="20">Hard · 20 cards</option>
                     </select>
                 </label>
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
@@ -2628,9 +2788,9 @@ function getMemoryMatchGameHTML() {
     <script>
         (() => {
             const themes = {
-                emoji: ["??","??","??","??","??","??","?","??","??","??"],
-                gaming: ["??","???","??","??","??","??","??","???","??","??"],
-                space: ["??","??","??","?","??","??","??","??","?????","??"]
+                emoji: ["🎉","🎈","🎵","🎮","🚀","🍕","⚡","🌈","🎯","🔥"],
+                gaming: ["🎮","🕹️","🏆","💥","🎧","👾","⚔️","🛡️","🎯","🚩"],
+                space: ["🚀","🪐","🌙","⭐","☄️","🛸","🌌","🔭","👨‍🚀","🌠"]
             };
             const board = document.getElementById("memoryBoard");
             const movesEl = document.getElementById("memoryMoves");
@@ -2660,7 +2820,7 @@ function getMemoryMatchGameHTML() {
                 const best = JSON.parse(localStorage.getItem(bestKey) || "{}");
                 const key = `${difficultyEl.value}-${themeEl.value}`;
                 if (best[key]) {
-                    bestEl.textContent = `Best: ${best[key].moves} moves � ${best[key].time}`;
+                    bestEl.textContent = `Best: ${best[key].moves} moves · ${best[key].time}`;
                 } else {
                     bestEl.textContent = "Best: --";
                 }
@@ -2695,7 +2855,7 @@ function getMemoryMatchGameHTML() {
                     primary_score: moves,
                     secondary_score: seconds,
                     score_label: `${moves} moves`,
-                    score_meta: `${formatTime(seconds)} � ${difficultyEl.options[difficultyEl.selectedIndex].text}`
+                    score_meta: `${formatTime(seconds)} · ${difficultyEl.options[difficultyEl.selectedIndex].text}`
                 }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
 
@@ -2895,7 +3055,7 @@ function getImageToPdfHTML() {
                     div.className = "relative";
                     // Added alt tag for SEO on preview images
                     div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg" alt="convert image to pdf"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">✓</span>`;
->>>>>>> 1a066413361175037281af2d18e2b6c509191792
+                    imgPreview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
@@ -3478,238 +3638,12 @@ function getPdfToExcelHTML() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-
-        const pdfToExcelInput = document.getElementById("pdfToExcelInput");
-        const excelPreview = document.getElementById("pdfPreview");
-        const excelProgress = document.getElementById("excelProgress");
-        const tableResult = document.getElementById("tableResult");
-
-        pdfToExcelInput.addEventListener("change", function() {
-            if (!this.files.length) {
-                excelPreview.textContent = "";
-                excelPreview.classList.add("hidden");
-                return;
-            }
-
-            excelPreview.textContent = this.files[0].name + " selected";
-            excelPreview.classList.remove("hidden");
-        });
-
-        function normalizeExcelText(value) {
-            return String(value || "")
-                .split("\r").join(" ")
-                .split("\n").join(" ")
-                .split("\t").join(" ")
-                .split(" ")
-                .filter(Boolean)
-                .join(" ")
-                .trim();
-        }
-
-        function csvEscape(value) {
-            return "\"" + String(value == null ? "" : value).replace(/"/g, "\"\"") + "\"";
-        }
-
-        function clusterTextRows(items) {
-            const positioned = items
-                .map(function(item) {
-                    return {
-                        text: normalizeExcelText(item.str),
-                        x: item.transform[4] || 0,
-                        y: item.transform[5] || 0,
-                        width: item.width || 0,
-                        height: Math.abs(item.height || item.transform[0] || 10)
-                    };
-                })
-                .filter(function(item) {
-                    return item.text;
-                })
-                .sort(function(a, b) {
-                    if (Math.abs(b.y - a.y) > 2) return b.y - a.y;
-                    return a.x - b.x;
-                });
-
-            const rows = [];
-
-            positioned.forEach(function(item) {
-                const tolerance = Math.max(2.5, item.height * 0.45);
-                let row = null;
-
-                for (let i = 0; i < rows.length; i++) {
-                    if (Math.abs(rows[i].y - item.y) <= tolerance) {
-                        row = rows[i];
-                        break;
-                    }
-                }
-
-                if (!row) {
-                    row = { y: item.y, items: [], avgHeight: item.height };
-                    rows.push(row);
-                }
-
-                row.items.push(item);
-                row.avgHeight = (row.avgHeight + item.height) / 2;
-            });
-
-            rows.sort(function(a, b) {
-                return b.y - a.y;
-            });
-
-            return rows.map(function(row) {
-                row.items.sort(function(a, b) {
-                    return a.x - b.x;
-                });
-                return row;
-            });
-        }
-
-        function buildPageLines(rows) {
-            return rows.map(function(row) {
-                let text = "";
-                let lastRight = null;
-
-                row.items.forEach(function(item) {
-                    if (lastRight !== null && item.x - lastRight > Math.max(6, item.height * 0.8)) {
-                        text += " ";
-                    } else if (text) {
-                        text += " ";
-                    }
-
-                    text += item.text;
-                    lastRight = item.x + item.width;
-                });
-
-                return normalizeExcelText(text);
-            }).filter(Boolean);
-        }
-
-        function collectRepeatedMargins(pageRowsCollection) {
-            const counts = {};
-            const threshold = Math.max(2, Math.ceil(pageRowsCollection.length * 0.6));
-
-            pageRowsCollection.forEach(function(rows) {
-                const candidates = [];
-                if (rows.length) {
-                    candidates.push(buildPageLines([rows[0]])[0] || "");
-                }
-                if (rows.length > 1) {
-                    candidates.push(buildPageLines([rows[1]])[0] || "");
-                }
-                if (rows.length > 2) {
-                    candidates.push(buildPageLines([rows[rows.length - 1]])[0] || "");
-                    candidates.push(buildPageLines([rows[rows.length - 2]])[0] || "");
-                }
-
-                candidates.forEach(function(text) {
-                    const normalized = normalizeExcelText(text);
-                    if (!normalized || normalized.length < 2) return;
-                    counts[normalized] = (counts[normalized] || 0) + 1;
-                });
-            });
-
-            const repeated = {};
-            Object.keys(counts).forEach(function(key) {
-                if (counts[key] >= threshold) {
-                    repeated[key] = true;
-                }
-            });
-
-            return repeated;
-        }
-
-        function removeRepeatedMarginRows(rows, repeatedRows) {
-            return rows.filter(function(row, index) {
-                const text = buildPageLines([row])[0] || "";
-                const normalized = normalizeExcelText(text);
-                const nearTop = index < 2;
-                const nearBottom = index >= rows.length - 2;
-
-                if (!normalized) return false;
-                if ((nearTop || nearBottom) && repeatedRows[normalized]) return false;
-                return true;
-            });
-        }
-
-        function buildColumnAnchors(rows) {
-            const anchors = [];
-
-            rows.forEach(function(row) {
-                row.items.forEach(function(item) {
-                    let matched = false;
-
-                    for (let i = 0; i < anchors.length; i++) {
-                        if (Math.abs(anchors[i] - item.x) <= Math.max(12, item.height)) {
-                            anchors[i] = (anchors[i] + item.x) / 2;
-                            matched = true;
-                            break;
-                        }
-                    }
-
-                    if (!matched) anchors.push(item.x);
-                });
-            });
-
-            return anchors.sort(function(a, b) { return a - b; });
-        }
-
-        function rowToCells(row, anchors) {
-            const cells = new Array(Math.max(anchors.length, 1)).fill("");
-
-            row.items.forEach(function(item) {
-                let closestIndex = 0;
-                let closestDistance = Math.abs(item.x - anchors[0]);
-
-                for (let i = 1; i < anchors.length; i++) {
-                    const distance = Math.abs(item.x - anchors[i]);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestIndex = i;
-                    }
-                }
-
-                cells[closestIndex] = cells[closestIndex]
-                    ? cells[closestIndex] + " " + item.text
-                    : item.text;
-            });
-
-            return cells.map(function(cell) {
-                return normalizeExcelText(cell);
-            });
-        }
-
-        function trimEmptyColumns(tableRows) {
-            if (!tableRows.length) return tableRows;
-
-            const keep = [];
-            const width = Math.max.apply(null, tableRows.map(function(row) { return row.length; }));
-
-            for (let col = 0; col < width; col++) {
-                let hasValue = false;
-                for (let rowIndex = 0; rowIndex < tableRows.length; rowIndex++) {
-                    if (normalizeExcelText(tableRows[rowIndex][col] || "")) {
-                        hasValue = true;
-                        break;
-                    }
-                }
-                if (hasValue) keep.push(col);
-            }
-
-            return tableRows.map(function(row) {
-                return keep.map(function(col) {
-                    return row[col] || "";
-                });
-            });
-        }
-
-        function buildStructuredTable(textContent) {
-            return clusterTextRows(textContent.items || []);
-        }
-
+        
         document.getElementById("pdfToExcelBtn").addEventListener("click", async function() {
-            const input = pdfToExcelInput;
+            const input = document.getElementById("pdfToExcelInput");
             if (!input.files.length) return alert("Please select a PDF file");
-            const progress = excelProgress;
-            const resultDiv = tableResult;
+            const progress = document.getElementById("excelProgress");
+            const resultDiv = document.getElementById("tableResult");
             progress.classList.remove("hidden");
             resultDiv.innerHTML = "";
             
@@ -3719,97 +3653,66 @@ function getPdfToExcelHTML() {
                 const method = document.getElementById("extractMethod").value;
                 let allData = [];
                 let allText = "";
-                const pageRowMaps = [];
                 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     progress.innerHTML = "Extracting page " + i + " of " + pdf.numPages + "...";
                     const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent({ normalizeWhitespace: true });
+                    const textContent = await page.getTextContent();
                     
                     if (method === "text") {
-                        const pageRows = buildStructuredTable(textContent);
-                        const pageLines = buildPageLines(pageRows);
-                        if (pageLines.length) {
-                            allText += pageLines.join("\n") + "\n\n";
-                        }
+                        const pageText = textContent.items.map(item => item.str).join(" ");
+                        allText += pageText + "\n\n";
                     } else if (method === "lines") {
-                        pageRowMaps.push(buildStructuredTable(textContent));
+                        const lines = textContent.items.map(item => item.str).join(" ").split(/\s{2,}|\n/);
+                        allData.push(...lines.filter(l => l.trim()));
                     } else {
-                        pageRowMaps.push(buildStructuredTable(textContent));
-                    }
-                }
-
-                if (method === "lines" || method === "table") {
-                    const repeatedRows = collectRepeatedMargins(pageRowMaps);
-                    const cleanedPageRows = pageRowMaps.map(function(rows) {
-                        return removeRepeatedMarginRows(rows, repeatedRows);
-                    });
-
-                    if (method === "lines") {
-                        cleanedPageRows.forEach(function(rows) {
-                            buildPageLines(rows).forEach(function(line) {
-                                if (normalizeExcelText(line)) {
-                                    allData.push([normalizeExcelText(line)]);
-                                }
-                            });
+                        // Table detection - group text by Y position
+                        const itemsByY = {};
+                        textContent.items.forEach(item => {
+                            const y = Math.round(item.transform[5]);
+                            if (!itemsByY[y]) itemsByY[y] = [];
+                            itemsByY[y].push(item.str);
                         });
-                    } else {
-                        const allRows = [];
-                        cleanedPageRows.forEach(function(rows) {
-                            rows.forEach(function(row) {
-                                allRows.push(row);
-                            });
-                        });
-
-                        const anchors = buildColumnAnchors(allRows);
-                        const tableRows = cleanedPageRows.flatMap(function(rows) {
-                            return rows.map(function(row) {
-                                return rowToCells(row, anchors);
-                            });
-                        }).filter(function(row) {
-                            return row.some(function(cell) { return normalizeExcelText(cell); });
-                        });
-
-                        allData = trimEmptyColumns(tableRows);
+                        
+                        const rows = Object.values(itemsByY).map(rowItems => rowItems.join(" "));
+                        if (rows.length > 0) allData.push(...rows);
                     }
                 }
                 
                 let csvContent = "";
-                let filename = input.files[0].name.replace(/\.pdf$/i, "") || "extracted_data";
+                let filename = "extracted_data";
                 
                 if (method === "text") {
                     const blob = new Blob([allText], { type: "text/plain" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = filename + "_text.txt";
+                    a.download = "extracted_text.txt";
                     a.click();
                     URL.revokeObjectURL(url);
                     resultDiv.innerHTML = "<div class=\"bg-green-100 dark:bg-green-900/30 p-4 rounded-xl text-center\">Text extraction complete! TXT file downloaded.</div>";
                 } else if (method === "lines") {
-                    csvContent = allData.map(function(row) {
-                        return csvEscape(row[0] || "");
-                    }).join("\n");
+                    csvContent = allData.map(line => JSON.stringify(String(line))).join("\n");
                     const blob = new Blob([csvContent], { type: "text/csv" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = filename + "_lines.csv";
+                    a.download = "extracted_lines.csv";
                     a.click();
                     URL.revokeObjectURL(url);
                     resultDiv.innerHTML = "<div class=\"bg-green-100 dark:bg-green-900/30 p-4 rounded-xl text-center\">Line extraction complete! CSV file downloaded.</div>";
                 } else {
-                    const csvRows = allData.map(function(row) {
-                        return row.map(function(cell) {
-                            return csvEscape(cell);
-                        }).join(",");
+                    // Create Excel-friendly CSV with multiple columns
+                    const csvRows = allData.map(row => {
+                        const cells = row.split(/\s{2,}/);
+                        return cells.map(cell => `"${cell.trim().replace(/"/g, "")}"`).join(",");
                     });
                     csvContent = csvRows.join("\n");
                     const blob = new Blob([csvContent], { type: "text/csv" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = filename + "_table.csv";
+                    a.download = "extracted_table_data.csv";
                     a.click();
                     URL.revokeObjectURL(url);
                     resultDiv.innerHTML = "<div class=\"bg-green-100 dark:bg-green-900/30 p-4 rounded-xl text-center\">Table extraction complete! CSV file downloaded. Open in Excel for proper formatting.</div>";
@@ -3849,7 +3752,7 @@ function getMergePdfHTML() {
             Array.from(this.files).forEach((file, idx) => {
                 const badge = document.createElement("span");
                 badge.className = "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm";
-                badge.innerText = "📄 " + file.name;
+                badge.innerText = "ðŸ“„ " + file.name;
                 mergePreview.appendChild(badge);
             });
         });
@@ -5205,7 +5108,7 @@ function getImageToDxfHTML() {
             reader.onload = function(e) {
                 imgToDxfPreview.src = e.target.result;
                 imgToDxfPreviewWrap.classList.remove("hidden");
-                imgToDxfMeta.innerText = file.name + " • " + Math.round(file.size / 1024) + " KB";
+                imgToDxfMeta.innerText = file.name + " â€¢ " + Math.round(file.size / 1024) + " KB";
                 document.getElementById("imgToDxfDownload").classList.add("hidden");
                 imgToDxfStatus.innerText = "Ready to trace. Lower threshold keeps more dark pixels; higher threshold keeps more of the image.";
             };
@@ -5399,7 +5302,7 @@ function getImageToSvgHTML() {
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById("imgToSvgPreview").src = e.target.result;
-                document.getElementById("imgToSvgMeta").innerText = file.name + " • " + Math.round(file.size / 1024) + " KB";
+                document.getElementById("imgToSvgMeta").innerText = file.name + " â€¢ " + Math.round(file.size / 1024) + " KB";
                 document.getElementById("imgToSvgPreviewWrap").classList.remove("hidden");
                 document.getElementById("imgToSvgDownload").classList.add("hidden");
                 document.getElementById("imgToSvgStatus").innerText = "Ready to trace into SVG.";
@@ -5536,7 +5439,7 @@ function getResizeImageHTML() {
                     resizeWidth.value = img.width;
                     resizeHeight.value = img.height;
                     document.getElementById("resizeOriginalImg").src = e.target.result;
-                    document.getElementById("resizeOriginalMeta").innerText = img.width + " x " + img.height + " • " + Math.round(file.size / 1024) + " KB";
+                    document.getElementById("resizeOriginalMeta").innerText = img.width + " x " + img.height + " â€¢ " + Math.round(file.size / 1024) + " KB";
                     document.getElementById("resizePreviewWrap").classList.remove("hidden");
                     document.getElementById("resizeResultImg").classList.add("hidden");
                     document.getElementById("resizeDownloadBtn").classList.add("hidden");
@@ -5583,7 +5486,7 @@ function getResizeImageHTML() {
                         const preview = document.getElementById("resizeResultImg");
                         preview.src = url;
                         preview.classList.remove("hidden");
-                        document.getElementById("resizeResultMeta").innerText = width + " x " + height + " • " + Math.round(blob.size / 1024) + " KB";
+                        document.getElementById("resizeResultMeta").innerText = width + " x " + height + " â€¢ " + Math.round(blob.size / 1024) + " KB";
                         document.getElementById("resizeDownloadBtn").classList.remove("hidden");
                         document.getElementById("resizeStatus").innerText = "Resized image ready.";
                     }, format, quality);
@@ -6142,7 +6045,7 @@ function getAiImageGeneratorHTML() {
                 
 
                 try {
-                    showStatus("🎨 Generating your image... This may take a few seconds.");
+                    showStatus("ðŸŽ¨ Generating your image... This may take a few seconds.");
                     
                     // Make authenticated request
                     const response = await fetch("backend/ai_image_proxy.php", {
@@ -6187,7 +6090,7 @@ function getAiImageGeneratorHTML() {
                     
                 } catch (error) {
                     console.error("Generation error:", error);
-                    showStatus("❌ " + error.message, true);
+                    showStatus("âŒ " + error.message, true);
                     resultContainer.classList.add("hidden");
                     return null;
                 }
@@ -6323,7 +6226,7 @@ function getImageConverterHTML() {
                     const img = new Image();
                     img.onload = function() {
                         originalImg.src = e.target.result;
-                        originalMeta.textContent = img.width + " x " + img.height + " • " + Math.round(file.size / 1024) + " KB";
+                        originalMeta.textContent = img.width + " x " + img.height + " â€¢ " + Math.round(file.size / 1024) + " KB";
                         previewWrap.classList.remove("hidden");
                         status.textContent = "Image loaded. Choose a format and click Convert Image.";
                     };
@@ -6360,7 +6263,7 @@ function getImageConverterHTML() {
                             resultImg.src = resultUrl;
                             resultImg.classList.remove("hidden");
                             downloadBtn.classList.remove("hidden");
-                            resultMeta.textContent = img.width + " x " + img.height + " • " + Math.round(blob.size / 1024) + " KB";
+                            resultMeta.textContent = img.width + " x " + img.height + " â€¢ " + Math.round(blob.size / 1024) + " KB";
                             status.textContent = "Converted image ready.";
                         }, format, quality);
                     };
@@ -6522,7 +6425,7 @@ function getVideoToAudioHTML() {
                 preview.src = previewUrl;
                 preview.classList.remove("hidden");
                 metaWrap.classList.remove("hidden");
-                fileMeta.textContent = file.name + " • " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
+                fileMeta.textContent = file.name + " â€¢ " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
                 setStatus("Video loaded. Choose a format and click Convert to Audio.");
             });
 
@@ -7337,9 +7240,9 @@ function getRotatePdfHTML() {
     <div class="space-y-6">
         <input type="file" id="rotatePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
         <select id="rotatePdfAngle" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-            <option value="90">Rotate 90°</option>
-            <option value="180">Rotate 180°</option>
-            <option value="270">Rotate 270°</option>
+            <option value="90">Rotate 90Â°</option>
+            <option value="180">Rotate 180Â°</option>
+            <option value="270">Rotate 270Â°</option>
         </select>
         <button id="rotatePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Rotate PDF</button>
     </div>
