@@ -3839,14 +3839,24 @@ function getPdfToExcelHTML() {
 function getMergePdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Merge PDF Free - Merge PDF Files Online Free</h1>
+            <p>Use this free merge PDF tool to merge PDF files, merge PDF online, and learn how to merge PDF files quickly in one secure workflow.</p>
+            <p>Merge PDF online free, combine PDF pages in order, and use a free merge PDF experience for personal, school, and office documents.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'mergePdfInput\').click()">
             <input type="file" id="mergePdfInput" class="hidden" accept=".pdf" multiple>
             <div class="mb-3 flex justify-center text-blue-500"><svg width="70" height="54" viewBox="0 0 70 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12h14l5 5v19a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3Z"></path><path d="M21 12v7h7"></path><path d="M50 12h14l5 5v19a3 3 0 0 1-3 3H50a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3Z"></path><path d="M64 12v7h7"></path><path d="M36 20v14"></path><path d="M29 27h14"></path></svg></div>
-            <p class="font-medium">Select PDF files to merge</p>
-            <p class="text-sm text-gray-500 mt-2">Combine multiple PDFs into one document</p>
+            <h2 class="text-lg font-semibold">Merge PDF Files</h2>
+            <p class="font-medium">Select PDF files to merge PDF online free</p>
+            <p class="text-sm text-gray-500 mt-2">Merge PDF free, combine PDF pages in order, and use a simple merge PDF online tool without extra steps</p>
         </div>
         <div id="mergePreview" class="flex flex-wrap gap-2 mt-4"></div>
-        <button id="mergePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Merge PDFs</button>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to merge PDF files:
+            Upload two or more files, arrange them if needed, and merge PDF files free in one click.
+        </div>
+        <button id="mergePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Merge PDF</button>
         <div id="mergeProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
