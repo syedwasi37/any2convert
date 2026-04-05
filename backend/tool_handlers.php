@@ -4641,7 +4641,7 @@ function getPptToPdfHTML() {
                                 images.push("data:" + mime + ";base64," + base64);
                             }
                             return images;
-                        }
+                        }                                                                          
 
                         for (const slideFile of slideFiles) {
                             progress.innerHTML = "Reading " + slideFile.split("/").pop() + "...";
