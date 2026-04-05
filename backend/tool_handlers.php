@@ -3456,22 +3456,32 @@ function getPdfToPptHTML() {
 function getPdfToExcelHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>PDF to Excel Converter Free - Convert PDF to Excel Online</h1>
+            <p>Use this free PDF to Excel converter to convert PDF to Excel, export PDF to Excel spreadsheet files, and learn how to convert a PDF to Excel without losing structure.</p>
+            <p>Convert PDF to Excel free with an online PDF to Excel converter, free PDF to Excel converter workflow, and simple steps for converting PDF to Excel spreadsheet data.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToExcelInput\').click()">
             <input type="file" id="pdfToExcelInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h17l6 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M25 9v8h8"></path><path d="M36 27h12"></path><path d="m43 21 6 6-6 6"></path><path d="M55 33 60 27l4 3 6-9"></path></svg></div>
-            <p class="font-medium">Select PDF to extract data</p>
-            <p class="text-sm text-gray-500 mt-2">Extract tables and structured data to Excel</p>
+            <h2 class="text-lg font-semibold">PDF to Excel Converter</h2>
+            <p class="font-medium">Select PDF to convert PDF to Excel spreadsheet</p>
+            <p class="text-sm text-gray-500 mt-2">Convert PDF to Excel free, export PDF to Excel, and organize tables with our online PDF to Excel converter</p>
         </div>
         <div id="pdfPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <div class="space-y-4">
-            <label class="block text-sm font-medium">Extraction Method:</label>
+            <label class="block text-sm font-medium">Choose how to convert PDF to Excel:</label>
             <select id="extractMethod" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-                <option value="table">Table Detection (Best for tabular data)</option>
-                <option value="text">Text Extraction (All text)</option>
-                <option value="lines">Line by Line (CSV format)</option>
+                <option value="table">PDF to Excel Table Detection (Best for tabular data)</option>
+                <option value="text">Convert PDF to Excel Text Extraction</option>
+                <option value="lines">Convert a PDF to Excel Line by Line</option>
             </select>
         </div>
-        <button id="pdfToExcelBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Extract to Excel</button>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to convert PDF to Excel:
+            Upload your file, choose the best extraction mode, and convert PDF to Excel online free in seconds.
+        </div>
+        <button id="pdfToExcelBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert PDF to Excel</button>
         <div id="excelProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
         <div id="tableResult" class="mt-4 space-y-4"></div>
     </div>
