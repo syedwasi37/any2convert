@@ -101,6 +101,8 @@ function renderToolHandlerHTML($tool) {
             return getWebpConverterHTML();
         case 'video_to_audio':
             return getVideoToAudioHTML();
+        case 'video_compressor':
+            return getVideoCompressorHTML();
         case 'currency_converter':
             return getCurrencyConverterHTML();
         case 'length_converter':
@@ -7203,6 +7205,270 @@ function getVideoToAudioHTML() {
                 const a = document.createElement("a");
                 a.href = url;
                 a.download = outputName || "audio.mp3";
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        })();
+      </script>';
+  }
+function getVideoCompressorHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Compress Video Online Free</h1>
+            <p>Compress video files online free and reduce video file size directly in your browser without uploading to a server.</p>
+            <p>Use this video compressor to shrink MP4, MOV, WEBM, AVI, MKV, and other common video files for sharing, storage, or faster uploads.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Video Compressor</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Upload a video, choose a compression level, and create a smaller MP4 file directly in your browser.</p>
+        </div>
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'videoCompressorInput\').click()">
+            <input type="file" id="videoCompressorInput" class="hidden" accept="video/*,.mkv,.avi,.mov,.mp4,.webm,.m4v">
+            <div class="text-5xl mb-3">VIDEO</div>
+            <p class="font-medium">Upload a video to compress</p>
+            <p class="text-sm text-gray-500 mt-2">Compression runs locally with FFmpeg WebAssembly</p>
+        </div>
+        <div id="videoCompressorMetaWrap" class="hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/30 p-4 space-y-2">
+            <div class="font-medium text-sm">Selected file</div>
+            <div id="videoCompressorFileMeta" class="text-sm text-gray-500"></div>
+            <video id="videoCompressorPreview" class="w-full max-h-72 rounded-xl bg-black hidden" controls preload="metadata"></video>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Compression level</label>
+                <select id="videoCompressorLevel" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="medium" selected>Medium Compression</option>
+                    <option value="high">High Compression</option>
+                    <option value="low">Low Compression</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Output</label>
+                <div class="w-full p-3 bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-xl border border-gray-200 dark:border-gray-700">Compressed MP4 video</div>
+            </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+            <button id="videoCompressorRunBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Compress Video</button>
+            <button id="videoCompressorDownloadBtn" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition hidden">Download Compressed Video</button>
+        </div>
+        <div id="videoCompressorProgressWrap" class="hidden rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/20 p-4">
+            <div class="flex items-center justify-between gap-3 text-sm">
+                <span id="videoCompressorProgressLabel" class="font-medium text-blue-900 dark:text-blue-100">Preparing compression...</span>
+                <span id="videoCompressorProgressPercent" class="font-semibold text-blue-700 dark:text-blue-200">0%</span>
+            </div>
+            <div class="mt-3 h-3 rounded-full bg-blue-100 dark:bg-blue-900/60 overflow-hidden">
+                <div id="videoCompressorProgressBar" class="h-full rounded-full bg-blue-600 transition-all duration-300" style="width:0%"></div>
+            </div>
+        </div>
+        <div id="videoCompressorResultWrap" class="hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/40 p-4 space-y-3">
+            <div class="font-medium text-sm">Compressed result</div>
+            <div id="videoCompressorResultMeta" class="text-sm text-gray-500"></div>
+            <video id="videoCompressorOutputPreview" class="w-full max-h-72 rounded-xl bg-black hidden" controls preload="metadata"></video>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 p-4 text-sm text-gray-600 dark:text-gray-300">This video compressor reduces file size by re-encoding the uploaded video into a smaller MP4 format in your browser.</div>
+        <p id="videoCompressorStatus" class="text-sm text-gray-500 text-center"></p>
+    </div>
+    <script src="assets/vendor/ffmpeg/ffmpeg.js"></script>
+    <script src="assets/vendor/ffmpeg/util.js"></script>
+    <script>
+        (function() {
+            const input = document.getElementById("videoCompressorInput");
+            const levelSelect = document.getElementById("videoCompressorLevel");
+            const runBtn = document.getElementById("videoCompressorRunBtn");
+            const downloadBtn = document.getElementById("videoCompressorDownloadBtn");
+            const status = document.getElementById("videoCompressorStatus");
+            const metaWrap = document.getElementById("videoCompressorMetaWrap");
+            const fileMeta = document.getElementById("videoCompressorFileMeta");
+            const preview = document.getElementById("videoCompressorPreview");
+            const progressWrap = document.getElementById("videoCompressorProgressWrap");
+            const progressLabel = document.getElementById("videoCompressorProgressLabel");
+            const progressPercent = document.getElementById("videoCompressorProgressPercent");
+            const progressBar = document.getElementById("videoCompressorProgressBar");
+            const resultWrap = document.getElementById("videoCompressorResultWrap");
+            const resultMeta = document.getElementById("videoCompressorResultMeta");
+            const outputPreview = document.getElementById("videoCompressorOutputPreview");
+
+            let ffmpeg = null;
+            let ffmpegLoaded = false;
+            let outputBlob = null;
+            let outputName = "";
+            let previewUrl = "";
+            let outputUrl = "";
+
+            function setStatus(message) {
+                status.textContent = message;
+            }
+
+            function setProgress(percent, message) {
+                const safePercent = Math.max(0, Math.min(100, Math.round(percent || 0)));
+                progressWrap.classList.remove("hidden");
+                progressBar.style.width = safePercent + "%";
+                progressPercent.textContent = safePercent + "%";
+                if (message) progressLabel.textContent = message;
+            }
+
+            function resetProgress() {
+                progressBar.style.width = "0%";
+                progressPercent.textContent = "0%";
+                progressLabel.textContent = "Preparing compression...";
+                progressWrap.classList.add("hidden");
+            }
+
+            function revokeUrls() {
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    previewUrl = "";
+                }
+                if (outputUrl) {
+                    URL.revokeObjectURL(outputUrl);
+                    outputUrl = "";
+                }
+            }
+
+            async function ensureFFmpegLoaded() {
+                if (ffmpegLoaded) return ffmpeg;
+                const { FFmpeg } = FFmpegWASM;
+                const { toBlobURL } = FFmpegUtil;
+                ffmpeg = new FFmpeg();
+                ffmpeg.on("log", function(event) {
+                    if (event && event.message) {
+                        setStatus("Processing: " + event.message);
+                    }
+                });
+                ffmpeg.on("progress", function(event) {
+                    if (event && typeof event.progress === "number" && isFinite(event.progress)) {
+                        setProgress(event.progress * 100, "Compressing video...");
+                    }
+                });
+                const baseURL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd";
+                setStatus("Loading video compression engine...");
+                setProgress(8, "Loading video compression engine...");
+                await ffmpeg.load({
+                    coreURL: await toBlobURL(baseURL + "/ffmpeg-core.js", "text/javascript"),
+                    wasmURL: await toBlobURL(baseURL + "/ffmpeg-core.wasm", "application/wasm")
+                });
+                ffmpegLoaded = true;
+                setStatus("Compressor ready.");
+                setProgress(14, "Compressor ready.");
+                return ffmpeg;
+            }
+
+            function getCompressionSettings(level) {
+                switch (level) {
+                    case "high":
+                        return { crf: "34", audio: "80k", scale: "960:-2" };
+                    case "low":
+                        return { crf: "26", audio: "128k", scale: "1280:-2" };
+                    case "medium":
+                    default:
+                        return { crf: "30", audio: "96k", scale: "1280:-2" };
+                }
+            }
+
+            input.addEventListener("change", function() {
+                const file = this.files[0];
+                outputBlob = null;
+                outputName = "";
+                downloadBtn.classList.add("hidden");
+                resultWrap.classList.add("hidden");
+                outputPreview.classList.add("hidden");
+                outputPreview.removeAttribute("src");
+                revokeUrls();
+                resetProgress();
+                if (!file) return;
+
+                previewUrl = URL.createObjectURL(file);
+                preview.src = previewUrl;
+                preview.classList.remove("hidden");
+                metaWrap.classList.remove("hidden");
+                fileMeta.textContent = file.name + " • " + Math.round(file.size / 1024 / 1024 * 100) / 100 + " MB";
+                setStatus("Video loaded. Choose a compression level and click Compress Video.");
+            });
+
+            runBtn.addEventListener("click", async function() {
+                const file = input.files[0];
+                if (!file) return alert("Please select a video first");
+
+                runBtn.disabled = true;
+                runBtn.classList.add("opacity-50", "cursor-not-allowed");
+                runBtn.textContent = "Compressing...";
+                downloadBtn.classList.add("hidden");
+                resultWrap.classList.add("hidden");
+                outputPreview.classList.add("hidden");
+                outputPreview.removeAttribute("src");
+                outputBlob = null;
+                outputName = "";
+                resetProgress();
+                if (outputUrl) {
+                    URL.revokeObjectURL(outputUrl);
+                    outputUrl = "";
+                }
+
+                try {
+                    const engine = await ensureFFmpegLoaded();
+                    const { fetchFile } = FFmpegUtil;
+                    const extMatch = file.name.match(/\.([^.]+)$/);
+                    const inputExt = extMatch ? extMatch[1].toLowerCase() : "mp4";
+                    const safeInputName = "input." + inputExt;
+                    const baseName = file.name.replace(/\.[^.]+$/, "") || "compressed-video";
+                    const outputFileName = "compressed.mp4";
+                    const settings = getCompressionSettings(levelSelect.value);
+
+                    setStatus("Preparing video file...");
+                    setProgress(18, "Preparing video file...");
+                    await engine.writeFile(safeInputName, await fetchFile(file));
+
+                    setStatus("Compressing video...");
+                    setProgress(24, "Compressing video...");
+                    await engine.exec([
+                        "-i", safeInputName,
+                        "-vf", "scale=\'min(" + settings.scale.split(":")[0] + ",iw)\':-2",
+                        "-c:v", "libx264",
+                        "-preset", "veryfast",
+                        "-crf", settings.crf,
+                        "-c:a", "aac",
+                        "-b:a", settings.audio,
+                        "-movflags", "+faststart",
+                        outputFileName
+                    ]);
+
+                    const data = await engine.readFile(outputFileName);
+                    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data.buffer || data);
+                    outputBlob = new Blob([bytes], { type: "video/mp4" });
+                    outputName = baseName + "_compressed.mp4";
+                    outputUrl = URL.createObjectURL(outputBlob);
+                    outputPreview.src = outputUrl;
+                    outputPreview.classList.remove("hidden");
+                    resultWrap.classList.remove("hidden");
+                    downloadBtn.classList.remove("hidden");
+
+                    const originalMb = Math.round(file.size / 1024 / 1024 * 100) / 100;
+                    const compressedMb = Math.round(outputBlob.size / 1024 / 1024 * 100) / 100;
+                    const saved = file.size > 0 ? Math.max(0, Math.round((1 - (outputBlob.size / file.size)) * 100)) : 0;
+                    resultMeta.textContent = "Original: " + originalMb + " MB • Compressed: " + compressedMb + " MB • Saved: " + saved + "%";
+                    setStatus("Video compressed successfully.");
+                    setProgress(100, "Compression complete.");
+
+                    try { await engine.deleteFile(safeInputName); } catch (e) {}
+                    try { await engine.deleteFile(outputFileName); } catch (e) {}
+                } catch (error) {
+                    console.error("Video compression failed:", error);
+                    setStatus("Compression failed: " + (error && error.message ? error.message : "Unknown error"));
+                    setProgress(0, "Compression failed.");
+                } finally {
+                    runBtn.disabled = false;
+                    runBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                    runBtn.textContent = "Compress Video";
+                }
+            });
+
+            downloadBtn.addEventListener("click", function() {
+                if (!outputBlob) return;
+                const url = URL.createObjectURL(outputBlob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = outputName || "compressed-video.mp4";
                 a.click();
                 URL.revokeObjectURL(url);
             });

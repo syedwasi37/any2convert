@@ -300,6 +300,18 @@ $seo_tools = [
         ],
         'content' => 'Use the video to audio converter to extract soundtracks, voice notes, lectures, interviews, or music from your video files without uploading them to a server. The conversion runs in your browser using WebAssembly, so your media stays on your device while you choose the output format that works best for editing, playback, or sharing.'
     ],
+    'video-compressor' => [
+        'id' => 'video_compressor',
+        'h1' => 'Compress Video Online Free',
+        'title' => 'Video Compressor - Reduce Video File Size Online | Any2Convert',
+        'meta_desc' => 'Compress video files into smaller MP4 output directly in your browser. Reduce video size for sharing, storage, and uploads without sending files to a server.',
+        'icon' => 'VIDEO',
+        'faqs' => [
+            ['q' => 'What video formats can I upload?', 'a' => 'You can upload common formats such as MP4, MOV, WEBM, AVI, MKV, and similar video files that FFmpeg WebAssembly can process in the browser.'],
+            ['q' => 'What format is the compressed output?', 'a' => 'This tool exports the compressed result as an MP4 video file for broad compatibility.']
+        ],
+        'content' => 'Use the video compressor to reduce file size before sharing videos by email, messaging apps, websites, or cloud storage. Compression runs locally in your browser, so your media stays on your device while the tool re-encodes the file into a smaller MP4 output.'
+    ],
     'currency-converter' => [
         'id' => 'currency_converter',
         'h1' => 'Live Currency Converter',
