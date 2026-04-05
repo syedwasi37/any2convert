@@ -5000,10 +5000,12 @@ function getPptToPdfPureClientHTML() {
                     resourcePromise = (async function () {
                         await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js");
                         await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jszip/2.6.1/jszip.min.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/filereader.js");
                         await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js");
                         await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js");
                         await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/dingbat.js");
                         await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/pptxjs.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/divs2slides.js");
                         await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
                         await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
                     })();
