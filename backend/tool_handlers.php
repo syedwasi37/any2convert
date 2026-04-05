@@ -10165,11 +10165,12 @@ function getEditPdfHTML() {
                         <div id="editPdfThumbs" class="max-h-[760px] overflow-auto space-y-3 pr-1"></div>
                         <div class="space-y-3">
                             <div id="editPdfPageInfo" class="text-sm text-gray-500">Upload a PDF to start editing.</div>
-                            <div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
-                                <div class="min-w-max mx-auto">
-                                    <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
-                                </div>
-                            </div>
+                           // In your getEditPdfHTML function, update the stage container div:
+<div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3" style="max-height: 80vh; min-height: 500px;">
+    <div class="min-w-max mx-auto" style="display: flex; justify-content: center; align-items: center;">
+        <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible" style="display: inline-block;"></div>
+    </div>
+</div>
                             <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF editing window will appear here after upload.</div>
                         </div>
                     </div>
@@ -10290,117 +10291,174 @@ function getEditPdfHTML() {
             return { fontWeight: "500", fontStyle: "normal" };
         }
 
-        function buildOverlayNode(pageData, overlay, stageSize) {
-            const node = document.createElement("div");
-            node.className = "absolute z-10 cursor-move select-none";
-            if (overlay.id === editPdfSelectedOverlayId) {
-                node.classList.add("ring-2", "ring-blue-500");
-            }
+       function buildOverlayNode(pageData, overlay, stageSize) {
+    const node = document.createElement("div");
+    node.className = "absolute z-10 cursor-move select-none";
+    if (overlay.id === editPdfSelectedOverlayId) {
+        node.classList.add("ring-2", "ring-blue-500");
+    }
 
-            node.style.left = (overlay.xRatio * stageSize.width) + "px";
-            node.style.top = (overlay.yRatio * stageSize.height) + "px";
-            node.style.width = (overlay.widthRatio * stageSize.width) + "px";
+    // Calculate positions based on actual stage size
+    const leftPos = overlay.xRatio * stageSize.width;
+    const topPos = overlay.yRatio * stageSize.height;
+    const widthVal = overlay.widthRatio * stageSize.width;
+    
+    node.style.position = "absolute";
+    node.style.left = leftPos + "px";
+    node.style.top = topPos + "px";
+    node.style.width = widthVal + "px";
 
-            if (overlay.type === "text") {
-                const textCss = getTextCss(overlay.style);
-                node.className += " px-2 py-1 bg-white/80 rounded-md";
-                node.style.fontSize = Math.max(10, overlay.sizeRatio * stageSize.width) + "px";
-                node.style.fontWeight = textCss.fontWeight;
-                node.style.fontStyle = textCss.fontStyle;
-                node.style.color = "#111827";
-                node.textContent = overlay.text;
-            } else {
-                const image = document.createElement("img");
-                image.src = overlay.src;
-                image.className = "w-full h-auto block";
-                image.draggable = false;
-                node.appendChild(image);
-            }
+    if (overlay.type === "text") {
+        const textCss = getTextCss(overlay.style);
+        node.style.padding = "4px 8px";
+        node.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+        node.style.borderRadius = "6px";
+        node.style.fontSize = Math.max(10, overlay.sizeRatio * stageSize.width) + "px";
+        node.style.fontWeight = textCss.fontWeight;
+        node.style.fontStyle = textCss.fontStyle;
+        node.style.color = "#111827";
+        node.style.whiteSpace = "pre-wrap";
+        node.style.wordBreak = "break-word";
+        node.textContent = overlay.text;
+    } else {
+        const image = document.createElement("img");
+        image.src = overlay.src;
+        image.style.width = "100%";
+        image.style.height = "auto";
+        image.style.display = "block";
+        image.draggable = false;
+        node.appendChild(image);
+    }
 
-            node.addEventListener("click", function(event) {
-                event.stopPropagation();
-                editPdfSelectedOverlayId = overlay.id;
-                renderEditPdfWorkspace();
-            });
+    // Make the overlay draggable
+    let isDragging = false;
+    let startX, startY, startLeft, startTop;
 
-            node.addEventListener("pointerdown", function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-                editPdfSelectedOverlayId = overlay.id;
+    node.addEventListener("mousedown", function(e) {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = parseFloat(node.style.left);
+        startTop = parseFloat(node.style.top);
+        
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+    });
 
-                const stageRect = editPdfStage.getBoundingClientRect();
-                const nodeRect = node.getBoundingClientRect();
-                const offsetX = event.clientX - nodeRect.left;
-                const offsetY = event.clientY - nodeRect.top;
+    function onMouseMove(e) {
+        if (!isDragging) return;
+        
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        let newLeft = startLeft + dx;
+        let newTop = startTop + dy;
+        
+        // Constrain within stage bounds
+        newLeft = Math.max(0, Math.min(newLeft, stageSize.width - node.offsetWidth));
+        newTop = Math.max(0, Math.min(newTop, stageSize.height - node.offsetHeight));
+        
+        node.style.left = newLeft + "px";
+        node.style.top = newTop + "px";
+        
+        // Update ratios
+        overlay.xRatio = newLeft / stageSize.width;
+        overlay.yRatio = newTop / stageSize.height;
+    }
 
-                function move(moveEvent) {
-                    const widthRatio = nodeRect.width / stageRect.width;
-                    const heightRatio = nodeRect.height / stageRect.height;
-                    overlay.xRatio = clamp((moveEvent.clientX - stageRect.left - offsetX) / stageRect.width, 0, 1 - widthRatio);
-                    overlay.yRatio = clamp((moveEvent.clientY - stageRect.top - offsetY) / stageRect.height, 0, 1 - heightRatio);
-                    node.style.left = (overlay.xRatio * stageSize.width) + "px";
-                    node.style.top = (overlay.yRatio * stageSize.height) + "px";
-                }
+    function onMouseUp() {
+        isDragging = false;
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+    }
 
-                function stop() {
-                    window.removeEventListener("pointermove", move);
-                    window.removeEventListener("pointerup", stop);
-                    renderEditPdfWorkspace();
-                }
+    node.addEventListener("click", function(event) {
+        event.stopPropagation();
+        editPdfSelectedOverlayId = overlay.id;
+        renderEditPdfWorkspace();
+    });
 
-                window.addEventListener("pointermove", move);
-                window.addEventListener("pointerup", stop);
-            });
-
-            return node;
-        }
+    return node;
+}
 
         async function renderEditPdfWorkspace() {
-            const pageData = getCurrentPageData();
-            if (!pageData) return;
+    const pageData = getCurrentPageData();
+    if (!pageData) return;
 
-            editPdfThumbs.querySelectorAll("button").forEach(function(btn, index) {
-                btn.classList.toggle("ring-2", index === editPdfCurrentPage);
-                btn.classList.toggle("ring-blue-500", index === editPdfCurrentPage);
-            });
+    editPdfThumbs.querySelectorAll("button").forEach(function(btn, index) {
+        btn.classList.toggle("ring-2", index === editPdfCurrentPage);
+        btn.classList.toggle("ring-blue-500", index === editPdfCurrentPage);
+    });
 
-            editPdfPageInfo.textContent = "Editing page " + (editPdfCurrentPage + 1) + " of " + editPdfPages.length;
-            editPdfStage.innerHTML = "";
+    editPdfPageInfo.textContent = "Editing page " + (editPdfCurrentPage + 1) + " of " + editPdfPages.length;
+    editPdfStage.innerHTML = "";
 
-            const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
-            const baseViewport = page.getViewport({ scale: 1 });
-            const availableWidth = Math.max(320, editPdfStageWrap.clientWidth - 32);
-            const availableHeight = Math.max(420, Math.min(window.innerHeight * 0.72, 920));
-            const fitScale = Math.min(1.2, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
-            const viewport = page.getViewport({ scale: Math.max(0.45, fitScale) });
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d", { alpha: false });
-            canvas.width = Math.ceil(viewport.width);
-            canvas.height = Math.ceil(viewport.height);
-            canvas.className = "block bg-white";
-            context.fillStyle = "#ffffff";
-            context.fillRect(0, 0, canvas.width, canvas.height);
+    const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
+    const originalViewport = page.getViewport({ scale: 1 });
+    
+    // Get the container dimensions
+    const stageWrap = document.getElementById("editPdfStageWrap");
+    const container = stageWrap.querySelector(".overflow-auto");
+    const containerRect = container.getBoundingClientRect();
+    
+    // Calculate available space (leave room for padding/margins)
+    const availableWidth = containerRect.width - 40; // Subtract padding
+    const availableHeight = containerRect.height - 40;
+    
+    // Calculate scale to fit the page completely
+    const scaleX = availableWidth / originalViewport.width;
+    const scaleY = availableHeight / originalViewport.height;
+    const scale = Math.min(scaleX, scaleY, 1.5); // Max scale of 1.5x
+    
+    // Apply minimum scale to ensure visibility
+    const finalScale = Math.max(0.3, scale);
+    const viewport = page.getViewport({ scale: finalScale });
+    
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d", { alpha: false });
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    canvas.style.width = viewport.width + "px";
+    canvas.style.height = viewport.height + "px";
+    canvas.style.display = "block";
+    canvas.style.margin = "0 auto";
+    
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
-            editPdfStage.style.width = canvas.width + "px";
-            editPdfStage.style.height = canvas.height + "px";
-            editPdfStage.style.maxWidth = "none";
-            editPdfStage.appendChild(canvas);
+    // Clear and set stage dimensions
+    editPdfStage.style.width = viewport.width + "px";
+    editPdfStage.style.height = viewport.height + "px";
+    editPdfStage.style.position = "relative";
+    editPdfStage.style.margin = "0 auto";
+    editPdfStage.appendChild(canvas);
 
-            await page.render({
-                canvasContext: context,
-                viewport: viewport
-            }).promise;
+    // Render the page
+    await page.render({
+        canvasContext: context,
+        viewport: viewport
+    }).promise;
 
-            const stageSize = { width: canvas.width, height: canvas.height };
-            pageData.overlays.forEach(function(overlay) {
-                editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
-            });
+    // Get the actual rendered dimensions for overlay positioning
+    const stageSize = { width: viewport.width, height: viewport.height };
+    
+    // Add overlays
+    pageData.overlays.forEach(function(overlay) {
+        editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
+    });
 
-            editPdfStage.onclick = function() {
-                editPdfSelectedOverlayId = null;
-                renderEditPdfWorkspace();
-            };
+    // Handle click on empty area to deselect
+    editPdfStage.onclick = function(e) {
+        if (e.target === editPdfStage || e.target === canvas) {
+            editPdfSelectedOverlayId = null;
+            renderEditPdfWorkspace();
         }
+    };
+}
 
         function createOverlayId() {
             return "overlay-" + Date.now() + "-" + Math.random().toString(16).slice(2);
