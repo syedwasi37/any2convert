@@ -24,7 +24,7 @@ function renderToolHandlerHTML($tool) {
         case 'excel_to_pdf':
             return getExcelToPdfHTML();
         case 'ppt_to_pdf':
-            return getPptToPdfHTMLBackend();
+            return getPptToPdfPureClientHTML();
         case 'html_to_pdf':
             return getHtmlToPdfHTML();
         case 'split_pdf':
@@ -4832,6 +4832,367 @@ function getPptToPdfHTMLBackend() {
                 } catch (error) {
                     status.textContent = "Error: " + error.message;
                     status.classList.add("text-red-500");
+                }
+            });
+        })();
+    </script>';
+}
+
+function getPptToPdfPureClientHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Power Point to PDF Converter Online</h1>
+            <p>Use this power point to pdf converter to render PPTX slides in your browser and export them as PDF pages.</p>
+            <p>Common searches include power point to pdf, convert power point to pdf, power point to pdf converter, and convert power point to pdf online.</p>
+        </div>
+        <div class="grid 2xl:grid-cols-[0.92fr_1.08fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Client-Side PPTX to PDF</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert PowerPoint slides to PDF in your browser</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Upload a `.pptx` file, let the browser render each slide, preview the result, and download it as a PDF. This tool does not upload your file to the server.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">PPT</div>
+                </div>
+
+                <label for="pptToPdfClientInput" class="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[1.75rem] p-8 text-center hover:border-blue-500 transition cursor-pointer bg-white/75 dark:bg-slate-950/45">
+                    <input type="file" id="pptToPdfClientInput" class="hidden" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+                    <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
+                    <p class="font-medium text-gray-900 dark:text-white">Select a `.pptx` file</p>
+                    <p class="text-sm text-gray-500 mt-2">Best for modern PowerPoint presentations with browser-renderable content</p>
+                </label>
+
+                <div id="pptToPdfClientPreview" class="hidden mt-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/85 dark:bg-slate-950/60 px-4 py-3 text-sm text-gray-600 dark:text-gray-300"></div>
+
+                <div class="mt-5 grid sm:grid-cols-2 gap-3">
+                    <button id="pptToPdfClientRenderBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold hover:opacity-90 transition">Render Slides</button>
+                    <button id="pptToPdfClientDownloadBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Download PDF</button>
+                </div>
+
+                <div id="pptToPdfClientStatus" class="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                    Choose a `.pptx` file, render it in the preview panel, then export it to PDF. Older `.ppt` files are not supported in pure browser conversion.
+                </div>
+
+                <div class="mt-4 rounded-[1.6rem] border border-amber-200/80 dark:border-amber-800/70 bg-amber-50/80 dark:bg-amber-950/20 p-4 text-sm text-amber-900 dark:text-amber-100">
+                    This is the strongest browser-only approach we can use here, but extremely complex PowerPoint features like some SmartArt, animations, embedded Office objects, and rare fonts may still differ from Microsoft PowerPoint export.
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Slide Preview</p>
+                        <h4 class="text-xl font-black text-gray-900 dark:text-white mt-2">Rendered slides before PDF export</h4>
+                    </div>
+                    <span id="pptToPdfClientSlideCount" class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300 text-xs font-black">0 slides</span>
+                </div>
+                <div id="pptToPdfClientCanvasHost" class="rounded-[1.8rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-950/70 p-4 min-h-[420px] overflow-auto">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">Your rendered PPTX slides will appear here.</div>
+                    <div id="pptToPdfClientRenderArea" class="mt-4 space-y-6"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const input = document.getElementById("pptToPdfClientInput");
+            const preview = document.getElementById("pptToPdfClientPreview");
+            const renderButton = document.getElementById("pptToPdfClientRenderBtn");
+            const downloadButton = document.getElementById("pptToPdfClientDownloadBtn");
+            const status = document.getElementById("pptToPdfClientStatus");
+            const renderArea = document.getElementById("pptToPdfClientRenderArea");
+            const slideCount = document.getElementById("pptToPdfClientSlideCount");
+
+            if (!input || !preview || !renderButton || !downloadButton || !status || !renderArea || !slideCount) {
+                return;
+            }
+
+            let renderedSlides = [];
+            let currentFileName = "presentation";
+            let resourcePromise = null;
+            let currentObjectUrl = null;
+
+            function setStatus(message, tone) {
+                status.textContent = message;
+                status.className = "mt-4 rounded-2xl border p-4 text-sm";
+                if (tone === "error") {
+                    status.classList.add("border-red-200", "bg-red-50", "text-red-700", "dark:border-red-900", "dark:bg-red-950/20", "dark:text-red-200");
+                    return;
+                }
+                if (tone === "success") {
+                    status.classList.add("border-emerald-200", "bg-emerald-50", "text-emerald-700", "dark:border-emerald-900", "dark:bg-emerald-950/20", "dark:text-emerald-200");
+                    return;
+                }
+                status.classList.add("border-blue-100", "bg-blue-50/70", "text-blue-900", "dark:border-blue-900", "dark:bg-blue-950/20", "dark:text-blue-100");
+            }
+
+            function updateSlideCount(count) {
+                slideCount.textContent = count + " slide" + (count === 1 ? "" : "s");
+            }
+
+            function resetRenderArea(message) {
+                renderArea.innerHTML = "";
+                renderedSlides = [];
+                downloadButton.disabled = true;
+                updateSlideCount(0);
+                if (message) {
+                    renderArea.innerHTML = "<div class=\"text-sm text-gray-500 dark:text-gray-400\">" + message + "</div>";
+                }
+            }
+
+            function loadScriptOnce(src) {
+                const existing = document.querySelector("script[data-any2convert-src=\"" + src + "\"]");
+                if (existing) {
+                    return existing.dataset.loaded === "true"
+                        ? Promise.resolve()
+                        : new Promise(function (resolve, reject) {
+                            existing.addEventListener("load", resolve, { once: true });
+                            existing.addEventListener("error", function () {
+                                reject(new Error("Failed to load script: " + src));
+                            }, { once: true });
+                        });
+                }
+
+                return new Promise(function (resolve, reject) {
+                    const script = document.createElement("script");
+                    script.src = src;
+                    script.async = false;
+                    script.dataset.any2convertSrc = src;
+                    script.addEventListener("load", function () {
+                        script.dataset.loaded = "true";
+                        resolve();
+                    }, { once: true });
+                    script.addEventListener("error", function () {
+                        reject(new Error("Failed to load script: " + src));
+                    }, { once: true });
+                    document.head.appendChild(script);
+                });
+            }
+
+            function loadStylesheetOnce(href) {
+                if (document.querySelector("link[data-any2convert-href=\"" + href + "\"]")) {
+                    return;
+                }
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = href;
+                link.dataset.any2convertHref = href;
+                document.head.appendChild(link);
+            }
+
+            function ensureLocalStyles() {
+                if (document.getElementById("pptToPdfClientLocalStyles")) {
+                    return;
+                }
+                const style = document.createElement("style");
+                style.id = "pptToPdfClientLocalStyles";
+                style.textContent = "#pptToPdfClientRenderArea .slide{margin:0 auto 24px !important;box-shadow:0 18px 50px rgba(15,23,42,.14) !important;border-radius:18px;overflow:hidden;background:#fff;}#pptToPdfClientRenderArea .slide:last-child{margin-bottom:0 !important;}";
+                document.head.appendChild(style);
+            }
+
+            async function ensureResources() {
+                if (!resourcePromise) {
+                    loadStylesheetOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/css/pptxjs.css");
+                    loadStylesheetOnce("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css");
+                    ensureLocalStyles();
+                    resourcePromise = (async function () {
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jszip/2.6.1/jszip.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/dingbat.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/pptxjs.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+                    })();
+                }
+                return resourcePromise;
+            }
+
+            function getSlideNodes() {
+                return Array.from(renderArea.children).filter(function (node) {
+                    return node.nodeType === 1;
+                });
+            }
+
+            async function waitForImages(scope) {
+                const images = Array.from(scope.querySelectorAll("img"));
+                await Promise.all(images.map(function (img) {
+                    if (img.complete) {
+                        return Promise.resolve();
+                    }
+                    return new Promise(function (resolve) {
+                        img.addEventListener("load", resolve, { once: true });
+                        img.addEventListener("error", resolve, { once: true });
+                    });
+                }));
+            }
+
+            async function waitForRenderedSlides() {
+                return await new Promise(function (resolve, reject) {
+                    const timeout = window.setTimeout(function () {
+                        observer.disconnect();
+                        reject(new Error("The PPTX renderer timed out before producing slides."));
+                    }, 45000);
+                    let idleTimer = null;
+                    const observer = new MutationObserver(function () {
+                        scheduleCheck();
+                    });
+
+                    async function runCheck() {
+                        const slides = getSlideNodes();
+                        if (!slides.length) {
+                            return;
+                        }
+                        await Promise.all(slides.map(waitForImages));
+                        if (document.fonts && document.fonts.ready) {
+                            try {
+                                await document.fonts.ready;
+                            } catch (fontError) {
+                            }
+                        }
+                        window.clearTimeout(timeout);
+                        observer.disconnect();
+                        resolve(slides);
+                    }
+
+                    function scheduleCheck() {
+                        window.clearTimeout(idleTimer);
+                        idleTimer = window.setTimeout(function () {
+                            runCheck().catch(function (error) {
+                                window.clearTimeout(timeout);
+                                observer.disconnect();
+                                reject(error);
+                            });
+                        }, 700);
+                    }
+
+                    observer.observe(renderArea, { childList: true, subtree: true });
+                    scheduleCheck();
+                });
+            }
+
+            input.addEventListener("change", function () {
+                const file = this.files && this.files[0] ? this.files[0] : null;
+                resetRenderArea("Your rendered PPTX slides will appear here.");
+                if (!file) {
+                    preview.classList.add("hidden");
+                    preview.textContent = "";
+                    currentFileName = "presentation";
+                    setStatus("Choose a `.pptx` file, render it in the preview panel, then export it to PDF. Older `.ppt` files are not supported in pure browser conversion.");
+                    return;
+                }
+
+                currentFileName = file.name.replace(/\.pptx$/i, "") || "presentation";
+                preview.textContent = "Selected: " + file.name + " (" + Math.max(1, Math.round(file.size / 1024)) + " KB)";
+                preview.classList.remove("hidden");
+
+                if (!/\.pptx$/i.test(file.name)) {
+                    setStatus("Pure browser conversion only supports `.pptx` files. Please resave legacy `.ppt` files as `.pptx` and try again.", "error");
+                    return;
+                }
+
+                setStatus("File selected. Click Render Slides to preview the presentation before downloading the PDF.");
+            });
+
+            renderButton.addEventListener("click", async function () {
+                const file = input.files && input.files[0] ? input.files[0] : null;
+                if (!file) {
+                    setStatus("Please choose a `.pptx` file first.", "error");
+                    return;
+                }
+                if (!/\.pptx$/i.test(file.name)) {
+                    setStatus("Only `.pptx` files are supported for client-side conversion.", "error");
+                    return;
+                }
+
+                resetRenderArea("Rendering PowerPoint slides...");
+                setStatus("Loading the PPTX renderer and building your slide preview...");
+                renderButton.disabled = true;
+
+                try {
+                    await ensureResources();
+
+                    if (currentObjectUrl) {
+                        URL.revokeObjectURL(currentObjectUrl);
+                    }
+                    currentObjectUrl = URL.createObjectURL(file);
+                    renderArea.innerHTML = "";
+
+                    window.jQuery(renderArea).pptxToHtml({
+                        pptxFileUrl: currentObjectUrl,
+                        slideMode: false,
+                        keyBoardShortCut: false,
+                        mediaProcess: true,
+                        themeProcess: true,
+                        slideType: "divs2slidesjs",
+                        jsZipV2: false
+                    });
+
+                    renderedSlides = await waitForRenderedSlides();
+                    downloadButton.disabled = renderedSlides.length === 0;
+                    updateSlideCount(renderedSlides.length);
+                    setStatus("Slides rendered successfully. Review the preview, then click Download PDF.", "success");
+                } catch (error) {
+                    resetRenderArea("The presentation could not be rendered in the browser.");
+                    setStatus(error && error.message ? error.message : "PPTX rendering failed.", "error");
+                } finally {
+                    renderButton.disabled = false;
+                }
+            });
+
+            downloadButton.addEventListener("click", async function () {
+                if (!renderedSlides.length) {
+                    setStatus("Render the slides first, then download the PDF.", "error");
+                    return;
+                }
+                if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+                    setStatus("PDF libraries are still loading. Please wait a moment and try again.", "error");
+                    return;
+                }
+
+                downloadButton.disabled = true;
+                setStatus("Capturing rendered slides and exporting the PDF...");
+
+                try {
+                    const canvases = [];
+                    for (let index = 0; index < renderedSlides.length; index += 1) {
+                        setStatus("Capturing slide " + (index + 1) + " of " + renderedSlides.length + "...");
+                        const canvas = await window.html2canvas(renderedSlides[index], {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: "#ffffff"
+                        });
+                        canvases.push(canvas);
+                    }
+
+                    const firstCanvas = canvases[0];
+                    const pdfWidth = firstCanvas.width * 0.75;
+                    const pdfHeight = firstCanvas.height * 0.75;
+                    const orientation = pdfWidth >= pdfHeight ? "landscape" : "portrait";
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: orientation,
+                        unit: "pt",
+                        format: [pdfHeight, pdfWidth]
+                    });
+
+                    canvases.forEach(function (canvas, index) {
+                        if (index > 0) {
+                            pdf.addPage([pdfHeight, pdfWidth], orientation);
+                        }
+                        const imageData = canvas.toDataURL("image/jpeg", 0.98);
+                        pdf.addImage(imageData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+                    });
+
+                    pdf.save(currentFileName + ".pdf");
+                    setStatus("PDF created successfully. Your download should start automatically.", "success");
+                } catch (error) {
+                    setStatus(error && error.message ? error.message : "PDF export failed.", "error");
+                } finally {
+                    downloadButton.disabled = false;
                 }
             });
         })();
