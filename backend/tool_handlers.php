@@ -7489,61 +7489,199 @@ function getVideoCompressorHTML() {
 function getOcrToolHTML() {
     return '
     <div class="space-y-6">
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'ocrImageInput\').click()">
-            <input type="file" id="ocrImageInput" class="hidden" accept="image/*">
-            <div class="mb-3 flex justify-center text-blue-500"><svg width="68" height="54" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 27s7-10 16-10 16 10 16 10-7 10-16 10S4 27 4 27Z"></path><circle cx="20" cy="27" r="4"></circle><path d="M40 19h20"></path><path d="M40 26h20"></path><path d="M40 33h14"></path></svg></div>
-            <p class="font-medium">Upload an image with text</p>
-            <p class="text-sm text-gray-500 mt-2">We\'ll extract text using OCR (works best with clear images)</p>
+        <div style="display:none;">
+            <h1>Online OCR Image to Text Tool</h1>
+            <p>Free online OCR for JPG, JPEG, PNG, WEBP, screenshots, receipts, scanned pages, and document photos.</p>
+            <p>OCR meaning is optical character recognition. This OCR tool uses Tesseract OCR technology to turn images into editable text in your browser.</p>
         </div>
-        <div id="ocrPreview" class="hidden mt-4 text-center">
-            <img id="ocrPreviewImg" class="max-w-full h-32 object-contain rounded-lg mx-auto">
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Free Online OCR</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Extract text from JPG, PNG, and JPEG images</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Upload an image and run online OCR directly in your browser. This OCR tool works best for screenshots, scanned pages, receipts, invoices, IDs, and other clear text images.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                        <svg width="30" height="30" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 27s7-10 16-10 16 10 16 10-7 10-16 10S4 27 4 27Z"></path><circle cx="20" cy="27" r="4"></circle><path d="M40 19h20"></path><path d="M40 26h20"></path><path d="M40 33h14"></path></svg>
+                    </div>
+                </div>
+
+                <label for="ocrImageInput" class="block rounded-[1.8rem] border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white/85 dark:bg-slate-950/60 p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-900 transition">
+                    <input type="file" id="ocrImageInput" class="hidden" accept=".jpg,.jpeg,.png,.webp,.bmp,.gif,image/*">
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 15-4.5-4.5L7 20"></path></svg>
+                    </div>
+                    <p class="font-bold text-gray-900 dark:text-white">Choose image for OCR</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Supports JPG, JPEG, PNG, WEBP, BMP, and GIF files. Your file stays on your device.</p>
+                </label>
+
+                <div id="ocrPreviewCard" class="hidden mt-5 rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <img id="ocrPreviewImg" class="max-w-full md:w-44 h-36 object-contain rounded-2xl bg-slate-50 dark:bg-slate-900 p-2" alt="OCR preview">
+                        <div class="text-left flex-1">
+                            <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Selected Image</p>
+                            <p id="ocrFileMeta" class="mt-2 text-base font-bold text-gray-900 dark:text-white"></p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">For the best OCR result, use a sharp image with good contrast and straight text.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="ocrBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Run OCR</button>
+                    <button id="copyOcrBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition hidden">Copy Text</button>
+                    <button id="downloadOcrBtn" type="button" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition hidden">Download TXT</button>
+                </div>
+
+                <p id="ocrStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">OCR meaning is optical character recognition. Click Run OCR to turn image text into editable text.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">OCR Result</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <textarea id="ocrText" class="w-full h-72 bg-transparent text-sm leading-7 text-gray-800 dark:text-slate-100 resize-none outline-none" placeholder="Recognized text will appear here after OCR runs."></textarea>
+                </div>
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">What is OCR?</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">What is OCR: OCR technology reads printed text from an image and converts it into selectable, searchable words.</p>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Engine</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">This free OCR tool uses Tesseract OCR software in the browser, so you can run online OCR without uploading private files.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button id="ocrBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Extract Text</button>
-        <div id="ocrResult" class="hidden mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
-            <h4 class="font-bold mb-2">Extracted Text:</h4>
-            <p id="ocrText" class="whitespace-pre-wrap text-sm max-h-64 overflow-y-auto"></p>
-            <button id="copyOcrBtn" class="mt-3 text-sm text-blue-600">Copy to clipboard</button>
+        <div class="rounded-[1.8rem] border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-5 text-sm text-blue-950 dark:text-blue-100 leading-7">
+            If you also need <strong>OCR PDF</strong>, scanned PDF extraction, or PDF to OCR workflows, use the site\'s dedicated OCR PDF tool. This page is focused on image OCR for JPG, PNG, JPEG, screenshots, and document photos.
         </div>
     </div>
     <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script>
         const ocrInput = document.getElementById("ocrImageInput");
-        const ocrPreview = document.getElementById("ocrPreview");
+        const ocrPreviewCard = document.getElementById("ocrPreviewCard");
         const ocrPreviewImg = document.getElementById("ocrPreviewImg");
-        
+        const ocrFileMeta = document.getElementById("ocrFileMeta");
+        const ocrBtn = document.getElementById("ocrBtn");
+        const ocrStatus = document.getElementById("ocrStatus");
+        const ocrText = document.getElementById("ocrText");
+        const copyOcrBtn = document.getElementById("copyOcrBtn");
+        const downloadOcrBtn = document.getElementById("downloadOcrBtn");
+
+        function setOcrImageStatus(message, isError) {
+            ocrStatus.textContent = message || "";
+            ocrStatus.classList.toggle("text-red-500", !!isError);
+            ocrStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                ocrStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function formatBytes(size) {
+            const value = Number(size || 0);
+            if (!value) return "0 B";
+            const units = ["B", "KB", "MB", "GB"];
+            let index = 0;
+            let current = value;
+            while (current >= 1024 && index < units.length - 1) {
+                current /= 1024;
+                index++;
+            }
+            return current.toFixed(current >= 10 || index === 0 ? 0 : 1) + " " + units[index];
+        }
+
+        function getOcrImageBaseName(name) {
+            return String(name || "ocr-image").replace(/\.[^.]+$/, "") || "ocr-image";
+        }
+
         ocrInput.addEventListener("change", function() {
-            if(this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    ocrPreviewImg.src = e.target.result;
-                    ocrPreview.classList.remove("hidden");
-                };
-                reader.readAsDataURL(this.files[0]);
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            ocrText.value = "";
+            copyOcrBtn.classList.add("hidden");
+            downloadOcrBtn.classList.add("hidden");
+
+            if (!file) {
+                ocrPreviewCard.classList.add("hidden");
+                setOcrImageStatus("OCR meaning is optical character recognition. Click Run OCR to turn image text into editable text.");
+                return;
             }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                ocrPreviewImg.src = e.target.result;
+                ocrPreviewCard.classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+            ocrFileMeta.textContent = file.name + " • " + formatBytes(file.size);
+            setOcrImageStatus("Image ready. Run online OCR to extract text from the selected file.");
         });
-        
-        document.getElementById("ocrBtn").addEventListener("click", async function() {
-            const input = document.getElementById("ocrImageInput");
-            if (!input.files.length) return alert("Please select an image");
-            const resultDiv = document.getElementById("ocrResult");
-            const textDiv = document.getElementById("ocrText");
-            resultDiv.classList.add("hidden");
-            textDiv.innerText = "Processing... (this may take a few seconds)";
-            resultDiv.classList.remove("hidden");
-            
-            const image = input.files[0];
+
+        copyOcrBtn.addEventListener("click", async function() {
+            if (!ocrText.value.trim()) return;
+
             try {
-                const { data: { text } } = await Tesseract.recognize(image, "eng");
-                textDiv.innerText = text || "No text detected. Try a clearer image.";
-            } catch(e) {
-                textDiv.innerText = "Error processing image: " + e.message;
+                await navigator.clipboard.writeText(ocrText.value);
+                setOcrImageStatus("OCR text copied to clipboard.");
+            } catch (error) {
+                setOcrImageStatus("Could not copy automatically. Please copy the text manually.", true);
             }
         });
-        
-        document.getElementById("copyOcrBtn").addEventListener("click", function() {
-            const text = document.getElementById("ocrText").innerText;
-            navigator.clipboard.writeText(text);
-            alert("Text copied to clipboard!");
+
+        downloadOcrBtn.addEventListener("click", function() {
+            if (!ocrText.value.trim()) return;
+
+            const file = ocrInput.files && ocrInput.files[0] ? ocrInput.files[0] : null;
+            const baseName = getOcrImageBaseName(file ? file.name : "");
+            const blob = new Blob([ocrText.value], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = baseName + "_ocr.txt";
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+
+        ocrBtn.addEventListener("click", async function() {
+            const file = ocrInput.files && ocrInput.files[0] ? ocrInput.files[0] : null;
+            if (!file) {
+                alert("Please select a JPG, JPEG, PNG, or image file first.");
+                return;
+            }
+
+            if (!window.Tesseract) {
+                setOcrImageStatus("OCR library failed to load. Please refresh and try again.", true);
+                return;
+            }
+
+            ocrText.value = "";
+            copyOcrBtn.classList.add("hidden");
+            downloadOcrBtn.classList.add("hidden");
+            setOcrImageStatus("Running Tesseract OCR on your image. This may take a few seconds...");
+
+            try {
+                const result = await window.Tesseract.recognize(file, "eng", {
+                    logger: function(message) {
+                        if (message && message.status) {
+                            const progress = typeof message.progress === "number" ? " " + Math.round(message.progress * 100) + "%" : "";
+                            setOcrImageStatus("OCR in progress: " + message.status + progress);
+                        }
+                    }
+                });
+
+                const text = result && result.data && result.data.text ? result.data.text.trim() : "";
+                ocrText.value = text;
+                copyOcrBtn.classList.toggle("hidden", !text);
+                downloadOcrBtn.classList.toggle("hidden", !text);
+
+                if (text) {
+                    setOcrImageStatus("OCR complete. Text extracted successfully from the image.");
+                } else {
+                    setOcrImageStatus("OCR finished, but no readable text was detected. Try a sharper or higher-contrast image.", true);
+                }
+            } catch (error) {
+                setOcrImageStatus("Error processing image OCR: " + error.message, true);
+            }
         });
     </script>';
 }

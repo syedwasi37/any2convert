@@ -417,14 +417,17 @@ $seo_tools = [
     ],
     'ocr-image-to-text' => [
         'id' => 'ocr_tool',
-        'h1' => 'Extract Text from Image (OCR)',
-        'title' => 'OCR Tool Online - Free Image to Text Extract',
-        'meta_desc' => 'Read text from images automatically using advanced machine learning OCR algorithms right in your browser.',
+        'h1' => 'Online OCR Image to Text Tool',
+        'title' => 'Online OCR Image to Text - Free OCR Tool | Any2Convert',
+        'meta_desc' => 'Free online OCR tool for JPG, PNG, and JPEG files. Extract text from images instantly with Tesseract OCR technology in your browser.',
         'icon' => 'A',
         'faqs' => [
-            ['q' => 'Does this work on handwritten text?', 'a' => 'It works best on printed or typed text, but it can recognize very neat handwriting.']
+            ['q' => 'What is OCR meaning?', 'a' => 'OCR meaning is optical character recognition. It is OCR technology that reads text from images and converts it into editable digital text.'],
+            ['q' => 'Is this a free online OCR tool?', 'a' => 'Yes. This is a free online OCR tool that runs in your browser and supports image OCR for JPG, JPEG, PNG, and similar image formats.'],
+            ['q' => 'Does this use Tesseract OCR?', 'a' => 'Yes. This OCR tool uses Tesseract OCR in the browser to recognize printed text from screenshots, scans, and document photos.'],
+            ['q' => 'Does this work on handwritten text?', 'a' => 'It works best on printed or typed text, but it can recognize very neat handwriting in some images.']
         ],
-        'content' => 'Stop manually copying quotes from images. Upload any photo, screenshot, or scanned document, and our optical character recognition (OCR) engine will extract the editable text. Powered by Tesseract in your browser, your sensitive documents never leave your computer.'
+        'content' => 'Use this free OCR tool to extract text from image files online without uploading them. If you need online OCR for JPG, PNG, JPEG, screenshots, invoices, receipts, scanned notes, or document photos, this browser-based OCR software makes the text editable in seconds. Powered by Tesseract OCR, the tool runs locally for better privacy while supporting common searches like OCR, online OCR, OCR online, free online OCR, OCR tool, OCR technology, and what is OCR.'
     ],
     'excel-to-pdf' => [
         'id' => 'excel_to_pdf',
