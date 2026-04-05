@@ -6786,12 +6786,14 @@ function getWebpConverterHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>WEBP to PNG JPG JPEG PDF Converter Online Free</h1>
-            <p>Convert WEBP images to PNG, JPG, JPEG, or PDF directly in your browser with fast client-side processing.</p>
+            <h1>WEBP to JPG PNG JPEG PDF Converter Free Online</h1>
+            <p>Use this WEBP to JPG converter to convert WEBP to JPG, WEBP to PNG, WEBP to JPEG, or WEBP to PDF quickly in your browser.</p>
+            <p>Convert WEBP to JPG free, use a WEBP to PNG converter free, or convert WEBP to PDF online free without installing software.</p>
+            <p>If you need to know how to convert WEBP to JPG, how to convert WEBP to PNG, or how to convert WEBP to PDF, upload your WEBP image, choose the output format, and download instantly.</p>
         </div>
-        <div class="rounded-2xl border border-fuchsia-200/70 bg-fuchsia-50/80 dark:bg-fuchsia-950/30 dark:border-fuchsia-900 p-4">
-            <div class="font-semibold text-fuchsia-900 dark:text-fuchsia-100">WEBP Converter</div>
-            <p class="mt-1 text-sm text-fuchsia-800 dark:text-fuchsia-200">Upload a WEBP image, choose PNG, JPG, JPEG, or PDF, preview it, and download the converted file.</p>
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">WEBP to JPG PNG PDF Converter</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Convert WEBP to JPG, WEBP to PNG, WEBP to JPEG, or WEBP to PDF online free with fast preview and download.</p>
         </div>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
             <input type="file" id="webpInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".webp,image/webp">
@@ -6802,9 +6804,9 @@ function getWebpConverterHTML() {
                 <option value="pdf">Convert to PDF</option>
             </select>
             <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
-                Upload the WEBP image, choose the output format, and download the converted PNG, JPG, JPEG, or PDF file.
+                Convert WEBP to JPG free, change WEBP to PNG, or use this WEBP to PDF converter online when you need a quick WEBP file conversion without losing time.
             </div>
-            <button id="webpConvertBtn" class="w-full  text-white py-3 rounded-xl font-semibold hover:bg-fuchsia-700 transition">Convert WEBP</button>
+            <button id="webpConvertBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert WEBP</button>
             <div id="webpStatus" class="hidden text-sm text-gray-500 text-center"></div>
         </div>
         <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
