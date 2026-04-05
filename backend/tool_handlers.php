@@ -5159,34 +5159,49 @@ function getPptToPdfPureClientHTML() {
                 setStatus("Capturing rendered slides and exporting the PDF...");
 
                 try {
-                    const canvases = [];
+                    const capturedSlides = [];
                     for (let index = 0; index < renderedSlides.length; index += 1) {
                         setStatus("Capturing slide " + (index + 1) + " of " + renderedSlides.length + "...");
-                        const canvas = await window.html2canvas(renderedSlides[index], {
+                        const slideNode = renderedSlides[index];
+                        const rect = slideNode.getBoundingClientRect();
+                        const canvas = await window.html2canvas(slideNode, {
                             scale: 2,
                             useCORS: true,
                             allowTaint: true,
-                            backgroundColor: "#ffffff"
+                            backgroundColor: "#ffffff",
+                            width: Math.max(1, Math.ceil(rect.width)),
+                            height: Math.max(1, Math.ceil(rect.height)),
+                            windowWidth: Math.max(document.documentElement.clientWidth, Math.ceil(rect.width)),
+                            windowHeight: Math.max(document.documentElement.clientHeight, Math.ceil(rect.height)),
+                            scrollX: 0,
+                            scrollY: 0
                         });
-                        canvases.push(canvas);
+                        capturedSlides.push({
+                            canvas: canvas,
+                            width: rect.width || canvas.width,
+                            height: rect.height || canvas.height
+                        });
                     }
 
-                    const firstCanvas = canvases[0];
-                    const pdfWidth = firstCanvas.width * 0.75;
-                    const pdfHeight = firstCanvas.height * 0.75;
+                    const firstSlide = capturedSlides[0];
+                    const pdfWidth = Math.max(1, firstSlide.width) * 0.75;
+                    const pdfHeight = Math.max(1, firstSlide.height) * 0.75;
                     const orientation = pdfWidth >= pdfHeight ? "landscape" : "portrait";
                     const pdf = new window.jspdf.jsPDF({
                         orientation: orientation,
                         unit: "pt",
-                        format: [pdfHeight, pdfWidth]
+                        format: [pdfWidth, pdfHeight]
                     });
 
-                    canvases.forEach(function (canvas, index) {
+                    capturedSlides.forEach(function (slideCapture, index) {
+                        const pageWidth = Math.max(1, slideCapture.width) * 0.75;
+                        const pageHeight = Math.max(1, slideCapture.height) * 0.75;
+                        const pageOrientation = pageWidth >= pageHeight ? "landscape" : "portrait";
                         if (index > 0) {
-                            pdf.addPage([pdfHeight, pdfWidth], orientation);
+                            pdf.addPage([pageWidth, pageHeight], pageOrientation);
                         }
-                        const imageData = canvas.toDataURL("image/jpeg", 0.98);
-                        pdf.addImage(imageData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+                        const imageData = slideCapture.canvas.toDataURL("image/png");
+                        pdf.addImage(imageData, "PNG", 0, 0, pageWidth, pageHeight);
                     });
 
                     pdf.save(currentFileName + ".pdf");
