@@ -7980,24 +7980,103 @@ function getOptimizePdfHTML() {
 function getRepairPdfHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="repairPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <button id="repairPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Repair PDF</button>
-        <p class="text-sm text-gray-500">Best-effort rebuild for PDFs with minor structural issues.</p>
+        <div style="display:none;">
+            <h1>Repair PDF Online Free - Repair PDF File</h1>
+            <p>Use this repair PDF tool to repair PDF files online free, rebuild damaged PDF documents, and learn how to repair PDF file issues directly in your browser.</p>
+            <p>Repair PDF file online free, repair PDF files with browser-based rebuilding, and create a cleaner copy when a document has minor structure or compatibility issues.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Repair PDF File</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF to repair PDF file issues, rebuild the document structure, and download a fresh repaired copy.</p>
+            </div>
+            <input type="file" id="repairPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="repairPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                How to repair PDF:
+                Upload the file, let the tool rebuild the PDF, and download a repaired version if the browser can recover the document pages.
+            </div>
+            <button id="repairPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Repair PDF</button>
+        </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
         document.getElementById("repairPdfBtn").addEventListener("click", async function() {
             const file = document.getElementById("repairPdfInput").files[0];
             if (!file) return alert("Please select a PDF file");
+            const status = document.getElementById("repairPdfStatus");
+            status.classList.remove("hidden", "text-red-500");
             try {
-                const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
-                const bytes = await pdf.save({ useObjectStreams: false, addDefaultPage: false });
+                status.textContent = "Trying direct PDF repair...";
+                const sourceBytes = await file.arrayBuffer();
+
+                try {
+                    const pdf = await PDFLib.PDFDocument.load(sourceBytes, { ignoreEncryption: true });
+                    const bytes = await pdf.save({ useObjectStreams: false, addDefaultPage: false });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+                    a.download = (file.name.replace(/\.pdf$/i, "") || "repaired") + "-repaired.pdf";
+                    a.click();
+                    status.textContent = "Repair complete. Rebuilt PDF downloaded.";
+                    return;
+                } catch (directError) {
+                    status.textContent = "Direct repair failed. Rebuilding pages visually...";
+                }
+
+                const pdfView = await pdfjsLib.getDocument({ data: sourceBytes }).promise;
+                const { jsPDF } = window.jspdf;
+                let doc = null;
+
+                for (let i = 1; i <= pdfView.numPages; i++) {
+                    status.textContent = "Rebuilding page " + i + " of " + pdfView.numPages + "...";
+                    const page = await pdfView.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.6 });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d", { alpha: false });
+                    canvas.width = Math.ceil(viewport.width);
+                    canvas.height = Math.ceil(viewport.height);
+                    context.fillStyle = "#FFFFFF";
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+
+                    const orientation = viewport.width > viewport.height ? "landscape" : "portrait";
+                    const pageFormat = [Math.ceil(viewport.width), Math.ceil(viewport.height)];
+
+                    if (!doc) {
+                        doc = new jsPDF({
+                            orientation: orientation,
+                            unit: "pt",
+                            format: pageFormat,
+                            compress: true
+                        });
+                    } else {
+                        doc.addPage(pageFormat, orientation);
+                    }
+
+                    const imageData = canvas.toDataURL("image/jpeg", 0.92);
+                    doc.addImage(imageData, "JPEG", 0, 0, pageFormat[0], pageFormat[1], undefined, "FAST");
+                }
+
+                if (!doc) {
+                    throw new Error("No pages could be rebuilt.");
+                }
+
+                const repairedBytes = doc.output("arraybuffer");
                 const a = document.createElement("a");
-                a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-                a.download = "repaired.pdf";
+                a.href = URL.createObjectURL(new Blob([repairedBytes], { type: "application/pdf" }));
+                a.download = (file.name.replace(/\.pdf$/i, "") || "repaired") + "-repaired.pdf";
                 a.click();
+                status.textContent = "Repair complete. Visual rebuilt PDF downloaded.";
             } catch (e) {
-                alert("This PDF could not be repaired in the browser.");
+                status.classList.add("text-red-500");
+                status.textContent = "This PDF could not be repaired in the browser: " + e.message;
             }
         });
     </script>';
@@ -8006,38 +8085,229 @@ function getRepairPdfHTML() {
 function getOcrPdfHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="ocrPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <button id="ocrPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">OCR PDF</button>
-        <div id="ocrPdfStatus" class="text-sm text-gray-500 text-center hidden"></div>
-        <textarea id="ocrPdfOutput" class="hidden w-full h-56 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></textarea>
+        <div style="display:none;">
+            <h1>OCR PDF Online Free - Extract Text From Scanned PDF</h1>
+            <p>Use this OCR PDF tool to recognize text from scanned documents, make PDF text selectable, and run free OCR PDF conversion online in your browser.</p>
+            <p>Free OCR PDF to text, OCR PDF to Word style content, OCR PDF converter, and online OCR PDF processing for searchable scanned files on Windows, Mac, and mobile.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">OCR PDF Converter</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a scanned or image-based PDF to extract text with OCR, make the content searchable, and copy or download the recognized text for free.</p>
+            </div>
+            <input type="file" id="ocrPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="ocrPdfPreview" class="hidden text-sm text-gray-500 text-center"></div>
+            <button id="ocrPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">OCR PDF Free</button>
+            <div id="ocrPdfStatus" class="text-sm text-gray-500 text-center hidden"></div>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            What is OCR PDF:
+            OCR reads scanned PDF pages like images and converts them into selectable text. This helps when you need OCR PDF to text, OCR PDF to Word-style content, or searchable document text.
+        </div>
+        <textarea id="ocrPdfOutput" class="hidden w-full h-64 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Recognized text will appear here..."></textarea>
+        <div id="ocrPdfActions" class="hidden flex flex-wrap gap-3">
+            <button id="ocrPdfCopyBtn" type="button" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Copy Text</button>
+            <button id="ocrPdfDownloadBtn" type="button" class="px-4 py-3 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition">Download TXT</button>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-        document.getElementById("ocrPdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("ocrPdfInput").files[0];
-            if (!file) return alert("Please select a PDF file");
-            const status = document.getElementById("ocrPdfStatus");
-            const output = document.getElementById("ocrPdfOutput");
-            status.classList.remove("hidden");
-            output.classList.remove("hidden");
-            status.textContent = "Running OCR...";
-            let fullText = "";
-            const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-            for (let i = 1; i <= pdf.numPages; i++) {
-                status.textContent = `OCR page ${i} of ${pdf.numPages}...`;
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 1.5 });
-                const canvas = document.createElement("canvas");
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
-                const { data: { text } } = await Tesseract.recognize(canvas, "eng");
-                fullText += `\n\n--- Page ${i} ---\n` + text;
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+        }
+
+        const ocrPdfInput = document.getElementById("ocrPdfInput");
+        const ocrPdfBtn = document.getElementById("ocrPdfBtn");
+        const ocrPdfStatus = document.getElementById("ocrPdfStatus");
+        const ocrPdfOutput = document.getElementById("ocrPdfOutput");
+        const ocrPdfActions = document.getElementById("ocrPdfActions");
+        const ocrPdfCopyBtn = document.getElementById("ocrPdfCopyBtn");
+        const ocrPdfDownloadBtn = document.getElementById("ocrPdfDownloadBtn");
+        const ocrPdfPreview = document.getElementById("ocrPdfPreview");
+
+        function setOcrStatus(message, isError) {
+            if (!message) {
+                ocrPdfStatus.textContent = "";
+                ocrPdfStatus.classList.add("hidden");
+                ocrPdfStatus.classList.remove("text-red-500");
+                return;
             }
-            output.value = fullText.trim();
-            status.textContent = "OCR complete.";
+
+            ocrPdfStatus.textContent = message;
+            ocrPdfStatus.classList.remove("hidden");
+            ocrPdfStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function normalizeOcrText(value) {
+            return String(value || "")
+                .replace(/\r/g, " ")
+                .replace(/\t/g, " ")
+                .replace(/[ ]{2,}/g, " ")
+                .replace(/\n{3,}/g, "\n\n")
+                .trim();
+        }
+
+        function buildOcrTextFromItems(items) {
+            const rows = {};
+            let usefulItemCount = 0;
+
+            items.forEach(function(item) {
+                const text = normalizeOcrText(item && item.str ? item.str : "");
+                if (!text) return;
+
+                usefulItemCount += text.length;
+                const y = Math.round(item.transform && item.transform[5] ? item.transform[5] : 0);
+                if (!rows[y]) rows[y] = [];
+                rows[y].push({
+                    x: item.transform && item.transform[4] ? item.transform[4] : 0,
+                    text: text
+                });
+            });
+
+            const lines = Object.keys(rows)
+                .map(function(key) { return parseInt(key, 10); })
+                .sort(function(a, b) { return b - a; })
+                .map(function(y) {
+                    return rows[y]
+                        .sort(function(a, b) { return a.x - b.x; })
+                        .map(function(part) { return part.text; })
+                        .join(" ");
+                })
+                .filter(Boolean);
+
+            return {
+                text: normalizeOcrText(lines.join("\n")),
+                usefulItemCount: usefulItemCount
+            };
+        }
+
+        async function extractPageText(page) {
+            const textContent = await page.getTextContent({ normalizeWhitespace: true });
+            const built = buildOcrTextFromItems(textContent.items || []);
+            return built;
+        }
+
+        async function runPageOcr(page) {
+            const viewport = page.getViewport({ scale: 2.2 });
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d", { alpha: false });
+
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#FFFFFF";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+
+            const result = await Tesseract.recognize(canvas, "eng");
+            return normalizeOcrText(result && result.data ? result.data.text : "");
+        }
+
+        function getOcrBaseName(fileName) {
+            let baseName = fileName || "ocr-pdf";
+            if (baseName.toLowerCase().slice(-4) === ".pdf") {
+                baseName = baseName.slice(0, -4);
+            }
+            return baseName || "ocr-pdf";
+        }
+
+        ocrPdfInput.addEventListener("change", function() {
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            ocrPdfOutput.value = "";
+            ocrPdfOutput.classList.add("hidden");
+            ocrPdfActions.classList.add("hidden");
+            setOcrStatus("");
+
+            if (!file) {
+                ocrPdfPreview.textContent = "";
+                ocrPdfPreview.classList.add("hidden");
+                return;
+            }
+
+            ocrPdfPreview.textContent = file.name + " selected for OCR PDF conversion";
+            ocrPdfPreview.classList.remove("hidden");
+        });
+
+        ocrPdfCopyBtn.addEventListener("click", async function() {
+            if (!ocrPdfOutput.value) return;
+
+            try {
+                await navigator.clipboard.writeText(ocrPdfOutput.value);
+                setOcrStatus("OCR text copied to clipboard.");
+            } catch (error) {
+                setOcrStatus("Could not copy OCR text automatically. Please copy it manually.", true);
+            }
+        });
+
+        ocrPdfDownloadBtn.addEventListener("click", function() {
+            if (!ocrPdfOutput.value) return;
+
+            const file = ocrPdfInput.files && ocrPdfInput.files[0] ? ocrPdfInput.files[0] : null;
+            const baseName = getOcrBaseName(file ? file.name : "");
+            const blob = new Blob([ocrPdfOutput.value], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = baseName + "_ocr.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        ocrPdfBtn.addEventListener("click", async function() {
+            const file = ocrPdfInput.files && ocrPdfInput.files[0] ? ocrPdfInput.files[0] : null;
+            if (!file) {
+                alert("Please select a PDF file");
+                return;
+            }
+
+            try {
+                if (!window.pdfjsLib) {
+                    throw new Error("PDF library failed to load.");
+                }
+                if (!window.Tesseract) {
+                    throw new Error("OCR library failed to load.");
+                }
+
+                ocrPdfOutput.value = "";
+                ocrPdfOutput.classList.remove("hidden");
+                ocrPdfActions.classList.add("hidden");
+                setOcrStatus("Loading PDF for OCR...");
+
+                const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                const pageTexts = [];
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    setOcrStatus("Reading page " + i + " of " + pdf.numPages + "...");
+
+                    const extracted = await extractPageText(page);
+                    let pageText = extracted.text;
+
+                    if (!pageText || extracted.usefulItemCount < 30) {
+                        setOcrStatus("Running OCR on page " + i + " of " + pdf.numPages + "...");
+                        pageText = await runPageOcr(page);
+                    }
+
+                    if (pageText) {
+                        pageTexts.push(pageText);
+                    }
+                }
+
+                ocrPdfOutput.value = pageTexts.join("\n\n").trim();
+                ocrPdfActions.classList.toggle("hidden", !ocrPdfOutput.value);
+
+                if (ocrPdfOutput.value) {
+                    setOcrStatus("OCR complete. Text extracted successfully.");
+                } else {
+                    setOcrStatus("OCR finished, but no readable text was found in this PDF.", true);
+                }
+            } catch (error) {
+                setOcrStatus("Error while running OCR: " + error.message, true);
+            }
         });
     </script>';
 }
