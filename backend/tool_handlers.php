@@ -8963,40 +8963,123 @@ function getAddWatermarkHTML() {
 function getUnlockPdfHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="unlockPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <button id="unlockPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Unlock PDF</button>
-        <p class="text-sm text-gray-500">Best for opening print-viewable PDFs by rebuilding pages into a new file.</p>
+        <div style="display:none;">
+            <h1>Unlock PDF Online Free</h1>
+            <p>Use this unlock PDF tool to unlock PDF files online free, enter the PDF password, and download an unlocked PDF document for viewing or editing.</p>
+            <p>Learn how to unlock PDF, unlock PDF for editing, and unlock PDF password protected files in your browser with a simple upload and password flow.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Unlock PDF File</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a protected PDF, enter the password if required, and download a new unlocked copy.</p>
+            </div>
+            <input type="file" id="unlockPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <input type="password" id="unlockPdfPassword" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter PDF password if the file is locked">
+            <button id="unlockPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Unlock PDF Free</button>
+            <div id="unlockPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to unlock PDF:
+            Upload the locked PDF, enter the correct password, let the tool open and rebuild the document, then download the unlocked PDF file.
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-        document.getElementById("unlockPdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("unlockPdfInput").files[0];
-            if (!file) return alert("Please select a PDF file");
+        const unlockPdfInput = document.getElementById("unlockPdfInput");
+        const unlockPdfPassword = document.getElementById("unlockPdfPassword");
+        const unlockPdfStatus = document.getElementById("unlockPdfStatus");
+        const unlockPdfBtn = document.getElementById("unlockPdfBtn");
+
+        function setUnlockPdfStatus(message, isError) {
+            if (!message) {
+                unlockPdfStatus.textContent = "";
+                unlockPdfStatus.classList.add("hidden");
+                unlockPdfStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            unlockPdfStatus.textContent = message;
+            unlockPdfStatus.classList.remove("hidden");
+            unlockPdfStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function getUnlockPdfBaseName(name) {
+            let baseName = name || "unlocked";
+            if (baseName.toLowerCase().slice(-4) === ".pdf") {
+                baseName = baseName.slice(0, -4);
+            }
+            return baseName || "unlocked";
+        }
+
+        unlockPdfBtn.addEventListener("click", async function() {
+            const file = unlockPdfInput.files && unlockPdfInput.files[0] ? unlockPdfInput.files[0] : null;
+            if (!file) {
+                alert("Please select a PDF file");
+                return;
+            }
+
+            const password = (unlockPdfPassword.value || "").trim();
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF("p", "mm", "a4");
+
             try {
-                const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const pageHeight = doc.internal.pageSize.getHeight();
+                setUnlockPdfStatus("Opening PDF...");
+                const sourceBytes = await file.arrayBuffer();
+                const loadingTask = pdfjsLib.getDocument({
+                    data: sourceBytes,
+                    password: password || undefined
+                });
+                const pdf = await loadingTask.promise;
+                let doc = null;
+
                 for (let i = 1; i <= pdf.numPages; i++) {
+                    setUnlockPdfStatus("Unlocking page " + i + " of " + pdf.numPages + "...");
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: 2 });
+                    const viewport = page.getViewport({ scale: 1.8 });
                     const canvas = document.createElement("canvas");
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    const canvasCtx = canvas.getContext("2d");
+                    const canvasCtx = canvas.getContext("2d", { alpha: false });
+                    canvas.width = Math.ceil(viewport.width);
+                    canvas.height = Math.ceil(viewport.height);
+                    canvasCtx.fillStyle = "#FFFFFF";
+                    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
                     canvasCtx.imageSmoothingEnabled = true;
                     canvasCtx.imageSmoothingQuality = "high";
-                    await page.render({ canvasContext: canvasCtx, viewport }).promise;
-                    if (i > 1) doc.addPage();
-                    const img = canvas.toDataURL("image/jpeg", 0.97);
-                    doc.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
+
+                    await page.render({
+                        canvasContext: canvasCtx,
+                        viewport: viewport
+                    }).promise;
+
+                    const orientation = viewport.width > viewport.height ? "landscape" : "portrait";
+                    const pageFormat = [Math.ceil(viewport.width), Math.ceil(viewport.height)];
+                    if (!doc) {
+                        doc = new jsPDF({
+                            orientation: orientation,
+                            unit: "pt",
+                            format: pageFormat,
+                            compress: true
+                        });
+                    } else {
+                        doc.addPage(pageFormat, orientation);
+                    }
+
+                    const img = canvas.toDataURL("image/jpeg", 0.96);
+                    doc.addImage(img, "JPEG", 0, 0, pageFormat[0], pageFormat[1]);
                 }
-                doc.save("unlocked.pdf");
-            } catch (e) {
-                alert("Could not unlock this PDF in browser: " + e.message);
+
+                if (!doc) {
+                    throw new Error("No pages were found in this PDF.");
+                }
+
+                doc.save(getUnlockPdfBaseName(file.name) + "_unlocked.pdf");
+                setUnlockPdfStatus("Unlock complete. Unlocked PDF downloaded.");
+            } catch (error) {
+                let message = error && error.message ? error.message : "Could not unlock this PDF.";
+                if (message.toLowerCase().indexOf("password") !== -1) {
+                    message = "This PDF is password protected. Enter the correct password and try again.";
+                }
+                setUnlockPdfStatus(message, true);
             }
         });
     </script>';
