@@ -7361,27 +7361,204 @@ function getRemovePagesHTML() {
 function getExtractPagesHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="extractPagesInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <input type="text" id="extractPagesList" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Pages to extract, e.g. 1,3,5">
-        <button id="extractPagesBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Extract Pages</button>
+        <div style="display:none;">
+            <h1>Extract Pages from PDF Free - Extract Pages from PDF Online</h1>
+            <p>Use this tool to extract pages from PDF online free, learn how to extract pages from PDF documents, and download only the pages you need.</p>
+            <p>Extract pages from PDF free on Mac, Windows, Linux, and mobile devices with a simple visual page selector.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Extract Pages from PDF</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, click the pages you want to keep, and download a new PDF containing only those selected pages.</p>
+            </div>
+            <input type="file" id="extractPagesInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="extractPagesStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="extractPagesToolbar" class="hidden flex flex-wrap gap-3">
+                <button id="extractPagesClearBtn" type="button" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Clear Selection</button>
+                <button id="extractPagesBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Extract Selected Pages</button>
+            </div>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to extract pages from PDF:
+            Upload your file, click the pages you want to extract, and download a smaller PDF with only the selected pages.
+        </div>
+        <div id="extractPagesEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF pages will appear here after upload so you can extract pages from PDF file visually.</div>
+        <div id="extractPagesGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("extractPagesBtn").addEventListener("click", async function() {
-            const file = document.getElementById("extractPagesInput").files[0];
-            if (!file) return alert("Please select a PDF file");
-            const indexes = (document.getElementById("extractPagesList").value.match(/\d+/g) || []).map(n => parseInt(n, 10) - 1).filter(n => n >= 0);
-            if (!indexes.length) return alert("Enter pages to extract.");
-            const src = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-            const out = await PDFLib.PDFDocument.create();
-            const valid = indexes.filter(i => i < src.getPageCount());
-            const pages = await out.copyPages(src, valid);
-            pages.forEach(page => out.addPage(page));
-            const bytes = await out.save();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-            a.download = "extracted-pages.pdf";
-            a.click();
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const extractPagesInput = document.getElementById("extractPagesInput");
+        const extractPagesStatus = document.getElementById("extractPagesStatus");
+        const extractPagesToolbar = document.getElementById("extractPagesToolbar");
+        const extractPagesGrid = document.getElementById("extractPagesGrid");
+        const extractPagesEmpty = document.getElementById("extractPagesEmpty");
+        const extractPagesBtn = document.getElementById("extractPagesBtn");
+        const extractPagesClearBtn = document.getElementById("extractPagesClearBtn");
+
+        let extractPagesPdfBytes = null;
+        let extractPagesPdfDoc = null;
+        let extractPagesViewDoc = null;
+        let extractPagesItems = [];
+
+        function setExtractPagesStatus(message, isError) {
+            if (!message) {
+                extractPagesStatus.textContent = "";
+                extractPagesStatus.classList.add("hidden");
+                extractPagesStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            extractPagesStatus.textContent = message;
+            extractPagesStatus.classList.remove("hidden");
+            extractPagesStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function updateExtractPagesVisibility() {
+            const hasItems = extractPagesItems.length > 0;
+            extractPagesGrid.classList.toggle("hidden", !hasItems);
+            extractPagesToolbar.classList.toggle("hidden", !hasItems);
+            extractPagesEmpty.classList.toggle("hidden", hasItems);
+            if (!hasItems) {
+                extractPagesEmpty.textContent = "PDF pages will appear here after upload.";
+            }
+        }
+
+        function selectedExtractCount() {
+            return extractPagesItems.filter(function(item) { return item.selected; }).length;
+        }
+
+        async function renderExtractThumbnail(pageIndex, canvas) {
+            if (!extractPagesViewDoc) return;
+            const page = await extractPagesViewDoc.getPage(pageIndex + 1);
+            const viewport = page.getViewport({ scale: 0.32 });
+            const context = canvas.getContext("2d");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+        }
+
+        function createExtractPageCard(item, index) {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden text-left transition";
+
+            const preview = document.createElement("div");
+            preview.className = "aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden";
+
+            const canvas = document.createElement("canvas");
+            canvas.className = "w-full h-full object-contain bg-white";
+            preview.appendChild(canvas);
+            renderExtractThumbnail(item.sourceIndex, canvas);
+
+            const mark = document.createElement("div");
+            mark.className = "absolute top-3 right-3 min-w-[38px] h-9 px-2 rounded-full flex items-center justify-center font-black text-xs transition";
+            mark.textContent = "Keep";
+
+            const body = document.createElement("div");
+            body.className = "p-4";
+            body.innerHTML = "<div class=\"text-xs uppercase tracking-[0.18em] text-gray-400\">Page " + (index + 1) + "</div><div class=\"mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100\">Original PDF page " + (item.sourceIndex + 1) + "</div>";
+
+            card.appendChild(preview);
+            card.appendChild(mark);
+            card.appendChild(body);
+
+            function syncSelectedState() {
+                card.classList.toggle("ring-2", item.selected);
+                card.classList.toggle("ring-emerald-500", item.selected);
+                card.classList.toggle("border-emerald-300", item.selected);
+                mark.className = item.selected
+                    ? "absolute top-3 right-3 min-w-[38px] h-9 px-2 rounded-full flex items-center justify-center font-black text-xs transition bg-emerald-600 text-white shadow-lg"
+                    : "absolute top-3 right-3 min-w-[38px] h-9 px-2 rounded-full flex items-center justify-center font-black text-xs transition bg-white/90 text-slate-400 border border-slate-200";
+                mark.textContent = item.selected ? "Keep" : "Select";
+            }
+
+            card.addEventListener("click", function() {
+                item.selected = !item.selected;
+                syncSelectedState();
+                const count = selectedExtractCount();
+                setExtractPagesStatus(count ? count + " page(s) selected for extraction." : "No pages selected.");
+            });
+
+            syncSelectedState();
+            return card;
+        }
+
+        function renderExtractPagesGrid() {
+            extractPagesGrid.innerHTML = "";
+            updateExtractPagesVisibility();
+            extractPagesItems.forEach(function(item, index) {
+                extractPagesGrid.appendChild(createExtractPageCard(item, index));
+            });
+        }
+
+        extractPagesInput.addEventListener("change", async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            try {
+                setExtractPagesStatus("Loading PDF pages...");
+                extractPagesPdfBytes = await file.arrayBuffer();
+                extractPagesPdfDoc = await PDFLib.PDFDocument.load(extractPagesPdfBytes);
+                extractPagesViewDoc = await pdfjsLib.getDocument({ data: extractPagesPdfBytes }).promise;
+                extractPagesItems = [];
+
+                for (let i = 0; i < extractPagesPdfDoc.getPageCount(); i++) {
+                    extractPagesItems.push({
+                        sourceIndex: i,
+                        selected: false
+                    });
+                }
+
+                renderExtractPagesGrid();
+                setExtractPagesStatus("Click pages to choose which ones to extract.");
+            } catch (error) {
+                extractPagesItems = [];
+                renderExtractPagesGrid();
+                setExtractPagesStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        extractPagesClearBtn.addEventListener("click", function() {
+            extractPagesItems.forEach(function(item) {
+                item.selected = false;
+            });
+            renderExtractPagesGrid();
+            setExtractPagesStatus("Selection cleared.");
+        });
+
+        extractPagesBtn.addEventListener("click", async function() {
+            const selectedIndexes = extractPagesItems
+                .map(function(item) { return item.selected ? item.sourceIndex : -1; })
+                .filter(function(index) { return index >= 0; });
+
+            if (!extractPagesPdfDoc || !extractPagesItems.length) return alert("Please select a PDF file");
+            if (!selectedIndexes.length) return alert("Please select at least one page to extract.");
+
+            try {
+                setExtractPagesStatus("Extracting selected pages...");
+                const src = await PDFLib.PDFDocument.load(extractPagesPdfBytes);
+                const out = await PDFLib.PDFDocument.create();
+                const pages = await out.copyPages(src, selectedIndexes);
+                pages.forEach(function(page) {
+                    out.addPage(page);
+                });
+
+                const bytes = await out.save();
+                const file = extractPagesInput.files[0];
+                const baseName = file && file.name ? file.name.replace(/\.pdf$/i, "") : "extracted-pages";
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+                a.download = baseName + "-extracted-pages.pdf";
+                a.click();
+                setExtractPagesStatus(selectedIndexes.length + " page(s) extracted. Your new PDF has been downloaded.");
+            } catch (error) {
+                setExtractPagesStatus("Could not extract pages: " + error.message, true);
+            }
         });
     </script>';
 }
