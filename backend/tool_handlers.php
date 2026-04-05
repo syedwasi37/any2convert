@@ -6566,7 +6566,9 @@ function getHeicConverterHTML() {
             }
 
             try {
-                setHeicStatus("Converting HEIC file...");
+                heicConvertBtn.disabled = true;
+                heicConvertBtn.textContent = "Converting...";
+                setHeicStatus("Converting HEIC file. Please wait...");
                 const targetFormat = heicOutputFormat.value;
                 const imageType = targetFormat === "png" ? "image/png" : "image/jpeg";
                 const converted = await heic2any({
@@ -6608,6 +6610,9 @@ function getHeicConverterHTML() {
                 setHeicStatus("Conversion complete. File downloaded.");
             } catch (error) {
                 setHeicStatus("Could not convert this HEIC file: " + error.message, true);
+            } finally {
+                heicConvertBtn.disabled = false;
+                heicConvertBtn.textContent = "Convert HEIC to JPG PNG PDF";
             }
         });
     </script>';
