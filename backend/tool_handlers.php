@@ -7155,24 +7155,196 @@ function getSplitPdfHTML() {
 function getRemovePagesHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="removePagesInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <input type="text" id="removePagesList" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Pages to remove, e.g. 2,4,7">
-        <button id="removePagesBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Remove Pages</button>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Remove PDF Pages</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, preview every page, click pages to mark them with a cross for removal, and then download the cleaned PDF.</p>
+            </div>
+            <input type="file" id="removePagesInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="removePagesStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="removePagesToolbar" class="hidden flex flex-wrap gap-3">
+                <button id="removePagesClearBtn" type="button" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Clear Selection</button>
+                <button id="removePagesBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Remove Selected Pages</button>
+            </div>
+        </div>
+        <div id="removePagesEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF pages will appear here after upload.</div>
+        <div id="removePagesGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("removePagesBtn").addEventListener("click", async function() {
-            const file = document.getElementById("removePagesInput").files[0];
-            if (!file) return alert("Please select a PDF file");
-            const pages = (document.getElementById("removePagesList").value.match(/\d+/g) || []).map(n => parseInt(n, 10) - 1).filter(n => n >= 0).sort((a,b)=>b-a);
-            if (!pages.length) return alert("Enter at least one page number.");
-            const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-            pages.forEach(index => { if (index < pdf.getPageCount()) pdf.removePage(index); });
-            const bytes = await pdf.save();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-            a.download = "pages-removed.pdf";
-            a.click();
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const removePagesInput = document.getElementById("removePagesInput");
+        const removePagesStatus = document.getElementById("removePagesStatus");
+        const removePagesToolbar = document.getElementById("removePagesToolbar");
+        const removePagesGrid = document.getElementById("removePagesGrid");
+        const removePagesEmpty = document.getElementById("removePagesEmpty");
+        const removePagesBtn = document.getElementById("removePagesBtn");
+        const removePagesClearBtn = document.getElementById("removePagesClearBtn");
+
+        let removePagesPdfBytes = null;
+        let removePagesPdfDoc = null;
+        let removePagesViewDoc = null;
+        let removePagesItems = [];
+
+        function setRemovePagesStatus(message, isError) {
+            if (!message) {
+                removePagesStatus.textContent = "";
+                removePagesStatus.classList.add("hidden");
+                removePagesStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            removePagesStatus.textContent = message;
+            removePagesStatus.classList.remove("hidden");
+            removePagesStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function updateRemovePagesVisibility() {
+            const hasItems = removePagesItems.length > 0;
+            removePagesGrid.classList.toggle("hidden", !hasItems);
+            removePagesToolbar.classList.toggle("hidden", !hasItems);
+            removePagesEmpty.classList.toggle("hidden", hasItems);
+            if (!hasItems) {
+                removePagesEmpty.textContent = "PDF pages will appear here after upload.";
+            }
+        }
+
+        function selectedRemoveCount() {
+            return removePagesItems.filter(function(item) { return item.marked; }).length;
+        }
+
+        async function renderRemoveThumbnail(pageIndex, canvas) {
+            if (!removePagesViewDoc) return;
+            const page = await removePagesViewDoc.getPage(pageIndex + 1);
+            const viewport = page.getViewport({ scale: 0.32 });
+            const context = canvas.getContext("2d");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+        }
+
+        function createRemovePageCard(item, index) {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden text-left transition";
+
+            const preview = document.createElement("div");
+            preview.className = "aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden";
+
+            const canvas = document.createElement("canvas");
+            canvas.className = "w-full h-full object-contain bg-white";
+            preview.appendChild(canvas);
+            renderRemoveThumbnail(item.sourceIndex, canvas);
+
+            const mark = document.createElement("div");
+            mark.className = "absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-lg transition";
+            mark.textContent = "×";
+
+            const body = document.createElement("div");
+            body.className = "p-4";
+            body.innerHTML = "<div class=\"text-xs uppercase tracking-[0.18em] text-gray-400\">Page " + (index + 1) + "</div><div class=\"mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100\">Original PDF page " + (item.sourceIndex + 1) + "</div>";
+
+            card.appendChild(preview);
+            card.appendChild(mark);
+            card.appendChild(body);
+
+            function syncMarkedState() {
+                card.classList.toggle("ring-2", item.marked);
+                card.classList.toggle("ring-rose-500", item.marked);
+                card.classList.toggle("border-rose-300", item.marked);
+                mark.className = item.marked
+                    ? "absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-lg transition bg-rose-600 text-white shadow-lg"
+                    : "absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-lg transition bg-white/90 text-slate-400 border border-slate-200";
+            }
+
+            card.addEventListener("click", function() {
+                item.marked = !item.marked;
+                syncMarkedState();
+                const count = selectedRemoveCount();
+                setRemovePagesStatus(count ? count + " page(s) selected for removal." : "No pages selected for removal.");
+            });
+
+            syncMarkedState();
+            return card;
+        }
+
+        function renderRemovePagesGrid() {
+            removePagesGrid.innerHTML = "";
+            updateRemovePagesVisibility();
+            removePagesItems.forEach(function(item, index) {
+                removePagesGrid.appendChild(createRemovePageCard(item, index));
+            });
+        }
+
+        removePagesInput.addEventListener("change", async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            try {
+                setRemovePagesStatus("Loading PDF pages...");
+                removePagesPdfBytes = await file.arrayBuffer();
+                removePagesPdfDoc = await PDFLib.PDFDocument.load(removePagesPdfBytes);
+                removePagesViewDoc = await pdfjsLib.getDocument({ data: removePagesPdfBytes }).promise;
+                removePagesItems = [];
+
+                for (let i = 0; i < removePagesPdfDoc.getPageCount(); i++) {
+                    removePagesItems.push({
+                        sourceIndex: i,
+                        marked: false
+                    });
+                }
+
+                renderRemovePagesGrid();
+                setRemovePagesStatus("Click any page to mark it with a cross for removal.");
+            } catch (error) {
+                removePagesItems = [];
+                renderRemovePagesGrid();
+                setRemovePagesStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        removePagesClearBtn.addEventListener("click", function() {
+            removePagesItems.forEach(function(item) {
+                item.marked = false;
+            });
+            renderRemovePagesGrid();
+            setRemovePagesStatus("Selection cleared.");
+        });
+
+        removePagesBtn.addEventListener("click", async function() {
+            const selectedIndexes = removePagesItems
+                .map(function(item, index) { return item.marked ? index : -1; })
+                .filter(function(index) { return index >= 0; })
+                .sort(function(a, b) { return b - a; });
+
+            if (!removePagesPdfDoc || !removePagesItems.length) return alert("Please select a PDF file");
+            if (!selectedIndexes.length) return alert("Please select at least one page to remove.");
+            if (selectedIndexes.length === removePagesItems.length) return alert("At least one page must remain in the PDF.");
+
+            try {
+                setRemovePagesStatus("Removing selected pages...");
+                const pdf = await PDFLib.PDFDocument.load(removePagesPdfBytes);
+                selectedIndexes.forEach(function(index) {
+                    if (index < pdf.getPageCount()) {
+                        pdf.removePage(index);
+                    }
+                });
+
+                const bytes = await pdf.save();
+                const file = removePagesInput.files[0];
+                const baseName = file && file.name ? file.name.replace(/\.pdf$/i, "") : "pages-removed";
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+                a.download = baseName + "-pages-removed.pdf";
+                a.click();
+                setRemovePagesStatus(selectedIndexes.length + " page(s) removed. Your new PDF has been downloaded.");
+            } catch (error) {
+                setRemovePagesStatus("Could not remove pages: " + error.message, true);
+            }
         });
     </script>';
 }
