@@ -5079,6 +5079,16 @@ function getSqlToJsonHTML() {
 function getQrGeneratorHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Free QR Code Generator Online</h1>
+            <p>Use this QR code generator free tool to create static QR codes for URLs, text, WiFi, business cards, and more.</p>
+            <p>Best free QR code generator, online QR code generator, free QR code generator no sign up, and QR code generator free online workflow in your browser.</p>
+            <p>If you are comparing Adobe QR code generator, Canva QR code generator, Google QR code generator, or the QR code generator tools online, this gives you a privacy-first free option.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Free QR Code Generator</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Create a QR code instantly with this free QR code generator online. No sign up, no expiry, and instant PNG download.</p>
+        </div>
         <textarea id="qrText" class="w-full h-32 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text or URL to generate QR code"></textarea>
         <div class="flex gap-3">
             <select id="qrSize" class="flex-1 p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
@@ -5095,6 +5105,7 @@ function getQrGeneratorHTML() {
             </select>
         </div>
         <button id="generateQrBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Generate QR Code</button>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 p-4 text-sm text-gray-600 dark:text-gray-300">This QR code generator free tool works well for website links, menus, contact cards, plain text, and quick sharing. It is a free QR code generator online with no sign up requirement for basic static codes.</div>
         <div id="qrResult" class="flex flex-col items-center mt-6 hidden">
             <div id="qrcode"></div>
             <button id="downloadQrBtn" class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg text-sm hidden">Download QR Code</button>

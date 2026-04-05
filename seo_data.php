@@ -127,14 +127,16 @@ $seo_tools = [
     ],
     'qr-code-generator' => [
         'id' => 'qr_generator',
-        'h1' => 'Free QR Code Generator',
-        'title' => 'QR Code Generator - Create QR Codes Instantly | Any2Convert',
-        'meta_desc' => 'Generate high-quality QR codes for URLs, text, WiFi passwords, and vCards. Download as PNG instantly.',
+        'h1' => 'Free QR Code Generator Online',
+        'title' => 'Free QR Code Generator Online - No Sign Up | Any2Convert',
+        'meta_desc' => 'Create static QR codes instantly with this free QR code generator online. No sign up required for URL, text, WiFi, and contact QR codes.',
         'icon' => '📱',
         'faqs' => [
-            ['q' => 'Do these QR codes expire?', 'a' => 'No! We generate static QR codes that last forever and do not depend on any tracking servers.']
+            ['q' => 'Do these QR codes expire?', 'a' => 'No. We generate static QR codes that do not expire and do not depend on tracking redirects.'],
+            ['q' => 'Is this a free QR code generator with no sign up?', 'a' => 'Yes. This is a free QR code generator online for static QR codes and you do not need to sign up to use the basic generator.'],
+            ['q' => 'Is this similar to Adobe QR code generator, Canva QR code generator, or Google QR code generator tools?', 'a' => 'It serves the same basic purpose of creating QR codes, but this tool focuses on simple static code generation with privacy-first browser use.']
         ],
-        'content' => 'Create instant QR codes for your restaurant menu, business cards, Wi-Fi networks, or website links. Unlike many other services, our QR codes are entirely static, meaning they will never expire and we do not track the scans or inject ads.'
+        'content' => 'Use this QR code generator to create static QR codes for links, text, menus, WiFi details, business cards, and quick sharing. It is designed for searches like QR code generator, free QR code generator, QR code generator free, QR code generator online, free QR code generator no sign up, online QR code generator, best QR code generator, QR code generator free online, and best free QR code generator. If users compare tools like Adobe QR code generator, Canva QR code generator, Google QR code generator, or QR code generator pro products, this page offers a simple free browser-based option.'
     ],
     'password-generator' => [
         'id' => 'password_gen',
