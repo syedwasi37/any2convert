@@ -4448,7 +4448,7 @@ function getExcelToPdfHTML() {
 }
 
 function getPptToPdfHTML() {
-    return '
+    return `
     <div class="space-y-6">
         <div style="display:none;">
             <h1>Power Point to PDF Converter Online</h1>
@@ -4456,7 +4456,7 @@ function getPptToPdfHTML() {
             <p>Common searches include power point to pdf, convert power point to pdf, power point to pdf conversion, turn power point to pdf, and export power point to pdf.</p>
             <p>If you need microsoft power point to pdf conversion, how to convert power point to pdf, or how to save power point to pdf, this tool helps with PPT and PPTX files.</p>
         </div>
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pptToPdfInput\').click()">
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById('pptToPdfInput').click()">
             <input type="file" id="pptToPdfInput" class="hidden" accept=".ppt,.pptx">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
             <p class="font-medium">Select PowerPoint file to convert to PDF</p>
@@ -4474,80 +4474,120 @@ function getPptToPdfHTML() {
         <button id="pptToPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF</button>
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>
     <script>
-        (function() {
         const pptInput = document.getElementById("pptToPdfInput");
         const pptPreview = document.getElementById("pptPreview");
-        
-        if (!pptInput || !pptPreview) {
-            return;
-        }
 
         pptInput.addEventListener("change", function() {
-            if(this.files[0]) {
+            if (this.files[0]) {
                 pptPreview.innerHTML = "Selected: " + this.files[0].name;
                 pptPreview.classList.remove("hidden");
             }
         });
-        
+
         document.getElementById("pptToPdfBtn").addEventListener("click", async function() {
             const input = document.getElementById("pptToPdfInput");
             if (!input.files.length) return alert("Please select a PowerPoint file");
             const progress = document.getElementById("pptProgress");
             progress.classList.remove("hidden");
             progress.innerHTML = "Converting PowerPoint to PDF...";
-            
+
             try {
                 const file = input.files[0];
                 const arrayBuffer = await file.arrayBuffer();
                 const layout = document.getElementById("slideLayout").value;
-                
                 let slides = [];
-                
-                if (/\.pptx$/i.test(file.name)) {
+
+                if (/\\.pptx$/i.test(file.name)) {
                     try {
                         const JSZip = window.JSZip;
                         const zip = await JSZip.loadAsync(arrayBuffer);
+
                         const slideFiles = Object.keys(zip.files)
-                            .filter(name => /ppt\/slides\/slide\d+\.xml$/i.test(name))
+                            .filter(name => /^ppt\\/slides\\/slide\\d+\\.xml$/i.test(name))
                             .sort(function(a, b) {
-                                const aNum = parseInt((a.match(/slide(\d+)\.xml/i) || [0, 0])[1], 10);
-                                const bNum = parseInt((b.match(/slide(\d+)\.xml/i) || [0, 0])[1], 10);
+                                const aNum = parseInt((a.match(/slide(\\d+)\\.xml/i) || [0, 0])[1], 10);
+                                const bNum = parseInt((b.match(/slide(\\d+)\\.xml/i) || [0, 0])[1], 10);
                                 return aNum - bNum;
                             });
 
-                        function decodeXmlEntities(value) {
-                            const textarea = document.createElement("textarea");
-                            textarea.innerHTML = value;
-                            return textarea.value;
+                        // Decode XML character entities using plain string replacement (no DOM tricks)
+                        function decodeXmlEntities(str) {
+                            return str
+                                .replace(/&amp;/g, "&")
+                                .replace(/&lt;/g, "<")
+                                .replace(/&gt;/g, ">")
+                                .replace(/&quot;/g, '"')
+                                .replace(/&apos;/g, "'")
+                                .replace(/&#(\\d+);/g, function(_, n) {
+                                    return String.fromCharCode(parseInt(n, 10));
+                                })
+                                .replace(/&#x([0-9a-fA-F]+);/g, function(_, h) {
+                                    return String.fromCharCode(parseInt(h, 16));
+                                });
                         }
 
-                        function xmlTextToParagraphs(xmlString) {
-                            const lines = [];
-                            const paragraphMatches = xmlString.match(/<a:p[\s\S]*?<\/a:p>/gi) || [];
+                        // Brute-force regex fallback: grabs every <t> or <a:t> text content
+                        function fallbackExtractText(xmlString) {
+                            const runMatches = Array.from(
+                                xmlString.matchAll(/<(?:[a-zA-Z0-9_]+:)?t(?:\\s[^>]*)?>([\\s\\S]*?)<\\/(?:[a-zA-Z0-9_]+:)?t>/gi)
+                            );
+                            const pieces = runMatches
+                                .map(function(m) { return decodeXmlEntities((m[1] || "").trim()); })
+                                .filter(Boolean);
+                            return pieces.length ? [pieces.join(" ")] : [];
+                        }
 
-                            paragraphMatches.forEach(function(paragraphXml) {
-                                const runMatches = Array.from(paragraphXml.matchAll(/<a:t[^>]*>([\s\S]*?)<\/a:t>/gi));
-                                const pieces = runMatches
-                                    .map(function(match) { return decodeXmlEntities((match[1] || "").trim()); })
-                                    .filter(Boolean);
-                                if (pieces.length) {
-                                    lines.push(pieces.join(" "));
-                                }
-                            });
+                        // PRIMARY FIX: Use DOMParser with proper namespace-aware element lookup
+                        // instead of fragile regex on raw XML strings.
+                        function extractTextFromSlideXml(xmlString) {
+                            try {
+                                const parser = new DOMParser();
+                                const xmlDoc = parser.parseFromString(xmlString, "application/xml");
 
-                            if (!lines.length) {
-                                const fallbackRuns = Array.from(xmlString.matchAll(/<(?:a:)?t[^>]*>([\s\S]*?)<\/(?:a:)?t>/gi))
-                                    .map(function(match) { return decodeXmlEntities((match[1] || "").trim()); })
-                                    .filter(Boolean);
-                                if (fallbackRuns.length) {
-                                    lines.push(fallbackRuns.join(" "));
+                                // Bail out if XML failed to parse
+                                if (xmlDoc.querySelector("parsererror")) {
+                                    return fallbackExtractText(xmlString);
                                 }
+
+                                // DrawingML namespace URI — the correct way to find <a:p> and <a:t>
+                                const NS = "http://schemas.openxmlformats.org/drawingml/2006/main";
+
+                                let paragraphs = Array.from(xmlDoc.getElementsByTagNameNS(NS, "p"));
+                                // If namespace lookup returned nothing, try without namespace
+                                if (paragraphs.length === 0) {
+                                    paragraphs = Array.from(xmlDoc.getElementsByTagName("a:p"));
+                                }
+                                if (paragraphs.length === 0) {
+                                    paragraphs = Array.from(xmlDoc.querySelectorAll("p"));
+                                }
+
+                                const lines = [];
+                                paragraphs.forEach(function(para) {
+                                    let textRuns = Array.from(para.getElementsByTagNameNS(NS, "t"));
+                                    if (textRuns.length === 0) {
+                                        textRuns = Array.from(para.getElementsByTagName("a:t"));
+                                    }
+                                    if (textRuns.length === 0) {
+                                        textRuns = Array.from(para.querySelectorAll("t"));
+                                    }
+
+                                    const text = textRuns
+                                        .map(function(t) { return (t.textContent || "").trim(); })
+                                        .filter(Boolean)
+                                        .join(" ");
+
+                                    if (text) lines.push(text);
+                                });
+
+                                // If DOMParser approach found nothing, use brute-force fallback
+                                return lines.length ? lines : fallbackExtractText(xmlString);
+
+                            } catch (e) {
+                                return fallbackExtractText(xmlString);
                             }
-
-                            return lines;
                         }
 
                         function normalizeZipPath(basePath, targetPath) {
@@ -4556,79 +4596,61 @@ function getPptToPdfHTML() {
                             const targetParts = targetPath.split("/");
                             targetParts.forEach(function(part) {
                                 if (!part || part === ".") return;
-                                if (part === "..") {
-                                    baseParts.pop();
-                                } else {
-                                    baseParts.push(part);
-                                }
+                                if (part === "..") baseParts.pop();
+                                else baseParts.push(part);
                             });
                             return baseParts.join("/");
                         }
 
                         async function extractSlideImages(slideFile) {
-                            const relPath = slideFile.replace(/ppt\/slides\/(slide\d+)\.xml$/i, "ppt/slides/_rels/$1.xml.rels");
+                            const relPath = slideFile.replace(
+                                /ppt\\/slides\\/(slide\\d+)\\.xml$/i,
+                                "ppt/slides/_rels/$1.xml.rels"
+                            );
                             const relEntry = zip.files[relPath];
                             if (!relEntry) return [];
 
                             const relXmlText = await relEntry.async("string");
-                            const relationships = Array.from(relXmlText.matchAll(/<Relationship\b[^>]*Target="([^"]+)"[^>]*Type="([^"]+)"[^>]*\/?>/gi))
-                                .map(function(match) {
-                                    return {
-                                        target: match[1] || "",
-                                        type: match[2] || ""
-                                    };
-                                });
-                            const images = [];
+                            const relationships = Array.from(
+                                relXmlText.matchAll(/<Relationship\\b[^>]*Target="([^"]+)"[^>]*Type="([^"]+)"[^>]*\\/?>/ gi)
+                            ).map(function(match) {
+                                return { target: match[1] || "", type: match[2] || "" };
+                            });
 
+                            const images = [];
                             for (const rel of relationships) {
                                 const target = rel.target || "";
                                 const type = rel.type || "";
-                                if (!/image/i.test(type) && !/\.(png|jpe?g|gif|bmp|svg|webp)$/i.test(target)) {
-                                    continue;
-                                }
-
+                                if (!/image/i.test(type) && !/\\.(png|jpe?g|gif|bmp|svg|webp)$/i.test(target)) continue;
                                 const normalized = normalizeZipPath(relPath, target);
                                 const mediaFile = zip.files[normalized];
                                 if (!mediaFile) continue;
-
                                 const ext = (normalized.split(".").pop() || "png").toLowerCase();
                                 const mimeMap = {
-                                    png: "image/png",
-                                    jpg: "image/jpeg",
-                                    jpeg: "image/jpeg",
-                                    gif: "image/gif",
-                                    bmp: "image/bmp",
-                                    webp: "image/webp",
-                                    svg: "image/svg+xml"
+                                    png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
+                                    gif: "image/gif", bmp: "image/bmp", webp: "image/webp", svg: "image/svg+xml"
                                 };
                                 const mime = mimeMap[ext] || "application/octet-stream";
                                 const base64 = await mediaFile.async("base64");
                                 images.push("data:" + mime + ";base64," + base64);
                             }
-
                             return images;
                         }
-                        
+
                         for (const slideFile of slideFiles) {
                             progress.innerHTML = "Reading " + slideFile.split("/").pop() + "...";
                             const content = await zip.files[slideFile].async("string");
-                            const textLines = xmlTextToParagraphs(content);
+                            const textLines = extractTextFromSlideXml(content);
                             const images = await extractSlideImages(slideFile);
-
-                            slides.push({
-                                number: slides.length + 1,
-                                lines: textLines,
-                                images: images
-                            });
+                            slides.push({ number: slides.length + 1, lines: textLines, images: images });
                         }
 
-                        if (!slides.length) {
-                            throw new Error("No slides were found in this PPTX file.");
-                        }
-                    } catch(e) {
+                        if (!slides.length) throw new Error("No slides were found in this PPTX file.");
+
+                    } catch (e) {
                         slides.push({
                             number: 1,
-                            lines: ["Unable to extract slide content. The presentation may be protected, highly complex, or corrupted."],
+                            lines: ["Unable to extract slide content. The presentation may be protected, highly complex, or corrupted. Error: " + e.message],
                             images: []
                         });
                     }
@@ -4639,54 +4661,36 @@ function getPptToPdfHTML() {
                         images: []
                     });
                 }
-                
+
                 const orientation = layout === "landscape" ? "landscape" : "portrait";
                 const { jsPDF } = window.jspdf || {};
-                if (!jsPDF) {
-                    throw new Error("PDF library failed to load.");
-                }
+                if (!jsPDF) throw new Error("PDF library failed to load.");
 
-                const pdf = new jsPDF({
-                    orientation: orientation,
-                    unit: "pt",
-                    format: "a4",
-                    compress: true
-                });
-
-                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pdf = new jsPDF({ orientation: orientation, unit: "pt", format: "a4", compress: true });
+                const pageWidth  = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 const margin = 36;
-                const usableWidth = pageWidth - (margin * 2);
-                const usableHeight = pageHeight - (margin * 2);
+                const usableWidth  = pageWidth  - margin * 2;
+                const usableHeight = pageHeight - margin * 2;
 
                 async function getImageSize(src) {
-                    return await new Promise(function(resolve, reject) {
+                    return new Promise(function(resolve, reject) {
                         const img = new Image();
-                        img.onload = function() {
-                            resolve({
-                                width: img.naturalWidth || img.width || 1,
-                                height: img.naturalHeight || img.height || 1
-                            });
-                        };
-                        img.onerror = function() {
-                            reject(new Error("Could not read slide image."));
-                        };
+                        img.onload  = function() { resolve({ width: img.naturalWidth || 1, height: img.naturalHeight || 1 }); };
+                        img.onerror = function() { reject(new Error("Could not read slide image.")); };
                         img.src = src;
                     });
                 }
 
                 function imageFormatFromDataUrl(src) {
-                    if (/^data:image\/png/i.test(src)) return "PNG";
-                    if (/^data:image\/webp/i.test(src)) return "WEBP";
-                    if (/^data:image\/svg\+xml/i.test(src)) return "SVG";
+                    if (/^data:image\\/png/i.test(src))      return "PNG";
+                    if (/^data:image\\/webp/i.test(src))     return "WEBP";
+                    if (/^data:image\\/svg\\+xml/i.test(src)) return "SVG";
                     return "JPEG";
                 }
 
                 for (let i = 0; i < slides.length; i++) {
-                    if (i > 0) {
-                        pdf.addPage("a4", orientation);
-                    }
-
+                    if (i > 0) pdf.addPage("a4", orientation);
                     progress.innerHTML = "Building PDF page " + (i + 1) + " of " + slides.length + "...";
                     const slide = slides[i];
                     let cursorY = margin;
@@ -4694,6 +4698,7 @@ function getPptToPdfHTML() {
                     pdf.setFillColor(255, 255, 255);
                     pdf.rect(0, 0, pageWidth, pageHeight, "F");
 
+                    // Slide number header
                     pdf.setDrawColor(52, 152, 219);
                     pdf.setLineWidth(4);
                     pdf.line(margin, cursorY, margin, cursorY + 28);
@@ -4703,58 +4708,47 @@ function getPptToPdfHTML() {
                     pdf.text("Slide " + slide.number, margin + 12, cursorY + 20);
                     cursorY += 42;
 
-                    const textLines = (slide.lines || []).length ? slide.lines : ["No readable text was found on this slide."];
+                    // Slide text content
+                    const textLines = slide.lines && slide.lines.length
+                        ? slide.lines
+                        : ["No readable text was found on this slide."];
                     pdf.setFont("helvetica", "normal");
                     pdf.setTextColor(51, 65, 85);
                     pdf.setFontSize(12);
 
                     textLines.forEach(function(line) {
                         const wrapped = pdf.splitTextToSize(String(line || ""), usableWidth);
-                        if (cursorY + (wrapped.length * 16) > pageHeight - margin) {
-                            return;
-                        }
+                        if (cursorY + wrapped.length * 16 > pageHeight - margin) return;
                         pdf.text(wrapped, margin, cursorY);
-                        cursorY += (wrapped.length * 16) + 6;
+                        cursorY += wrapped.length * 16 + 6;
                     });
 
+                    // Slide images
                     for (const src of (slide.images || [])) {
                         try {
                             const size = await getImageSize(src);
-                            const maxWidth = usableWidth;
                             const maxHeight = Math.max(80, pageHeight - margin - cursorY);
-                            const scale = Math.min(maxWidth / size.width, maxHeight / size.height, 1);
-                            const renderWidth = Math.max(40, size.width * scale);
+                            const scale = Math.min(usableWidth / size.width, maxHeight / size.height, 1);
+                            const renderWidth  = Math.max(40, size.width  * scale);
                             const renderHeight = Math.max(40, size.height * scale);
-
-                            if (cursorY + renderHeight > pageHeight - margin) {
-                                break;
-                            }
-
-                            const x = margin + ((usableWidth - renderWidth) / 2);
+                            if (cursorY + renderHeight > pageHeight - margin) break;
+                            const x = margin + (usableWidth - renderWidth) / 2;
                             pdf.addImage(src, imageFormatFromDataUrl(src), x, cursorY, renderWidth, renderHeight);
                             cursorY += renderHeight + 18;
-                        } catch (imageError) {
-                        }
+                        } catch (imageError) {}
                     }
                 }
 
-                pdf.save((file.name.replace(/\.(ppt|pptx)$/i, "") || "presentation") + ".pdf");
+                pdf.save((file.name.replace(/\\.(ppt|pptx)$/i, "") || "presentation") + ".pdf");
                 alert("Conversion complete! PDF downloaded.");
-            } catch(e) {
+
+            } catch (e) {
                 alert("Error converting PowerPoint file: " + e.message);
             }
             progress.classList.add("hidden");
         });
-        
-        function escapeHtml(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        })();
-    </script>';
+    <\/script>`;
 }
-
 
 function getJsonToCsvHTML() {
     return '
