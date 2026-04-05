@@ -7208,28 +7208,291 @@ function getExtractPagesHTML() {
 function getOrganizePdfHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="organizePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <input type="text" id="organizePdfOrder" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="New order, e.g. 3,1,2,4">
-        <button id="organizePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Organize PDF</button>
-        <p class="text-sm text-gray-500">Enter the page order you want in the final PDF.</p>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Organize PDF Pages</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF to preview all pages, drag and drop to reorder, delete pages, insert blank pages, and save the updated PDF.</p>
+            </div>
+            <input type="file" id="organizePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="organizePdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="organizePdfToolbar" class="hidden flex flex-wrap gap-3">
+                <button id="organizeAddBlankBtn" type="button" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Add Blank Page</button>
+                <button id="organizeResetBtn" type="button" class="px-4 py-3 rounded-xl bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition">Reset Order</button>
+                <button id="organizePdfBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Save Organized PDF</button>
+            </div>
+        </div>
+        <div id="organizePdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF page thumbnails will appear here after upload.</div>
+        <div id="organizePdfGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("organizePdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("organizePdfInput").files[0];
-            if (!file) return alert("Please select a PDF file");
-            const order = (document.getElementById("organizePdfOrder").value.match(/\d+/g) || []).map(n => parseInt(n, 10) - 1);
-            if (!order.length) return alert("Enter a new page order.");
-            const src = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-            const out = await PDFLib.PDFDocument.create();
-            const valid = order.filter(i => i >= 0 && i < src.getPageCount());
-            const pages = await out.copyPages(src, valid);
-            pages.forEach(page => out.addPage(page));
-            const bytes = await out.save();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-            a.download = "organized.pdf";
-            a.click();
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const organizeInput = document.getElementById("organizePdfInput");
+        const organizeGrid = document.getElementById("organizePdfGrid");
+        const organizeEmpty = document.getElementById("organizePdfEmpty");
+        const organizeStatus = document.getElementById("organizePdfStatus");
+        const organizeToolbar = document.getElementById("organizePdfToolbar");
+        const organizeSaveBtn = document.getElementById("organizePdfBtn");
+        const organizeResetBtn = document.getElementById("organizeResetBtn");
+        const organizeAddBlankBtn = document.getElementById("organizeAddBlankBtn");
+
+        let organizeSourceBytes = null;
+        let organizeSourcePdf = null;
+        let organizeViewPdf = null;
+        let organizePages = [];
+        let organizeOriginalPages = [];
+        let draggedPageId = null;
+        let organizeIdCounter = 0;
+
+        function nextOrganizeId() {
+            organizeIdCounter += 1;
+            return "page_" + organizeIdCounter;
+        }
+
+        function setOrganizeStatus(message, isError) {
+            if (!message) {
+                organizeStatus.textContent = "";
+                organizeStatus.classList.add("hidden");
+                organizeStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            organizeStatus.textContent = message;
+            organizeStatus.classList.remove("hidden");
+            organizeStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function clonePageState(page) {
+            return {
+                id: page.id,
+                type: page.type,
+                sourceIndex: page.sourceIndex,
+                width: page.width,
+                height: page.height
+            };
+        }
+
+        function updateOrganizerVisibility() {
+            const hasPages = organizePages.length > 0;
+            organizeGrid.classList.toggle("hidden", !hasPages);
+            organizeToolbar.classList.toggle("hidden", !hasPages);
+            organizeEmpty.classList.toggle("hidden", hasPages);
+            if (!hasPages) {
+                organizeEmpty.textContent = "PDF page thumbnails will appear here after upload.";
+            }
+        }
+
+        function createPageCard(page, index) {
+            const card = document.createElement("div");
+            card.className = "rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden";
+            card.draggable = true;
+            card.dataset.pageId = page.id;
+
+            const preview = document.createElement("div");
+            preview.className = "aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden";
+
+            if (page.type === "source") {
+                const canvas = document.createElement("canvas");
+                canvas.className = "w-full h-full object-contain bg-white";
+                preview.appendChild(canvas);
+                renderOrganizeThumbnail(page.sourceIndex, canvas);
+            } else {
+                preview.innerHTML = "<div class=\"text-center px-4\"><div class=\"text-4xl font-black text-slate-300 dark:text-slate-600\">+</div><div class=\"mt-2 text-sm font-semibold text-slate-500 dark:text-slate-300\">Blank Page</div></div>";
+            }
+
+            const body = document.createElement("div");
+            body.className = "p-4 space-y-3";
+
+            const top = document.createElement("div");
+            top.className = "flex items-center justify-between gap-3";
+            top.innerHTML = "<div><div class=\"text-xs uppercase tracking-[0.18em] text-gray-400\">Page " + (index + 1) + "</div><div class=\"text-sm font-semibold text-gray-900 dark:text-gray-100\">" + (page.type === "source" ? "Original PDF page " + (page.sourceIndex + 1) : "Inserted blank page") + "</div></div>";
+
+            const actions = document.createElement("div");
+            actions.className = "flex flex-wrap gap-2";
+
+            const insertBtn = document.createElement("button");
+            insertBtn.type = "button";
+            insertBtn.className = "px-3 py-2 rounded-lg bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 text-xs font-semibold";
+            insertBtn.textContent = "Insert Blank After";
+            insertBtn.addEventListener("click", function() {
+                insertBlankPage(index + 1, page.width, page.height);
+            });
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.type = "button";
+            deleteBtn.className = "px-3 py-2 rounded-lg bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200 text-xs font-semibold";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.addEventListener("click", function() {
+                deletePage(page.id);
+            });
+
+            actions.appendChild(insertBtn);
+            actions.appendChild(deleteBtn);
+
+            body.appendChild(top);
+            body.appendChild(actions);
+            card.appendChild(preview);
+            card.appendChild(body);
+
+            card.addEventListener("dragstart", function() {
+                draggedPageId = page.id;
+                card.classList.add("opacity-60");
+            });
+
+            card.addEventListener("dragend", function() {
+                draggedPageId = null;
+                card.classList.remove("opacity-60");
+            });
+
+            card.addEventListener("dragover", function(event) {
+                event.preventDefault();
+                card.classList.add("ring-2", "ring-blue-500");
+            });
+
+            card.addEventListener("dragleave", function() {
+                card.classList.remove("ring-2", "ring-blue-500");
+            });
+
+            card.addEventListener("drop", function(event) {
+                event.preventDefault();
+                card.classList.remove("ring-2", "ring-blue-500");
+                movePage(draggedPageId, page.id);
+            });
+
+            return card;
+        }
+
+        async function renderOrganizeThumbnail(sourceIndex, canvas) {
+            if (!organizeViewPdf) return;
+            const pdfPage = await organizeViewPdf.getPage(sourceIndex + 1);
+            const viewport = pdfPage.getViewport({ scale: 0.32 });
+            const context = canvas.getContext("2d");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await pdfPage.render({ canvasContext: context, viewport: viewport }).promise;
+        }
+
+        function renderOrganizeGrid() {
+            organizeGrid.innerHTML = "";
+            updateOrganizerVisibility();
+            organizePages.forEach(function(page, index) {
+                organizeGrid.appendChild(createPageCard(page, index));
+            });
+        }
+
+        function insertBlankPage(index, width, height) {
+            const reference = organizePages[Math.max(0, Math.min(index - 1, organizePages.length - 1))];
+            organizePages.splice(index, 0, {
+                id: nextOrganizeId(),
+                type: "blank",
+                sourceIndex: null,
+                width: width || (reference ? reference.width : 595),
+                height: height || (reference ? reference.height : 842)
+            });
+            renderOrganizeGrid();
+        }
+
+        function deletePage(pageId) {
+            organizePages = organizePages.filter(function(page) {
+                return page.id !== pageId;
+            });
+            renderOrganizeGrid();
+        }
+
+        function movePage(dragId, targetId) {
+            if (!dragId || !targetId || dragId === targetId) return;
+            const fromIndex = organizePages.findIndex(function(page) { return page.id === dragId; });
+            const toIndex = organizePages.findIndex(function(page) { return page.id === targetId; });
+            if (fromIndex === -1 || toIndex === -1) return;
+
+            const moved = organizePages.splice(fromIndex, 1)[0];
+            organizePages.splice(toIndex, 0, moved);
+            renderOrganizeGrid();
+        }
+
+        organizeInput.addEventListener("change", async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            try {
+                setOrganizeStatus("Loading PDF pages...");
+                organizeSourceBytes = await file.arrayBuffer();
+                organizeSourcePdf = await PDFLib.PDFDocument.load(organizeSourceBytes);
+                organizeViewPdf = await pdfjsLib.getDocument({ data: organizeSourceBytes }).promise;
+                organizePages = [];
+
+                for (let i = 0; i < organizeSourcePdf.getPageCount(); i++) {
+                    const page = organizeSourcePdf.getPage(i);
+                    organizePages.push({
+                        id: nextOrganizeId(),
+                        type: "source",
+                        sourceIndex: i,
+                        width: page.getWidth(),
+                        height: page.getHeight()
+                    });
+                }
+
+                organizeOriginalPages = organizePages.map(clonePageState);
+                renderOrganizeGrid();
+                setOrganizeStatus("Drag pages to reorder. You can also delete pages or insert blank pages.");
+            } catch (error) {
+                organizePages = [];
+                organizeOriginalPages = [];
+                renderOrganizeGrid();
+                setOrganizeStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        organizeAddBlankBtn.addEventListener("click", function() {
+            insertBlankPage(organizePages.length, organizePages[organizePages.length - 1] ? organizePages[organizePages.length - 1].width : 595, organizePages[organizePages.length - 1] ? organizePages[organizePages.length - 1].height : 842);
+        });
+
+        organizeResetBtn.addEventListener("click", function() {
+            if (!organizeOriginalPages.length) return;
+            organizePages = organizeOriginalPages.map(clonePageState);
+            renderOrganizeGrid();
+            setOrganizeStatus("Page order reset to the original PDF.");
+        });
+
+        organizeSaveBtn.addEventListener("click", async function() {
+            if (!organizeSourcePdf || !organizePages.length) return alert("Please upload a PDF first.");
+
+            try {
+                setOrganizeStatus("Saving organized PDF...");
+                const out = await PDFLib.PDFDocument.create();
+                const sourceIndexes = organizePages
+                    .filter(function(page) { return page.type === "source"; })
+                    .map(function(page) { return page.sourceIndex; });
+
+                const copiedPages = sourceIndexes.length
+                    ? await out.copyPages(organizeSourcePdf, sourceIndexes)
+                    : [];
+                let copiedPointer = 0;
+
+                organizePages.forEach(function(page) {
+                    if (page.type === "source") {
+                        out.addPage(copiedPages[copiedPointer]);
+                        copiedPointer += 1;
+                    } else {
+                        out.addPage([page.width || 595, page.height || 842]);
+                    }
+                });
+
+                const bytes = await out.save();
+                const file = organizeInput.files[0];
+                const baseName = file && file.name ? file.name.replace(/\.pdf$/i, "") : "organized";
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+                a.download = baseName + "-organized.pdf";
+                a.click();
+                setOrganizeStatus("Organized PDF ready. Your updated file has been downloaded.");
+            } catch (error) {
+                setOrganizeStatus("Could not save this PDF: " + error.message, true);
+            }
         });
     </script>';
 }
