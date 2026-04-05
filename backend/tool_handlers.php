@@ -7365,11 +7365,12 @@ function getExtractPagesHTML() {
             <h1>Extract Pages from PDF Free - Extract Pages from PDF Online</h1>
             <p>Use this tool to extract pages from PDF online free, learn how to extract pages from PDF documents, and download only the pages you need.</p>
             <p>Extract pages from PDF free on Mac, Windows, Linux, and mobile devices with a simple visual page selector.</p>
+            <p>Use it as a split PDF tool to split PDF pages, split PDF into individual pages, split PDF into multiple files, and manage split PDF files online free.</p>
         </div>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
             <div>
                 <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Extract Pages from PDF</div>
-                <p class="text-sm text-gray-500 mt-1">Upload a PDF, click the pages you want to keep, and download a new PDF containing only those selected pages.</p>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, click the pages you want to keep, and download a new PDF containing only those selected pages. This also works well if you want to split PDF pages or split PDF into pages.</p>
             </div>
             <input type="file" id="extractPagesInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
             <div id="extractPagesStatus" class="hidden text-sm text-gray-500 text-center"></div>
@@ -7380,9 +7381,9 @@ function getExtractPagesHTML() {
         </div>
         <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
             How to extract pages from PDF:
-            Upload your file, click the pages you want to extract, and download a smaller PDF with only the selected pages.
+            Upload your file, click the pages you want to extract, and download a smaller PDF with only the selected pages. You can also use this workflow to split PDF online free and create a split PDF file from selected pages.
         </div>
-        <div id="extractPagesEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF pages will appear here after upload so you can extract pages from PDF file visually.</div>
+        <div id="extractPagesEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF pages will appear here after upload so you can extract pages from PDF file visually or use it as a split PDF online tool.</div>
         <div id="extractPagesGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
