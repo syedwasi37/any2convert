@@ -4038,11 +4038,16 @@ function getCompressPdfHTML() {
 function getProtectPdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Password Protect PDF Online Free</h1>
+            <p>Use this password protect PDF tool to protect PDF files online free, add a password to a PDF file, and secure documents from opening, copying, or editing without permission.</p>
+            <p>Learn how to password protect PDF files, protect PDF from editing, and create a password protected PDF file in your browser on Mac, Windows, and mobile.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'protectPdfInput\').click()">
             <input type="file" id="protectPdfInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 1 1 8 0v3"></path></svg></div>
-            <p class="font-medium">Select PDF to protect</p>
-            <p class="text-sm text-gray-500 mt-2">Add password protection to your PDF</p>
+            <p class="font-medium">Password Protect PDF File</p>
+            <p class="text-sm text-gray-500 mt-2">Password protect PDF online free and download a secured copy</p>
         </div>
         <div id="protectPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <div class="space-y-4">
@@ -4051,7 +4056,11 @@ function getProtectPdfHTML() {
             <label class="block text-sm font-medium">Confirm Password:</label>
             <input type="password" id="confirmPassword" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Confirm password">
         </div>
-        <button id="protectPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Protect PDF</button>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to password protect PDF:
+            Upload the PDF file, enter and confirm a password, protect the PDF from easy access or editing, and download the secured document.
+        </div>
+        <button id="protectPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Password Protect PDF Free</button>
         <div id="protectProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -6986,17 +6995,26 @@ function getWordToPdfPureJS() {
 function getProtectPdfPureJS() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Password Protect PDF Online Free</h1>
+            <p>Use this password protect PDF tool to protect PDF files online free, add a password to a PDF file, and secure documents from easy opening or editing.</p>
+            <p>Learn how to password protect PDF files, protect PDF from editing, and create a password protected PDF file in your browser without uploading to external software.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'protectPdfInput\').click()">
             <input type="file" id="protectPdfInput" class="hidden" accept=".pdf">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 1 1 8 0v3"></path></svg></div>
-            <p class="font-medium">Select PDF to protect</p>
-            <p class="text-sm text-gray-500 mt-2">Protects document natively via JS Canvas flatten</p>
+            <p class="font-medium">Password Protect PDF File</p>
+            <p class="text-sm text-gray-500 mt-2">Protect PDF online free with a password and download a secured copy</p>
         </div>
         <div id="protectPreview" class="text-sm text-gray-500 text-center hidden"></div>
         <div class="space-y-4">
             <input type="password" id="pdfPassword" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-xl" placeholder="Decryption Password">
         </div>
-        <button id="protectPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Secure and Download</button>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to password protect PDF:
+            Upload the PDF, enter a password, protect the PDF file in your browser, and download the secured version.
+        </div>
+        <button id="protectPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Password Protect PDF Free</button>
         <div id="protectProgress" class="text-sm text-gray-500 text-center hidden"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
