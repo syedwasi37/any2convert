@@ -276,6 +276,18 @@ $seo_tools = [
         ],
         'content' => 'JPG images are widely used, but sometimes you need a transparent-friendly PNG, a fresh JPEG export, or a PDF version for documents and sharing. This browser-based JPG converter makes it easy to open a JPG or JPEG file and export it in the format you need without uploading it to a server.'
     ],
+    'webp-to-png-jpg-jpeg-pdf' => [
+        'id' => 'webp_converter',
+        'h1' => 'Convert WEBP to PNG JPG JPEG or PDF Online',
+        'title' => 'WEBP to PNG, JPG, JPEG, PDF Converter Free | Any2Convert',
+        'meta_desc' => 'Convert WEBP images to PNG, JPG, JPEG, or PDF directly in your browser. Fast, private, and free.',
+        'icon' => 'WEBP',
+        'faqs' => [
+            ['q' => 'Can I convert WEBP to JPG or JPEG?', 'a' => 'Yes. Choose JPG or JPEG as the output format and the tool will convert your WEBP image into a standard image file.'],
+            ['q' => 'Can I create a PDF from a WEBP image?', 'a' => 'Yes. Select PDF as the output format to generate a one-page PDF from your WEBP image.']
+        ],
+        'content' => 'WEBP is great for web performance, but many apps, forms, and devices still need PNG, JPG, JPEG, or PDF. This browser-based WEBP converter helps you open a WEBP image and export it into a more compatible format without uploading your file to any server.'
+    ],
     'video-to-audio' => [
         'id' => 'video_to_audio',
         'h1' => 'Convert Video to Audio Online Free',

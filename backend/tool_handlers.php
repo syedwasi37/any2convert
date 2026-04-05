@@ -97,6 +97,8 @@ function renderToolHandlerHTML($tool) {
             return getHeicConverterHTML();
         case 'jpg_converter':
             return getJpgConverterHTML();
+        case 'webp_converter':
+            return getWebpConverterHTML();
         case 'video_to_audio':
             return getVideoToAudioHTML();
         case 'currency_converter':
@@ -6775,6 +6777,165 @@ function getJpgConverterHTML() {
             } finally {
                 jpgConvertBtn.disabled = false;
                 jpgConvertBtn.textContent = "Convert JPG to PNG JPEG PDF";
+            }
+        });
+    </script>';
+}
+
+function getWebpConverterHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>WEBP to PNG JPG JPEG PDF Converter Online Free</h1>
+            <p>Convert WEBP images to PNG, JPG, JPEG, or PDF directly in your browser with fast client-side processing.</p>
+        </div>
+        <div class="rounded-2xl border border-fuchsia-200/70 bg-fuchsia-50/80 dark:bg-fuchsia-950/30 dark:border-fuchsia-900 p-4">
+            <div class="font-semibold text-fuchsia-900 dark:text-fuchsia-100">WEBP Converter</div>
+            <p class="mt-1 text-sm text-fuchsia-800 dark:text-fuchsia-200">Upload a WEBP image, choose PNG, JPG, JPEG, or PDF, preview it, and download the converted file.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <input type="file" id="webpInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".webp,image/webp">
+            <select id="webpOutputFormat" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                <option value="png">Convert to PNG</option>
+                <option value="jpg">Convert to JPG</option>
+                <option value="jpeg">Convert to JPEG</option>
+                <option value="pdf">Convert to PDF</option>
+            </select>
+            <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                Upload the WEBP image, choose the output format, and download the converted PNG, JPG, JPEG, or PDF file.
+            </div>
+            <button id="webpConvertBtn" class="w-full bg-fuchsia-600 text-white py-3 rounded-xl font-semibold hover:bg-fuchsia-700 transition">Convert WEBP</button>
+            <div id="webpStatus" class="hidden text-sm text-gray-500 text-center"></div>
+        </div>
+        <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
+            <div class="text-sm text-gray-500 mb-3">Preview</div>
+            <div id="webpPreviewWrap" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500 min-h-[260px] flex items-center justify-center">Converted WEBP preview will appear here.</div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const webpInput = document.getElementById("webpInput");
+        const webpOutputFormat = document.getElementById("webpOutputFormat");
+        const webpConvertBtn = document.getElementById("webpConvertBtn");
+        const webpStatus = document.getElementById("webpStatus");
+        const webpPreviewWrap = document.getElementById("webpPreviewWrap");
+
+        function setWebpStatus(message, isError) {
+            if (!message) {
+                webpStatus.textContent = "";
+                webpStatus.classList.add("hidden");
+                webpStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            webpStatus.textContent = message;
+            webpStatus.classList.remove("hidden");
+            webpStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function getWebpBaseName(name) {
+            let base = name || "converted";
+            base = base.replace(/\\.webp$/i, "");
+            return base || "converted";
+        }
+
+        async function fileToWebpImage(file) {
+            return new Promise(function(resolve, reject) {
+                const url = URL.createObjectURL(file);
+                const image = new Image();
+                image.onload = function() {
+                    URL.revokeObjectURL(url);
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Could not load the WEBP image."));
+                };
+                image.src = url;
+            });
+        }
+
+        async function blobToWebpImage(blob) {
+            return new Promise(function(resolve, reject) {
+                const url = URL.createObjectURL(blob);
+                const image = new Image();
+                image.onload = function() {
+                    URL.revokeObjectURL(url);
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    reject(new Error("Could not load converted preview."));
+                };
+                image.src = url;
+            });
+        }
+
+        function canvasFromWebpImage(image, mimeType, quality) {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+            return new Promise(function(resolve) {
+                canvas.toBlob(function(blob) {
+                    resolve({ blob: blob, canvas: canvas });
+                }, mimeType, quality);
+            });
+        }
+
+        async function renderWebpPreview(blob) {
+            const image = await blobToWebpImage(blob);
+            webpPreviewWrap.innerHTML = "";
+            image.className = "max-w-full max-h-[520px] mx-auto rounded-xl shadow";
+            webpPreviewWrap.appendChild(image);
+        }
+
+        webpConvertBtn.addEventListener("click", async function() {
+            const file = webpInput.files && webpInput.files[0] ? webpInput.files[0] : null;
+            if (!file) {
+                alert("Please select a WEBP file");
+                return;
+            }
+
+            try {
+                webpConvertBtn.disabled = true;
+                webpConvertBtn.textContent = "Converting...";
+                setWebpStatus("Converting WEBP file. Please wait...");
+
+                const image = await fileToWebpImage(file);
+                const targetFormat = webpOutputFormat.value;
+                const baseName = getWebpBaseName(file.name);
+
+                if (targetFormat === "pdf") {
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: image.width > image.height ? "landscape" : "portrait",
+                        unit: "pt",
+                        format: [image.width, image.height]
+                    });
+                    const prepared = await canvasFromWebpImage(image, "image/jpeg", 0.95);
+                    const dataUrl = prepared.canvas.toDataURL("image/jpeg", 0.95);
+                    await renderWebpPreview(prepared.blob);
+                    pdf.addImage(dataUrl, "JPEG", 0, 0, image.width, image.height);
+                    pdf.save(baseName + ".pdf");
+                } else {
+                    const mimeType = targetFormat === "png" ? "image/png" : "image/jpeg";
+                    const prepared = await canvasFromWebpImage(image, mimeType, 0.95);
+                    await renderWebpPreview(prepared.blob);
+                    const url = URL.createObjectURL(prepared.blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = baseName + "." + (targetFormat === "png" ? "png" : targetFormat);
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }
+
+                setWebpStatus("Conversion complete. File downloaded.");
+            } catch (error) {
+                setWebpStatus("Could not convert this WEBP file: " + error.message, true);
+            } finally {
+                webpConvertBtn.disabled = false;
+                webpConvertBtn.textContent = "Convert WEBP";
             }
         });
     </script>';
