@@ -10124,69 +10124,52 @@ function getEditPdfHTML() {
             <p>Edit PDF text, add pictures, edit PDF free online, and use a visual PDF editor workspace on Mac, Windows, and mobile browsers.</p>
         </div>
         <div class="rounded-2xl border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-4">
-            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Visual PDF editor workspace</div>
-            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Upload your PDF, view a large editable page preview, add text or images, drag them where needed, and download the edited PDF.</p>
+            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Simple PDF editor</div>
+            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Upload a PDF, view one large page preview, add text or an image, then download the edited PDF.</p>
         </div>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
             <input type="file" id="editPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
             <div id="editPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
-            <div id="editPdfControls" class="hidden fixed inset-0 z-[9999] bg-black/70 p-3 md:p-6">
-                <div class="h-full w-full rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 shadow-2xl overflow-hidden flex flex-col">
-                    <div class="flex items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-                        <div>
-                            <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit PDF Online</div>
-                            <div class="text-sm text-gray-500">Large PDF editor modal for text and picture insertion.</div>
+            <div id="editPdfControls" class="hidden space-y-4">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <select id="editPdfPageSelect" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></select>
+                    <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
+                </div>
+                <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
+                    <div id="editPdfPageInfo" class="text-sm text-gray-500 mb-3">Upload a PDF to start editing.</div>
+                    <div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
+                        <div class="min-w-max mx-auto">
+                            <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
                         </div>
-                        <button id="closeEditPdfModalBtn" type="button" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Close</button>
                     </div>
-                    <div class="flex-1 overflow-hidden p-4">
-                        <div class="grid xl:grid-cols-[320px,1fr] gap-5 h-full">
-                            <div class="space-y-4 overflow-auto pr-1">
-                                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
-                        <div class="font-semibold text-gray-900 dark:text-gray-100">Text Inserter</div>
-                        <textarea id="editPdfText" class="w-full h-24 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
-                            <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-                                <option value="regular">Regular</option>
-                                <option value="bold">Bold</option>
-                                <option value="italic">Italic</option>
-                            </select>
-                        </div>
-                        <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Insert Text On Current Page</button>
-                                </div>
-                                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
-                        <div class="font-semibold text-gray-900 dark:text-gray-100">Picture Inserter</div>
-                        <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
-                        <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Insert Picture On Current Page</button>
-                                </div>
-                                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
-                        <div class="font-semibold text-gray-900 dark:text-gray-100">Selected Overlay</div>
-                        <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
-                        <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Download Edited PDF</button>
-                                </div>
-                                <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
-                        How to edit PDF:
-                        Upload the file, choose a page, insert text or a picture, drag items to the correct spot, and download the edited PDF.
-                                </div>
-                            </div>
-                            <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4 min-h-0">
-                                <div class="grid lg:grid-cols-[150px,1fr] gap-4 h-full">
-                                    <div id="editPdfThumbs" class="max-h-full overflow-auto space-y-3 pr-1"></div>
-                                    <div class="space-y-3 min-h-0 flex flex-col">
-                            <div id="editPdfPageInfo" class="text-sm text-gray-500">Upload a PDF to start editing.</div>
-                            <div id="editPdfStageWrap" class="hidden flex-1 overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
-                                <div class="min-w-max mx-auto">
-                                    <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
-                                </div>
-                            </div>
-                            <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF editing window will appear here after upload.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF preview will appear here after upload.</div>
+                </div>
+                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
+                    <div class="font-semibold text-gray-900 dark:text-gray-100">Text Inserter</div>
+                    <textarea id="editPdfText" class="w-full h-24 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
+                        <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                            <option value="regular">Regular</option>
+                            <option value="bold">Bold</option>
+                            <option value="italic">Italic</option>
+                        </select>
+                        <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Add Text</button>
                     </div>
                 </div>
+                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
+                    <div class="font-semibold text-gray-900 dark:text-gray-100">Picture Inserter</div>
+                    <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Add Picture</button>
+                        <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
+                    </div>
+                </div>
+                <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                    How to edit PDF:
+                    Upload the file, choose a page, add text or picture, drag the item on the large preview, and download the edited PDF.
+                </div>
+                <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Download Edited PDF</button>
             </div>
         </div>
     </div>
@@ -10198,8 +10181,8 @@ function getEditPdfHTML() {
         const editPdfInput = document.getElementById("editPdfInput");
         const editPdfStatus = document.getElementById("editPdfStatus");
         const editPdfControls = document.getElementById("editPdfControls");
-        const closeEditPdfModalBtn = document.getElementById("closeEditPdfModalBtn");
-        const editPdfThumbs = document.getElementById("editPdfThumbs");
+        const editPdfPageSelect = document.getElementById("editPdfPageSelect");
+        const refreshEditPdfPreviewBtn = document.getElementById("refreshEditPdfPreviewBtn");
         const editPdfPageInfo = document.getElementById("editPdfPageInfo");
         const editPdfStageWrap = document.getElementById("editPdfStageWrap");
         const editPdfStage = document.getElementById("editPdfStage");
@@ -10238,7 +10221,6 @@ function getEditPdfHTML() {
             editPdfControls.classList.toggle("hidden", !hasPages);
             editPdfStageWrap.classList.toggle("hidden", !hasPages);
             editPdfEmpty.classList.toggle("hidden", hasPages);
-            document.body.style.overflow = hasPages ? "hidden" : "";
         }
 
         function getEditPdfBaseName(name) {
@@ -10253,42 +10235,15 @@ function getEditPdfHTML() {
             return Math.min(max, Math.max(min, value));
         }
 
-        async function renderEditPdfThumb(pageNumber) {
-            const page = await editPdfViewDoc.getPage(pageNumber + 1);
-            const viewport = page.getViewport({ scale: 0.22 });
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d", { alpha: false });
-            canvas.width = Math.ceil(viewport.width);
-            canvas.height = Math.ceil(viewport.height);
-            canvas.className = "w-full h-auto block bg-white rounded-lg";
-            context.fillStyle = "#ffffff";
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-            return canvas;
-        }
-
-        async function renderEditPdfThumbs() {
-            editPdfThumbs.innerHTML = "";
+        function rebuildEditPdfPageSelect() {
+            editPdfPageSelect.innerHTML = "";
             for (let i = 0; i < editPdfPages.length; i++) {
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.className = "w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 text-left transition";
-                btn.dataset.pageIndex = String(i);
-
-                const label = document.createElement("div");
-                label.className = "text-xs font-semibold text-gray-500 mb-2";
-                label.textContent = "Page " + (i + 1);
-                btn.appendChild(label);
-                btn.appendChild(await renderEditPdfThumb(i));
-
-                btn.addEventListener("click", function() {
-                    editPdfCurrentPage = i;
-                    editPdfSelectedOverlayId = null;
-                    renderEditPdfWorkspace();
-                });
-
-                editPdfThumbs.appendChild(btn);
+                const option = document.createElement("option");
+                option.value = String(i);
+                option.textContent = "Page " + (i + 1);
+                editPdfPageSelect.appendChild(option);
             }
+            editPdfPageSelect.value = String(editPdfCurrentPage);
         }
 
         function getCurrentPageData() {
@@ -10374,20 +10329,15 @@ function getEditPdfHTML() {
             const pageData = getCurrentPageData();
             if (!pageData) return;
 
-            editPdfThumbs.querySelectorAll("button").forEach(function(btn, index) {
-                btn.classList.toggle("ring-2", index === editPdfCurrentPage);
-                btn.classList.toggle("ring-blue-500", index === editPdfCurrentPage);
-            });
-
             editPdfPageInfo.textContent = "Editing page " + (editPdfCurrentPage + 1) + " of " + editPdfPages.length;
             editPdfStage.innerHTML = "";
 
             const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
             const baseViewport = page.getViewport({ scale: 1 });
-            const availableWidth = Math.max(320, editPdfStageWrap.clientWidth - 32);
-            const availableHeight = Math.max(420, Math.min(window.innerHeight * 0.72, 920));
-            const fitScale = Math.min(1.2, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
-            const viewport = page.getViewport({ scale: Math.max(0.45, fitScale) });
+            const availableWidth = Math.max(500, editPdfStageWrap.clientWidth - 32);
+            const availableHeight = Math.max(700, Math.min(window.innerHeight * 0.78, 1100));
+            const fitScale = Math.min(1.5, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
+            const viewport = page.getViewport({ scale: Math.max(0.65, fitScale) });
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d", { alpha: false });
             canvas.width = Math.ceil(viewport.width);
@@ -10465,6 +10415,16 @@ function getEditPdfHTML() {
             renderEditPdfWorkspace();
         });
 
+        editPdfPageSelect.addEventListener("change", function() {
+            editPdfCurrentPage = parseInt(this.value || "0", 10);
+            editPdfSelectedOverlayId = null;
+            renderEditPdfWorkspace();
+        });
+
+        refreshEditPdfPreviewBtn.addEventListener("click", function() {
+            renderEditPdfWorkspace();
+        });
+
         removeEditPdfOverlayBtn.addEventListener("click", function() {
             const pageData = getCurrentPageData();
             if (!pageData || !editPdfSelectedOverlayId) {
@@ -10484,7 +10444,6 @@ function getEditPdfHTML() {
             editPdfPages = [];
             editPdfCurrentPage = 0;
             editPdfSelectedOverlayId = null;
-            editPdfThumbs.innerHTML = "";
             editPdfStage.innerHTML = "";
             updateEditPdfVisibility();
 
@@ -10502,22 +10461,12 @@ function getEditPdfHTML() {
                     editPdfPages.push({ overlays: [] });
                 }
                 updateEditPdfVisibility();
-                await renderEditPdfThumbs();
+                rebuildEditPdfPageSelect();
                 await renderEditPdfWorkspace();
                 setEditPdfStatus("PDF loaded. Add text or pictures and drag them to the right spot.");
             } catch (error) {
                 setEditPdfStatus("Could not load this PDF: " + error.message, true);
             }
-        });
-
-        closeEditPdfModalBtn.addEventListener("click", function() {
-            editPdfPages = [];
-            editPdfCurrentPage = 0;
-            editPdfSelectedOverlayId = null;
-            editPdfThumbs.innerHTML = "";
-            editPdfStage.innerHTML = "";
-            updateEditPdfVisibility();
-            setEditPdfStatus("PDF editor closed.");
         });
 
         downloadEditPdfBtn.addEventListener("click", async function() {
