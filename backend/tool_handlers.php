@@ -10118,83 +10118,444 @@ function getPdfToPdfaHTML() {
 function getEditPdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Edit PDF Online Free</h1>
+            <p>Use this edit PDF tool to edit PDF online free, insert text or images on PDF pages, and download the updated PDF file in your browser.</p>
+            <p>Edit PDF text, add pictures, edit PDF free online, and use a visual PDF editor workspace on Mac, Windows, and mobile browsers.</p>
+        </div>
         <div class="rounded-2xl border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-4">
-            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Upload and place content precisely</div>
-            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Choose your PDF, then add text or an optional image/signature with X/Y coordinates.</p>
+            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Visual PDF editor workspace</div>
+            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Upload your PDF, view a large editable page preview, add text or images, drag them where needed, and download the edited PDF.</p>
         </div>
-        <div class="grid md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-                <label for="editPdfInput" class="text-sm font-semibold text-gray-700 dark:text-gray-200">PDF file</label>
-                <input type="file" id="editPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-            </div>
-            <div class="space-y-2">
-                <label for="editPdfPage" class="text-sm font-semibold text-gray-700 dark:text-gray-200">Page number</label>
-                <input type="number" id="editPdfPage" min="1" value="1" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Page number">
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <input type="file" id="editPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="editPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="editPdfControls" class="hidden grid xl:grid-cols-[320px,1fr] gap-5">
+                <div class="space-y-4">
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                        <div class="font-semibold text-gray-900 dark:text-gray-100">Text Inserter</div>
+                        <textarea id="editPdfText" class="w-full h-24 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
+                            <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                                <option value="regular">Regular</option>
+                                <option value="bold">Bold</option>
+                                <option value="italic">Italic</option>
+                            </select>
+                        </div>
+                        <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Insert Text On Current Page</button>
+                    </div>
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                        <div class="font-semibold text-gray-900 dark:text-gray-100">Picture Inserter</div>
+                        <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
+                        <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Insert Picture On Current Page</button>
+                    </div>
+                    <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                        <div class="font-semibold text-gray-900 dark:text-gray-100">Selected Overlay</div>
+                        <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
+                        <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Download Edited PDF</button>
+                    </div>
+                    <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                        How to edit PDF:
+                        Upload the file, choose a page, insert text or a picture, drag items to the correct spot, and download the edited PDF.
+                    </div>
+                </div>
+                <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
+                    <div class="grid lg:grid-cols-[150px,1fr] gap-4">
+                        <div id="editPdfThumbs" class="max-h-[760px] overflow-auto space-y-3 pr-1"></div>
+                        <div class="space-y-3">
+                            <div id="editPdfPageInfo" class="text-sm text-gray-500">Upload a PDF to start editing.</div>
+                            <div id="editPdfStageWrap" class="hidden flex justify-center">
+                                <div id="editPdfStage" class="relative bg-white shadow-lg overflow-hidden max-w-full"></div>
+                            </div>
+                            <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF editing window will appear here after upload.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-            <div class="font-semibold text-gray-900 dark:text-gray-100">Add text overlay</div>
-            <textarea id="editPdfText" class="w-full h-28 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to place on the page"></textarea>
-            <div class="grid md:grid-cols-3 gap-4">
-                <input type="number" id="editPdfTextX" min="0" value="60" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="X position">
-                <input type="number" id="editPdfTextY" min="0" value="100" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Y position">
-                <input type="number" id="editPdfTextSize" min="8" value="18" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
-            </div>
-        </div>
-        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-            <div class="font-semibold text-gray-900 dark:text-gray-100">Optional image or signature</div>
-            <div class="space-y-2">
-                <label for="editPdfImage" class="text-sm font-semibold text-gray-700 dark:text-gray-200">Image file (PNG or JPG)</label>
-                <input type="file" id="editPdfImage" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
-            </div>
-            <div class="grid md:grid-cols-4 gap-4">
-                <input type="number" id="editPdfImageX" min="0" value="60" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Image X">
-                <input type="number" id="editPdfImageY" min="0" value="160" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Image Y">
-                <input type="number" id="editPdfImageW" min="10" value="140" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Image width">
-                <input type="number" id="editPdfImageH" min="10" value="60" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Image height">
-            </div>
-        </div>
-        <button id="editPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Edit PDF</button>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("editPdfBtn").addEventListener("click", async function() {
-            const pdfFile = document.getElementById("editPdfInput").files[0];
-            if (!pdfFile) return alert("Please select a PDF file");
-            const pageNumber = parseInt(document.getElementById("editPdfPage").value || "1", 10) - 1;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const editPdfInput = document.getElementById("editPdfInput");
+        const editPdfStatus = document.getElementById("editPdfStatus");
+        const editPdfControls = document.getElementById("editPdfControls");
+        const editPdfThumbs = document.getElementById("editPdfThumbs");
+        const editPdfPageInfo = document.getElementById("editPdfPageInfo");
+        const editPdfStageWrap = document.getElementById("editPdfStageWrap");
+        const editPdfStage = document.getElementById("editPdfStage");
+        const editPdfEmpty = document.getElementById("editPdfEmpty");
+        const editPdfText = document.getElementById("editPdfText");
+        const editPdfTextSize = document.getElementById("editPdfTextSize");
+        const editPdfTextStyle = document.getElementById("editPdfTextStyle");
+        const addEditPdfTextBtn = document.getElementById("addEditPdfTextBtn");
+        const editPdfImage = document.getElementById("editPdfImage");
+        const addEditPdfImageBtn = document.getElementById("addEditPdfImageBtn");
+        const removeEditPdfOverlayBtn = document.getElementById("removeEditPdfOverlayBtn");
+        const downloadEditPdfBtn = document.getElementById("editPdfBtn");
+
+        let editPdfBytes = null;
+        let editPdfDoc = null;
+        let editPdfViewDoc = null;
+        let editPdfPages = [];
+        let editPdfCurrentPage = 0;
+        let editPdfSelectedOverlayId = null;
+
+        function setEditPdfStatus(message, isError) {
+            if (!message) {
+                editPdfStatus.textContent = "";
+                editPdfStatus.classList.add("hidden");
+                editPdfStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            editPdfStatus.textContent = message;
+            editPdfStatus.classList.remove("hidden");
+            editPdfStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function updateEditPdfVisibility() {
+            const hasPages = editPdfPages.length > 0;
+            editPdfControls.classList.toggle("hidden", !hasPages);
+            editPdfStageWrap.classList.toggle("hidden", !hasPages);
+            editPdfEmpty.classList.toggle("hidden", hasPages);
+        }
+
+        function getEditPdfBaseName(name) {
+            let baseName = name || "edited";
+            if (baseName.toLowerCase().slice(-4) === ".pdf") {
+                baseName = baseName.slice(0, -4);
+            }
+            return baseName || "edited";
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        async function renderEditPdfThumb(pageNumber) {
+            const page = await editPdfViewDoc.getPage(pageNumber + 1);
+            const viewport = page.getViewport({ scale: 0.22 });
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d", { alpha: false });
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            canvas.className = "w-full h-auto block bg-white rounded-lg";
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            return canvas;
+        }
+
+        async function renderEditPdfThumbs() {
+            editPdfThumbs.innerHTML = "";
+            for (let i = 0; i < editPdfPages.length; i++) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 text-left transition";
+                btn.dataset.pageIndex = String(i);
+
+                const label = document.createElement("div");
+                label.className = "text-xs font-semibold text-gray-500 mb-2";
+                label.textContent = "Page " + (i + 1);
+                btn.appendChild(label);
+                btn.appendChild(await renderEditPdfThumb(i));
+
+                btn.addEventListener("click", function() {
+                    editPdfCurrentPage = i;
+                    editPdfSelectedOverlayId = null;
+                    renderEditPdfWorkspace();
+                });
+
+                editPdfThumbs.appendChild(btn);
+            }
+        }
+
+        function getCurrentPageData() {
+            return editPdfPages[editPdfCurrentPage];
+        }
+
+        function getTextCss(style) {
+            if (style === "bold") {
+                return { fontWeight: "700", fontStyle: "normal" };
+            }
+            if (style === "italic") {
+                return { fontWeight: "500", fontStyle: "italic" };
+            }
+            return { fontWeight: "500", fontStyle: "normal" };
+        }
+
+        function buildOverlayNode(pageData, overlay, stageSize) {
+            const node = document.createElement("div");
+            node.className = "absolute z-10 cursor-move select-none";
+            if (overlay.id === editPdfSelectedOverlayId) {
+                node.classList.add("ring-2", "ring-blue-500");
+            }
+
+            node.style.left = (overlay.xRatio * stageSize.width) + "px";
+            node.style.top = (overlay.yRatio * stageSize.height) + "px";
+            node.style.width = (overlay.widthRatio * stageSize.width) + "px";
+
+            if (overlay.type === "text") {
+                const textCss = getTextCss(overlay.style);
+                node.className += " px-2 py-1 bg-white/80 rounded-md";
+                node.style.fontSize = Math.max(10, overlay.sizeRatio * stageSize.width) + "px";
+                node.style.fontWeight = textCss.fontWeight;
+                node.style.fontStyle = textCss.fontStyle;
+                node.style.color = "#111827";
+                node.textContent = overlay.text;
+            } else {
+                const image = document.createElement("img");
+                image.src = overlay.src;
+                image.className = "w-full h-auto block";
+                image.draggable = false;
+                node.appendChild(image);
+            }
+
+            node.addEventListener("click", function(event) {
+                event.stopPropagation();
+                editPdfSelectedOverlayId = overlay.id;
+                renderEditPdfWorkspace();
+            });
+
+            node.addEventListener("pointerdown", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                editPdfSelectedOverlayId = overlay.id;
+
+                const stageRect = editPdfStage.getBoundingClientRect();
+                const nodeRect = node.getBoundingClientRect();
+                const offsetX = event.clientX - nodeRect.left;
+                const offsetY = event.clientY - nodeRect.top;
+
+                function move(moveEvent) {
+                    const widthRatio = nodeRect.width / stageRect.width;
+                    const heightRatio = nodeRect.height / stageRect.height;
+                    overlay.xRatio = clamp((moveEvent.clientX - stageRect.left - offsetX) / stageRect.width, 0, 1 - widthRatio);
+                    overlay.yRatio = clamp((moveEvent.clientY - stageRect.top - offsetY) / stageRect.height, 0, 1 - heightRatio);
+                    node.style.left = (overlay.xRatio * stageSize.width) + "px";
+                    node.style.top = (overlay.yRatio * stageSize.height) + "px";
+                }
+
+                function stop() {
+                    window.removeEventListener("pointermove", move);
+                    window.removeEventListener("pointerup", stop);
+                    renderEditPdfWorkspace();
+                }
+
+                window.addEventListener("pointermove", move);
+                window.addEventListener("pointerup", stop);
+            });
+
+            return node;
+        }
+
+        async function renderEditPdfWorkspace() {
+            const pageData = getCurrentPageData();
+            if (!pageData) return;
+
+            editPdfThumbs.querySelectorAll("button").forEach(function(btn, index) {
+                btn.classList.toggle("ring-2", index === editPdfCurrentPage);
+                btn.classList.toggle("ring-blue-500", index === editPdfCurrentPage);
+            });
+
+            editPdfPageInfo.textContent = "Editing page " + (editPdfCurrentPage + 1) + " of " + editPdfPages.length;
+            editPdfStage.innerHTML = "";
+
+            const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
+            const viewport = page.getViewport({ scale: 1.15 });
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d", { alpha: false });
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            canvas.className = "max-w-full h-auto block bg-white";
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            editPdfStage.style.width = canvas.width + "px";
+            editPdfStage.style.height = canvas.height + "px";
+            editPdfStage.appendChild(canvas);
+
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+
+            const stageSize = { width: canvas.width, height: canvas.height };
+            pageData.overlays.forEach(function(overlay) {
+                editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
+            });
+
+            editPdfStage.onclick = function() {
+                editPdfSelectedOverlayId = null;
+                renderEditPdfWorkspace();
+            };
+        }
+
+        function createOverlayId() {
+            return "overlay-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+        }
+
+        addEditPdfTextBtn.addEventListener("click", function() {
+            const pageData = getCurrentPageData();
+            const text = (editPdfText.value || "").trim();
+            if (!pageData || !text) {
+                alert("Please enter text first.");
+                return;
+            }
+
+            const size = Math.max(8, parseInt(editPdfTextSize.value || "22", 10));
+            pageData.overlays.push({
+                id: createOverlayId(),
+                type: "text",
+                text: text,
+                style: editPdfTextStyle.value,
+                xRatio: 0.14,
+                yRatio: 0.16,
+                widthRatio: 0.34,
+                sizeRatio: size / 700
+            });
+            renderEditPdfWorkspace();
+        });
+
+        addEditPdfImageBtn.addEventListener("click", async function() {
+            const pageData = getCurrentPageData();
+            const imageFile = editPdfImage.files && editPdfImage.files[0] ? editPdfImage.files[0] : null;
+            if (!pageData || !imageFile) {
+                alert("Please choose an image first.");
+                return;
+            }
+
+            const src = URL.createObjectURL(imageFile);
+            pageData.overlays.push({
+                id: createOverlayId(),
+                type: "image",
+                src: src,
+                mimeType: imageFile.type || "image/png",
+                xRatio: 0.18,
+                yRatio: 0.22,
+                widthRatio: 0.28,
+                file: imageFile
+            });
+            renderEditPdfWorkspace();
+        });
+
+        removeEditPdfOverlayBtn.addEventListener("click", function() {
+            const pageData = getCurrentPageData();
+            if (!pageData || !editPdfSelectedOverlayId) {
+                alert("Please select an inserted text or image first.");
+                return;
+            }
+
+            pageData.overlays = pageData.overlays.filter(function(item) {
+                return item.id !== editPdfSelectedOverlayId;
+            });
+            editPdfSelectedOverlayId = null;
+            renderEditPdfWorkspace();
+        });
+
+        editPdfInput.addEventListener("change", async function() {
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            editPdfPages = [];
+            editPdfCurrentPage = 0;
+            editPdfSelectedOverlayId = null;
+            editPdfThumbs.innerHTML = "";
+            editPdfStage.innerHTML = "";
+            updateEditPdfVisibility();
+
+            if (!file) {
+                setEditPdfStatus("");
+                return;
+            }
+
             try {
-                const pdf = await PDFLib.PDFDocument.load(await pdfFile.arrayBuffer());
-                if (pageNumber < 0 || pageNumber >= pdf.getPageCount()) return alert("Invalid page number.");
-                const page = pdf.getPages()[pageNumber];
-                const text = document.getElementById("editPdfText").value.trim();
-                if (text) {
-                    const font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
-                    page.drawText(text, {
-                        x: parseFloat(document.getElementById("editPdfTextX").value || "60"),
-                        y: parseFloat(document.getElementById("editPdfTextY").value || "100"),
-                        size: parseFloat(document.getElementById("editPdfTextSize").value || "18"),
-                        font,
-                        color: PDFLib.rgb(0.1, 0.1, 0.1)
-                    });
+                setEditPdfStatus("Loading PDF editor workspace...");
+                editPdfBytes = await file.arrayBuffer();
+                editPdfDoc = await PDFLib.PDFDocument.load(editPdfBytes);
+                editPdfViewDoc = await pdfjsLib.getDocument({ data: editPdfBytes }).promise;
+                for (let i = 0; i < editPdfDoc.getPageCount(); i++) {
+                    editPdfPages.push({ overlays: [] });
                 }
-                const imageFile = document.getElementById("editPdfImage").files[0];
-                if (imageFile) {
-                    const bytes = await imageFile.arrayBuffer();
-                    const image = imageFile.type.includes("png") ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
-                    page.drawImage(image, {
-                        x: parseFloat(document.getElementById("editPdfImageX").value || "60"),
-                        y: parseFloat(document.getElementById("editPdfImageY").value || "160"),
-                        width: parseFloat(document.getElementById("editPdfImageW").value || "140"),
-                        height: parseFloat(document.getElementById("editPdfImageH").value || "60")
-                    });
+                updateEditPdfVisibility();
+                await renderEditPdfThumbs();
+                await renderEditPdfWorkspace();
+                setEditPdfStatus("PDF loaded. Add text or pictures and drag them to the right spot.");
+            } catch (error) {
+                setEditPdfStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        downloadEditPdfBtn.addEventListener("click", async function() {
+            const pdfFile = editPdfInput.files && editPdfInput.files[0] ? editPdfInput.files[0] : null;
+            if (!pdfFile) {
+                alert("Please select a PDF file");
+                return;
+            }
+
+            try {
+                setEditPdfStatus("Applying edits to PDF...");
+                const pdf = await PDFLib.PDFDocument.load(editPdfBytes);
+                const pages = pdf.getPages();
+                const fontCache = {};
+
+                for (let i = 0; i < editPdfPages.length; i++) {
+                    const page = pages[i];
+                    const pageWidth = page.getWidth();
+                    const pageHeight = page.getHeight();
+                    const overlays = editPdfPages[i].overlays;
+
+                    for (let j = 0; j < overlays.length; j++) {
+                        const overlay = overlays[j];
+                        if (overlay.type === "text") {
+                            let fontName = PDFLib.StandardFonts.Helvetica;
+                            if (overlay.style === "bold") fontName = PDFLib.StandardFonts.HelveticaBold;
+                            if (overlay.style === "italic") fontName = PDFLib.StandardFonts.HelveticaOblique;
+                            if (!fontCache[fontName]) {
+                                fontCache[fontName] = await pdf.embedFont(fontName);
+                            }
+
+                            const font = fontCache[fontName];
+                            const fontSize = Math.max(8, overlay.sizeRatio * 700);
+                            const x = overlay.xRatio * pageWidth;
+                            const y = pageHeight - (overlay.yRatio * pageHeight) - fontSize;
+                            page.drawText(overlay.text, {
+                                x: x,
+                                y: y,
+                                size: fontSize,
+                                font: font,
+                                color: PDFLib.rgb(0.1, 0.1, 0.1)
+                            });
+                        } else {
+                            const bytes = await overlay.file.arrayBuffer();
+                            const image = (overlay.mimeType || "").toLowerCase().indexOf("png") !== -1
+                                ? await pdf.embedPng(bytes)
+                                : await pdf.embedJpg(bytes);
+                            const width = overlay.widthRatio * pageWidth;
+                            const scale = width / image.width;
+                            const height = image.height * scale;
+                            const x = overlay.xRatio * pageWidth;
+                            const y = pageHeight - (overlay.yRatio * pageHeight) - height;
+                            page.drawImage(image, {
+                                x: x,
+                                y: y,
+                                width: width,
+                                height: height
+                            });
+                        }
+                    }
                 }
+
                 const out = await pdf.save();
                 const a = document.createElement("a");
                 a.href = URL.createObjectURL(new Blob([out], { type: "application/pdf" }));
-                a.download = "edited.pdf";
+                a.download = getEditPdfBaseName(pdfFile.name) + "_edited.pdf";
                 a.click();
-            } catch (e) {
-                alert("Could not edit this PDF: " + e.message);
+                setEditPdfStatus("Edited PDF downloaded successfully.");
+            } catch (error) {
+                setEditPdfStatus("Could not edit this PDF: " + error.message, true);
             }
         });
     </script>';
