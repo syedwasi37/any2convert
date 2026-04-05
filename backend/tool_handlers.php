@@ -10165,8 +10165,10 @@ function getEditPdfHTML() {
                         <div id="editPdfThumbs" class="max-h-[760px] overflow-auto space-y-3 pr-1"></div>
                         <div class="space-y-3">
                             <div id="editPdfPageInfo" class="text-sm text-gray-500">Upload a PDF to start editing.</div>
-                            <div id="editPdfStageWrap" class="hidden flex justify-center">
-                                <div id="editPdfStage" class="relative bg-white shadow-lg overflow-hidden max-w-full"></div>
+                            <div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
+                                <div class="min-w-max mx-auto">
+                                    <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
+                                </div>
                             </div>
                             <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF editing window will appear here after upload.</div>
                         </div>
