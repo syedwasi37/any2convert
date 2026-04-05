@@ -9567,37 +9567,311 @@ function getSignPdfHTML() {
 function getCropPdfHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="cropPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <div class="grid md:grid-cols-2 gap-4">
-            <input type="number" id="cropMarginX" min="0" value="24" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Left and right margin">
-            <input type="number" id="cropMarginY" min="0" value="24" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Top and bottom margin">
+        <div style="display:none;">
+            <h1>Crop PDF Online Free - Crop PDF Pages</h1>
+            <p>Use this crop PDF tool to crop PDF online free, choose the crop area visually, and save cropped PDF pages directly in your browser.</p>
+            <p>Learn how to crop PDF files, crop PDF pages online, and trim PDF page edges on Mac, Windows, and mobile with a visual crop box editor.</p>
         </div>
-        <button id="cropPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Crop PDF</button>
-        <p class="text-sm text-gray-500">Applies a uniform crop box to all pages using the margins you choose.</p>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Crop PDF Pages</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, drag the crop box to the exact area you want to keep, resize it, and download the cropped PDF.</p>
+            </div>
+            <input type="file" id="cropPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="cropPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="cropPdfToolbar" class="hidden flex flex-wrap gap-3">
+                <button id="cropPdfApplyAllBtn" type="button" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Apply First Crop To All Pages</button>
+                <button id="cropPdfResetBtn" type="button" class="px-4 py-3 rounded-xl bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition">Reset Crop Boxes</button>
+                <button id="cropPdfBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Crop PDF Free</button>
+            </div>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to crop PDF:
+            Upload the file, move and resize the crop area on the page preview, then save the cropped PDF file.
+        </div>
+        <div id="cropPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF page previews will appear here after upload so you can crop PDF pages visually.</div>
+        <div id="cropPdfGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("cropPdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("cropPdfInput").files[0];
-            if (!file) return alert("Please select a PDF file");
-            const marginX = Math.max(0, parseFloat(document.getElementById("cropMarginX").value || "0"));
-            const marginY = Math.max(0, parseFloat(document.getElementById("cropMarginY").value || "0"));
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const cropPdfInput = document.getElementById("cropPdfInput");
+        const cropPdfStatus = document.getElementById("cropPdfStatus");
+        const cropPdfToolbar = document.getElementById("cropPdfToolbar");
+        const cropPdfGrid = document.getElementById("cropPdfGrid");
+        const cropPdfEmpty = document.getElementById("cropPdfEmpty");
+        const cropPdfApplyAllBtn = document.getElementById("cropPdfApplyAllBtn");
+        const cropPdfResetBtn = document.getElementById("cropPdfResetBtn");
+        const cropPdfBtn = document.getElementById("cropPdfBtn");
+
+        let cropPdfBytes = null;
+        let cropPdfDoc = null;
+        let cropPdfViewDoc = null;
+        let cropPdfItems = [];
+
+        function setCropPdfStatus(message, isError) {
+            if (!message) {
+                cropPdfStatus.textContent = "";
+                cropPdfStatus.classList.add("hidden");
+                cropPdfStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            cropPdfStatus.textContent = message;
+            cropPdfStatus.classList.remove("hidden");
+            cropPdfStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function updateCropPdfVisibility() {
+            const hasItems = cropPdfItems.length > 0;
+            cropPdfGrid.classList.toggle("hidden", !hasItems);
+            cropPdfToolbar.classList.toggle("hidden", !hasItems);
+            cropPdfEmpty.classList.toggle("hidden", hasItems);
+        }
+
+        function createDefaultCropArea() {
+            return {
+                xRatio: 0.08,
+                yRatio: 0.08,
+                widthRatio: 0.84,
+                heightRatio: 0.84
+            };
+        }
+
+        function getCropPdfBaseName(name) {
+            let baseName = name || "cropped";
+            if (baseName.toLowerCase().slice(-4) === ".pdf") {
+                baseName = baseName.slice(0, -4);
+            }
+            return baseName || "cropped";
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        async function renderCropThumbnail(item, canvas) {
+            if (!cropPdfViewDoc) return;
+            const page = await cropPdfViewDoc.getPage(item.pageNumber);
+            const viewport = page.getViewport({ scale: 0.34 });
+            const context = canvas.getContext("2d");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+        }
+
+        function makeCropOverlay(item, stage) {
+            const cropArea = item.cropArea;
+            const box = document.createElement("div");
+            box.className = "absolute border-2 border-blue-500 bg-blue-500/10 cursor-move z-10";
+            box.style.left = (cropArea.xRatio * 100) + "%";
+            box.style.top = (cropArea.yRatio * 100) + "%";
+            box.style.width = (cropArea.widthRatio * 100) + "%";
+            box.style.height = (cropArea.heightRatio * 100) + "%";
+
+            const label = document.createElement("div");
+            label.className = "absolute -top-7 left-0 px-2 py-1 rounded-md bg-blue-600 text-white text-[11px] font-semibold whitespace-nowrap";
+            label.textContent = "Crop Area";
+            box.appendChild(label);
+
+            const handle = document.createElement("div");
+            handle.className = "absolute -right-2 -bottom-2 w-5 h-5 rounded-full bg-blue-600 border-2 border-white cursor-se-resize";
+            box.appendChild(handle);
+
+            box.addEventListener("pointerdown", function(event) {
+                if (event.target === handle) return;
+                event.preventDefault();
+
+                const stageRect = stage.getBoundingClientRect();
+                const boxRect = box.getBoundingClientRect();
+                const offsetX = event.clientX - boxRect.left;
+                const offsetY = event.clientY - boxRect.top;
+
+                function move(moveEvent) {
+                    const widthRatio = boxRect.width / stageRect.width;
+                    const heightRatio = boxRect.height / stageRect.height;
+                    const xRatio = clamp((moveEvent.clientX - stageRect.left - offsetX) / stageRect.width, 0, 1 - widthRatio);
+                    const yRatio = clamp((moveEvent.clientY - stageRect.top - offsetY) / stageRect.height, 0, 1 - heightRatio);
+                    item.cropArea.xRatio = xRatio;
+                    item.cropArea.yRatio = yRatio;
+                    box.style.left = (xRatio * 100) + "%";
+                    box.style.top = (yRatio * 100) + "%";
+                }
+
+                function stop() {
+                    window.removeEventListener("pointermove", move);
+                    window.removeEventListener("pointerup", stop);
+                }
+
+                window.addEventListener("pointermove", move);
+                window.addEventListener("pointerup", stop);
+            });
+
+            handle.addEventListener("pointerdown", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const stageRect = stage.getBoundingClientRect();
+
+                function resize(moveEvent) {
+                    const nextWidth = clamp((moveEvent.clientX - stageRect.left) / stageRect.width - item.cropArea.xRatio, 0.12, 1 - item.cropArea.xRatio);
+                    const nextHeight = clamp((moveEvent.clientY - stageRect.top) / stageRect.height - item.cropArea.yRatio, 0.12, 1 - item.cropArea.yRatio);
+                    item.cropArea.widthRatio = nextWidth;
+                    item.cropArea.heightRatio = nextHeight;
+                    box.style.width = (nextWidth * 100) + "%";
+                    box.style.height = (nextHeight * 100) + "%";
+                }
+
+                function stopResize() {
+                    window.removeEventListener("pointermove", resize);
+                    window.removeEventListener("pointerup", stopResize);
+                }
+
+                window.addEventListener("pointermove", resize);
+                window.addEventListener("pointerup", stopResize);
+            });
+
+            return box;
+        }
+
+        function createCropCard(item) {
+            const card = document.createElement("div");
+            card.className = "rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden";
+
+            const stage = document.createElement("div");
+            stage.className = "relative bg-gray-100 dark:bg-gray-800";
+
+            const canvas = document.createElement("canvas");
+            canvas.className = "w-full h-auto block bg-white";
+            stage.appendChild(canvas);
+            stage.appendChild(makeCropOverlay(item, stage));
+
+            const body = document.createElement("div");
+            body.className = "p-4 space-y-3";
+
+            const info = document.createElement("div");
+            info.innerHTML = "<div class=\"text-xs uppercase tracking-[0.18em] text-gray-400\">Page " + item.pageNumber + "</div><div class=\"mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100\">Drag and resize the crop box</div>";
+
+            const resetBtn = document.createElement("button");
+            resetBtn.type = "button";
+            resetBtn.className = "px-3 py-2 rounded-lg bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 text-xs font-semibold";
+            resetBtn.textContent = "Reset This Page";
+            resetBtn.addEventListener("click", function() {
+                item.cropArea = createDefaultCropArea();
+                renderCropPdfGrid();
+            });
+
+            body.appendChild(info);
+            body.appendChild(resetBtn);
+            card.appendChild(stage);
+            card.appendChild(body);
+
+            renderCropThumbnail(item, canvas);
+            return card;
+        }
+
+        function renderCropPdfGrid() {
+            cropPdfGrid.innerHTML = "";
+            updateCropPdfVisibility();
+            cropPdfItems.forEach(function(item) {
+                cropPdfGrid.appendChild(createCropCard(item));
+            });
+        }
+
+        cropPdfInput.addEventListener("change", async function() {
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            cropPdfItems = [];
+            cropPdfBytes = null;
+            cropPdfDoc = null;
+            cropPdfViewDoc = null;
+            renderCropPdfGrid();
+
+            if (!file) {
+                setCropPdfStatus("");
+                return;
+            }
+
             try {
-                const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-                pdf.getPages().forEach(page => {
+                setCropPdfStatus("Loading PDF pages...");
+                cropPdfBytes = await file.arrayBuffer();
+                cropPdfDoc = await PDFLib.PDFDocument.load(cropPdfBytes);
+                cropPdfViewDoc = await pdfjsLib.getDocument({ data: cropPdfBytes }).promise;
+
+                for (let i = 1; i <= cropPdfDoc.getPageCount(); i++) {
+                    cropPdfItems.push({
+                        pageNumber: i,
+                        cropArea: createDefaultCropArea()
+                    });
+                }
+
+                renderCropPdfGrid();
+                setCropPdfStatus("Move the crop box on each page, or apply the first crop to all pages.");
+            } catch (error) {
+                setCropPdfStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        cropPdfApplyAllBtn.addEventListener("click", function() {
+            if (!cropPdfItems.length) return;
+            const first = cropPdfItems[0].cropArea;
+            cropPdfItems.forEach(function(item) {
+                item.cropArea = {
+                    xRatio: first.xRatio,
+                    yRatio: first.yRatio,
+                    widthRatio: first.widthRatio,
+                    heightRatio: first.heightRatio
+                };
+            });
+            renderCropPdfGrid();
+        });
+
+        cropPdfResetBtn.addEventListener("click", function() {
+            cropPdfItems.forEach(function(item) {
+                item.cropArea = createDefaultCropArea();
+            });
+            renderCropPdfGrid();
+        });
+
+        cropPdfBtn.addEventListener("click", async function() {
+            const file = cropPdfInput.files && cropPdfInput.files[0] ? cropPdfInput.files[0] : null;
+            if (!file) {
+                alert("Please select a PDF file");
+                return;
+            }
+
+            try {
+                setCropPdfStatus("Applying crop boxes to PDF...");
+                const pdf = await PDFLib.PDFDocument.load(cropPdfBytes);
+                const pages = pdf.getPages();
+
+                cropPdfItems.forEach(function(item, index) {
+                    const page = pages[index];
                     const width = page.getWidth();
                     const height = page.getHeight();
-                    const cropWidth = Math.max(20, width - (marginX * 2));
-                    const cropHeight = Math.max(20, height - (marginY * 2));
-                    page.setCropBox(marginX, marginY, cropWidth, cropHeight);
+                    const x = width * item.cropArea.xRatio;
+                    const cropWidth = Math.max(20, width * item.cropArea.widthRatio);
+                    const cropHeight = Math.max(20, height * item.cropArea.heightRatio);
+                    const yTop = height * item.cropArea.yRatio;
+                    const y = Math.max(0, height - yTop - cropHeight);
+
+                    page.setCropBox(x, y, Math.min(cropWidth, width - x), Math.min(cropHeight, height - y));
                 });
+
                 const bytes = await pdf.save();
                 const a = document.createElement("a");
                 a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-                a.download = "cropped.pdf";
+                a.download = getCropPdfBaseName(file.name) + "_cropped.pdf";
                 a.click();
-            } catch (e) {
-                alert("Could not crop this PDF: " + e.message);
+                setCropPdfStatus("Crop complete. Cropped PDF downloaded.");
+            } catch (error) {
+                setCropPdfStatus("Could not crop this PDF: " + error.message, true);
             }
         });
     </script>';
