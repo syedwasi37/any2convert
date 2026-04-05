@@ -889,7 +889,7 @@ function getInvoiceGeneratorHTML() {
             function addItemRow(data = {}) {
                 const row = document.createElement("div");
                 row.className = "grid md:grid-cols-[1.6fr_120px_140px_52px] gap-3";
-                row.innerHTML = `<input class="item-desc rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Design package" value="${data.desc || ""}"><input class="item-qty rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="1" step="1" value="${data.qty || 1}"><input class="item-price rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="0" step="0.01" value="${data.price || 0}"><button class="remove-item rounded-2xl bg-rose-500/12 text-rose-500 font-bold">×</button>`;
+                row.innerHTML = `<input class="item-desc rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" placeholder="Design package" value="${data.desc || ""}"><input class="item-qty rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="1" step="1" value="${data.qty || 1}"><input class="item-price rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-white" type="number" min="0" step="0.01" value="${data.price || 0}"><button class="remove-item rounded-2xl bg-rose-500/12 text-rose-500 font-bold">ï¿½</button>`;
                 row.querySelectorAll("input").forEach((el) => el.addEventListener("input", renderInvoice));
                 row.querySelector(".remove-item").addEventListener("click", () => { row.remove(); renderInvoice(); });
                 itemsWrap.appendChild(row);
@@ -975,7 +975,7 @@ function getSocialImageResizerHTML() {
             <div class="flex flex-wrap gap-3"><button id="socialResize" class="rounded-2xl bg-cyan-600 text-white px-5 py-3 font-semibold">Resize Image</button><button id="socialDownload" class="rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 font-semibold">Download PNG</button><p id="socialStatus" class="text-sm text-slate-500 dark:text-slate-400 self-center">Choose a platform preset to generate the output.</p></div>
         </div>
         <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-xl p-5 text-white">
-            <div class="flex items-center justify-between"><div><p class="text-[11px] tracking-[0.3em] uppercase text-cyan-300">Preview</p><h3 id="socialMeta" class="mt-2 text-xl font-black">Ready for export</h3></div><div id="socialDims" class="text-sm text-slate-300">0 × 0</div></div>
+            <div class="flex items-center justify-between"><div><p class="text-[11px] tracking-[0.3em] uppercase text-cyan-300">Preview</p><h3 id="socialMeta" class="mt-2 text-xl font-black">Ready for export</h3></div><div id="socialDims" class="text-sm text-slate-300">0 ï¿½ 0</div></div>
             <div class="mt-5 rounded-[28px] overflow-hidden bg-slate-900 border border-white/10 min-h-[420px] flex items-center justify-center"><canvas id="socialCanvas" class="max-w-full max-h-[480px]"></canvas></div>
         </div>
     </div>
@@ -983,10 +983,10 @@ function getSocialImageResizerHTML() {
         (() => {
             const presets = { instagram_post: { label: "Instagram Post", width: 1080, height: 1080 }, instagram_story: { label: "Instagram Story", width: 1080, height: 1920 }, youtube_thumb: { label: "YouTube Thumbnail", width: 1280, height: 720 }, linkedin_post: { label: "LinkedIn Post", width: 1200, height: 627 }, facebook_post: { label: "Facebook Post", width: 1200, height: 630 }, x_post: { label: "X / Twitter Post", width: 1600, height: 900 }, whatsapp_status: { label: "WhatsApp Status", width: 1080, height: 1920 } };
             const presetSelect = document.getElementById("socialPreset"), input = document.getElementById("socialImageInput"), fitSelect = document.getElementById("socialFit"), bgInput = document.getElementById("socialBg"), canvas = document.getElementById("socialCanvas"), ctx = canvas.getContext("2d"), status = document.getElementById("socialStatus"), dims = document.getElementById("socialDims"), meta = document.getElementById("socialMeta"); let image = null;
-            Object.entries(presets).forEach(([value, preset]) => { const option = document.createElement("option"); option.value = value; option.textContent = `${preset.label} (${preset.width}×${preset.height})`; presetSelect.appendChild(option); });
+            Object.entries(presets).forEach(([value, preset]) => { const option = document.createElement("option"); option.value = value; option.textContent = `${preset.label} (${preset.width}ï¿½${preset.height})`; presetSelect.appendChild(option); });
             function draw() {
                 const preset = presets[presetSelect.value]; if (!preset) return;
-                canvas.width = preset.width; canvas.height = preset.height; ctx.fillStyle = bgInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height); dims.textContent = `${preset.width} × ${preset.height}`; meta.textContent = preset.label;
+                canvas.width = preset.width; canvas.height = preset.height; ctx.fillStyle = bgInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height); dims.textContent = `${preset.width} ï¿½ ${preset.height}`; meta.textContent = preset.label;
                 if (!image) { status.textContent = "Upload an image first."; return; }
                 const scale = fitSelect.value === "cover" ? Math.max(canvas.width / image.width, canvas.height / image.height) : Math.min(canvas.width / image.width, canvas.height / image.height);
                 const drawWidth = image.width * scale, drawHeight = image.height * scale, x = (canvas.width - drawWidth) / 2, y = (canvas.height - drawHeight) / 2;
@@ -1286,7 +1286,7 @@ function getPercentageCalculatorHTML() {
                 </div>
                 <div class="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 p-5">
                     <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Formula</p>
-                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300"><strong class="text-slate-900 dark:text-white">Value / Base × 100</strong></p>
+                    <p class="mt-3 text-sm text-slate-600 dark:text-slate-300"><strong class="text-slate-900 dark:text-white">Value / Base ï¿½ 100</strong></p>
                 </div>
             </div>
         </div>
@@ -2100,13 +2100,13 @@ function getTournamentBracketGeneratorHTML() {
                 <div class="bq-card">
                     <div class="flex items-center justify-between gap-3 mb-3"><span class="text-[11px] uppercase tracking-[0.22em] text-slate-400">Team Names</span><button id="bracketAutofillBtn" type="button" class="rounded-full bg-cyan-400/10 text-cyan-300 px-4 py-2 text-sm font-semibold border border-cyan-400/12">Autofill</button></div>
                     <textarea id="bracketNames" rows="10" class="bq-field min-h-[15rem] resize-y" placeholder="Team Agent&#10;Team Lacy">Team Agent
-Team OhnePixel
-Team Lacy
-Team Jynxzi
-Team Mooda
-Team StableRonaldo
-Team Tarik
-Team FNS</textarea>
+Team A
+Team B
+Team C
+Team D
+Team E
+Team F
+Team G</textarea>
                     <div class="mt-4 flex flex-wrap gap-3"><button id="bracketGenerateBtn" class="rounded-[1rem] bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-5 py-3.5 font-semibold shadow-[0_18px_40px_rgba(14,165,233,.26)]">Generate Bracket</button><button id="bracketShuffleBtn" class="rounded-[1rem] bg-white/8 text-white px-5 py-3.5 font-semibold border border-white/10">Shuffle Seeds</button></div>
                 </div>
                 <div id="bracketOverview" class="grid grid-cols-2 gap-3"></div>
@@ -2365,7 +2365,7 @@ function getTypingSpeedTestHTML() {
                     primary_score: wpm,
                     secondary_score: accuracy,
                     score_label: `${wpm} WPM`,
-                    score_meta: `${accuracy}% accuracy · ${elapsedSeconds}s`
+                    score_meta: `${accuracy}% accuracy ï¿½ ${elapsedSeconds}s`
                 }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
             function nextPrompt() {
@@ -2543,9 +2543,9 @@ function getMemoryMatchGameHTML() {
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
                     <span class="block text-[11px] uppercase tracking-[0.22em] text-slate-400 mb-2">Difficulty</span>
                     <select id="memoryDifficulty" class="w-full min-h-[56px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 text-[15px] font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/30">
-                        <option value="12">Easy · 12 cards</option>
-                        <option value="16" selected>Normal · 16 cards</option>
-                        <option value="20">Hard · 20 cards</option>
+                        <option value="12">Easy ï¿½ 12 cards</option>
+                        <option value="16" selected>Normal ï¿½ 16 cards</option>
+                        <option value="20">Hard ï¿½ 20 cards</option>
                     </select>
                 </label>
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
@@ -2636,7 +2636,7 @@ function getMemoryMatchGameHTML() {
                 const best = JSON.parse(localStorage.getItem(bestKey) || "{}");
                 const key = `${difficultyEl.value}-${themeEl.value}`;
                 if (best[key]) {
-                    bestEl.textContent = `Best: ${best[key].moves} moves · ${best[key].time}`;
+                    bestEl.textContent = `Best: ${best[key].moves} moves ï¿½ ${best[key].time}`;
                 } else {
                     bestEl.textContent = "Best: --";
                 }
@@ -2671,7 +2671,7 @@ function getMemoryMatchGameHTML() {
                     primary_score: moves,
                     secondary_score: seconds,
                     score_label: `${moves} moves`,
-                    score_meta: `${formatTime(seconds)} · ${difficultyEl.options[difficultyEl.selectedIndex].text}`
+                    score_meta: `${formatTime(seconds)} ï¿½ ${difficultyEl.options[difficultyEl.selectedIndex].text}`
                 }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
 
