@@ -9880,11 +9880,36 @@ function getCropPdfHTML() {
 function getComparePdfHTML() {
     return '
     <div class="space-y-6">
-        <div class="grid md:grid-cols-2 gap-4">
-            <input type="file" id="comparePdfInputA" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-            <input type="file" id="comparePdfInputB" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+        <div style="display:none;">
+            <h1>Compare PDF Online Free - Compare PDF Files Side by Side</h1>
+            <p>Use this compare PDF tool to compare PDF files online, review PDF documents side by side, and find text differences between uploaded PDF files.</p>
+            <p>Learn how to compare PDF documents, compare PDF files for differences, and compare PDF side by side directly in your browser.</p>
         </div>
-        <button id="comparePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Compare PDFs</button>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Compare PDF Documents</div>
+                <p class="text-sm text-gray-500 mt-1">Upload two PDF files, preview them side by side, and compare the extracted text for differences.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <input type="file" id="comparePdfInputA" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+                <input type="file" id="comparePdfInputB" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            </div>
+            <button id="comparePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Compare PDF Files</button>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to compare PDF files:
+            Upload both PDF documents, review the preview side by side, and run the comparison to find differences in the extracted content.
+        </div>
+        <div class="grid lg:grid-cols-2 gap-4">
+            <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-900 dark:text-gray-100">PDF A Preview</div>
+                <div id="comparePdfPreviewA" class="aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-sm text-gray-500 p-4">Upload the first PDF to preview it here.</div>
+            </div>
+            <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-900 dark:text-gray-100">PDF B Preview</div>
+                <div id="comparePdfPreviewB" class="aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-sm text-gray-500 p-4">Upload the second PDF to preview it here.</div>
+            </div>
+        </div>
         <div id="comparePdfResult" class="hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 dark:bg-slate-900 dark:border-slate-700 space-y-3">
             <div id="comparePdfSummary" class="text-sm text-slate-700 dark:text-slate-200"></div>
             <textarea id="comparePdfDiff" class="w-full h-72 p-4 rounded-xl border border-slate-200 bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-600"></textarea>
@@ -9893,6 +9918,40 @@ function getComparePdfHTML() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+        const comparePdfInputA = document.getElementById("comparePdfInputA");
+        const comparePdfInputB = document.getElementById("comparePdfInputB");
+        const comparePdfPreviewA = document.getElementById("comparePdfPreviewA");
+        const comparePdfPreviewB = document.getElementById("comparePdfPreviewB");
+
+        async function renderComparePreview(file, container, emptyText) {
+            container.innerHTML = "";
+
+            if (!file) {
+                container.textContent = emptyText;
+                return;
+            }
+
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 0.45 });
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d", { alpha: false });
+                canvas.width = Math.ceil(viewport.width);
+                canvas.height = Math.ceil(viewport.height);
+                canvas.className = "w-full h-full object-contain bg-white";
+                context.fillStyle = "#FFFFFF";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+                container.appendChild(canvas);
+            } catch (error) {
+                container.textContent = "Could not preview this PDF: " + error.message;
+            }
+        }
+
         async function extractPdfPlainText(file) {
             const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
             const parts = [];
@@ -9921,9 +9980,18 @@ function getComparePdfHTML() {
             }
             return output.join("\\n").trim();
         }
+
+        comparePdfInputA.addEventListener("change", function() {
+            renderComparePreview(this.files[0], comparePdfPreviewA, "Upload the first PDF to preview it here.");
+        });
+
+        comparePdfInputB.addEventListener("change", function() {
+            renderComparePreview(this.files[0], comparePdfPreviewB, "Upload the second PDF to preview it here.");
+        });
+
         document.getElementById("comparePdfBtn").addEventListener("click", async function() {
-            const fileA = document.getElementById("comparePdfInputA").files[0];
-            const fileB = document.getElementById("comparePdfInputB").files[0];
+            const fileA = comparePdfInputA.files[0];
+            const fileB = comparePdfInputB.files[0];
             if (!fileA || !fileB) return alert("Please select both PDF files.");
             try {
                 const textA = await extractPdfPlainText(fileA);
