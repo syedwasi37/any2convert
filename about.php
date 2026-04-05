@@ -7,17 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | Any2Convert</title>
     <meta name="description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first browser tools, and how the product is evolving.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
     <link rel="canonical" href="https://any2convert.com/about.php">
     <meta property="og:title" content="About Us | Any2Convert">
     <meta property="og:description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first browser tools, and how the product is evolving.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com/about.php">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="About Us | Any2Convert">
     <meta name="twitter:description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first browser tools, and how the product is evolving.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="https://any2convert.com/about.php">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Any2Convert","url":"https://any2convert.com/about.php","description":"Learn what Any2Convert is building and why the platform focuses on privacy-first browser tools.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
     <script>
     tailwind.config = {
         darkMode: 'class'

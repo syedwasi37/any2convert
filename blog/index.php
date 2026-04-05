@@ -9,17 +9,22 @@ require_once __DIR__ . '/../seo_data.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog | Any2Convert</title>
     <meta name="description" content="Read Any2Convert guides about privacy, QR codes, document workflows, and practical ways to use browser-based tools.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="application-name" content="Any2Convert">
     <link rel="canonical" href="https://any2convert.com/blog/">
     <meta property="og:title" content="Blog | Any2Convert">
     <meta property="og:description" content="Read Any2Convert guides about privacy, QR codes, document workflows, and practical ways to use browser-based tools.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com/blog/">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Blog | Any2Convert">
     <meta name="twitter:description" content="Read Any2Convert guides about privacy, QR codes, document workflows, and practical ways to use browser-based tools.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="https://any2convert.com/blog/">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Any2Convert Blog","url":"https://any2convert.com/blog/","description":"Guides about privacy, QR codes, document workflows, and browser-based tools.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
     <script>
     tailwind.config = {
         darkMode: 'class'

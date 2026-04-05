@@ -235,10 +235,10 @@ function any2convertRenderFooter(): void
                 <div>
                     <div class="site-footer-heading">Tools</div>
                     <div style="display:flex;flex-direction:column;gap:9px;">
-                        <a href="tool.php?slug=image-to-pdf" class="site-footer-link">Image to PDF</a>
-                        <a href="tool.php?slug=pdf-to-word" class="site-footer-link">PDF to Word</a>
-                        <a href="tool.php?slug=merge-pdf" class="site-footer-link">Merge PDF</a>
-                        <a href="tool.php?slug=ocr-image-to-text" class="site-footer-link">OCR Tool</a>
+                        <a href="/image-to-pdf" class="site-footer-link">Image to PDF</a>
+                        <a href="/pdf-to-word" class="site-footer-link">PDF to Word</a>
+                        <a href="/merge-pdf" class="site-footer-link">Merge PDF</a>
+                        <a href="/ocr-image-to-text" class="site-footer-link">OCR Tool</a>
                     </div>
                 </div>
                 <div>
@@ -253,7 +253,8 @@ function any2convertRenderFooter(): void
                 <div>
                     <div class="site-footer-heading">Resources</div>
                     <div style="display:flex;flex-direction:column;gap:9px;">
-                        <a href="blog/index.php" class="site-footer-link">Blog</a>
+                        <a href="/blog/" class="site-footer-link">Blog</a>
+                        <a href="/sitemap.php" class="site-footer-link">Sitemap</a>
                     </div>
                 </div>
             </div>

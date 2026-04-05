@@ -1,4 +1,5 @@
 User-agent: *
+Allow: /
 Disallow: /admin/
 Disallow: /backend/
 Disallow: /dashboard.php
@@ -7,5 +8,7 @@ Disallow: /signup.php
 Disallow: /forgot_password.php
 Disallow: /reset_password.php
 Disallow: /otp_verify.php
+Disallow: /error_log
+Disallow: /sess_*
 
 Sitemap: https://any2convert.com/sitemap.php

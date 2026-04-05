@@ -57,9 +57,80 @@ $isWideTool = in_array($tool_id, $wideToolIds, true);
 require_once 'backend/tool_handlers.php';
 $tool_html = renderToolHandlerHTML($tool_id);
 
+$siteUrl = 'https://any2convert.com';
+$toolUrl = $siteUrl . '/' . $slug;
+$toolTitle = $tool_data['title'];
+$toolDescription = $tool_data['meta_desc'];
+$toolFaqs = $tool_data['faqs'] ?? [];
+
 // Generate dynamic keywords for SEO from H1 and Title
 $clean_h1 = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($tool_data['h1'] . ' ' . $tool_data['title']));
 $dynamic_keywords = implode(', ', array_unique(array_filter(explode(' ', $clean_h1), fn($w) => strlen($w) > 2))) . ', free, online, tool, any2convert';
+
+$webPageSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebPage',
+    'name' => $tool_data['h1'],
+    'url' => $toolUrl,
+    'description' => $toolDescription,
+    'isPartOf' => [
+        '@type' => 'WebSite',
+        'name' => 'Any2Convert',
+        'url' => $siteUrl . '/',
+    ],
+    'breadcrumb' => [
+        '@id' => $toolUrl . '#breadcrumb',
+    ],
+];
+$softwareSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'SoftwareApplication',
+    'name' => $tool_data['h1'],
+    'applicationCategory' => 'UtilitiesApplication',
+    'applicationSubCategory' => 'Online File and Utility Tool',
+    'operatingSystem' => 'Web',
+    'url' => $toolUrl,
+    'description' => $toolDescription,
+    'isAccessibleForFree' => true,
+    'offers' => [
+        '@type' => 'Offer',
+        'price' => '0',
+        'priceCurrency' => 'USD',
+    ],
+];
+$breadcrumbSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    '@id' => $toolUrl . '#breadcrumb',
+    'itemListElement' => [
+        [
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => $siteUrl . '/',
+        ],
+        [
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => $tool_data['h1'],
+            'item' => $toolUrl,
+        ],
+    ],
+];
+$faqSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => array_map(static function ($faq) {
+        return [
+            '@type' => 'Question',
+            'name' => $faq['q'],
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => $faq['a'],
+            ],
+        ];
+    }, $toolFaqs),
+];
 
 // Get the rest of index.css and navbar
 ?>
@@ -68,21 +139,26 @@ $dynamic_keywords = implode(', ', array_unique(array_filter(explode(' ', $clean_
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($tool_data['title']) ?></title>
+    <title><?= htmlspecialchars($toolTitle) ?></title>
     <link rel="icon" type="image/png" href="mylogo.png">
-    <meta name="description" content="<?= htmlspecialchars($tool_data['meta_desc']) ?>">
+    <meta name="description" content="<?= htmlspecialchars($toolDescription) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($dynamic_keywords) ?>">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <meta property="og:title" content="<?= htmlspecialchars($tool_data['title']) ?>">
-    <meta property="og:description" content="<?= htmlspecialchars($tool_data['meta_desc']) ?>">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="application-name" content="Any2Convert">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta property="og:title" content="<?= htmlspecialchars($toolTitle) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($toolDescription) ?>">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://any2convert.com/<?= htmlspecialchars($slug) ?>">
+    <meta property="og:site_name" content="Any2Convert">
+    <meta property="og:url" content="<?= htmlspecialchars($toolUrl) ?>">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?= htmlspecialchars($tool_data['title']) ?>">
-    <meta name="twitter:description" content="<?= htmlspecialchars($tool_data['meta_desc']) ?>">
+    <meta name="twitter:title" content="<?= htmlspecialchars($toolTitle) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($toolDescription) ?>">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
-    <link rel="canonical" href="https://any2convert.com/<?= htmlspecialchars($slug) ?>">
+    <meta name="twitter:url" content="<?= htmlspecialchars($toolUrl) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars($toolUrl) ?>">
 
     <script>
     tailwind.config = {
@@ -95,38 +171,12 @@ $dynamic_keywords = implode(', ', array_unique(array_filter(explode(' ', $clean_
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <!-- Schema Markup -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "<?= htmlspecialchars($tool_data['h1']) ?>",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "All",
-      "browserRequirements": "Requires HTML5 support",
-      "offers": {
-        "@type": "Offer",
-        "price": "0"
-      }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        <?php foreach ($tool_data['faqs'] as $index => $faq): ?>
-        {
-          "@type": "Question",
-          "name": "<?= htmlspecialchars($faq['q']) ?>",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "<?= htmlspecialchars($faq['a']) ?>"
-          }
-        }<?= $index < count($tool_data['faqs']) - 1 ? ',' : '' ?>
-        <?php endforeach; ?>
-      ]
-    }
-    </script>
+    <script type="application/ld+json"><?= json_encode($webPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($softwareSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <?php if (!empty($toolFaqs)): ?>
+    <script type="application/ld+json"><?= json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <?php endif; ?>
 
     <style>
         /* Shared Styles from index.php */

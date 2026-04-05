@@ -213,6 +213,59 @@ $categoryMeta = [
     'gaming' => ['label' => 'Gaming Tools',           'accent' => 'pink', 'hex' => '#EC4899'],
     'fun' => ['label' => 'Fun Tools',                 'accent' => 'fuchsia', 'hex' => '#D946EF'],
 ];
+
+$siteUrl = 'https://any2convert.com';
+$toolListSchemaItems = [];
+$toolPosition = 1;
+foreach ($tools as $category) {
+    foreach ($category['tools'] as $tool) {
+        if (!isset($tool_slugs[$tool['id']])) {
+            continue;
+        }
+        $toolListSchemaItems[] = [
+            '@type' => 'ListItem',
+            'position' => $toolPosition++,
+            'url' => $siteUrl . '/' . $tool_slugs[$tool['id']],
+            'name' => $tool['name'],
+        ];
+    }
+}
+
+$websiteSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebSite',
+    'name' => 'Any2Convert',
+    'url' => $siteUrl . '/',
+    'description' => 'Free online PDF, image, calculator, converter, OCR, and utility tools with privacy-first browser processing.',
+    'inLanguage' => 'en',
+    'potentialAction' => [
+        '@type' => 'SearchAction',
+        'target' => $siteUrl . '/?q={search_term_string}',
+        'query-input' => 'required name=search_term_string',
+    ],
+];
+$organizationSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Organization',
+    'name' => 'Any2Convert',
+    'url' => $siteUrl . '/',
+    'logo' => $siteUrl . '/mylogo.png',
+];
+$collectionPageSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'CollectionPage',
+    'name' => 'Any2Convert Free Online Tools',
+    'url' => $siteUrl . '/',
+    'description' => 'Browse free online PDF, image, OCR, converter, calculator, business, writing, and utility tools on Any2Convert.',
+];
+$itemListSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'ItemList',
+    'name' => 'Any2Convert Tool Directory',
+    'itemListOrder' => 'https://schema.org/ItemListOrderAscending',
+    'numberOfItems' => count($toolListSchemaItems),
+    'itemListElement' => $toolListSchemaItems,
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -222,20 +275,24 @@ $categoryMeta = [
     <title>Any2Convert | Free All-in-One PDF & Document Converter Suite</title>
     <link rel="icon" type="image/png" href="mylogo.png">
     <meta name="description" content="Free online PDF tools: Convert images to PDF, merge, compress, protect PDFs. Also includes OCR, JSON to CSV, QR codes. 100% client-side processing - your files never leave your device.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <meta name="theme-color" content="#6C63FF">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
     <meta name="keywords" content="pdf to word, image to pdf, pdf converter, merge pdf, compress pdf, ocr tool, json to csv, free online tools">
     <meta name="author" content="Any2Convert">
+    <meta name="application-name" content="Any2Convert">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="canonical" href="https://any2convert.com/">
     <meta property="og:title" content="Any2Convert - Free PDF & Document Tools">
     <meta property="og:description" content="15+ free tools to convert, edit, and secure your documents. No uploads, 100% private.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Any2Convert - Free PDF & Document Tools">
     <meta name="twitter:description" content="Fast online PDF and image tools with client-side privacy.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="https://any2convert.com/">
 
     <script>
     tailwind.config = {
@@ -255,28 +312,10 @@ $categoryMeta = [
         gtag('js', new Date());
         gtag('config', 'G-GNWNK7QZTD');
     </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Any2Convert",
-      "url": "https://any2convert.com/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://any2convert.com/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Any2Convert",
-      "url": "https://any2convert.com/",
-      "logo": "https://any2convert.com/mylogo.png"
-    }
-    </script>
+    <script type="application/ld+json"><?= json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($collectionPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($itemListSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
     <style>
         /* ── LIGHT MODE (default) ── */

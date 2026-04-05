@@ -15,6 +15,7 @@ if (!$tool) {
 $pageTitle = "The Ultimate Guide to " . $tool['h1'] . " | Any2Convert Blog";
 $pageDesc = "Learn everything about " . strtolower($tool['h1']) . ". " . $tool['meta_desc'];
 $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
+$toolUrl = "https://any2convert.com/" . $slug;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +24,20 @@ $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <meta name="description" content="<?= htmlspecialchars($pageDesc) ?>">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
     <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($pageTitle) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($pageDesc) ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Any2Convert">
+    <meta property="og:url" content="<?= htmlspecialchars($canonical) ?>">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($pageDesc) ?>">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="<?= htmlspecialchars($canonical) ?>">
     
     <script>tailwind.config = { darkMode: 'class' };</script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,10 +50,12 @@ $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
       "@type": "Article",
       "headline": "<?= htmlspecialchars($pageTitle) ?>",
       "description": "<?= htmlspecialchars($pageDesc) ?>",
+      "mainEntityOfPage": "<?= htmlspecialchars($canonical) ?>",
       "author": { "@type": "Organization", "name": "Any2Convert" },
       "publisher": { "@type": "Organization", "name": "Any2Convert", "logo": {"@type": "ImageObject", "url": "https://any2convert.com/mylogo.png"} }
     }
     </script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://any2convert.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://any2convert.com/blog/"},{"@type":"ListItem","position":3,"name":"<?= htmlspecialchars($tool['h1']) ?> Guide","item":"<?= htmlspecialchars($canonical) ?>"}]}</script>
     
     <style>
         :root { --bg-accent: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 35%, #eef2ff 100%); --panel-bg: rgba(255,255,255,0.92); --panel-border: rgba(148,163,184,0.16); --text-main:#0f172a; --text-soft:#64748b; --nav-bg:rgba(255,255,255,0.72); --nav-border:rgba(148,163,184,0.14); --pill-bg:rgba(255,255,255,0.86); --pill-text:#334155; }
@@ -54,7 +70,7 @@ $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
             <a href="../index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="index.php" class="px-4 py-2 rounded-full font-bold text-sm bg-[var(--pill-bg)] text-[var(--pill-text)] border border-[var(--panel-border)]">All Blogs</a>
-                <a href="../tool.php?slug=<?= urlencode($slug) ?>" class="px-4 py-2 rounded-full font-bold text-sm bg-blue-600 text-white">Use Tool Now</a>
+                <a href="<?= htmlspecialchars($toolUrl) ?>" class="px-4 py-2 rounded-full font-bold text-sm bg-blue-600 text-white">Use Tool Now</a>
             </div>
         </div>
     </nav>
@@ -73,7 +89,7 @@ $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
 
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">How to Use the Tool</h2>
                 <ul class="list-disc pl-6 space-y-3 mt-4">
-                    <li><strong>Step 1:</strong> Navigate to the <a href="../tool.php?slug=<?= urlencode($slug) ?>" class="text-blue-500 font-bold hover:underline"><?= htmlspecialchars($tool['title']) ?></a> page.</li>
+                    <li><strong>Step 1:</strong> Navigate to the <a href="<?= htmlspecialchars($toolUrl) ?>" class="text-blue-500 font-bold hover:underline"><?= htmlspecialchars($tool['title']) ?></a> page.</li>
                     <li><strong>Step 2:</strong> Upload your file or input your data into the clean, user-friendly interface.</li>
                     <li><strong>Step 3:</strong> Click the action button. The processing is done instantly in your browser.</li>
                     <li><strong>Step 4:</strong> Download your highly optimized, watermark-free result.</li>
@@ -82,7 +98,7 @@ $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
                 <div class="my-12 p-8 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800 text-center">
                     <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">Ready to try it out?</h3>
                     <p class="text-sm text-blue-600 dark:text-blue-300 mb-6">100% Free. No installation. No data collection.</p>
-                    <a href="../tool.php?slug=<?= urlencode($slug) ?>" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none">
+                    <a href="<?= htmlspecialchars($toolUrl) ?>" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none">
                         Open Tool
                     </a>
                 </div>

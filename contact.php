@@ -22,17 +22,21 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact & Feedback | Any2Convert</title>
     <meta name="description" content="Contact the Any2Convert team, submit feedback, report issues, and get support for the website and its browser-based tools.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
     <link rel="canonical" href="https://any2convert.com/contact.php">
     <meta property="og:title" content="Contact & Feedback | Any2Convert">
     <meta property="og:description" content="Contact the Any2Convert team, submit feedback, report issues, and get support for the website and its browser-based tools.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com/contact.php">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Contact & Feedback | Any2Convert">
     <meta name="twitter:description" content="Contact the Any2Convert team, submit feedback, report issues, and get support for the website and its browser-based tools.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="https://any2convert.com/contact.php">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ContactPage","name":"Contact Any2Convert","url":"https://any2convert.com/contact.php","description":"Contact the Any2Convert team, submit feedback, report issues, and get support.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
     <script>
     tailwind.config = {
         darkMode: 'class'

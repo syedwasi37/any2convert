@@ -7,17 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | Any2Convert</title>
     <meta name="description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
     <link rel="canonical" href="https://any2convert.com/privacy.php">
     <meta property="og:title" content="Privacy Policy | Any2Convert">
     <meta property="og:description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com/privacy.php">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Privacy Policy | Any2Convert">
     <meta name="twitter:description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="https://any2convert.com/privacy.php">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy | Any2Convert","url":"https://any2convert.com/privacy.php","description":"Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
     <script>
     tailwind.config = {
         darkMode: 'class'
