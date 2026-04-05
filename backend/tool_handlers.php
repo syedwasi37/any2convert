@@ -4474,7 +4474,7 @@ function getPptToPdfHTML() {
         <button id="pptToPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF</button>
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         const pptInput = document.getElementById("pptToPdfInput");
@@ -4626,79 +4626,106 @@ function getPptToPdfHTML() {
                     });
                 }
                 
-                let slidesHtml = "";
                 const orientation = layout === "landscape" ? "landscape" : "portrait";
-                const slideWidth = layout === "landscape" ? "10in" : "8.5in";
-                const slideHeight = layout === "landscape" ? "7.5in" : "11in";
-                
-                for (let i = 0; i < slides.length; i++) {
-                    const textHtml = (slides[i].lines || []).length
-                        ? slides[i].lines.map(function(line) {
-                            return "<p style=\"margin:0 0 14px;\">" + escapeHtml(line) + "</p>";
-                        }).join("")
-                        : "<p style=\"margin:0;color:#64748b;\">No readable text was found on this slide.</p>";
-
-                    const imageHtml = (slides[i].images || []).map(function(src) {
-                        return "<div style=\"margin:18px 0 0;\"><img src=\"" + src + "\" style=\"max-width:100%;max-height:4.6in;object-fit:contain;border-radius:12px;border:1px solid #e2e8f0;display:block;margin:0 auto;\" /></div>";
-                    }).join("");
-
-                    slidesHtml += `
-                        <div class="slide" style="page-break-after: always; width: ${slideWidth}; min-height: ${slideHeight}; display: flex; flex-direction: column; justify-content: flex-start; padding: 34px; box-sizing: border-box; background: white;">
-                            <div class="slide-title" style="font-size: 28px; font-weight: bold; color: #1e293b; margin-bottom: 22px; border-left: 5px solid #3498db; padding-left: 18px;">
-                                Slide ${slides[i].number}
-                            </div>
-                            <div class="slide-content" style="font-size: 18px; line-height: 1.6; color: #334155; flex: 1;">
-                                ${textHtml}
-                                ${imageHtml}
-                            </div>
-                        </div>
-                    `;
+                const { jsPDF } = window.jspdf || {};
+                if (!jsPDF) {
+                    throw new Error("PDF library failed to load.");
                 }
-                
-                const completeHtml = `<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>PowerPoint to PDF</title>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            font-family: Arial, sans-serif;
-                            background: white;
+
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: "pt",
+                    format: "a4",
+                    compress: true
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 36;
+                const usableWidth = pageWidth - (margin * 2);
+                const usableHeight = pageHeight - (margin * 2);
+
+                async function getImageSize(src) {
+                    return await new Promise(function(resolve, reject) {
+                        const img = new Image();
+                        img.onload = function() {
+                            resolve({
+                                width: img.naturalWidth || img.width || 1,
+                                height: img.naturalHeight || img.height || 1
+                            });
+                        };
+                        img.onerror = function() {
+                            reject(new Error("Could not read slide image."));
+                        };
+                        img.src = src;
+                    });
+                }
+
+                function imageFormatFromDataUrl(src) {
+                    if (/^data:image\/png/i.test(src)) return "PNG";
+                    if (/^data:image\/webp/i.test(src)) return "WEBP";
+                    if (/^data:image\/svg\+xml/i.test(src)) return "SVG";
+                    return "JPEG";
+                }
+
+                for (let i = 0; i < slides.length; i++) {
+                    if (i > 0) {
+                        pdf.addPage("a4", orientation);
+                    }
+
+                    progress.innerHTML = "Building PDF page " + (i + 1) + " of " + slides.length + "...";
+                    const slide = slides[i];
+                    let cursorY = margin;
+
+                    pdf.setFillColor(255, 255, 255);
+                    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+                    pdf.setDrawColor(52, 152, 219);
+                    pdf.setLineWidth(4);
+                    pdf.line(margin, cursorY, margin, cursorY + 28);
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setTextColor(30, 41, 59);
+                    pdf.setFontSize(20);
+                    pdf.text("Slide " + slide.number, margin + 12, cursorY + 20);
+                    cursorY += 42;
+
+                    const textLines = (slide.lines || []).length ? slide.lines : ["No readable text was found on this slide."];
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setTextColor(51, 65, 85);
+                    pdf.setFontSize(12);
+
+                    textLines.forEach(function(line) {
+                        const wrapped = pdf.splitTextToSize(String(line || ""), usableWidth);
+                        if (cursorY + (wrapped.length * 16) > pageHeight - margin) {
+                            return;
                         }
-                        .slide {
-                            box-sizing: border-box;
-                        }
-                        @media print {
-                            .slide {
-                                page-break-after: always;
+                        pdf.text(wrapped, margin, cursorY);
+                        cursorY += (wrapped.length * 16) + 6;
+                    });
+
+                    for (const src of (slide.images || [])) {
+                        try {
+                            const size = await getImageSize(src);
+                            const maxWidth = usableWidth;
+                            const maxHeight = Math.max(80, pageHeight - margin - cursorY);
+                            const scale = Math.min(maxWidth / size.width, maxHeight / size.height, 1);
+                            const renderWidth = Math.max(40, size.width * scale);
+                            const renderHeight = Math.max(40, size.height * scale);
+
+                            if (cursorY + renderHeight > pageHeight - margin) {
+                                break;
                             }
+
+                            const x = margin + ((usableWidth - renderWidth) / 2);
+                            pdf.addImage(src, imageFormatFromDataUrl(src), x, cursorY, renderWidth, renderHeight);
+                            cursorY += renderHeight + 18;
+                        } catch (imageError) {
                         }
-                    </style>
-                </head>
-                <body>
-                    ${slidesHtml}
-                </body>
-                </html>`;
-                
-                const opt = {
-                    margin: [0, 0, 0, 0],
-                    filename: "powerpoint_to_pdf.pdf",
-                    image: { type: "jpeg", quality: 0.98 },
-                    html2canvas: { scale: 2, letterRendering: true, backgroundColor: "#ffffff" },
-                    jsPDF: { unit: "in", format: layout === "landscape" ? "a4" : "a4", orientation: orientation }
-                };
-                
-                const element = document.createElement("div");
-                element.innerHTML = completeHtml;
-                element.style.background = "#ffffff";
-                document.body.appendChild(element);
-                
-                await new Promise(resolve => setTimeout(resolve, 100));
-                await html2pdf().set(opt).from(element).save();
-                element.remove();
-                alert("Conversion complete! PDF downloaded with extracted slide content.");
+                    }
+                }
+
+                pdf.save((file.name.replace(/\.(ppt|pptx)$/i, "") || "presentation") + ".pdf");
+                alert("Conversion complete! PDF downloaded.");
             } catch(e) {
                 alert("Error converting PowerPoint file: " + e.message);
             }
