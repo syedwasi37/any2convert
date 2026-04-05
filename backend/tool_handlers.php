@@ -4501,11 +4501,10 @@ function getPptToPdfHTML() {
                 
                 let slides = [];
                 
-                if (file.name.endsWith(".pptx")) {
+                if (/\.pptx$/i.test(file.name)) {
                     try {
                         const JSZip = window.JSZip;
                         const zip = await JSZip.loadAsync(arrayBuffer);
-                        const parser = new DOMParser();
                         const slideFiles = Object.keys(zip.files)
                             .filter(name => /ppt\/slides\/slide\d+\.xml$/i.test(name))
                             .sort(function(a, b) {
@@ -4514,25 +4513,29 @@ function getPptToPdfHTML() {
                                 return aNum - bNum;
                             });
 
-                        function xmlTextToParagraphs(xmlString) {
-                            const xml = parser.parseFromString(xmlString, "application/xml");
-                            const paragraphs = Array.from(xml.getElementsByTagNameNS("*", "p"));
-                            const lines = [];
+                        function decodeXmlEntities(value) {
+                            const textarea = document.createElement("textarea");
+                            textarea.innerHTML = value;
+                            return textarea.value;
+                        }
 
-                            paragraphs.forEach(function(paragraph) {
-                                const runs = Array.from(paragraph.getElementsByTagNameNS("*", "t"));
-                                const line = runs
-                                    .map(function(node) { return (node.textContent || "").trim(); })
-                                    .filter(Boolean)
-                                    .join(" ");
-                                if (line) {
-                                    lines.push(line);
+                        function xmlTextToParagraphs(xmlString) {
+                            const lines = [];
+                            const paragraphMatches = xmlString.match(/<a:p[\s\S]*?<\/a:p>/gi) || [];
+
+                            paragraphMatches.forEach(function(paragraphXml) {
+                                const runMatches = Array.from(paragraphXml.matchAll(/<a:t[^>]*>([\s\S]*?)<\/a:t>/gi));
+                                const pieces = runMatches
+                                    .map(function(match) { return decodeXmlEntities((match[1] || "").trim()); })
+                                    .filter(Boolean);
+                                if (pieces.length) {
+                                    lines.push(pieces.join(" "));
                                 }
                             });
 
                             if (!lines.length) {
-                                const fallbackRuns = Array.from(xml.getElementsByTagNameNS("*", "t"))
-                                    .map(function(node) { return (node.textContent || "").trim(); })
+                                const fallbackRuns = Array.from(xmlString.matchAll(/<(?:a:)?t[^>]*>([\s\S]*?)<\/(?:a:)?t>/gi))
+                                    .map(function(match) { return decodeXmlEntities((match[1] || "").trim()); })
                                     .filter(Boolean);
                                 if (fallbackRuns.length) {
                                     lines.push(fallbackRuns.join(" "));
@@ -4562,13 +4565,19 @@ function getPptToPdfHTML() {
                             const relEntry = zip.files[relPath];
                             if (!relEntry) return [];
 
-                            const relXml = parser.parseFromString(await relEntry.async("string"), "application/xml");
-                            const relationships = Array.from(relXml.getElementsByTagName("Relationship"));
+                            const relXmlText = await relEntry.async("string");
+                            const relationships = Array.from(relXmlText.matchAll(/<Relationship\b[^>]*Target="([^"]+)"[^>]*Type="([^"]+)"[^>]*\/?>/gi))
+                                .map(function(match) {
+                                    return {
+                                        target: match[1] || "",
+                                        type: match[2] || ""
+                                    };
+                                });
                             const images = [];
 
                             for (const rel of relationships) {
-                                const target = rel.getAttribute("Target") || "";
-                                const type = rel.getAttribute("Type") || "";
+                                const target = rel.target || "";
+                                const type = rel.type || "";
                                 if (!/image/i.test(type) && !/\.(png|jpe?g|gif|bmp|svg|webp)$/i.test(target)) {
                                     continue;
                                 }
