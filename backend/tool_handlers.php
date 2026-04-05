@@ -7986,27 +7986,242 @@ function getOcrPdfHTML() {
 function getRotatePdfHTML() {
     return '
     <div class="space-y-6">
-        <input type="file" id="rotatePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <select id="rotatePdfAngle" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-            <option value="90">Rotate 90°</option>
-            <option value="180">Rotate 180°</option>
-            <option value="270">Rotate 270°</option>
-        </select>
-        <button id="rotatePdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Rotate PDF</button>
+        <div style="display:none;">
+            <h1>Rotate PDF Online Free - Rotate PDF Pages</h1>
+            <p>Use this rotate PDF tool to rotate PDF pages online free, permanently rotate PDF files, and save your updated document after visual page editing.</p>
+            <p>Rotate PDF file pages on Mac, Windows, and mobile browsers with per-page controls or apply one angle to all pages at once.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">Rotate PDF Pages</div>
+                <p class="text-sm text-gray-500 mt-1">Upload a PDF, preview each page, rotate pages left or right visually, apply an angle to all pages if needed, and download the rotated PDF.</p>
+            </div>
+            <input type="file" id="rotatePdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <div id="rotatePdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
+            <div id="rotatePdfToolbar" class="hidden flex flex-wrap gap-3">
+                <select id="rotatePdfAngle" class="px-4 py-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="90">Rotate all 90° right</option>
+                    <option value="180">Rotate all 180°</option>
+                    <option value="270">Rotate all 90° left</option>
+                </select>
+                <button id="rotatePdfApplyAllBtn" type="button" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Apply to All Pages</button>
+                <button id="rotatePdfResetBtn" type="button" class="px-4 py-3 rounded-xl bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 font-semibold hover:bg-amber-200 dark:hover:bg-amber-900/50 transition">Reset Rotations</button>
+                <button id="rotatePdfBtn" type="button" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Rotate PDF and Save</button>
+            </div>
+        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+            How to rotate PDF:
+            Upload the file, rotate PDF pages visually, and save your changes so the PDF stays permanently rotated.
+        </div>
+        <div id="rotatePdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-sm text-gray-500">PDF page thumbnails will appear here after upload so you can rotate PDF pages online.</div>
+        <div id="rotatePdfGrid" class="hidden grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        document.getElementById("rotatePdfBtn").addEventListener("click", async function() {
-            const file = document.getElementById("rotatePdfInput").files[0];
-            if (!file) return alert("Please select a PDF file");
-            const angle = parseInt(document.getElementById("rotatePdfAngle").value, 10);
-            const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-            pdf.getPages().forEach(page => page.setRotation(PDFLib.degrees(angle)));
-            const bytes = await pdf.save();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-            a.download = "rotated.pdf";
-            a.click();
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+        const rotatePdfInput = document.getElementById("rotatePdfInput");
+        const rotatePdfStatus = document.getElementById("rotatePdfStatus");
+        const rotatePdfToolbar = document.getElementById("rotatePdfToolbar");
+        const rotatePdfGrid = document.getElementById("rotatePdfGrid");
+        const rotatePdfEmpty = document.getElementById("rotatePdfEmpty");
+        const rotatePdfAngle = document.getElementById("rotatePdfAngle");
+        const rotatePdfApplyAllBtn = document.getElementById("rotatePdfApplyAllBtn");
+        const rotatePdfResetBtn = document.getElementById("rotatePdfResetBtn");
+        const rotatePdfSaveBtn = document.getElementById("rotatePdfBtn");
+
+        let rotatePdfBytes = null;
+        let rotatePdfDoc = null;
+        let rotatePdfViewDoc = null;
+        let rotatePdfItems = [];
+
+        function setRotatePdfStatus(message, isError) {
+            if (!message) {
+                rotatePdfStatus.textContent = "";
+                rotatePdfStatus.classList.add("hidden");
+                rotatePdfStatus.classList.remove("text-red-500");
+                return;
+            }
+
+            rotatePdfStatus.textContent = message;
+            rotatePdfStatus.classList.remove("hidden");
+            rotatePdfStatus.classList.toggle("text-red-500", !!isError);
+        }
+
+        function updateRotatePdfVisibility() {
+            const hasItems = rotatePdfItems.length > 0;
+            rotatePdfGrid.classList.toggle("hidden", !hasItems);
+            rotatePdfToolbar.classList.toggle("hidden", !hasItems);
+            rotatePdfEmpty.classList.toggle("hidden", hasItems);
+            if (!hasItems) {
+                rotatePdfEmpty.textContent = "PDF page thumbnails will appear here after upload so you can rotate PDF pages online.";
+            }
+        }
+
+        async function renderRotateThumbnail(item, canvas) {
+            if (!rotatePdfViewDoc) return;
+            const page = await rotatePdfViewDoc.getPage(item.sourceIndex + 1);
+            const viewport = page.getViewport({ scale: 0.32, rotation: item.rotation });
+            const context = canvas.getContext("2d");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+        }
+
+        function normalizeRotation(value) {
+            let angle = value % 360;
+            if (angle < 0) angle += 360;
+            return angle;
+        }
+
+        function createRotatePageCard(item, index) {
+            const card = document.createElement("div");
+            card.className = "rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden";
+
+            const preview = document.createElement("div");
+            preview.className = "aspect-[3/4] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden";
+
+            const canvas = document.createElement("canvas");
+            canvas.className = "w-full h-full object-contain bg-white";
+            preview.appendChild(canvas);
+
+            const body = document.createElement("div");
+            body.className = "p-4 space-y-3";
+
+            const info = document.createElement("div");
+            info.innerHTML = "<div class=\"text-xs uppercase tracking-[0.18em] text-gray-400\">Page " + (index + 1) + "</div><div class=\"mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100\">Original PDF page " + (item.sourceIndex + 1) + "</div>";
+
+            const angleBadge = document.createElement("div");
+            angleBadge.className = "text-xs font-semibold text-blue-700 dark:text-blue-300";
+
+            const controls = document.createElement("div");
+            controls.className = "flex flex-wrap gap-2";
+
+            const leftBtn = document.createElement("button");
+            leftBtn.type = "button";
+            leftBtn.className = "px-3 py-2 rounded-lg bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 text-xs font-semibold";
+            leftBtn.textContent = "Rotate Left";
+
+            const rightBtn = document.createElement("button");
+            rightBtn.type = "button";
+            rightBtn.className = "px-3 py-2 rounded-lg bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 text-xs font-semibold";
+            rightBtn.textContent = "Rotate Right";
+
+            const flipBtn = document.createElement("button");
+            flipBtn.type = "button";
+            flipBtn.className = "px-3 py-2 rounded-lg bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 text-xs font-semibold";
+            flipBtn.textContent = "Rotate 180°";
+
+            function refreshCard() {
+                angleBadge.textContent = "Current rotation: " + item.rotation + "°";
+                renderRotateThumbnail(item, canvas);
+            }
+
+            leftBtn.addEventListener("click", function() {
+                item.rotation = normalizeRotation(item.rotation - 90);
+                refreshCard();
+            });
+
+            rightBtn.addEventListener("click", function() {
+                item.rotation = normalizeRotation(item.rotation + 90);
+                refreshCard();
+            });
+
+            flipBtn.addEventListener("click", function() {
+                item.rotation = normalizeRotation(item.rotation + 180);
+                refreshCard();
+            });
+
+            controls.appendChild(leftBtn);
+            controls.appendChild(rightBtn);
+            controls.appendChild(flipBtn);
+            body.appendChild(info);
+            body.appendChild(angleBadge);
+            body.appendChild(controls);
+            card.appendChild(preview);
+            card.appendChild(body);
+
+            refreshCard();
+            return card;
+        }
+
+        function renderRotatePdfGrid() {
+            rotatePdfGrid.innerHTML = "";
+            updateRotatePdfVisibility();
+            rotatePdfItems.forEach(function(item, index) {
+                rotatePdfGrid.appendChild(createRotatePageCard(item, index));
+            });
+        }
+
+        rotatePdfInput.addEventListener("change", async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            try {
+                setRotatePdfStatus("Loading PDF pages...");
+                rotatePdfBytes = await file.arrayBuffer();
+                rotatePdfDoc = await PDFLib.PDFDocument.load(rotatePdfBytes);
+                rotatePdfViewDoc = await pdfjsLib.getDocument({ data: rotatePdfBytes }).promise;
+                rotatePdfItems = [];
+
+                for (let i = 0; i < rotatePdfDoc.getPageCount(); i++) {
+                    rotatePdfItems.push({
+                        sourceIndex: i,
+                        rotation: 0
+                    });
+                }
+
+                renderRotatePdfGrid();
+                setRotatePdfStatus("Rotate PDF pages visually, or apply one angle to all pages.");
+            } catch (error) {
+                rotatePdfItems = [];
+                renderRotatePdfGrid();
+                setRotatePdfStatus("Could not load this PDF: " + error.message, true);
+            }
+        });
+
+        rotatePdfApplyAllBtn.addEventListener("click", function() {
+            const angle = parseInt(rotatePdfAngle.value || "90", 10);
+            if (!rotatePdfItems.length) return;
+            rotatePdfItems.forEach(function(item) {
+                item.rotation = normalizeRotation(item.rotation + angle);
+            });
+            renderRotatePdfGrid();
+            setRotatePdfStatus("Applied " + angle + "° rotation to all pages.");
+        });
+
+        rotatePdfResetBtn.addEventListener("click", function() {
+            rotatePdfItems.forEach(function(item) {
+                item.rotation = 0;
+            });
+            renderRotatePdfGrid();
+            setRotatePdfStatus("All page rotations reset.");
+        });
+
+        rotatePdfSaveBtn.addEventListener("click", async function() {
+            if (!rotatePdfInput.files.length || !rotatePdfItems.length) return alert("Please select a PDF file");
+
+            try {
+                setRotatePdfStatus("Saving rotated PDF...");
+                const pdf = await PDFLib.PDFDocument.load(rotatePdfBytes);
+                pdf.getPages().forEach(function(page, index) {
+                    page.setRotation(PDFLib.degrees(rotatePdfItems[index].rotation));
+                });
+
+                const bytes = await pdf.save();
+                const file = rotatePdfInput.files[0];
+                const baseName = file && file.name ? file.name.replace(/\.pdf$/i, "") : "rotated";
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+                a.download = baseName + "-rotated.pdf";
+                a.click();
+                setRotatePdfStatus("Rotated PDF ready. Your file has been downloaded.");
+            } catch (error) {
+                setRotatePdfStatus("Could not rotate this PDF: " + error.message, true);
+            }
         });
     </script>';
 }
