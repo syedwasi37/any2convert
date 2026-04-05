@@ -6625,11 +6625,12 @@ function getJpgConverterHTML() {
     <div class="space-y-6">
         <div style="display:none;">
             <h1>JPG to PNG JPEG PDF Converter Online Free</h1>
-            <p>Convert JPG and JPEG images to PNG, JPEG, or PDF directly in your browser with fast client-side processing.</p>
+            <p>Use this JPG to PNG converter and JPG to PDF converter to convert JPG to PNG free, change JPG to PNG, convert JPG to PDF free, or export JPG files as JPEG directly in your browser.</p>
+            <p>Free JPG to PNG converter, JPG to PDF converter free, online JPG to PDF converter, and convert JPG to PNG online free workflows for Windows, Mac, iPhone, and Android browsers.</p>
         </div>
         <div class="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 dark:bg-emerald-950/30 dark:border-emerald-900 p-4">
             <div class="font-semibold text-emerald-900 dark:text-emerald-100">JPG Converter</div>
-            <p class="mt-1 text-sm text-emerald-800 dark:text-emerald-200">Upload a JPG or JPEG image, choose PNG, JPEG, or PDF, preview it, and download the converted file.</p>
+            <p class="mt-1 text-sm text-emerald-800 dark:text-emerald-200">Upload a JPG or JPEG image, choose PNG, JPEG, or PDF, preview it, and download the converted file in seconds.</p>
         </div>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
             <input type="file" id="jpgInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".jpg,.jpeg,image/jpeg">
@@ -6639,9 +6640,10 @@ function getJpgConverterHTML() {
                 <option value="pdf">Convert to PDF</option>
             </select>
             <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
-                Upload the JPG image, choose the output format, and download the converted PNG, JPEG, or PDF file.
+                How to convert JPG to PNG or PDF:
+                Upload the JPG image, choose PNG, JPEG, or PDF, and download the converted file for free.
             </div>
-            <button id="jpgConvertBtn" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition">Convert JPG</button>
+            <button id="jpgConvertBtn" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition">Convert JPG to PNG JPEG PDF</button>
             <div id="jpgStatus" class="hidden text-sm text-gray-500 text-center"></div>
         </div>
         <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
@@ -6772,7 +6774,7 @@ function getJpgConverterHTML() {
                 setJpgStatus("Could not convert this JPG file: " + error.message, true);
             } finally {
                 jpgConvertBtn.disabled = false;
-                jpgConvertBtn.textContent = "Convert JPG";
+                jpgConvertBtn.textContent = "Convert JPG to PNG JPEG PDF";
             }
         });
     </script>';
