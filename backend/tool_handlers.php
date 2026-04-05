@@ -10545,17 +10545,28 @@ function getEditPdfHTML() {
 function getRedactPdfHTML() {
     return '
     <div class="space-y-6">
-        <div class="rounded-2xl border border-amber-200/70 bg-amber-50/80 dark:bg-amber-950/30 dark:border-amber-900 p-4">
-            <div class="font-semibold text-amber-900 dark:text-amber-100">Burned-in redaction</div>
-            <p class="mt-1 text-sm text-amber-800 dark:text-amber-200">This version finds a keyword, paints black boxes over matches, and rebuilds the PDF from rendered pages for stronger visual redaction.</p>
+        <div style="display:none;">
+            <h1>Redact PDF Online Free</h1>
+            <p>Use this redact PDF tool to redact PDF online free, hide sensitive PDF text, and download a rebuilt redacted copy directly in your browser.</p>
+            <p>Learn how to redact PDF for free, redact PDF text online, and create a free redact PDF workflow without Adobe.</p>
         </div>
-        <input type="file" id="redactPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-        <input type="text" id="redactKeyword" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter keyword to redact">
-        <label class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-            <input type="checkbox" id="redactCaseSensitive" class="rounded border-gray-300">
-            Match case exactly
-        </label>
-        <button id="redactPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Redact PDF</button>
+        <div class="rounded-2xl border border-amber-200/70 bg-amber-50/80 dark:bg-amber-950/30 dark:border-amber-900 p-4">
+            <div class="font-semibold text-amber-900 dark:text-amber-100">Redact PDF text visually</div>
+            <p class="mt-1 text-sm text-amber-800 dark:text-amber-200">Enter a word or phrase, redact PDF text with black boxes, and download a rebuilt copy for stronger visual redaction.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
+            <input type="file" id="redactPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+            <input type="text" id="redactKeyword" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter keyword or phrase to redact">
+            <label class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                <input type="checkbox" id="redactCaseSensitive" class="rounded border-gray-300">
+                Match case exactly
+            </label>
+            <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                How to redact PDF:
+                Upload the PDF, enter the text you want to hide, choose case-sensitive matching if needed, and download the redacted PDF file.
+            </div>
+            <button id="redactPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Redact PDF Free</button>
+        </div>
         <div id="redactStatus" class="hidden text-sm text-gray-500 text-center"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
