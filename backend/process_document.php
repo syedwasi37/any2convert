@@ -1,8 +1,9 @@
 <?php
 // backend/process_document.php
 // API endpoint for converting documents securely
-// Free Secret from convertapi.com (250 req/month)
-define('CONVERTAPI_SECRET', 'YOUR_CONVERT_API_SECRET_HERE'); 
+require_once __DIR__ . '/db.php';
+
+$convertApiSecret = envValue('CONVERTAPI_SECRET', 'YOUR_CONVERT_API_SECRET_HERE');
 
 header('Content-Type: application/json');
 
@@ -18,8 +19,8 @@ if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
-if (CONVERTAPI_SECRET === 'YOUR_CONVERT_API_SECRET_HERE') {
-    echo json_encode(['error' => 'Backend API is not configured. The administrator needs to specify the CONVERTAPI_SECRET in backend/process_document.php.']);
+if ($convertApiSecret === 'YOUR_CONVERT_API_SECRET_HERE') {
+    echo json_encode(['error' => 'Backend API is not configured. Add CONVERTAPI_SECRET to your .env file.']);
     exit;
 }
 
@@ -32,6 +33,7 @@ $map = [
     'pdf_to_ppt'  => ['from' => 'pdf', 'to' => 'pptx'],
     'pdf_to_excel'=> ['from' => 'pdf', 'to' => 'xlsx'],
     'word_to_pdf' => ['from' => 'docx', 'to' => 'pdf'],
+    'ppt_to_pdf'  => ['from' => 'pptx', 'to' => 'pdf'],
     'protect_pdf' => ['from' => 'pdf', 'to' => 'encrypt']
 ];
 
@@ -51,7 +53,14 @@ if ($action === 'word_to_pdf') {
     }
 }
 
-$url = "https://v2.convertapi.com/convert/$from/to/$to?Secret=" . CONVERTAPI_SECRET;
+if ($action === 'ppt_to_pdf') {
+    $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    if ($ext === 'ppt') {
+        $from = 'ppt';
+    }
+}
+
+$url = "https://v2.convertapi.com/convert/$from/to/$to?Secret=" . $convertApiSecret;
 
 $postFields = [
     'File' => new CURLFile($filePath, mime_content_type($filePath), $fileName)
