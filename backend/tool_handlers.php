@@ -12259,6 +12259,7 @@ function getEditPdfHTML() {
         let editPdfPages = [];
         let editPdfCurrentPage = 0;
         let editPdfSelectedOverlayId = null;
+        let editPdfEditingOverlayId = null;
         let editPdfZoomLevel = 1;
 
         function setEditPdfStatus(message, isError) {
@@ -12348,6 +12349,34 @@ function getEditPdfHTML() {
                 if (overlay.type === "replace-text" && overlay.heightRatio) {
                     node.style.minHeight = Math.max(18, overlay.heightRatio * stageSize.height) + "px";
                 }
+                if (overlay.type === "replace-text") {
+                    node.style.cursor = editPdfEditingOverlayId === overlay.id ? "text" : "move";
+                    node.contentEditable = editPdfEditingOverlayId === overlay.id ? "true" : "false";
+                    if (editPdfEditingOverlayId === overlay.id) {
+                        node.classList.add("outline-none", "ring-2", "ring-indigo-500/70");
+                    }
+                    node.addEventListener("input", function() {
+                        overlay.text = node.textContent || "";
+                        editPdfText.value = overlay.text;
+                    });
+                    node.addEventListener("blur", function() {
+                        overlay.text = (node.textContent || "").trim();
+                        editPdfEditingOverlayId = null;
+                        if (!overlay.text) {
+                            pageData.overlays = pageData.overlays.filter(function(item) {
+                                return item.id !== overlay.id;
+                            });
+                            editPdfSelectedOverlayId = null;
+                        }
+                        renderEditPdfWorkspace();
+                    });
+                    node.addEventListener("keydown", function(event) {
+                        if (event.key === "Escape") {
+                            event.preventDefault();
+                            node.blur();
+                        }
+                    });
+                }
             } else {
                 const image = document.createElement("img");
                 image.src = overlay.src;
@@ -12359,10 +12388,16 @@ function getEditPdfHTML() {
             node.addEventListener("click", function(event) {
                 event.stopPropagation();
                 editPdfSelectedOverlayId = overlay.id;
+                if (overlay.type === "replace-text") {
+                    editPdfEditingOverlayId = overlay.id;
+                }
                 renderEditPdfWorkspace();
             });
 
             node.addEventListener("pointerdown", function(event) {
+                if (overlay.type === "replace-text" && editPdfEditingOverlayId === overlay.id) {
+                    return;
+                }
                 event.preventDefault();
                 event.stopPropagation();
                 editPdfSelectedOverlayId = overlay.id;
@@ -12432,8 +12467,10 @@ function getEditPdfHTML() {
                 }
 
                 editPdfSelectedOverlayId = overlay.id;
+                editPdfEditingOverlayId = overlay.id;
                 editPdfText.value = overlay.text;
                 editPdfTextSize.value = String(Math.max(8, Math.round(overlay.sizeRatio * stageSize.width)));
+                editPdfTextStyle.value = overlay.style;
                 editPdfTextHint.textContent = "Detected text selected. Update the content or size, then click Add Text to replace it in the exported PDF.";
                 renderEditPdfWorkspace();
             });
@@ -12548,11 +12585,24 @@ function getEditPdfHTML() {
             }
 
             pageData.overlays.forEach(function(overlay) {
-                editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
+                const overlayNode = buildOverlayNode(pageData, overlay, stageSize);
+                editPdfStage.appendChild(overlayNode);
+                if (overlay.id === editPdfEditingOverlayId && overlay.type === "replace-text") {
+                    requestAnimationFrame(function() {
+                        overlayNode.focus();
+                        const selection = window.getSelection();
+                        const range = document.createRange();
+                        range.selectNodeContents(overlayNode);
+                        range.collapse(false);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    });
+                }
             });
 
             editPdfStage.onclick = function() {
                 editPdfSelectedOverlayId = null;
+                editPdfEditingOverlayId = null;
                 renderEditPdfWorkspace();
             };
         }
@@ -12575,6 +12625,7 @@ function getEditPdfHTML() {
                 selectedOverlay.text = text;
                 selectedOverlay.style = editPdfTextStyle.value;
                 selectedOverlay.sizeRatio = size / 700;
+                editPdfEditingOverlayId = selectedOverlay.id;
             } else {
                 pageData.overlays.push({
                     id: createOverlayId(),
@@ -12671,7 +12722,24 @@ function getEditPdfHTML() {
                 return item.id !== editPdfSelectedOverlayId;
             });
             editPdfSelectedOverlayId = null;
+            editPdfEditingOverlayId = null;
             renderEditPdfWorkspace();
+        });
+
+        window.addEventListener("keydown", function(event) {
+            const tag = document.activeElement ? document.activeElement.tagName : "";
+            const isTypingInForm = tag === "INPUT" || tag === "TEXTAREA" || (document.activeElement && document.activeElement.isContentEditable);
+            if (isTypingInForm) return;
+            if ((event.key === "Delete" || event.key === "Backspace") && editPdfSelectedOverlayId) {
+                const pageData = getCurrentPageData();
+                if (!pageData) return;
+                pageData.overlays = pageData.overlays.filter(function(item) {
+                    return item.id !== editPdfSelectedOverlayId;
+                });
+                editPdfSelectedOverlayId = null;
+                editPdfEditingOverlayId = null;
+                renderEditPdfWorkspace();
+            }
         });
 
         editPdfInput.addEventListener("change", async function() {
@@ -12679,6 +12747,7 @@ function getEditPdfHTML() {
             editPdfPages = [];
             editPdfCurrentPage = 0;
             editPdfSelectedOverlayId = null;
+            editPdfEditingOverlayId = null;
             editPdfStage.innerHTML = "";
             updateEditPdfVisibility();
 
