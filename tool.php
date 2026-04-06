@@ -53,6 +53,40 @@ $wideToolIds = [
     'memory_match_game',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
+$pdfToolIds = [
+    'img_to_pdf',
+    'pdf_to_img',
+    'pdf_to_word',
+    'pdf_to_ppt',
+    'pdf_to_excel',
+    'merge_pdf',
+    'compress_pdf',
+    'protect_pdf',
+    'word_to_pdf',
+    'excel_to_pdf',
+    'ppt_to_pdf',
+    'html_to_pdf',
+    'split_pdf',
+    'remove_pages',
+    'extract_pages',
+    'organize_pdf',
+    'scan_to_pdf',
+    'optimize_pdf',
+    'repair_pdf',
+    'ocr_pdf',
+    'rotate_pdf',
+    'add_page_numbers',
+    'add_watermark',
+    'unlock_pdf',
+    'sign_pdf',
+    'crop_pdf',
+    'compare_pdf',
+    'pdf_to_pdfa',
+    'edit_pdf',
+    'redact_pdf',
+    'translate_pdf',
+];
+$isPdfTool = in_array($tool_id, $pdfToolIds, true);
 
 require_once 'backend/tool_handlers.php';
 $tool_html = renderToolHandlerHTML($tool_id);
@@ -260,6 +294,14 @@ $faqSchema = [
         .tool-container.tool-container-wide {
             max-width: 1180px;
             padding: 34px;
+        }
+        .tool-container.tool-container-pdf {
+            max-width: 1100px;
+            padding: 34px;
+            background:
+                radial-gradient(circle at top left, rgba(108,99,255,0.12), transparent 22rem),
+                radial-gradient(circle at bottom right, rgba(59,130,246,0.1), transparent 18rem),
+                var(--bg-card);
         }
         .tool-container::before {
             content: "";
@@ -484,6 +526,51 @@ $faqSchema = [
         .tool-container.tool-container-wide textarea {
             line-height: 1.65;
         }
+        .tool-container.tool-container-pdf :where(.rounded-3xl, .rounded-2xl, .rounded-xl) {
+            backdrop-filter: blur(14px);
+        }
+        .tool-container.tool-container-pdf :where(.rounded-3xl, .rounded-2xl) {
+            border-color: color-mix(in srgb, var(--border) 82%, transparent) !important;
+            box-shadow: 0 18px 38px rgba(15,23,42,0.07);
+        }
+        html.dark .tool-container.tool-container-pdf :where(.rounded-3xl, .rounded-2xl) {
+            box-shadow: 0 20px 42px rgba(2,6,23,0.28);
+        }
+        .tool-container.tool-container-pdf button {
+            min-height: 52px;
+            border-radius: 18px !important;
+            transition: transform 0.24s cubic-bezier(.22,1,.36,1), box-shadow 0.24s ease, filter 0.24s ease;
+        }
+        .tool-container.tool-container-pdf button:hover {
+            transform: translateY(-1px);
+            filter: saturate(1.03);
+        }
+        .tool-container.tool-container-pdf input[type="file"] {
+            min-height: 64px;
+            padding: 18px 20px !important;
+            border-radius: 20px !important;
+            background: color-mix(in srgb, var(--bg-surface) 90%, white 10%) !important;
+        }
+        .tool-container.tool-container-pdf input[type="file"]::file-selector-button {
+            margin-right: 14px;
+            border: 0;
+            border-radius: 14px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--accent), #7c8cff);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .tool-container.tool-container-pdf .pdf-hero-note {
+            border-radius: 22px;
+            border: 1px solid rgba(99,102,241,0.18);
+            background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(59,130,246,0.07));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
+        }
+        html.dark .tool-container.tool-container-pdf .pdf-hero-note {
+            background: linear-gradient(135deg, rgba(108,99,255,0.14), rgba(59,130,246,0.09));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
         .tool-container.tool-container-wide button {
             min-height: 52px;
             font-weight: 700;
@@ -549,6 +636,9 @@ $faqSchema = [
             ) {
                 border-radius: 24px !important;
             }
+            .tool-container.tool-container-pdf {
+                padding: 20px;
+            }
         }
 
         /* Need these libraries depending on tool */
@@ -581,7 +671,7 @@ if (isset($_SESSION['user_name'])) {
 <main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
     <?= adsRenderPosition($conn, 'top_content') ?>
     <!-- TOOL INTERFACE -->
-    <div class="tool-container<?= $isWideTool ? ' tool-container-wide' : '' ?>" id="modalContent">
+    <div class="tool-container<?= $isWideTool ? ' tool-container-wide' : '' ?><?= $isPdfTool ? ' tool-container-pdf' : '' ?>" id="modalContent">
         <?= $tool_html ?>
     </div>
     

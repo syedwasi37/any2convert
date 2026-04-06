@@ -2069,37 +2069,37 @@ HTML;
 function getTournamentBracketGeneratorHTML() {
     return <<<'HTML'
     <style>
-        .bq{max-width:98rem;margin:0 auto;display:grid;grid-template-columns:minmax(300px,332px) minmax(0,1fr);gap:1.15rem}
+        .bq{max-width:98rem;margin:0 auto;display:grid;grid-template-columns:minmax(308px,344px) minmax(0,1fr);gap:1.2rem}
         .bq-side,.bq-board{border:1px solid rgba(148,163,184,.12);box-shadow:0 24px 80px rgba(15,23,42,.28)}
-        .bq-side{border-radius:2rem;padding:1.2rem;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(15,23,42,.98));color:#f8fafc;backdrop-filter:blur(16px)}
-        .bq-card{border-radius:1.4rem;padding:1rem;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
-        .bq-field{width:100%;margin-top:.7rem;border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(15,23,42,.76));color:#f8fafc;padding:.9rem .95rem;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .22s ease, box-shadow .22s ease, transform .22s ease}
+        .bq-side{border-radius:2rem;padding:1.2rem;background:linear-gradient(180deg,rgba(15,18,32,.98),rgba(9,12,24,.99));color:#f8fafc;backdrop-filter:blur(16px)}
+        .bq-card{border-radius:1.45rem;padding:1rem;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.075);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+        .bq-field{width:100%;margin-top:.7rem;border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(14,20,39,.94),rgba(13,18,34,.82));color:#f8fafc;padding:.92rem .95rem;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .22s ease, box-shadow .22s ease, transform .22s ease}
         .bq-field:focus{border-color:rgba(56,189,248,.42);box-shadow:0 0 0 4px rgba(56,189,248,.12), inset 0 1px 0 rgba(255,255,255,.03)}
         .bq-side textarea.bq-field{min-height:14rem;line-height:1.65}
         .bq-side button{transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease}
         .bq-side button:hover{transform:translateY(-1px)}
         .bq-board{border-radius:2rem;padding:1.2rem;min-height:44rem;color:#fff;background:
-            radial-gradient(circle at top left,rgba(59,130,246,.1),transparent 22rem),
-            radial-gradient(circle at bottom right,rgba(34,211,238,.08),transparent 20rem),
-            linear-gradient(180deg,#1d2128 0%,#141821 100%)}
+            radial-gradient(circle at top left,rgba(108,99,255,.18),transparent 20rem),
+            radial-gradient(circle at bottom right,rgba(59,130,246,.12),transparent 18rem),
+            linear-gradient(180deg,#161a26 0%,#10141f 100%)}
         .bq-board-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.08)}
         .bq-board-head h3{line-height:1}
         .bq-board-head p{max-width:38rem}
         .bq-board-stats{display:flex;flex-wrap:wrap;gap:.75rem}
         .bq-canvas{overflow:auto;margin-top:1rem;padding:1.05rem 4.75rem 2rem 1rem;border-radius:1.6rem;border:1px solid rgba(255,255,255,.06);background:
-            linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.015)),
+            linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.012)),
             linear-gradient(transparent 31px,rgba(255,255,255,.03) 32px),
             linear-gradient(90deg,transparent 31px,rgba(255,255,255,.03) 32px);
             background-size:auto,32px 32px,32px 32px;
-            box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 16px 40px rgba(2,6,23,.18)}
         .bq-rounds{display:flex;gap:2.1rem;align-items:flex-start;min-width:max-content;padding-right:8rem;padding-bottom:1rem}
         .bq-round{min-width:15.4rem;display:flex;flex-direction:column}
         .bq-stage{margin-bottom:1rem;padding-left:.15rem}
-        .bq-match{position:relative;width:13.75rem;height:5.1rem}.bq-box{height:100%;display:grid;grid-template-rows:1fr 1fr;background:rgba(18,22,31,.98);border:1px solid rgba(255,255,255,.1);border-radius:1.05rem;overflow:hidden;position:relative;z-index:2;box-shadow:0 12px 30px rgba(2,8,23,.22)}
+        .bq-match{position:relative;width:13.75rem;height:5.1rem}.bq-box{height:100%;display:grid;grid-template-rows:1fr 1fr;background:linear-gradient(180deg,rgba(15,19,30,.98),rgba(16,21,35,.98));border:1px solid rgba(255,255,255,.11);border-radius:1.15rem;overflow:hidden;position:relative;z-index:2;box-shadow:0 12px 30px rgba(2,8,23,.22)}
         .bq-row{display:grid;grid-template-columns:auto 1fr auto;gap:.55rem;align-items:center;padding:.58rem .72rem}.bq-row+.bq-row{border-top:1px solid rgba(255,255,255,.08)}
         .bq-row.win{background:linear-gradient(90deg,rgba(34,197,94,.12),transparent 85%)}.bq-row.dim .bq-name{color:rgba(148,163,184,.8);font-weight:700}
         .bq-seed,.bq-score{font-size:.8rem;font-weight:900}.bq-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem;font-weight:800}
-        .bq-pill{position:absolute;top:-.72rem;left:.7rem;z-index:3;padding:.22rem .5rem;border-radius:999px;font-size:.61rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(14,165,233,.16);border:1px solid rgba(56,189,248,.18);color:#7dd3fc;font-weight:800}
+        .bq-pill{position:absolute;top:-.72rem;left:.7rem;z-index:3;padding:.22rem .5rem;border-radius:999px;font-size:.61rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(108,99,255,.18);border:1px solid rgba(129,140,248,.22);color:#c4b5fd;font-weight:800}
         .bq-h,.bq-v{position:absolute;background:rgba(255,255,255,.72);z-index:1}.bq-h{top:calc(50% - 1px);left:calc(100% + .15rem);width:1.35rem;height:2px}.bq-v{left:calc(100% + 1.48rem);width:2px;height:var(--span)}.bq-v.down{top:50%}.bq-v.up{top:calc(50% - var(--span))}
         .bq-stat{border-radius:1.1rem;padding:.9rem 1rem;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);min-width:8.5rem}
         .bq-bar{height:.9rem;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bq-bar>span{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#4ade80)}
@@ -2116,8 +2116,8 @@ function getTournamentBracketGeneratorHTML() {
     <div class="bq">
         <aside class="bq-side">
             <p class="text-[11px] tracking-[0.32em] uppercase text-cyan-300 font-semibold">Gaming Tools</p>
-            <h2 class="mt-2 text-3xl font-black">Bracket HQ</h2>
-            <p class="mt-3 text-sm leading-6 text-slate-300">Generate a real single-elimination bracket board with seeded matchups, match times, and a clean stream-style layout.</p>
+            <h2 class="mt-2 text-3xl font-black">Tournament Bracket Planner</h2>
+            <p class="mt-3 text-sm leading-6 text-slate-300">Build a cleaner single-elimination bracket with seeded matchups, timing slots, and a stream-ready layout that feels closer to a real tournament dashboard.</p>
             <div class="mt-6 space-y-4">
                 <div class="bq-card">
                     <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Tournament Name<input id="bracketTitle" class="bq-field" value="Valorant Tourney"></label>
@@ -11066,53 +11066,93 @@ function getEditPdfHTML() {
             <p>Use this edit PDF tool to edit PDF online free, insert text or images on PDF pages, and download the updated PDF file in your browser.</p>
             <p>Edit PDF text, add pictures, edit PDF free online, and use a visual PDF editor workspace on Mac, Windows, and mobile browsers.</p>
         </div>
-        <div class="rounded-2xl border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-4">
-            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Simple PDF editor</div>
-            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Upload a PDF, view one large page preview, add text or an image, then download the edited PDF.</p>
-        </div>
-        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
-            <input type="file" id="editPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-            <div id="editPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
-            <div id="editPdfControls" class="hidden space-y-4">
-                <div class="grid md:grid-cols-2 gap-4">
-                    <select id="editPdfPageSelect" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></select>
-                    <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
+        <div class="pdf-hero-note p-5 md:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <div class="text-[11px] font-black uppercase tracking-[0.28em] text-indigo-700 dark:text-indigo-300">PDF Tools</div>
+                    <div class="mt-2 text-2xl md:text-3xl font-black text-slate-900 dark:text-white">Edit PDF Workspace</div>
+                    <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-700 dark:text-slate-300">Upload a PDF, switch between pages, place new text or images exactly where you want them, and export the updated file in your browser.</p>
                 </div>
-                <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
-                    <div id="editPdfPageInfo" class="text-sm text-gray-500 mb-3">Upload a PDF to start editing.</div>
+                <div class="rounded-2xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-slate-900/40 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 max-w-md">
+                    This editor currently adds clean overlay text and images on top of the PDF preview. True font-matching edits to existing PDF text need a deeper editing engine than the current browser-only stack.
+                </div>
+            </div>
+        </div>
+        <div class="grid xl:grid-cols-[0.95fr_1.15fr] gap-5">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 p-5 space-y-4 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Source File</p>
+                    <input type="file" id="editPdfInput" class="w-full mt-3 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
+                </div>
+                <div id="editPdfStatus" class="hidden text-sm text-slate-500 dark:text-slate-400 text-center rounded-2xl bg-slate-50 dark:bg-slate-900/60 px-4 py-3"></div>
+                <div id="editPdfControls" class="hidden space-y-4">
+                    <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/60 p-4 space-y-4">
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <label class="block text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Page
+                                <select id="editPdfPageSelect" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></select>
+                            </label>
+                            <div class="flex items-end">
+                                <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
+                            </div>
+                        </div>
+                        <div id="editPdfPageInfo" class="text-sm text-slate-500 dark:text-slate-400">Upload a PDF to start editing.</div>
+                    </div>
+                    <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/45 p-4 space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <div class="font-semibold text-gray-900 dark:text-gray-100">Add Text</div>
+                                <div class="text-sm text-slate-500 dark:text-slate-400">Insert fresh text blocks onto the active page.</div>
+                            </div>
+                            <div class="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 font-black">T</div>
+                        </div>
+                        <textarea id="editPdfText" class="w-full h-28 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
+                            <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                            <option value="regular">Regular</option>
+                            <option value="bold">Bold</option>
+                            <option value="italic">Italic</option>
+                            </select>
+                            <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Add Text</button>
+                        </div>
+                    </div>
+                    <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/45 p-4 space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <div class="font-semibold text-gray-900 dark:text-gray-100">Add Image</div>
+                                <div class="text-sm text-slate-500 dark:text-slate-400">Place logos, signatures, stamps, or screenshots on the selected page.</div>
+                            </div>
+                            <div class="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900/8 dark:bg-white/8 text-slate-700 dark:text-slate-200 font-black">IMG</div>
+                        </div>
+                        <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Add Picture</button>
+                            <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
+                        </div>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-blue-100 bg-blue-50/80 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm leading-7 text-blue-900 dark:text-blue-100">
+                        <span class="font-semibold">How it works:</span>
+                        Upload the file, choose a page, place text or an image on the preview, drag it where you want, then export the edited PDF.
+                    </div>
+                    <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition shadow-[0_18px_40px_rgba(59,130,246,0.22)]">Download Edited PDF</button>
+                </div>
+            </div>
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-indigo-50/70 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+                <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+                    <div>
+                        <p class="text-[11px] uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">Live Canvas</p>
+                        <h3 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">Preview and position</h3>
+                        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Your page preview appears here. Select an item and drag it around before downloading.</p>
+                    </div>
+                </div>
+                <div class="rounded-[1.7rem] border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/35 p-4">
                     <div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
                         <div class="min-w-max mx-auto">
                             <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
                         </div>
                     </div>
-                    <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF preview will appear here after upload.</div>
+                    <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center text-sm text-gray-500 dark:text-slate-400">A large PDF preview will appear here after upload.</div>
                 </div>
-                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-                    <div class="font-semibold text-gray-900 dark:text-gray-100">Text Inserter</div>
-                    <textarea id="editPdfText" class="w-full h-24 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
-                    <div class="grid md:grid-cols-3 gap-3">
-                        <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
-                        <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-                            <option value="regular">Regular</option>
-                            <option value="bold">Bold</option>
-                            <option value="italic">Italic</option>
-                        </select>
-                        <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Add Text</button>
-                    </div>
-                </div>
-                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-                    <div class="font-semibold text-gray-900 dark:text-gray-100">Picture Inserter</div>
-                    <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Add Picture</button>
-                        <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
-                    </div>
-                </div>
-                <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
-                    How to edit PDF:
-                    Upload the file, choose a page, add text or picture, drag the item on the large preview, and download the edited PDF.
-                </div>
-                <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Download Edited PDF</button>
             </div>
         </div>
     </div>
