@@ -12340,7 +12340,7 @@ function getEditPdfHTML() {
 
             if (overlay.type === "text" || overlay.type === "replace-text") {
                 const textCss = getTextCss(overlay.style);
-                node.className += overlay.type === "replace-text" ? " px-2 py-1 bg-white/96 rounded-md shadow-sm border border-slate-200/80" : " px-2 py-1 bg-white/80 rounded-md";
+                node.className += overlay.type === "replace-text" ? " px-1 py-0.5 rounded-sm" : " px-2 py-1 bg-white/80 rounded-md";
                 node.style.fontSize = Math.max(10, overlay.sizeRatio * stageSize.width) + "px";
                 node.style.fontWeight = textCss.fontWeight;
                 node.style.fontStyle = textCss.fontStyle;
@@ -12348,12 +12348,17 @@ function getEditPdfHTML() {
                 node.textContent = overlay.text;
                 if (overlay.type === "replace-text" && overlay.heightRatio) {
                     node.style.minHeight = Math.max(18, overlay.heightRatio * stageSize.height) + "px";
+                    node.style.lineHeight = Math.max(18, overlay.heightRatio * stageSize.height) + "px";
                 }
                 if (overlay.type === "replace-text") {
-                    node.style.cursor = editPdfEditingOverlayId === overlay.id ? "text" : "move";
+                    node.style.background = "transparent";
+                    node.style.border = "0";
+                    node.style.boxShadow = "0 0 0 4px rgba(255,255,255,0.95), 0 0 0 8px rgba(255,255,255,0.82)";
+                    node.style.cursor = editPdfEditingOverlayId === overlay.id ? "text" : "pointer";
                     node.contentEditable = editPdfEditingOverlayId === overlay.id ? "true" : "false";
                     if (editPdfEditingOverlayId === overlay.id) {
-                        node.classList.add("outline-none", "ring-2", "ring-indigo-500/70");
+                        node.classList.add("outline-none");
+                        node.style.boxShadow = "0 0 0 4px rgba(255,255,255,0.98), 0 0 0 8px rgba(99,102,241,0.35)";
                     }
                     node.addEventListener("input", function() {
                         overlay.text = node.textContent || "";
@@ -12556,6 +12561,8 @@ function getEditPdfHTML() {
             editPdfStage.style.height = canvas.height + "px";
             editPdfStage.style.maxWidth = "none";
             editPdfStage.appendChild(canvas);
+            editPdfStageWrap.scrollLeft = 0;
+            editPdfStageWrap.scrollTop = 0;
 
             await page.render({
                 canvasContext: context,
