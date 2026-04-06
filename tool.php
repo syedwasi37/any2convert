@@ -298,7 +298,7 @@ $faqSchema = [
             padding: 34px;
         }
         .tool-container.tool-container-pdf {
-            max-width: 1280px;
+            max-width: 1480px;
             padding: 34px;
             background:
                 radial-gradient(circle at top left, rgba(108,99,255,0.12), transparent 22rem),
