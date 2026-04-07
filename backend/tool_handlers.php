@@ -12209,7 +12209,7 @@ function getEditPdfHTML() {
                 </div>
                 <div class="rounded-[1.7rem] border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/35 p-4">
                     <div id="editPdfStageWrap" class="hidden overflow-auto max-h-[78vh] rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
-                        <div class="min-w-max w-full flex justify-start">
+                        <div class="w-full flex justify-center">
                             <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
                         </div>
                     </div>
@@ -12219,7 +12219,7 @@ function getEditPdfHTML() {
                             <label for="editPdfZoom" class="text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400 font-semibold">Preview Zoom</label>
                             <div id="editPdfZoomValue" class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-200 font-black text-sm text-center min-w-[94px]">100%</div>
                         </div>
-                        <input type="range" id="editPdfZoom" min="40" max="180" step="5" value="100" class="w-full h-5 accent-indigo-600 cursor-pointer">
+                        <input type="range" id="editPdfZoom" min="40" max="180" step="5" value="100" class="w-full h-3 accent-indigo-600 cursor-pointer">
                     </div>
                 </div>
             </div>
@@ -12313,23 +12313,6 @@ function getEditPdfHTML() {
             return pageData.overlays.find(function(overlay) {
                 return overlay.id === editPdfSelectedOverlayId && (overlay.type === "text" || overlay.type === "replace-text");
             }) || null;
-        }
-
-        function createManualReplaceOverlay(stageSize, x, y) {
-            const width = Math.min(stageSize.width * 0.28, 220);
-            const height = Math.max(28, stageSize.height * 0.042);
-            return {
-                id: createOverlayId(),
-                type: "replace-text",
-                sourceKey: "manual-" + Date.now(),
-                text: (editPdfText.value || "").trim() || "Edit text",
-                style: editPdfTextStyle.value,
-                xRatio: clamp(x / stageSize.width, 0, 0.92),
-                yRatio: clamp(y / stageSize.height, 0, 0.94),
-                widthRatio: clamp(width / stageSize.width, 0.12, 0.55),
-                heightRatio: clamp(height / stageSize.height, 0.025, 0.12),
-                sizeRatio: Math.max(8, parseInt(editPdfTextSize.value || "22", 10)) / 700
-            };
         }
 
         function getTextCss(style) {
@@ -12516,24 +12499,10 @@ function getEditPdfHTML() {
 
             editPdfTextHint.textContent = detectableTextCount
                 ? "Tip: click detected text on the page preview to load it into the editor and replace it directly."
-                : "This page looks like a scanned image PDF. Click anywhere on the page to place replacement text manually, then edit or remove it.";
+                : "This page looks like a scanned image PDF, so there is no native text layer to click. You can still add replacement text manually, but true click-to-edit here would need OCR/image editing.";
 
             pageData.overlays.forEach(function(overlay) {
                 editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
-            });
-
-            canvas.addEventListener("click", function(event) {
-                const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                const overlay = createManualReplaceOverlay(stageSize, x, y);
-                pageData.overlays.push(overlay);
-                editPdfSelectedOverlayId = overlay.id;
-                editPdfText.value = overlay.text;
-                editPdfTextSize.value = String(Math.max(8, Math.round(overlay.sizeRatio * 700)));
-                editPdfTextStyle.value = overlay.style;
-                editPdfTextHint.textContent = "Placed a text box on the page. Type to update it, drag it to reposition, or remove it if needed.";
-                renderEditPdfWorkspace();
             });
 
             editPdfStage.onclick = function() {
