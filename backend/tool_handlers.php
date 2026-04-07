@@ -12207,8 +12207,8 @@ function getEditPdfHTML() {
                     </div>
                 </div>
                 <div class="rounded-[1.7rem] border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/35 p-4">
-                    <div id="editPdfStageWrap" class="hidden overflow-auto max-h-[78vh] rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
-                        <div class="w-full flex justify-center">
+                    <div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
+                        <div class="min-w-max mx-auto">
                             <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
                         </div>
                     </div>
@@ -12378,10 +12378,10 @@ function getEditPdfHTML() {
 
             const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
             const baseViewport = page.getViewport({ scale: 1 });
-            const availableWidth = Math.max(280, editPdfStageWrap.clientWidth - 36);
-            const availableHeight = Math.max(420, Math.min(window.innerHeight * 0.74, 980));
-            const fitScale = Math.min(1.45, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
-            const viewport = page.getViewport({ scale: Math.max(0.28, fitScale) });
+            const availableWidth = Math.max(500, editPdfStageWrap.clientWidth - 32);
+            const availableHeight = Math.max(700, Math.min(window.innerHeight * 0.78, 1100));
+            const fitScale = Math.min(1.5, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
+            const viewport = page.getViewport({ scale: Math.max(0.65, fitScale) });
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d", { alpha: false });
             canvas.width = Math.ceil(viewport.width);
@@ -12467,12 +12467,6 @@ function getEditPdfHTML() {
 
         refreshEditPdfPreviewBtn.addEventListener("click", function() {
             renderEditPdfWorkspace();
-        });
-
-        window.addEventListener("resize", function() {
-            if (editPdfPages.length) {
-                renderEditPdfWorkspace();
-            }
         });
 
         removeEditPdfOverlayBtn.addEventListener("click", function() {
