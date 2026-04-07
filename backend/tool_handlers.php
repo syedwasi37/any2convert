@@ -12139,7 +12139,7 @@ function getEditPdfHTML() {
                 </div>
             </div>
         </div>
-        <div class="grid xl:grid-cols-[minmax(390px,460px)_minmax(0,1fr)] gap-5">
+        <div class="grid xl:grid-cols-[0.95fr_1.15fr] gap-5">
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 p-5 space-y-4 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
                 <div>
                     <p class="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Source File</p>
@@ -12155,6 +12155,12 @@ function getEditPdfHTML() {
                             <div class="flex items-end">
                                 <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
                             </div>
+                        </div>
+                        <div class="grid md:grid-cols-[1fr_auto] gap-3 items-end">
+                            <label class="block text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Zoom
+                                <input type="range" id="editPdfZoom" min="40" max="180" step="5" value="100" class="mt-3 w-full accent-indigo-600">
+                            </label>
+                            <div id="editPdfZoomValue" class="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-black text-sm text-center min-w-[88px]">100%</div>
                         </div>
                         <div id="editPdfPageInfo" class="text-sm text-slate-500 dark:text-slate-400">Upload a PDF to start editing.</div>
                         <div id="editPdfTextHint" class="text-xs leading-6 text-indigo-700 dark:text-indigo-300 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3">Tip: click detected text on the page preview to load it into the editor and replace it directly.</div>
@@ -12214,13 +12220,6 @@ function getEditPdfHTML() {
                         </div>
                     </div>
                     <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center text-sm text-gray-500 dark:text-slate-400">A large PDF preview will appear here after upload.</div>
-                    <div id="editPdfZoomWrap" class="hidden mt-4 rounded-[1.35rem] border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/55 px-5 py-4">
-                        <div class="flex items-center justify-between gap-4 mb-3">
-                            <label for="editPdfZoom" class="text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400 font-semibold">Preview Zoom</label>
-                            <div id="editPdfZoomValue" class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-200 font-black text-sm text-center min-w-[94px]">100%</div>
-                        </div>
-                        <input type="range" id="editPdfZoom" min="40" max="180" step="5" value="100" class="w-full h-3 accent-indigo-600 cursor-pointer">
-                    </div>
                 </div>
             </div>
         </div>
@@ -12240,7 +12239,6 @@ function getEditPdfHTML() {
         const editPdfStageWrap = document.getElementById("editPdfStageWrap");
         const editPdfStage = document.getElementById("editPdfStage");
         const editPdfEmpty = document.getElementById("editPdfEmpty");
-        const editPdfZoomWrap = document.getElementById("editPdfZoomWrap");
         const editPdfText = document.getElementById("editPdfText");
         const editPdfTextSize = document.getElementById("editPdfTextSize");
         const editPdfTextStyle = document.getElementById("editPdfTextStyle");
@@ -12277,7 +12275,6 @@ function getEditPdfHTML() {
             const hasPages = editPdfPages.length > 0;
             editPdfControls.classList.toggle("hidden", !hasPages);
             editPdfStageWrap.classList.toggle("hidden", !hasPages);
-            editPdfZoomWrap.classList.toggle("hidden", !hasPages);
             editPdfEmpty.classList.toggle("hidden", hasPages);
         }
 
@@ -12473,12 +12470,9 @@ function getEditPdfHTML() {
 
             const stageSize = { width: canvas.width, height: canvas.height };
             const textContent = await page.getTextContent({ normalizeWhitespace: true });
-            const items = textContent.items || [];
-            let detectableTextCount = 0;
-            items.forEach(function(item, index) {
+            (textContent.items || []).forEach(function(item, index) {
                 const raw = (item.str || "").trim();
                 if (!raw) return;
-                detectableTextCount++;
                 const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
                 const width = Math.max(14, item.width * viewport.scale);
                 const height = Math.max(12, Math.abs(item.height || tx[0] || 14) * viewport.scale * 0.9);
@@ -12497,16 +12491,13 @@ function getEditPdfHTML() {
                 }
             });
 
-            editPdfTextHint.textContent = detectableTextCount
-                ? "Tip: click detected text on the page preview to load it into the editor and replace it directly."
-                : "This page looks like a scanned image PDF, so there is no native text layer to click. You can still add replacement text manually, but true click-to-edit here would need OCR/image editing.";
-
             pageData.overlays.forEach(function(overlay) {
                 editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
             });
 
             editPdfStage.onclick = function() {
                 editPdfSelectedOverlayId = null;
+                editPdfTextHint.textContent = "Tip: click detected text on the page preview to load it into the editor and replace it directly.";
                 renderEditPdfWorkspace();
             };
         }
