@@ -12139,7 +12139,7 @@ function getEditPdfHTML() {
                 </div>
             </div>
         </div>
-        <div class="grid xl:grid-cols-[minmax(360px,430px)_minmax(0,1fr)] gap-5">
+        <div class="grid xl:grid-cols-[minmax(390px,460px)_minmax(0,1fr)] gap-5">
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 p-5 space-y-4 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
                 <div>
                     <p class="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Source File</p>
@@ -12157,7 +12157,7 @@ function getEditPdfHTML() {
                             </div>
                         </div>
                         <div id="editPdfPageInfo" class="text-sm text-slate-500 dark:text-slate-400">Upload a PDF to start editing.</div>
-                        <div id="editPdfTextHint" class="text-xs leading-6 text-indigo-700 dark:text-indigo-300 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3">Tip: click detected text on the page preview to load it into the editor and replace it directly. Scanned PDFs may need OCR detection for this.</div>
+                        <div id="editPdfTextHint" class="text-xs leading-6 text-indigo-700 dark:text-indigo-300 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3">Tip: click detected text on the page preview to load it into the editor and replace it directly.</div>
                     </div>
                     <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/45 p-4 space-y-4">
                         <div class="flex items-center justify-between gap-3">
@@ -12227,7 +12227,6 @@ function getEditPdfHTML() {
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 
@@ -12314,6 +12313,23 @@ function getEditPdfHTML() {
             return pageData.overlays.find(function(overlay) {
                 return overlay.id === editPdfSelectedOverlayId && (overlay.type === "text" || overlay.type === "replace-text");
             }) || null;
+        }
+
+        function createManualReplaceOverlay(stageSize, x, y) {
+            const width = Math.min(stageSize.width * 0.28, 220);
+            const height = Math.max(28, stageSize.height * 0.042);
+            return {
+                id: createOverlayId(),
+                type: "replace-text",
+                sourceKey: "manual-" + Date.now(),
+                text: (editPdfText.value || "").trim() || "Edit text",
+                style: editPdfTextStyle.value,
+                xRatio: clamp(x / stageSize.width, 0, 0.92),
+                yRatio: clamp(y / stageSize.height, 0, 0.94),
+                widthRatio: clamp(width / stageSize.width, 0.12, 0.55),
+                heightRatio: clamp(height / stageSize.height, 0.025, 0.12),
+                sizeRatio: Math.max(8, parseInt(editPdfTextSize.value || "22", 10)) / 700
+            };
         }
 
         function getTextCss(style) {
@@ -12441,59 +12457,6 @@ function getEditPdfHTML() {
             return hit;
         }
 
-        async function ensureDetectedTextItems(page, viewport, stageSize, canvas, pageData) {
-            if (Array.isArray(pageData.detectedItems)) {
-                return pageData.detectedItems;
-            }
-
-            const detected = [];
-            const textContent = await page.getTextContent({ normalizeWhitespace: true });
-            (textContent.items || []).forEach(function(item, index) {
-                const raw = (item.str || "").trim();
-                if (!raw) return;
-                const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-                const width = Math.max(14, item.width * viewport.scale);
-                const height = Math.max(12, Math.abs(item.height || tx[0] || 14) * viewport.scale * 0.9);
-                const left = tx[4];
-                const top = tx[5] - height;
-                detected.push({
-                    key: "pdfjs-" + index + ":" + raw + ":" + Math.round(left) + ":" + Math.round(top),
-                    str: raw,
-                    leftRatio: left / stageSize.width,
-                    topRatio: top / stageSize.height,
-                    widthRatio: width / stageSize.width,
-                    heightRatio: height / stageSize.height
-                });
-            });
-
-            if (detected.length < 8 && window.Tesseract) {
-                editPdfTextHint.textContent = "No native text layer found. Running OCR on this page so detected words can become clickable...";
-                try {
-                    const result = await window.Tesseract.recognize(canvas, "eng");
-                    (((result || {}).data || {}).words || []).forEach(function(word, index) {
-                        const raw = String(word && word.text ? word.text : "").trim();
-                        const box = word && word.bbox ? word.bbox : null;
-                        if (!raw || !box) return;
-                        const width = Math.max(12, box.x1 - box.x0);
-                        const height = Math.max(10, box.y1 - box.y0);
-                        detected.push({
-                            key: "ocr-" + index + ":" + raw + ":" + box.x0 + ":" + box.y0,
-                            str: raw,
-                            leftRatio: box.x0 / stageSize.width,
-                            topRatio: box.y0 / stageSize.height,
-                            widthRatio: width / stageSize.width,
-                            heightRatio: height / stageSize.height
-                        });
-                    });
-                } catch (error) {
-                    editPdfTextHint.textContent = "OCR could not detect clickable words on this page. Decorative or low-contrast scanned text may still need manual replacement.";
-                }
-            }
-
-            pageData.detectedItems = detected;
-            return detected;
-        }
-
         async function renderEditPdfWorkspace() {
             const pageData = getCurrentPageData();
             if (!pageData) return;
@@ -12526,29 +12489,51 @@ function getEditPdfHTML() {
             }).promise;
 
             const stageSize = { width: canvas.width, height: canvas.height };
-            const detectedItems = await ensureDetectedTextItems(page, viewport, stageSize, canvas, pageData);
-            detectedItems.forEach(function(item) {
+            const textContent = await page.getTextContent({ normalizeWhitespace: true });
+            const items = textContent.items || [];
+            let detectableTextCount = 0;
+            items.forEach(function(item, index) {
+                const raw = (item.str || "").trim();
+                if (!raw) return;
+                detectableTextCount++;
+                const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                const width = Math.max(14, item.width * viewport.scale);
+                const height = Math.max(12, Math.abs(item.height || tx[0] || 14) * viewport.scale * 0.9);
+                const left = tx[4];
+                const top = tx[5] - height;
                 const target = buildTextTargetNode(pageData, {
-                    key: item.key,
-                    str: item.str,
-                    left: item.leftRatio * stageSize.width,
-                    top: item.topRatio * stageSize.height,
-                    width: item.widthRatio * stageSize.width,
-                    height: item.heightRatio * stageSize.height
+                    key: index + ":" + raw + ":" + Math.round(left) + ":" + Math.round(top),
+                    str: raw,
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height
                 }, stageSize);
                 if (target) {
                     editPdfStage.appendChild(target);
                 }
             });
 
-            if (detectedItems.length) {
-                editPdfTextHint.textContent = "Click detected text on the page preview to load it into the editor and replace it directly.";
-            } else {
-                editPdfTextHint.textContent = "No clickable words were detected on this page. Some scanned or decorative PDFs still need manual replacement workflows.";
-            }
+            editPdfTextHint.textContent = detectableTextCount
+                ? "Tip: click detected text on the page preview to load it into the editor and replace it directly."
+                : "This page looks like a scanned image PDF. Click anywhere on the page to place replacement text manually, then edit or remove it.";
 
             pageData.overlays.forEach(function(overlay) {
                 editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
+            });
+
+            canvas.addEventListener("click", function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const overlay = createManualReplaceOverlay(stageSize, x, y);
+                pageData.overlays.push(overlay);
+                editPdfSelectedOverlayId = overlay.id;
+                editPdfText.value = overlay.text;
+                editPdfTextSize.value = String(Math.max(8, Math.round(overlay.sizeRatio * 700)));
+                editPdfTextStyle.value = overlay.style;
+                editPdfTextHint.textContent = "Placed a text box on the page. Type to update it, drag it to reposition, or remove it if needed.";
+                renderEditPdfWorkspace();
             });
 
             editPdfStage.onclick = function() {
@@ -12693,14 +12678,14 @@ function getEditPdfHTML() {
                 editPdfDoc = await PDFLib.PDFDocument.load(editPdfBytes);
                 editPdfViewDoc = await pdfjsLib.getDocument({ data: editPdfBytes }).promise;
                 for (let i = 0; i < editPdfDoc.getPageCount(); i++) {
-                    editPdfPages.push({ overlays: [], detectedItems: null });
+                editPdfPages.push({ overlays: [] });
                 }
                 updateEditPdfVisibility();
                 rebuildEditPdfPageSelect();
                 editPdfZoom.value = "100";
                 editPdfZoomLevel = 1;
                 editPdfZoomValue.textContent = "100%";
-                editPdfTextHint.textContent = "Tip: click detected text on the page preview to load it into the editor and replace it directly. Scanned PDFs may need OCR detection for this.";
+                editPdfTextHint.textContent = "Tip: click detected text on the page preview to load it into the editor and replace it directly.";
                 await renderEditPdfWorkspace();
                 setEditPdfStatus("PDF loaded. Add text or pictures and drag them to the right spot.");
             } catch (error) {
