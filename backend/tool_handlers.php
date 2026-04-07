@@ -12139,7 +12139,7 @@ function getEditPdfHTML() {
                 </div>
             </div>
         </div>
-        <div class="grid xl:grid-cols-[minmax(320px,380px)_minmax(0,1fr)] gap-5">
+        <div class="grid xl:grid-cols-[minmax(360px,430px)_minmax(0,1fr)] gap-5">
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 p-5 space-y-4 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
                 <div>
                     <p class="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Source File</p>
@@ -12219,7 +12219,7 @@ function getEditPdfHTML() {
                             <label for="editPdfZoom" class="text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400 font-semibold">Preview Zoom</label>
                             <div id="editPdfZoomValue" class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-200 font-black text-sm text-center min-w-[94px]">100%</div>
                         </div>
-                        <input type="range" id="editPdfZoom" min="40" max="140" step="5" value="100" class="w-full h-5 accent-indigo-600 cursor-pointer">
+                        <input type="range" id="editPdfZoom" min="40" max="180" step="5" value="100" class="w-full h-5 accent-indigo-600 cursor-pointer">
                     </div>
                 </div>
             </div>
@@ -12476,7 +12476,7 @@ function getEditPdfHTML() {
                 editPdfText.value = overlay.text;
                 editPdfTextSize.value = String(Math.max(8, Math.round(overlay.sizeRatio * stageSize.width)));
                 editPdfTextStyle.value = overlay.style;
-                editPdfTextHint.textContent = "Detected text selected. Type directly on the page to replace it, or drag it gently if the OCR position needs adjustment.";
+                editPdfTextHint.textContent = "Detected text selected. Update the content or size, then click Add Text to replace it in the exported PDF.";
                 renderEditPdfWorkspace();
             });
 
@@ -12512,18 +12512,14 @@ function getEditPdfHTML() {
                 editPdfTextHint.textContent = "No native text layer found. Running OCR on this page so detected words can become clickable...";
                 try {
                     const result = await window.Tesseract.recognize(canvas, "eng");
-                    const lines = (((result || {}).data || {}).lines || []);
-                    lines.forEach(function(line, index) {
-                        const raw = String(line && line.text ? line.text : "").trim();
-                        const box = line && line.bbox ? line.bbox : null;
-                        const confidence = typeof line.confidence === "number" ? line.confidence : 100;
-                        if (confidence < 35) return;
+                    (((result || {}).data || {}).words || []).forEach(function(word, index) {
+                        const raw = String(word && word.text ? word.text : "").trim();
+                        const box = word && word.bbox ? word.bbox : null;
                         if (!raw || !box) return;
-                        if (raw.length < 2) return;
                         const width = Math.max(12, box.x1 - box.x0);
                         const height = Math.max(10, box.y1 - box.y0);
                         detected.push({
-                            key: "ocr-line-" + index + ":" + raw + ":" + box.x0 + ":" + box.y0,
+                            key: "ocr-" + index + ":" + raw + ":" + box.x0 + ":" + box.y0,
                             str: raw,
                             leftRatio: box.x0 / stageSize.width,
                             topRatio: box.y0 / stageSize.height,
@@ -12590,7 +12586,7 @@ function getEditPdfHTML() {
             });
 
             if (detectedItems.length) {
-                editPdfTextHint.textContent = "Click detected text on the page preview, then type directly on that same spot.";
+                editPdfTextHint.textContent = "Click detected text on the page preview to load it into the editor and replace it directly.";
             } else {
                 editPdfTextHint.textContent = "No clickable words were detected on this page. Some scanned or decorative PDFs still need manual replacement workflows.";
             }
