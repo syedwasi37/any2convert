@@ -12156,14 +12156,7 @@ function getEditPdfHTML() {
                                 <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
                             </div>
                         </div>
-                        <div class="grid md:grid-cols-[1fr_auto] gap-3 items-end">
-                            <label class="block text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Zoom
-                                <input type="range" id="editPdfZoom" min="40" max="180" step="5" value="100" class="mt-3 w-full accent-indigo-600">
-                            </label>
-                            <div id="editPdfZoomValue" class="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-black text-sm text-center min-w-[88px]">100%</div>
-                        </div>
                         <div id="editPdfPageInfo" class="text-sm text-slate-500 dark:text-slate-400">Upload a PDF to start editing.</div>
-                        <div id="editPdfTextHint" class="text-xs leading-6 text-indigo-700 dark:text-indigo-300 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3">Tip: click detected text on the page preview to load it into the editor and replace it directly.</div>
                     </div>
                     <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/45 p-4 space-y-4">
                         <div class="flex items-center justify-between gap-3">
@@ -12235,15 +12228,12 @@ function getEditPdfHTML() {
         const editPdfPageSelect = document.getElementById("editPdfPageSelect");
         const refreshEditPdfPreviewBtn = document.getElementById("refreshEditPdfPreviewBtn");
         const editPdfPageInfo = document.getElementById("editPdfPageInfo");
-        const editPdfTextHint = document.getElementById("editPdfTextHint");
         const editPdfStageWrap = document.getElementById("editPdfStageWrap");
         const editPdfStage = document.getElementById("editPdfStage");
         const editPdfEmpty = document.getElementById("editPdfEmpty");
         const editPdfText = document.getElementById("editPdfText");
         const editPdfTextSize = document.getElementById("editPdfTextSize");
         const editPdfTextStyle = document.getElementById("editPdfTextStyle");
-        const editPdfZoom = document.getElementById("editPdfZoom");
-        const editPdfZoomValue = document.getElementById("editPdfZoomValue");
         const addEditPdfTextBtn = document.getElementById("addEditPdfTextBtn");
         const editPdfImage = document.getElementById("editPdfImage");
         const addEditPdfImageBtn = document.getElementById("addEditPdfImageBtn");
@@ -12256,7 +12246,6 @@ function getEditPdfHTML() {
         let editPdfPages = [];
         let editPdfCurrentPage = 0;
         let editPdfSelectedOverlayId = null;
-        let editPdfZoomLevel = 1;
 
         function setEditPdfStatus(message, isError) {
             if (!message) {
@@ -12305,13 +12294,6 @@ function getEditPdfHTML() {
             return editPdfPages[editPdfCurrentPage];
         }
 
-        function getSelectedTextOverlay(pageData) {
-            if (!pageData || !editPdfSelectedOverlayId) return null;
-            return pageData.overlays.find(function(overlay) {
-                return overlay.id === editPdfSelectedOverlayId && (overlay.type === "text" || overlay.type === "replace-text");
-            }) || null;
-        }
-
         function getTextCss(style) {
             if (style === "bold") {
                 return { fontWeight: "700", fontStyle: "normal" };
@@ -12333,17 +12315,14 @@ function getEditPdfHTML() {
             node.style.top = (overlay.yRatio * stageSize.height) + "px";
             node.style.width = (overlay.widthRatio * stageSize.width) + "px";
 
-            if (overlay.type === "text" || overlay.type === "replace-text") {
+            if (overlay.type === "text") {
                 const textCss = getTextCss(overlay.style);
-                node.className += overlay.type === "replace-text" ? " px-2 py-1 bg-white/96 rounded-md shadow-sm border border-slate-200/80" : " px-2 py-1 bg-white/80 rounded-md";
+                node.className += " px-2 py-1 bg-white/80 rounded-md";
                 node.style.fontSize = Math.max(10, overlay.sizeRatio * stageSize.width) + "px";
                 node.style.fontWeight = textCss.fontWeight;
                 node.style.fontStyle = textCss.fontStyle;
                 node.style.color = "#111827";
                 node.textContent = overlay.text;
-                if (overlay.type === "replace-text" && overlay.heightRatio) {
-                    node.style.minHeight = Math.max(18, overlay.heightRatio * stageSize.height) + "px";
-                }
             } else {
                 const image = document.createElement("img");
                 image.src = overlay.src;
@@ -12390,53 +12369,6 @@ function getEditPdfHTML() {
             return node;
         }
 
-        function buildTextTargetNode(pageData, item, stageSize) {
-            if (!item || !item.str || !item.str.trim()) return null;
-
-            const hit = document.createElement("button");
-            hit.type = "button";
-            hit.className = "absolute z-[5] rounded-sm bg-transparent hover:bg-indigo-500/10 focus:bg-indigo-500/10 focus:outline-none border border-transparent hover:border-indigo-400/30";
-            hit.style.left = item.left + "px";
-            hit.style.top = item.top + "px";
-            hit.style.width = item.width + "px";
-            hit.style.height = item.height + "px";
-            hit.title = "Edit detected text";
-
-            hit.addEventListener("click", function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                let overlay = pageData.overlays.find(function(entry) {
-                    return entry.type === "replace-text" && entry.sourceKey === item.key;
-                });
-
-                if (!overlay) {
-                    const fontSize = Math.max(10, item.height * 0.78);
-                    overlay = {
-                        id: createOverlayId(),
-                        type: "replace-text",
-                        sourceKey: item.key,
-                        text: item.str,
-                        style: "regular",
-                        xRatio: item.left / stageSize.width,
-                        yRatio: item.top / stageSize.height,
-                        widthRatio: item.width / stageSize.width,
-                        heightRatio: item.height / stageSize.height,
-                        sizeRatio: fontSize / stageSize.width
-                    };
-                    pageData.overlays.push(overlay);
-                }
-
-                editPdfSelectedOverlayId = overlay.id;
-                editPdfText.value = overlay.text;
-                editPdfTextSize.value = String(Math.max(8, Math.round(overlay.sizeRatio * stageSize.width)));
-                editPdfTextHint.textContent = "Detected text selected. Update the content or size, then click Add Text to replace it in the exported PDF.";
-                renderEditPdfWorkspace();
-            });
-
-            return hit;
-        }
-
         async function renderEditPdfWorkspace() {
             const pageData = getCurrentPageData();
             if (!pageData) return;
@@ -12449,7 +12381,7 @@ function getEditPdfHTML() {
             const availableWidth = Math.max(280, editPdfStageWrap.clientWidth - 36);
             const availableHeight = Math.max(420, Math.min(window.innerHeight * 0.74, 980));
             const fitScale = Math.min(1.45, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
-            const viewport = page.getViewport({ scale: Math.max(0.28, fitScale * editPdfZoomLevel) });
+            const viewport = page.getViewport({ scale: Math.max(0.28, fitScale) });
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d", { alpha: false });
             canvas.width = Math.ceil(viewport.width);
@@ -12469,35 +12401,12 @@ function getEditPdfHTML() {
             }).promise;
 
             const stageSize = { width: canvas.width, height: canvas.height };
-            const textContent = await page.getTextContent({ normalizeWhitespace: true });
-            (textContent.items || []).forEach(function(item, index) {
-                const raw = (item.str || "").trim();
-                if (!raw) return;
-                const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-                const width = Math.max(14, item.width * viewport.scale);
-                const height = Math.max(12, Math.abs(item.height || tx[0] || 14) * viewport.scale * 0.9);
-                const left = tx[4];
-                const top = tx[5] - height;
-                const target = buildTextTargetNode(pageData, {
-                    key: index + ":" + raw + ":" + Math.round(left) + ":" + Math.round(top),
-                    str: raw,
-                    left: left,
-                    top: top,
-                    width: width,
-                    height: height
-                }, stageSize);
-                if (target) {
-                    editPdfStage.appendChild(target);
-                }
-            });
-
             pageData.overlays.forEach(function(overlay) {
                 editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
             });
 
             editPdfStage.onclick = function() {
                 editPdfSelectedOverlayId = null;
-                editPdfTextHint.textContent = "Tip: click detected text on the page preview to load it into the editor and replace it directly.";
                 renderEditPdfWorkspace();
             };
         }
@@ -12515,47 +12424,16 @@ function getEditPdfHTML() {
             }
 
             const size = Math.max(8, parseInt(editPdfTextSize.value || "22", 10));
-            const selectedOverlay = getSelectedTextOverlay(pageData);
-            if (selectedOverlay) {
-                selectedOverlay.text = text;
-                selectedOverlay.style = editPdfTextStyle.value;
-                selectedOverlay.sizeRatio = size / 700;
-            } else {
-                pageData.overlays.push({
-                    id: createOverlayId(),
-                    type: "text",
-                    text: text,
-                    style: editPdfTextStyle.value,
-                    xRatio: 0.14,
-                    yRatio: 0.16,
-                    widthRatio: 0.34,
-                    sizeRatio: size / 700
-                });
-            }
-            renderEditPdfWorkspace();
-        });
-
-        editPdfText.addEventListener("input", function() {
-            const pageData = getCurrentPageData();
-            const selectedOverlay = getSelectedTextOverlay(pageData);
-            if (!selectedOverlay) return;
-            selectedOverlay.text = this.value;
-            renderEditPdfWorkspace();
-        });
-
-        editPdfTextSize.addEventListener("input", function() {
-            const pageData = getCurrentPageData();
-            const selectedOverlay = getSelectedTextOverlay(pageData);
-            if (!selectedOverlay) return;
-            selectedOverlay.sizeRatio = Math.max(8, parseInt(this.value || "22", 10)) / 700;
-            renderEditPdfWorkspace();
-        });
-
-        editPdfTextStyle.addEventListener("change", function() {
-            const pageData = getCurrentPageData();
-            const selectedOverlay = getSelectedTextOverlay(pageData);
-            if (!selectedOverlay) return;
-            selectedOverlay.style = this.value;
+            pageData.overlays.push({
+                id: createOverlayId(),
+                type: "text",
+                text: text,
+                style: editPdfTextStyle.value,
+                xRatio: 0.14,
+                yRatio: 0.16,
+                widthRatio: 0.34,
+                sizeRatio: size / 700
+            });
             renderEditPdfWorkspace();
         });
 
@@ -12589,14 +12467,6 @@ function getEditPdfHTML() {
 
         refreshEditPdfPreviewBtn.addEventListener("click", function() {
             renderEditPdfWorkspace();
-        });
-
-        editPdfZoom.addEventListener("input", function() {
-            editPdfZoomLevel = Math.max(0.4, parseInt(this.value || "100", 10) / 100);
-            editPdfZoomValue.textContent = Math.round(editPdfZoomLevel * 100) + "%";
-            if (editPdfPages.length) {
-                renderEditPdfWorkspace();
-            }
         });
 
         window.addEventListener("resize", function() {
@@ -12638,14 +12508,10 @@ function getEditPdfHTML() {
                 editPdfDoc = await PDFLib.PDFDocument.load(editPdfBytes);
                 editPdfViewDoc = await pdfjsLib.getDocument({ data: editPdfBytes }).promise;
                 for (let i = 0; i < editPdfDoc.getPageCount(); i++) {
-                editPdfPages.push({ overlays: [] });
+                    editPdfPages.push({ overlays: [] });
                 }
                 updateEditPdfVisibility();
                 rebuildEditPdfPageSelect();
-                editPdfZoom.value = "100";
-                editPdfZoomLevel = 1;
-                editPdfZoomValue.textContent = "100%";
-                editPdfTextHint.textContent = "Tip: click detected text on the page preview to load it into the editor and replace it directly.";
                 await renderEditPdfWorkspace();
                 setEditPdfStatus("PDF loaded. Add text or pictures and drag them to the right spot.");
             } catch (error) {
@@ -12674,7 +12540,7 @@ function getEditPdfHTML() {
 
                     for (let j = 0; j < overlays.length; j++) {
                         const overlay = overlays[j];
-                        if (overlay.type === "text" || overlay.type === "replace-text") {
+                        if (overlay.type === "text") {
                             let fontName = PDFLib.StandardFonts.Helvetica;
                             if (overlay.style === "bold") fontName = PDFLib.StandardFonts.HelveticaBold;
                             if (overlay.style === "italic") fontName = PDFLib.StandardFonts.HelveticaOblique;
@@ -12685,19 +12551,7 @@ function getEditPdfHTML() {
                             const font = fontCache[fontName];
                             const fontSize = Math.max(8, overlay.sizeRatio * 700);
                             const x = overlay.xRatio * pageWidth;
-                            let y = pageHeight - (overlay.yRatio * pageHeight) - fontSize;
-                            if (overlay.type === "replace-text" && overlay.heightRatio) {
-                                const boxHeight = overlay.heightRatio * pageHeight;
-                                const rectY = pageHeight - (overlay.yRatio * pageHeight) - boxHeight;
-                                page.drawRectangle({
-                                    x: x - 1,
-                                    y: rectY - 1,
-                                    width: (overlay.widthRatio * pageWidth) + 4,
-                                    height: boxHeight + 3,
-                                    color: PDFLib.rgb(1, 1, 1)
-                                });
-                                y = rectY + Math.max(1, (boxHeight - fontSize) * 0.45);
-                            }
+                            const y = pageHeight - (overlay.yRatio * pageHeight) - fontSize;
                             page.drawText(overlay.text, {
                                 x: x,
                                 y: y,
