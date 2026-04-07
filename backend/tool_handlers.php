@@ -24,7 +24,7 @@ function renderToolHandlerHTML($tool) {
         case 'excel_to_pdf':
             return getExcelToPdfHTML();
         case 'ppt_to_pdf':
-            return getPptToPdfHTML();
+            return getPptToPdfPureClientHTML();
         case 'html_to_pdf':
             return getHtmlToPdfHTML();
         case 'split_pdf':
@@ -71,6 +71,8 @@ function renderToolHandlerHTML($tool) {
             return getJsonToCsvHTML();
         case 'csv_to_json':
             return getCsvToJsonHTML();
+        case 'sql_to_json':
+            return getSqlToJsonHTML();
         case 'qr_generator':
             return getQrGeneratorPureJS();
         case 'password_gen':
@@ -2069,37 +2071,37 @@ HTML;
 function getTournamentBracketGeneratorHTML() {
     return <<<'HTML'
     <style>
-        .bq{max-width:98rem;margin:0 auto;display:grid;grid-template-columns:minmax(300px,332px) minmax(0,1fr);gap:1.15rem}
+        .bq{max-width:98rem;margin:0 auto;display:grid;grid-template-columns:minmax(308px,344px) minmax(0,1fr);gap:1.2rem}
         .bq-side,.bq-board{border:1px solid rgba(148,163,184,.12);box-shadow:0 24px 80px rgba(15,23,42,.28)}
-        .bq-side{border-radius:2rem;padding:1.2rem;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(15,23,42,.98));color:#f8fafc;backdrop-filter:blur(16px)}
-        .bq-card{border-radius:1.4rem;padding:1rem;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
-        .bq-field{width:100%;margin-top:.7rem;border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(15,23,42,.76));color:#f8fafc;padding:.9rem .95rem;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .22s ease, box-shadow .22s ease, transform .22s ease}
+        .bq-side{border-radius:2rem;padding:1.2rem;background:linear-gradient(180deg,rgba(15,18,32,.98),rgba(9,12,24,.99));color:#f8fafc;backdrop-filter:blur(16px)}
+        .bq-card{border-radius:1.45rem;padding:1rem;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.075);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+        .bq-field{width:100%;margin-top:.7rem;border-radius:1rem;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(14,20,39,.94),rgba(13,18,34,.82));color:#f8fafc;padding:.92rem .95rem;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .22s ease, box-shadow .22s ease, transform .22s ease}
         .bq-field:focus{border-color:rgba(56,189,248,.42);box-shadow:0 0 0 4px rgba(56,189,248,.12), inset 0 1px 0 rgba(255,255,255,.03)}
         .bq-side textarea.bq-field{min-height:14rem;line-height:1.65}
         .bq-side button{transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease}
         .bq-side button:hover{transform:translateY(-1px)}
         .bq-board{border-radius:2rem;padding:1.2rem;min-height:44rem;color:#fff;background:
-            radial-gradient(circle at top left,rgba(59,130,246,.1),transparent 22rem),
-            radial-gradient(circle at bottom right,rgba(34,211,238,.08),transparent 20rem),
-            linear-gradient(180deg,#1d2128 0%,#141821 100%)}
+            radial-gradient(circle at top left,rgba(108,99,255,.18),transparent 20rem),
+            radial-gradient(circle at bottom right,rgba(59,130,246,.12),transparent 18rem),
+            linear-gradient(180deg,#161a26 0%,#10141f 100%)}
         .bq-board-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.08)}
         .bq-board-head h3{line-height:1}
         .bq-board-head p{max-width:38rem}
         .bq-board-stats{display:flex;flex-wrap:wrap;gap:.75rem}
         .bq-canvas{overflow:auto;margin-top:1rem;padding:1.05rem 4.75rem 2rem 1rem;border-radius:1.6rem;border:1px solid rgba(255,255,255,.06);background:
-            linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.015)),
+            linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.012)),
             linear-gradient(transparent 31px,rgba(255,255,255,.03) 32px),
             linear-gradient(90deg,transparent 31px,rgba(255,255,255,.03) 32px);
             background-size:auto,32px 32px,32px 32px;
-            box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 16px 40px rgba(2,6,23,.18)}
         .bq-rounds{display:flex;gap:2.1rem;align-items:flex-start;min-width:max-content;padding-right:8rem;padding-bottom:1rem}
         .bq-round{min-width:15.4rem;display:flex;flex-direction:column}
         .bq-stage{margin-bottom:1rem;padding-left:.15rem}
-        .bq-match{position:relative;width:13.75rem;height:5.1rem}.bq-box{height:100%;display:grid;grid-template-rows:1fr 1fr;background:rgba(18,22,31,.98);border:1px solid rgba(255,255,255,.1);border-radius:1.05rem;overflow:hidden;position:relative;z-index:2;box-shadow:0 12px 30px rgba(2,8,23,.22)}
+        .bq-match{position:relative;width:13.75rem;height:5.1rem}.bq-box{height:100%;display:grid;grid-template-rows:1fr 1fr;background:linear-gradient(180deg,rgba(15,19,30,.98),rgba(16,21,35,.98));border:1px solid rgba(255,255,255,.11);border-radius:1.15rem;overflow:hidden;position:relative;z-index:2;box-shadow:0 12px 30px rgba(2,8,23,.22)}
         .bq-row{display:grid;grid-template-columns:auto 1fr auto;gap:.55rem;align-items:center;padding:.58rem .72rem}.bq-row+.bq-row{border-top:1px solid rgba(255,255,255,.08)}
         .bq-row.win{background:linear-gradient(90deg,rgba(34,197,94,.12),transparent 85%)}.bq-row.dim .bq-name{color:rgba(148,163,184,.8);font-weight:700}
         .bq-seed,.bq-score{font-size:.8rem;font-weight:900}.bq-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem;font-weight:800}
-        .bq-pill{position:absolute;top:-.72rem;left:.7rem;z-index:3;padding:.22rem .5rem;border-radius:999px;font-size:.61rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(14,165,233,.16);border:1px solid rgba(56,189,248,.18);color:#7dd3fc;font-weight:800}
+        .bq-pill{position:absolute;top:-.72rem;left:.7rem;z-index:3;padding:.22rem .5rem;border-radius:999px;font-size:.61rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(108,99,255,.18);border:1px solid rgba(129,140,248,.22);color:#c4b5fd;font-weight:800}
         .bq-h,.bq-v{position:absolute;background:rgba(255,255,255,.72);z-index:1}.bq-h{top:calc(50% - 1px);left:calc(100% + .15rem);width:1.35rem;height:2px}.bq-v{left:calc(100% + 1.48rem);width:2px;height:var(--span)}.bq-v.down{top:50%}.bq-v.up{top:calc(50% - var(--span))}
         .bq-stat{border-radius:1.1rem;padding:.9rem 1rem;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.07);min-width:8.5rem}
         .bq-bar{height:.9rem;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bq-bar>span{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#4ade80)}
@@ -2116,8 +2118,8 @@ function getTournamentBracketGeneratorHTML() {
     <div class="bq">
         <aside class="bq-side">
             <p class="text-[11px] tracking-[0.32em] uppercase text-cyan-300 font-semibold">Gaming Tools</p>
-            <h2 class="mt-2 text-3xl font-black">Bracket HQ</h2>
-            <p class="mt-3 text-sm leading-6 text-slate-300">Generate a real single-elimination bracket board with seeded matchups, match times, and a clean stream-style layout.</p>
+            <h2 class="mt-2 text-3xl font-black">Tournament Bracket Planner</h2>
+            <p class="mt-3 text-sm leading-6 text-slate-300">Build a cleaner single-elimination bracket with seeded matchups, timing slots, and a stream-ready layout that feels closer to a real tournament dashboard.</p>
             <div class="mt-6 space-y-4">
                 <div class="bq-card">
                     <label class="block text-[11px] uppercase tracking-[0.22em] text-slate-400">Tournament Name<input id="bracketTitle" class="bq-field" value="Valorant Tourney"></label>
@@ -4275,6 +4277,7 @@ function getWordToPdfHTML() {
             div.textContent = text;
             return div.innerHTML;
         }
+        })();
     </script>';
 }
 
@@ -4448,8 +4451,14 @@ function getExcelToPdfHTML() {
 function getPptToPdfHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Power Point to PDF Converter Online</h1>
+            <p>Use this power point to pdf converter to convert PowerPoint slides into PDF online free in your browser.</p>
+            <p>Common searches include power point to pdf, convert power point to pdf, power point to pdf conversion, turn power point to pdf, and export power point to pdf.</p>
+            <p>If you need microsoft power point to pdf conversion, how to convert power point to pdf, or how to save power point to pdf, this tool helps with PPT and PPTX files.</p>
+        </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pptToPdfInput\').click()">
-            <input type="file" id="pptToPdfInput" class="hidden" accept=".ppt,.pptx">
+            <input type="file" id="pptToPdfInput" class="hidden" accept=".pptx">
             <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
             <p class="font-medium">Select PowerPoint file to convert to PDF</p>
             <p class="text-sm text-gray-500 mt-2">PPT/PPTX to PDF conversion with slide layout preserved</p>
@@ -4462,198 +4471,902 @@ function getPptToPdfHTML() {
                 <option value="landscape" selected>Landscape (Widescreen)</option>
             </select>
         </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">This power point to pdf free tool is useful when you want to convert PowerPoint to PDF online, convert from power point to pdf, or save a presentation as a shareable PDF handout.</div>
         <button id="pptToPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF</button>
         <div id="pptProgress" class="text-sm text-gray-500 text-center hidden">Processing...</div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
+        (function () {
         const pptInput = document.getElementById("pptToPdfInput");
         const pptPreview = document.getElementById("pptPreview");
-        
+
+        if (!pptInput || !pptPreview) {
+            return;
+        }
+
         pptInput.addEventListener("change", function() {
-            if(this.files[0]) {
+            if (this.files[0]) {
                 pptPreview.innerHTML = "Selected: " + this.files[0].name;
                 pptPreview.classList.remove("hidden");
             }
         });
-        
+
         document.getElementById("pptToPdfBtn").addEventListener("click", async function() {
             const input = document.getElementById("pptToPdfInput");
             if (!input.files.length) return alert("Please select a PowerPoint file");
             const progress = document.getElementById("pptProgress");
             progress.classList.remove("hidden");
             progress.innerHTML = "Converting PowerPoint to PDF...";
-            
+
             try {
                 const file = input.files[0];
                 const arrayBuffer = await file.arrayBuffer();
                 const layout = document.getElementById("slideLayout").value;
-                
                 let slides = [];
-                
-                if (file.name.endsWith(".pptx")) {
+
+                if (/\.pptx$/i.test(file.name)) {
                     try {
                         const JSZip = window.JSZip;
                         const zip = await JSZip.loadAsync(arrayBuffer);
-                        const slideFiles = Object.keys(zip.files).filter(name => name.match(/ppt\/slides\/slide\d+\.xml/));
-                        
-                        for (const slideFile of slideFiles) {
-                            const content = await zip.files[slideFile].async("string");
-                            const textMatches = content.match(/>([^<]+)</g);
-                            let slideText = "";
-                            if (textMatches) {
-                                slideText = textMatches.map(m => m.replace(/[<>]/g, "")).join(" ");
-                            }
-                            
-                            // Try to extract images if possible
-                            slides.push({
-                                number: slides.length + 1,
-                                content: slideText || "Slide content not available"
+
+                        const slideFiles = Object.keys(zip.files)
+                            .filter(name => /^ppt\/slides\/slide\d+\.xml$/i.test(name))
+                            .sort(function(a, b) {
+                                const aNum = parseInt((a.match(/slide(\d+)\.xml/i) || [0, 0])[1], 10);
+                                const bNum = parseInt((b.match(/slide(\d+)\.xml/i) || [0, 0])[1], 10);
+                                return aNum - bNum;
                             });
+
+                        // Decode XML character entities using plain string replacement (no DOM tricks)
+                        function decodeXmlEntities(str) {
+                            return str
+                                .replace(/&amp;/g, "&")
+                                .replace(/&lt;/g, "<")
+                                .replace(/&gt;/g, ">")
+                                .replace(/&quot;/g, "\"")
+                                .replace(/&apos;/g, "\'")
+                                .replace(/&#(\d+);/g, function(_, n) {
+                                    return String.fromCharCode(parseInt(n, 10));
+                                })
+                                .replace(/&#x([0-9a-fA-F]+);/g, function(_, h) {
+                                    return String.fromCharCode(parseInt(h, 16));
+                                });
                         }
-                    } catch(e) {
+
+                        // Brute-force regex fallback: grabs every <t> or <a:t> text content
+                        function fallbackExtractText(xmlString) {
+                            const runMatches = Array.from(
+                                xmlString.matchAll(/<(?:[a-zA-Z0-9_]+:)?t(?:\s[^>]*)?>([\s\S]*?)<\/(?:[a-zA-Z0-9_]+:)?t>/gi)
+                            );
+                            const pieces = runMatches
+                                .map(function(m) { return decodeXmlEntities((m[1] || "").trim()); })
+                                .filter(Boolean);
+                            return pieces.length ? [pieces.join(" ")] : [];
+                        }
+
+                        // PRIMARY FIX: Use DOMParser with proper namespace-aware element lookup
+                        // instead of fragile regex on raw XML strings.
+                        function extractTextFromSlideXml(xmlString) {
+                            try {
+                                const parser = new DOMParser();
+                                const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+                                // Bail out if XML failed to parse
+                                if (xmlDoc.querySelector("parsererror")) {
+                                    return fallbackExtractText(xmlString);
+                                }
+
+                                // DrawingML namespace URI — the correct way to find <a:p> and <a:t>
+                                const NS = "http://schemas.openxmlformats.org/drawingml/2006/main";
+
+                                let paragraphs = Array.from(xmlDoc.getElementsByTagNameNS(NS, "p"));
+                                // If namespace lookup returned nothing, try without namespace
+                                if (paragraphs.length === 0) {
+                                    paragraphs = Array.from(xmlDoc.getElementsByTagName("a:p"));
+                                }
+                                if (paragraphs.length === 0) {
+                                    paragraphs = Array.from(xmlDoc.querySelectorAll("p"));
+                                }
+
+                                const lines = [];
+                                paragraphs.forEach(function(para) {
+                                    let textRuns = Array.from(para.getElementsByTagNameNS(NS, "t"));
+                                    if (textRuns.length === 0) {
+                                        textRuns = Array.from(para.getElementsByTagName("a:t"));
+                                    }
+                                    if (textRuns.length === 0) {
+                                        textRuns = Array.from(para.querySelectorAll("t"));
+                                    }
+
+                                    const text = textRuns
+                                        .map(function(t) { return (t.textContent || "").trim(); })
+                                        .filter(Boolean)
+                                        .join(" ");
+
+                                    if (text) lines.push(text);
+                                });
+
+                                // If DOMParser approach found nothing, use brute-force fallback
+                                return lines.length ? lines : fallbackExtractText(xmlString);
+
+                            } catch (e) {
+                                return fallbackExtractText(xmlString);
+                            }
+                        }
+
+                        function normalizeZipPath(basePath, targetPath) {
+                            const baseParts = basePath.split("/");
+                            baseParts.pop();
+                            const targetParts = targetPath.split("/");
+                            targetParts.forEach(function(part) {
+                                if (!part || part === ".") return;
+                                if (part === "..") baseParts.pop();
+                                else baseParts.push(part);
+                            });
+                            return baseParts.join("/");
+                        }
+
+                        async function extractSlideImages(slideFile) {
+                            const relPath = slideFile.replace(
+                                /ppt\/slides\/(slide\d+)\.xml$/i,
+                                "ppt/slides/_rels/$1.xml.rels"
+                            );
+                            const relEntry = zip.files[relPath];
+                            if (!relEntry) return [];
+
+                            const relXmlText = await relEntry.async("string");
+                            const relationships = Array.from(
+                                relXmlText.matchAll(/<Relationship\b[^>]*Target="([^"]+)"[^>]*Type="([^"]+)"[^>]*\/?>/gi)
+                            ).map(function(match) {
+                                return { target: match[1] || "", type: match[2] || "" };
+                            });
+
+                            const images = [];
+                            for (const rel of relationships) {
+                                const target = rel.target || "";
+                                const type = rel.type || "";
+                                if (!/image/i.test(type) && !/\.(png|jpe?g|gif|bmp|svg|webp)$/i.test(target)) continue;
+                                const normalized = normalizeZipPath(relPath, target);
+                                const mediaFile = zip.files[normalized];
+                                if (!mediaFile) continue;
+                                const ext = (normalized.split(".").pop() || "png").toLowerCase();
+                                const mimeMap = {
+                                    png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
+                                    gif: "image/gif", bmp: "image/bmp", webp: "image/webp", svg: "image/svg+xml"
+                                };
+                                const mime = mimeMap[ext] || "application/octet-stream";
+                                const base64 = await mediaFile.async("base64");
+                                images.push("data:" + mime + ";base64," + base64);
+                            }
+                            return images;
+                        }                                                                          
+
+                        for (const slideFile of slideFiles) {
+                            progress.innerHTML = "Reading " + slideFile.split("/").pop() + "...";
+                            const content = await zip.files[slideFile].async("string");
+                            const textLines = extractTextFromSlideXml(content);
+                            const images = await extractSlideImages(slideFile);
+                            slides.push({ number: slides.length + 1, lines: textLines, images: images });
+                        }
+
+                        if (!slides.length) throw new Error("No slides were found in this PPTX file.");
+
+                    } catch (e) {
                         slides.push({
                             number: 1,
-                            content: "Unable to extract content. The presentation may be protected or corrupted."
+                            lines: ["Unable to extract slide content. The presentation may be protected, highly complex, or corrupted. Error: " + e.message],
+                            images: []
                         });
                     }
                 } else {
                     slides.push({
                         number: 1,
-                        content: "PPT files are not fully supported. Please convert to PPTX format first for better results."
+                        lines: ["Legacy .ppt files are not reliably supported in the browser. Please save the presentation as .pptx and try again for better results."],
+                        images: []
                     });
                 }
-                
-                let slidesHtml = "";
+
                 const orientation = layout === "landscape" ? "landscape" : "portrait";
-                const slideWidth = layout === "landscape" ? "10in" : "8.5in";
-                const slideHeight = layout === "landscape" ? "7.5in" : "11in";
-                
-                for (let i = 0; i < slides.length; i++) {
-                    slidesHtml += `
-                        <div class="slide" style="page-break-after: always; width: ${slideWidth}; height: ${slideHeight}; display: flex; flex-direction: column; justify-content: center; padding: 40px; box-sizing: border-box;">
-                            <div class="slide-title" style="font-size: 32px; font-weight: bold; color: #2c3e50; margin-bottom: 30px; border-left: 5px solid #3498db; padding-left: 20px;">
-                                Slide ${slides[i].number}
-                            </div>
-                            <div class="slide-content" style="font-size: 20px; line-height: 1.6; color: #34495e;">
-                                <p>${escapeHtml(slides[i].content)}</p>
-                            </div>
-                        </div>
-                    `;
+                const { jsPDF } = window.jspdf || {};
+                if (!jsPDF) throw new Error("PDF library failed to load.");
+
+                const pdf = new jsPDF({ orientation: orientation, unit: "pt", format: "a4", compress: true });
+                const pageWidth  = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 36;
+                const usableWidth  = pageWidth  - margin * 2;
+                const usableHeight = pageHeight - margin * 2;
+
+                async function getImageSize(src) {
+                    return new Promise(function(resolve, reject) {
+                        const img = new Image();
+                        img.onload  = function() { resolve({ width: img.naturalWidth || 1, height: img.naturalHeight || 1 }); };
+                        img.onerror = function() { reject(new Error("Could not read slide image.")); };
+                        img.src = src;
+                    });
                 }
-                
-                const completeHtml = `<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>PowerPoint to PDF</title>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            font-family: Arial, sans-serif;
-                            background: white;
-                        }
-                        .slide {
-                            box-sizing: border-box;
-                        }
-                        @media print {
-                            .slide {
-                                page-break-after: always;
-                            }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${slidesHtml}
-                </body>
-                </html>`;
-                
-                const opt = {
-                    margin: [0, 0, 0, 0],
-                    filename: "powerpoint_to_pdf.pdf",
-                    image: { type: "jpeg", quality: 0.98 },
-                    html2canvas: { scale: 2, letterRendering: true, backgroundColor: "#ffffff" },
-                    jsPDF: { unit: "in", format: layout === "landscape" ? "a4" : "a4", orientation: orientation }
-                };
-                
-                const element = document.createElement("div");
-                element.innerHTML = completeHtml;
-                document.body.appendChild(element);
-                
-                await new Promise(resolve => setTimeout(resolve, 100));
-                await html2pdf().set(opt).from(element).save();
-                element.remove();
-                alert("Conversion complete! PDF downloaded with slide layout.");
-            } catch(e) {
+
+                function imageFormatFromDataUrl(src) {
+                    if (/^data:image\\/png/i.test(src))      return "PNG";
+                    if (/^data:image\\/webp/i.test(src))     return "WEBP";
+                    if (/^data:image\\/svg\\+xml/i.test(src)) return "SVG";
+                    return "JPEG";
+                }
+
+                for (let i = 0; i < slides.length; i++) {
+                    if (i > 0) pdf.addPage("a4", orientation);
+                    progress.innerHTML = "Building PDF page " + (i + 1) + " of " + slides.length + "...";
+                    const slide = slides[i];
+                    let cursorY = margin;
+
+                    pdf.setFillColor(255, 255, 255);
+                    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+                    // Slide number header
+                    pdf.setDrawColor(52, 152, 219);
+                    pdf.setLineWidth(4);
+                    pdf.line(margin, cursorY, margin, cursorY + 28);
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setTextColor(30, 41, 59);
+                    pdf.setFontSize(20);
+                    pdf.text("Slide " + slide.number, margin + 12, cursorY + 20);
+                    cursorY += 42;
+
+                    // Slide text content
+                    const textLines = slide.lines && slide.lines.length
+                        ? slide.lines
+                        : ["No readable text was found on this slide."];
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setTextColor(51, 65, 85);
+                    pdf.setFontSize(12);
+
+                    textLines.forEach(function(line) {
+                        const wrapped = pdf.splitTextToSize(String(line || ""), usableWidth);
+                        if (cursorY + wrapped.length * 16 > pageHeight - margin) return;
+                        pdf.text(wrapped, margin, cursorY);
+                        cursorY += wrapped.length * 16 + 6;
+                    });
+
+                    // Slide images
+                    for (const src of (slide.images || [])) {
+                        try {
+                            const size = await getImageSize(src);
+                            const maxHeight = Math.max(80, pageHeight - margin - cursorY);
+                            const scale = Math.min(usableWidth / size.width, maxHeight / size.height, 1);
+                            const renderWidth  = Math.max(40, size.width  * scale);
+                            const renderHeight = Math.max(40, size.height * scale);
+                            if (cursorY + renderHeight > pageHeight - margin) break;
+                            const x = margin + (usableWidth - renderWidth) / 2;
+                            pdf.addImage(src, imageFormatFromDataUrl(src), x, cursorY, renderWidth, renderHeight);
+                            cursorY += renderHeight + 18;
+                        } catch (imageError) {}
+                    }
+                }
+
+                pdf.save((file.name.replace(/\\.(ppt|pptx)$/i, "") || "presentation") + ".pdf");
+                alert("Conversion complete! PDF downloaded.");
+
+            } catch (e) {
                 alert("Error converting PowerPoint file: " + e.message);
             }
             progress.classList.add("hidden");
         });
-        
-        function escapeHtml(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
     </script>';
 }
 
-// ... (keep the rest of the functions for JSON, CSV, QR, Password, Word Counter, Image Compressor, OCR as they are working well)
+function getPptToPdfHTMLBackend() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Power Point to PDF Converter Online</h1>
+            <p>Use this power point to pdf converter to convert PowerPoint slides into PDF online free with backend document conversion.</p>
+        </div>
+        <label for="pptToPdfBackendInput" class="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer">
+            <input type="file" id="pptToPdfBackendInput" class="hidden" accept=".ppt,.pptx">
+            <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
+            <p class="font-medium">Select PowerPoint file to convert to PDF</p>
+            <p class="text-sm text-gray-500 mt-2">Reliable backend conversion for PPT and PPTX files</p>
+        </label>
+        <div id="pptToPdfBackendPreview" class="text-sm text-gray-500 text-center hidden"></div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">This version uses backend document conversion instead of browser-only slide parsing. It is the right approach if you want the PDF to match the original PowerPoint more closely.</div>
+        <button id="pptToPdfBackendBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to PDF</button>
+        <div id="pptToPdfBackendStatus" class="text-sm text-gray-500 text-center hidden">Processing...</div>
+    </div>
+    <script>
+        (function () {
+            const input = document.getElementById("pptToPdfBackendInput");
+            const preview = document.getElementById("pptToPdfBackendPreview");
+            const button = document.getElementById("pptToPdfBackendBtn");
+            const status = document.getElementById("pptToPdfBackendStatus");
+
+            if (!input || !preview || !button || !status) {
+                return;
+            }
+
+            input.addEventListener("change", function () {
+                const file = this.files && this.files[0] ? this.files[0] : null;
+                if (!file) {
+                    preview.textContent = "";
+                    preview.classList.add("hidden");
+                    return;
+                }
+                preview.textContent = "Selected: " + file.name;
+                preview.classList.remove("hidden");
+            });
+
+            button.addEventListener("click", async function () {
+                const file = input.files && input.files[0] ? input.files[0] : null;
+                if (!file) {
+                    alert("Please select a PowerPoint file.");
+                    return;
+                }
+
+                status.classList.remove("hidden", "text-red-500");
+                status.textContent = "Uploading PowerPoint and converting to PDF...";
+
+                try {
+                    const formData = new FormData();
+                    formData.append("action", "ppt_to_pdf");
+                    formData.append("file", file);
+
+                    const response = await fetch("backend/process_document.php", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.error || "Conversion failed.");
+                    }
+
+                    const link = document.createElement("a");
+                    link.href = result.fileData;
+                    link.download = result.fileName || (file.name.replace(/\.(ppt|pptx)$/i, "") + ".pdf");
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+
+                    status.textContent = "Conversion complete. Your PDF download should start automatically.";
+                } catch (error) {
+                    status.textContent = "Error: " + error.message;
+                    status.classList.add("text-red-500");
+                }
+            });
+        })();
+    </script>';
+}
+
+function getPptToPdfPureClientHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Power Point to PDF Converter Online</h1>
+            <p>Use this power point to pdf converter to render PPTX slides in your browser and export them as PDF pages.</p>
+            <p>Common searches include power point to pdf, convert power point to pdf, power point to pdf converter, and convert power point to pdf online.</p>
+        </div>
+        <div class="grid 2xl:grid-cols-[0.92fr_1.08fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Client-Side PPTX to PDF</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert PowerPoint slides to PDF in your browser</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Upload a `.pptx` file, let the browser render each slide, preview the result, and download it as a PDF. This tool does not upload your file to the server.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">PPT</div>
+                </div>
+
+                <label for="pptToPdfClientInput" class="block border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[1.75rem] p-8 text-center hover:border-blue-500 transition cursor-pointer bg-white/75 dark:bg-slate-950/45">
+                    <input type="file" id="pptToPdfClientInput" class="hidden" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+                    <div class="mb-3 flex justify-center text-blue-500"><svg width="76" height="54" viewBox="0 0 76 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="18" height="14" rx="2"></rect><path d="m23 18 8-4v12l-8-4"></path><path d="M34 27h12"></path><path d="m41 21 6 6-6 6"></path><path d="M53 9h17l6 6v24a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3Z"></path><path d="M70 9v8h8"></path></svg></div>
+                    <p class="font-medium text-gray-900 dark:text-white">Select a `.pptx` file</p>
+                    <p class="text-sm text-gray-500 mt-2">Best for modern PowerPoint presentations with browser-renderable content</p>
+                </label>
+
+                <div id="pptToPdfClientPreview" class="hidden mt-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/85 dark:bg-slate-950/60 px-4 py-3 text-sm text-gray-600 dark:text-gray-300"></div>
+
+                <div class="mt-5 grid sm:grid-cols-2 gap-3">
+                    <button id="pptToPdfClientRenderBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold hover:opacity-90 transition">Render Slides</button>
+                    <button id="pptToPdfClientDownloadBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Download PDF</button>
+                </div>
+
+                <div id="pptToPdfClientStatus" class="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
+                    Choose a `.pptx` file, render it in the preview panel, then export it to PDF. Older `.ppt` files are not supported in pure browser conversion.
+                </div>
+
+                <div class="mt-4 rounded-[1.6rem] border border-amber-200/80 dark:border-amber-800/70 bg-amber-50/80 dark:bg-amber-950/20 p-4 text-sm text-amber-900 dark:text-amber-100">
+                    This is the strongest browser-only approach we can use here, but extremely complex PowerPoint features like some SmartArt, animations, embedded Office objects, and rare fonts may still differ from Microsoft PowerPoint export.
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Slide Preview</p>
+                        <h4 class="text-xl font-black text-gray-900 dark:text-white mt-2">Rendered slides before PDF export</h4>
+                    </div>
+                    <span id="pptToPdfClientSlideCount" class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300 text-xs font-black">0 slides</span>
+                </div>
+                <div id="pptToPdfClientCanvasHost" class="rounded-[1.8rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-950/70 p-4 min-h-[420px] overflow-auto">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">Your rendered PPTX slides will appear here.</div>
+                    <div id="pptToPdfClientRenderArea" class="mt-4 space-y-6"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const input = document.getElementById("pptToPdfClientInput");
+            const preview = document.getElementById("pptToPdfClientPreview");
+            const renderButton = document.getElementById("pptToPdfClientRenderBtn");
+            const downloadButton = document.getElementById("pptToPdfClientDownloadBtn");
+            const status = document.getElementById("pptToPdfClientStatus");
+            const renderArea = document.getElementById("pptToPdfClientRenderArea");
+            const slideCount = document.getElementById("pptToPdfClientSlideCount");
+
+            if (!input || !preview || !renderButton || !downloadButton || !status || !renderArea || !slideCount) {
+                return;
+            }
+
+            let renderedSlides = [];
+            let currentFileName = "presentation";
+            let resourcePromise = null;
+            let currentObjectUrl = null;
+
+            function setStatus(message, tone) {
+                status.textContent = message;
+                status.className = "mt-4 rounded-2xl border p-4 text-sm";
+                if (tone === "error") {
+                    status.classList.add("border-red-200", "bg-red-50", "text-red-700", "dark:border-red-900", "dark:bg-red-950/20", "dark:text-red-200");
+                    return;
+                }
+                if (tone === "success") {
+                    status.classList.add("border-emerald-200", "bg-emerald-50", "text-emerald-700", "dark:border-emerald-900", "dark:bg-emerald-950/20", "dark:text-emerald-200");
+                    return;
+                }
+                status.classList.add("border-blue-100", "bg-blue-50/70", "text-blue-900", "dark:border-blue-900", "dark:bg-blue-950/20", "dark:text-blue-100");
+            }
+
+            function updateSlideCount(count) {
+                slideCount.textContent = count + " slide" + (count === 1 ? "" : "s");
+            }
+
+            function resetRenderArea(message) {
+                renderArea.innerHTML = "";
+                renderedSlides = [];
+                downloadButton.disabled = true;
+                updateSlideCount(0);
+                if (message) {
+                    renderArea.innerHTML = "<div class=\"text-sm text-gray-500 dark:text-gray-400\">" + message + "</div>";
+                }
+            }
+
+            function loadScriptOnce(src) {
+                const existing = document.querySelector("script[data-any2convert-src=\"" + src + "\"]");
+                if (existing) {
+                    return existing.dataset.loaded === "true"
+                        ? Promise.resolve()
+                        : new Promise(function (resolve, reject) {
+                            existing.addEventListener("load", resolve, { once: true });
+                            existing.addEventListener("error", function () {
+                                reject(new Error("Failed to load script: " + src));
+                            }, { once: true });
+                        });
+                }
+
+                return new Promise(function (resolve, reject) {
+                    const script = document.createElement("script");
+                    script.src = src;
+                    script.async = false;
+                    script.dataset.any2convertSrc = src;
+                    script.addEventListener("load", function () {
+                        script.dataset.loaded = "true";
+                        resolve();
+                    }, { once: true });
+                    script.addEventListener("error", function () {
+                        reject(new Error("Failed to load script: " + src));
+                    }, { once: true });
+                    document.head.appendChild(script);
+                });
+            }
+
+            function loadStylesheetOnce(href) {
+                if (document.querySelector("link[data-any2convert-href=\"" + href + "\"]")) {
+                    return;
+                }
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = href;
+                link.dataset.any2convertHref = href;
+                document.head.appendChild(link);
+            }
+
+            function ensureLocalStyles() {
+                if (document.getElementById("pptToPdfClientLocalStyles")) {
+                    return;
+                }
+                const style = document.createElement("style");
+                style.id = "pptToPdfClientLocalStyles";
+                style.textContent = "#pptToPdfClientRenderArea .slide{margin:0 auto 24px !important;box-shadow:0 18px 50px rgba(15,23,42,.14) !important;border-radius:18px;overflow:hidden;background:#fff;}#pptToPdfClientRenderArea .slide:last-child{margin-bottom:0 !important;}";
+                document.head.appendChild(style);
+            }
+
+            async function ensureResources() {
+                if (!resourcePromise) {
+                    loadStylesheetOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/css/pptxjs.css");
+                    loadStylesheetOnce("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css");
+                    ensureLocalStyles();
+                    resourcePromise = (async function () {
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jszip/2.6.1/jszip.min.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/filereader.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/dingbat.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/pptxjs.js");
+                        await loadScriptOnce("https://cdn.jsdelivr.net/gh/meshesha/PPTXjs@master/js/divs2slides.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+                        await loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+                    })();
+                }
+                return resourcePromise;
+            }
+
+            function getSlideNodes() {
+                return Array.from(renderArea.children).filter(function (node) {
+                    return node.nodeType === 1;
+                });
+            }
+
+            async function waitForImages(scope) {
+                const images = Array.from(scope.querySelectorAll("img"));
+                await Promise.all(images.map(function (img) {
+                    if (img.complete) {
+                        return Promise.resolve();
+                    }
+                    return new Promise(function (resolve) {
+                        img.addEventListener("load", resolve, { once: true });
+                        img.addEventListener("error", resolve, { once: true });
+                    });
+                }));
+            }
+
+            async function waitForRenderedSlides() {
+                return await new Promise(function (resolve, reject) {
+                    const timeout = window.setTimeout(function () {
+                        observer.disconnect();
+                        reject(new Error("The PPTX renderer timed out before producing slides."));
+                    }, 45000);
+                    let idleTimer = null;
+                    const observer = new MutationObserver(function () {
+                        scheduleCheck();
+                    });
+
+                    async function runCheck() {
+                        const slides = getSlideNodes();
+                        if (!slides.length) {
+                            return;
+                        }
+                        await Promise.all(slides.map(waitForImages));
+                        if (document.fonts && document.fonts.ready) {
+                            try {
+                                await document.fonts.ready;
+                            } catch (fontError) {
+                            }
+                        }
+                        window.clearTimeout(timeout);
+                        observer.disconnect();
+                        resolve(slides);
+                    }
+
+                    function scheduleCheck() {
+                        window.clearTimeout(idleTimer);
+                        idleTimer = window.setTimeout(function () {
+                            runCheck().catch(function (error) {
+                                window.clearTimeout(timeout);
+                                observer.disconnect();
+                                reject(error);
+                            });
+                        }, 700);
+                    }
+
+                    observer.observe(renderArea, { childList: true, subtree: true });
+                    scheduleCheck();
+                });
+            }
+
+            input.addEventListener("change", function () {
+                const file = this.files && this.files[0] ? this.files[0] : null;
+                resetRenderArea("Your rendered PPTX slides will appear here.");
+                if (!file) {
+                    preview.classList.add("hidden");
+                    preview.textContent = "";
+                    currentFileName = "presentation";
+                    setStatus("Choose a `.pptx` file, render it in the preview panel, then export it to PDF. Older `.ppt` files are not supported in pure browser conversion.");
+                    return;
+                }
+
+                currentFileName = file.name.replace(/\.pptx$/i, "") || "presentation";
+                preview.textContent = "Selected: " + file.name + " (" + Math.max(1, Math.round(file.size / 1024)) + " KB)";
+                preview.classList.remove("hidden");
+
+                if (!/\.pptx$/i.test(file.name)) {
+                    setStatus("Pure browser conversion only supports `.pptx` files. Please resave legacy `.ppt` files as `.pptx` and try again.", "error");
+                    return;
+                }
+
+                setStatus("File selected. Click Render Slides to preview the presentation before downloading the PDF.");
+            });
+
+            renderButton.addEventListener("click", async function () {
+                const file = input.files && input.files[0] ? input.files[0] : null;
+                if (!file) {
+                    setStatus("Please choose a `.pptx` file first.", "error");
+                    return;
+                }
+                if (!/\.pptx$/i.test(file.name)) {
+                    setStatus("Only `.pptx` files are supported for client-side conversion.", "error");
+                    return;
+                }
+
+                resetRenderArea("Rendering PowerPoint slides...");
+                setStatus("Loading the PPTX renderer and building your slide preview...");
+                renderButton.disabled = true;
+
+                try {
+                    await ensureResources();
+
+                    if (currentObjectUrl) {
+                        URL.revokeObjectURL(currentObjectUrl);
+                    }
+                    currentObjectUrl = URL.createObjectURL(file);
+                    renderArea.innerHTML = "";
+
+                    window.jQuery(renderArea).pptxToHtml({
+                        pptxFileUrl: currentObjectUrl,
+                        slideMode: false,
+                        keyBoardShortCut: false,
+                        mediaProcess: true,
+                        themeProcess: true,
+                        slideType: "divs2slidesjs",
+                        jsZipV2: false
+                    });
+
+                    renderedSlides = await waitForRenderedSlides();
+                    downloadButton.disabled = renderedSlides.length === 0;
+                    updateSlideCount(renderedSlides.length);
+                    setStatus("Slides rendered successfully. Review the preview, then click Download PDF.", "success");
+                } catch (error) {
+                    resetRenderArea("The presentation could not be rendered in the browser.");
+                    setStatus(error && error.message ? error.message : "PPTX rendering failed.", "error");
+                } finally {
+                    renderButton.disabled = false;
+                }
+            });
+
+            downloadButton.addEventListener("click", async function () {
+                if (!renderedSlides.length) {
+                    setStatus("Render the slides first, then download the PDF.", "error");
+                    return;
+                }
+                if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+                    setStatus("PDF libraries are still loading. Please wait a moment and try again.", "error");
+                    return;
+                }
+
+                downloadButton.disabled = true;
+                setStatus("Capturing rendered slides and exporting the PDF...");
+
+                try {
+                    const capturedSlides = [];
+                    for (let index = 0; index < renderedSlides.length; index += 1) {
+                        setStatus("Capturing slide " + (index + 1) + " of " + renderedSlides.length + "...");
+                        const slideNode = renderedSlides[index];
+                        const rect = slideNode.getBoundingClientRect();
+                        const canvas = await window.html2canvas(slideNode, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: "#ffffff",
+                            width: Math.max(1, Math.ceil(rect.width)),
+                            height: Math.max(1, Math.ceil(rect.height)),
+                            windowWidth: Math.max(document.documentElement.clientWidth, Math.ceil(rect.width)),
+                            windowHeight: Math.max(document.documentElement.clientHeight, Math.ceil(rect.height)),
+                            scrollX: 0,
+                            scrollY: 0
+                        });
+                        capturedSlides.push({
+                            canvas: canvas,
+                            width: rect.width || canvas.width,
+                            height: rect.height || canvas.height
+                        });
+                    }
+
+                    const firstSlide = capturedSlides[0];
+                    const pdfWidth = Math.max(1, firstSlide.width) * 0.75;
+                    const pdfHeight = Math.max(1, firstSlide.height) * 0.75;
+                    const orientation = pdfWidth >= pdfHeight ? "landscape" : "portrait";
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: orientation,
+                        unit: "pt",
+                        format: [pdfWidth, pdfHeight]
+                    });
+
+                    capturedSlides.forEach(function (slideCapture, index) {
+                        const pageWidth = Math.max(1, slideCapture.width) * 0.75;
+                        const pageHeight = Math.max(1, slideCapture.height) * 0.75;
+                        const pageOrientation = pageWidth >= pageHeight ? "landscape" : "portrait";
+                        if (index > 0) {
+                            pdf.addPage([pageWidth, pageHeight], pageOrientation);
+                        }
+                        const imageData = slideCapture.canvas.toDataURL("image/png");
+                        pdf.addImage(imageData, "PNG", 0, 0, pageWidth, pageHeight);
+                    });
+
+                    pdf.save(currentFileName + ".pdf");
+                    setStatus("PDF created successfully. Your download should start automatically.", "success");
+                } catch (error) {
+                    setStatus(error && error.message ? error.message : "PDF export failed.", "error");
+                } finally {
+                    downloadButton.disabled = false;
+                }
+            });
+        })();
+    </script>';
+}
 
 function getJsonToCsvHTML() {
     return '
     <div class="space-y-6">
-        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
-            <div class="font-semibold text-blue-900 dark:text-blue-100">Paste JSON or upload a file</div>
-            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Upload a `.json` file or paste a JSON array below to convert it into CSV.</p>
+        <div style="display:none;">
+            <h1>JSON to CSV Converter Online</h1>
+            <p>Convert JSON to CSV online, convert JSON to CSV format for Excel, and download spreadsheet-ready files in your browser.</p>
+            <p>Useful for developers, analysts, Python JSON to CSV workflows, PowerShell convert JSON to CSV tasks, and data exports.</p>
         </div>
-        <input type="file" id="jsonFileInput" accept=".json,application/json" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
-        <textarea id="jsonInput" class="w-full h-64 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder=\'[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]\'></textarea>
-        <button id="jsonToCsvBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert to CSV</button>
-        <div id="csvResult" class="hidden mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
-            <h4 class="font-bold mb-2">CSV Preview:</h4>
-            <pre id="csvPreview" class="text-xs overflow-x-auto whitespace-pre-wrap"></pre>
-            <button id="downloadCsvBtn" class="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hidden">Download CSV</button>
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">JSON to CSV / Excel</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert JSON into CSV or Excel-ready rows</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Paste JSON, upload a `.json` file, flatten nested objects, preview the table, and download CSV or Excel output. Great for data scientists, analysts, and developers.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">{ }</div>
+                </div>
+
+                <input type="file" id="jsonFileInput" accept=".json,application/json" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600">
+                <textarea id="jsonInput" class="w-full h-72 mt-4 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder=\'[{"name":"John","age":30,"address":{"city":"Lahore"}},{"name":"Jane","age":25,"address":{"city":"Karachi"}}]\'></textarea>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="jsonToCsvBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Convert JSON to CSV</button>
+                    <button id="downloadCsvBtn" type="button" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition hidden">Download CSV</button>
+                    <button id="downloadExcelBtn" type="button" class="px-5 py-3 rounded-2xl bg-amber-500 text-slate-950 font-semibold hover:bg-amber-400 transition hidden">Download Excel</button>
+                </div>
+
+                <p id="jsonToCsvStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Convert JSON to CSV online or prepare JSON data for Excel with one click.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Preview</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <pre id="csvPreview" class="text-xs overflow-x-auto whitespace-pre-wrap text-gray-700 dark:text-slate-100 min-h-[260px]">CSV preview will appear here after conversion.</pre>
+                </div>
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Good for</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">API responses, analytics exports, Python JSON to CSV tasks, PowerShell conversions, and convert JSON to CSV in Excel workflows.</p>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Output</p>
+                        <p id="jsonToCsvMeta" class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">No output yet. Paste JSON and run the converter.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         let currentCSV = "";
+        let currentRows = [];
+        const jsonInput = document.getElementById("jsonInput");
+        const jsonStatus = document.getElementById("jsonToCsvStatus");
+        const csvPreview = document.getElementById("csvPreview");
+        const jsonMeta = document.getElementById("jsonToCsvMeta");
+        const downloadCsvBtn = document.getElementById("downloadCsvBtn");
+        const downloadExcelBtn = document.getElementById("downloadExcelBtn");
+
+        function setJsonStatus(message, isError) {
+            jsonStatus.textContent = message || "";
+            jsonStatus.classList.toggle("text-red-500", !!isError);
+            jsonStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                jsonStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function flattenObject(value, prefix, output) {
+            if (Array.isArray(value)) {
+                if (!value.length) {
+                    output[prefix] = "";
+                    return;
+                }
+                const primitiveArray = value.every(function(item) {
+                    return item === null || ["string", "number", "boolean"].includes(typeof item);
+                });
+                if (primitiveArray) {
+                    output[prefix] = value.join(" | ");
+                    return;
+                }
+                output[prefix] = JSON.stringify(value);
+                return;
+            }
+
+            if (value && typeof value === "object") {
+                Object.keys(value).forEach(function(key) {
+                    const nextKey = prefix ? prefix + "." + key : key;
+                    flattenObject(value[key], nextKey, output);
+                });
+                return;
+            }
+
+            output[prefix] = value === null || value === undefined ? "" : value;
+        }
+
+        function normalizeRows(parsed) {
+            if (Array.isArray(parsed)) return parsed;
+            if (parsed && typeof parsed === "object") return [parsed];
+            throw new Error("JSON must be an object or array of objects.");
+        }
+
         document.getElementById("jsonFileInput").addEventListener("change", function() {
             const file = this.files && this.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById("jsonInput").value = e.target.result || "";
+                jsonInput.value = e.target.result || "";
+                setJsonStatus("JSON file loaded. Click convert to generate CSV or Excel.");
             };
             reader.readAsText(file);
         });
         
         document.getElementById("jsonToCsvBtn").addEventListener("click", function() {
             try {
-                const json = JSON.parse(document.getElementById("jsonInput").value);
-                if (!Array.isArray(json)) throw new Error("JSON must be an array");
-                if (json.length === 0) throw new Error("JSON array is empty");
-                const headers = Object.keys(json[0]);
-                const csv = [headers.join(","), ...json.map(row => headers.map(h => {
-                    let val = row[h];
-                    if (val === undefined || val === null) val = "";
-                    if (typeof val === "string" && (val.includes(",") || val.includes("\""))) {
-                        val = "\"" + val.replace(/"/g, "\"\"") + "\"";
+                const parsed = JSON.parse(jsonInput.value);
+                const rows = normalizeRows(parsed);
+                if (!rows.length) throw new Error("JSON array is empty.");
+
+                currentRows = rows.map(function(row) {
+                    if (!row || typeof row !== "object" || Array.isArray(row)) {
+                        return { value: JSON.stringify(row) };
                     }
-                    return val;
-                }).join(","))].join("\\n");
-                currentCSV = csv;
-                document.getElementById("csvPreview").innerText = csv.slice(0, 500) + (csv.length > 500 ? "..." : "");
-                document.getElementById("csvResult").classList.remove("hidden");
-                document.getElementById("downloadCsvBtn").classList.remove("hidden");
-            } catch(e) {
-                alert("Invalid JSON: " + e.message);
+                    const flattened = {};
+                    Object.keys(row).forEach(function(key) {
+                        flattenObject(row[key], key, flattened);
+                    });
+                    return flattened;
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(currentRows);
+                currentCSV = XLSX.utils.sheet_to_csv(worksheet);
+                csvPreview.textContent = currentCSV || "No CSV output generated.";
+                jsonMeta.textContent = currentRows.length + " row(s) prepared with " + Object.keys(currentRows[0] || {}).length + " column(s). Ready for CSV or Excel download.";
+                downloadCsvBtn.classList.remove("hidden");
+                downloadExcelBtn.classList.remove("hidden");
+                setJsonStatus("JSON converted successfully. Download CSV or Excel.");
+            } catch (e) {
+                currentCSV = "";
+                currentRows = [];
+                downloadCsvBtn.classList.add("hidden");
+                downloadExcelBtn.classList.add("hidden");
+                csvPreview.textContent = "CSV preview will appear here after conversion.";
+                jsonMeta.textContent = "No output yet. Paste JSON and run the converter.";
+                setJsonStatus("Invalid JSON: " + e.message, true);
             }
         });
         
-        document.getElementById("downloadCsvBtn").addEventListener("click", function() {
+        downloadCsvBtn.addEventListener("click", function() {
+            if (!currentCSV) return;
             const blob = new Blob([currentCSV], { type: "text/csv" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -4661,6 +5374,14 @@ function getJsonToCsvHTML() {
             a.download = "converted.csv";
             a.click();
             URL.revokeObjectURL(url);
+        });
+
+        downloadExcelBtn.addEventListener("click", function() {
+            if (!currentRows.length || !window.XLSX) return;
+            const worksheet = XLSX.utils.json_to_sheet(currentRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "JSON");
+            XLSX.writeFile(workbook, "converted.xlsx");
         });
     </script>';
 }
@@ -4730,9 +5451,256 @@ function getCsvToJsonHTML() {
     </script>';
 }
 
+function getSqlToJsonHTML() {
+    return '
+    <div class="space-y-6">
+        <div style="display:none;">
+            <h1>SQL to JSON Converter Online</h1>
+            <p>Convert SQL to JSON online, parse SQL INSERT statements, and export database rows into JSON for development and database management.</p>
+        </div>
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">SQL to JSON</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert SQL INSERT rows into clean JSON</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Paste SQL dump content with `INSERT INTO ... VALUES (...)` statements and convert it into JSON objects for APIs, apps, testing, and database management.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">SQL</div>
+                </div>
+
+                <textarea id="sqlToJsonInput" class="w-full h-72 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl font-mono text-sm border border-gray-200 dark:border-gray-600" placeholder="INSERT INTO users (id, name, email) VALUES (1, &quot;Ali&quot;, &quot;ali@example.com&quot;), (2, &quot;Sara&quot;, &quot;sara@example.com&quot;);"></textarea>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="sqlToJsonBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Convert SQL to JSON</button>
+                    <button id="copySqlJsonBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition hidden">Copy JSON</button>
+                    <button id="downloadSqlJsonBtn" type="button" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition hidden">Download JSON</button>
+                </div>
+
+                <p id="sqlToJsonStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Best for SQL to JSON conversion from INSERT statements and SQL dump samples.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">JSON Output</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <textarea id="sqlToJsonOutput" class="w-full h-72 bg-transparent text-sm leading-7 text-gray-800 dark:text-slate-100 resize-none outline-none" placeholder="Converted JSON will appear here."></textarea>
+                </div>
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Supported</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">Standard `INSERT INTO table (columns) VALUES (...)` statements with multiple rows.</p>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Use cases</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">Database management, API seeding, fixtures, migrations, quick data cleanup, and SQL to JSON online checks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const sqlToJsonInput = document.getElementById("sqlToJsonInput");
+        const sqlToJsonOutput = document.getElementById("sqlToJsonOutput");
+        const sqlToJsonStatus = document.getElementById("sqlToJsonStatus");
+        const copySqlJsonBtn = document.getElementById("copySqlJsonBtn");
+        const downloadSqlJsonBtn = document.getElementById("downloadSqlJsonBtn");
+
+        function setSqlJsonStatus(message, isError) {
+            sqlToJsonStatus.textContent = message || "";
+            sqlToJsonStatus.classList.toggle("text-red-500", !!isError);
+            sqlToJsonStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                sqlToJsonStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function splitSqlValues(rowText) {
+            const values = [];
+            let current = "";
+            let quote = "";
+            let depth = 0;
+
+            for (let i = 0; i < rowText.length; i++) {
+                const char = rowText[i];
+                const next = rowText[i + 1] || "";
+
+                if (quote) {
+                    current += char;
+                    if (char === "\\\\") {
+                        current += next;
+                        i++;
+                        continue;
+                    }
+                    if (char === quote) {
+                        quote = "";
+                    }
+                    continue;
+                }
+
+                if (char === "\\"" || char === "\'") {
+                    quote = char;
+                    current += char;
+                    continue;
+                }
+
+                if (char === "(") depth++;
+                if (char === ")") depth--;
+
+                if (char === "," && depth === 0) {
+                    values.push(current.trim());
+                    current = "";
+                    continue;
+                }
+
+                current += char;
+            }
+
+            if (current.trim() !== "") {
+                values.push(current.trim());
+            }
+            return values;
+        }
+
+        function parseSqlValue(raw) {
+            const value = String(raw || "").trim();
+            if (/^null$/i.test(value)) return null;
+            if (/^(true|false)$/i.test(value)) return /^true$/i.test(value);
+            if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+            if ((value.startsWith("\'") && value.endsWith("\'")) || (value.startsWith("\\"") && value.endsWith("\\""))) {
+                return value.slice(1, -1).replace(/\\\\\'/g, "\'").replace(/\\\\\\"/g, "\\"").replace(/\\\\n/g, "\n").replace(/\\\\r/g, "\r").replace(/\\\\t/g, "\t").replace(/\\\\\\\\/g, "\\\\");
+            }
+            return value;
+        }
+
+        function extractRows(valuesSection) {
+            const rows = [];
+            let current = "";
+            let depth = 0;
+            let quote = "";
+
+            for (let i = 0; i < valuesSection.length; i++) {
+                const char = valuesSection[i];
+                const next = valuesSection[i + 1] || "";
+
+                if (quote) {
+                    current += char;
+                    if (char === "\\\\") {
+                        current += next;
+                        i++;
+                        continue;
+                    }
+                    if (char === quote) {
+                        quote = "";
+                    }
+                    continue;
+                }
+
+                if (char === "\\"" || char === "\'") {
+                    quote = char;
+                    current += char;
+                    continue;
+                }
+
+                if (char === "(") {
+                    depth++;
+                    if (depth === 1) continue;
+                }
+
+                if (char === ")") {
+                    depth--;
+                    if (depth === 0) {
+                        rows.push(current);
+                        current = "";
+                        continue;
+                    }
+                }
+
+                if (depth >= 1) {
+                    current += char;
+                }
+            }
+
+            return rows;
+        }
+
+        function parseInsertStatements(sql) {
+            const regex = /INSERT\\s+INTO\\s+[`"\\w.]+\\s*\\(([^)]+)\\)\\s*VALUES\\s*([\\s\\S]*?);/gi;
+            const output = [];
+            let match;
+
+            while ((match = regex.exec(sql)) !== null) {
+                const columns = match[1].split(",").map(function(column) {
+                    return column.trim().replace(/^[`"\\[]+|[`"\\]]+$/g, "");
+                });
+                const rows = extractRows(match[2]);
+
+                rows.forEach(function(rowText) {
+                    const values = splitSqlValues(rowText);
+                    const item = {};
+                    columns.forEach(function(column, index) {
+                        item[column] = parseSqlValue(values[index] || "");
+                    });
+                    output.push(item);
+                });
+            }
+
+            return output;
+        }
+
+        document.getElementById("sqlToJsonBtn").addEventListener("click", function() {
+            try {
+                const sql = sqlToJsonInput.value.trim();
+                if (!sql) throw new Error("Please paste SQL INSERT statements first.");
+                const rows = parseInsertStatements(sql);
+                if (!rows.length) throw new Error("No supported INSERT INTO ... VALUES statements were found.");
+                sqlToJsonOutput.value = JSON.stringify(rows, null, 2);
+                copySqlJsonBtn.classList.remove("hidden");
+                downloadSqlJsonBtn.classList.remove("hidden");
+                setSqlJsonStatus("SQL converted successfully. " + rows.length + " row(s) exported to JSON.");
+            } catch (error) {
+                sqlToJsonOutput.value = "";
+                copySqlJsonBtn.classList.add("hidden");
+                downloadSqlJsonBtn.classList.add("hidden");
+                setSqlJsonStatus(error.message, true);
+            }
+        });
+
+        copySqlJsonBtn.addEventListener("click", async function() {
+            if (!sqlToJsonOutput.value.trim()) return;
+            try {
+                await navigator.clipboard.writeText(sqlToJsonOutput.value);
+                setSqlJsonStatus("JSON copied to clipboard.");
+            } catch (error) {
+                setSqlJsonStatus("Could not copy automatically. Please copy the JSON manually.", true);
+            }
+        });
+
+        downloadSqlJsonBtn.addEventListener("click", function() {
+            if (!sqlToJsonOutput.value.trim()) return;
+            const blob = new Blob([sqlToJsonOutput.value], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "converted.json";
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>';
+}
+
 function getQrGeneratorHTML() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Free QR Code Generator Online</h1>
+            <p>Use this QR code generator free tool to create static QR codes for URLs, text, WiFi, business cards, and more.</p>
+            <p>Best free QR code generator, online QR code generator, free QR code generator no sign up, and QR code generator free online workflow in your browser.</p>
+            <p>If you are comparing Adobe QR code generator, Canva QR code generator, Google QR code generator, or the QR code generator tools online, this gives you a privacy-first free option.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Free QR Code Generator</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Create a QR code instantly with this free QR code generator online. No sign up, no expiry, and instant PNG download.</p>
+        </div>
         <textarea id="qrText" class="w-full h-32 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text or URL to generate QR code"></textarea>
         <div class="flex gap-3">
             <select id="qrSize" class="flex-1 p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
@@ -4749,6 +5717,7 @@ function getQrGeneratorHTML() {
             </select>
         </div>
         <button id="generateQrBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Generate QR Code</button>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 p-4 text-sm text-gray-600 dark:text-gray-300">This QR code generator free tool works well for website links, menus, contact cards, plain text, and quick sharing. It is a free QR code generator online with no sign up requirement for basic static codes.</div>
         <div id="qrResult" class="flex flex-col items-center mt-6 hidden">
             <div id="qrcode"></div>
             <button id="downloadQrBtn" class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg text-sm hidden">Download QR Code</button>
@@ -7489,61 +8458,199 @@ function getVideoCompressorHTML() {
 function getOcrToolHTML() {
     return '
     <div class="space-y-6">
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'ocrImageInput\').click()">
-            <input type="file" id="ocrImageInput" class="hidden" accept="image/*">
-            <div class="mb-3 flex justify-center text-blue-500"><svg width="68" height="54" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 27s7-10 16-10 16 10 16 10-7 10-16 10S4 27 4 27Z"></path><circle cx="20" cy="27" r="4"></circle><path d="M40 19h20"></path><path d="M40 26h20"></path><path d="M40 33h14"></path></svg></div>
-            <p class="font-medium">Upload an image with text</p>
-            <p class="text-sm text-gray-500 mt-2">We\'ll extract text using OCR (works best with clear images)</p>
+        <div style="display:none;">
+            <h1>Online OCR Image to Text Tool</h1>
+            <p>Free online OCR for JPG, JPEG, PNG, WEBP, screenshots, receipts, scanned pages, and document photos.</p>
+            <p>OCR meaning is optical character recognition. This OCR tool uses Tesseract OCR technology to turn images into editable text in your browser.</p>
         </div>
-        <div id="ocrPreview" class="hidden mt-4 text-center">
-            <img id="ocrPreviewImg" class="max-w-full h-32 object-contain rounded-lg mx-auto">
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Free Online OCR</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Extract text from JPG, PNG, and JPEG images</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Upload an image and run online OCR directly in your browser. This OCR tool works best for screenshots, scanned pages, receipts, invoices, IDs, and other clear text images.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                        <svg width="30" height="30" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 27s7-10 16-10 16 10 16 10-7 10-16 10S4 27 4 27Z"></path><circle cx="20" cy="27" r="4"></circle><path d="M40 19h20"></path><path d="M40 26h20"></path><path d="M40 33h14"></path></svg>
+                    </div>
+                </div>
+
+                <label for="ocrImageInput" class="block rounded-[1.8rem] border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white/85 dark:bg-slate-950/60 p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-900 transition">
+                    <input type="file" id="ocrImageInput" class="hidden" accept=".jpg,.jpeg,.png,.webp,.bmp,.gif,image/*">
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 15-4.5-4.5L7 20"></path></svg>
+                    </div>
+                    <p class="font-bold text-gray-900 dark:text-white">Choose image for OCR</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Supports JPG, JPEG, PNG, WEBP, BMP, and GIF files. Your file stays on your device.</p>
+                </label>
+
+                <div id="ocrPreviewCard" class="hidden mt-5 rounded-[1.6rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <img id="ocrPreviewImg" class="max-w-full md:w-44 h-36 object-contain rounded-2xl bg-slate-50 dark:bg-slate-900 p-2" alt="OCR preview">
+                        <div class="text-left flex-1">
+                            <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Selected Image</p>
+                            <p id="ocrFileMeta" class="mt-2 text-base font-bold text-gray-900 dark:text-white"></p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">For the best OCR result, use a sharp image with good contrast and straight text.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="ocrBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Run OCR</button>
+                    <button id="copyOcrBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition hidden">Copy Text</button>
+                    <button id="downloadOcrBtn" type="button" class="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition hidden">Download TXT</button>
+                </div>
+
+                <p id="ocrStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">OCR meaning is optical character recognition. Click Run OCR to turn image text into editable text.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">OCR Result</p>
+                <div class="mt-4 rounded-[1.8rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <textarea id="ocrText" class="w-full h-72 bg-transparent text-sm leading-7 text-gray-800 dark:text-slate-100 resize-none outline-none" placeholder="Recognized text will appear here after OCR runs."></textarea>
+                </div>
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">What is OCR?</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">What is OCR: OCR technology reads printed text from an image and converts it into selectable, searchable words.</p>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Engine</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">This free OCR tool uses Tesseract OCR software in the browser, so you can run online OCR without uploading private files.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button id="ocrBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Extract Text</button>
-        <div id="ocrResult" class="hidden mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
-            <h4 class="font-bold mb-2">Extracted Text:</h4>
-            <p id="ocrText" class="whitespace-pre-wrap text-sm max-h-64 overflow-y-auto"></p>
-            <button id="copyOcrBtn" class="mt-3 text-sm text-blue-600">Copy to clipboard</button>
+        <div class="rounded-[1.8rem] border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-5 text-sm text-blue-950 dark:text-blue-100 leading-7">
+            If you also need <strong>OCR PDF</strong>, scanned PDF extraction, or PDF to OCR workflows, use the site\'s dedicated OCR PDF tool. This page is focused on image OCR for JPG, PNG, JPEG, screenshots, and document photos.
         </div>
     </div>
     <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script>
         const ocrInput = document.getElementById("ocrImageInput");
-        const ocrPreview = document.getElementById("ocrPreview");
+        const ocrPreviewCard = document.getElementById("ocrPreviewCard");
         const ocrPreviewImg = document.getElementById("ocrPreviewImg");
-        
+        const ocrFileMeta = document.getElementById("ocrFileMeta");
+        const ocrBtn = document.getElementById("ocrBtn");
+        const ocrStatus = document.getElementById("ocrStatus");
+        const ocrText = document.getElementById("ocrText");
+        const copyOcrBtn = document.getElementById("copyOcrBtn");
+        const downloadOcrBtn = document.getElementById("downloadOcrBtn");
+
+        function setOcrImageStatus(message, isError) {
+            ocrStatus.textContent = message || "";
+            ocrStatus.classList.toggle("text-red-500", !!isError);
+            ocrStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                ocrStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function formatBytes(size) {
+            const value = Number(size || 0);
+            if (!value) return "0 B";
+            const units = ["B", "KB", "MB", "GB"];
+            let index = 0;
+            let current = value;
+            while (current >= 1024 && index < units.length - 1) {
+                current /= 1024;
+                index++;
+            }
+            return current.toFixed(current >= 10 || index === 0 ? 0 : 1) + " " + units[index];
+        }
+
+        function getOcrImageBaseName(name) {
+            return String(name || "ocr-image").replace(/\.[^.]+$/, "") || "ocr-image";
+        }
+
         ocrInput.addEventListener("change", function() {
-            if(this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    ocrPreviewImg.src = e.target.result;
-                    ocrPreview.classList.remove("hidden");
-                };
-                reader.readAsDataURL(this.files[0]);
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            ocrText.value = "";
+            copyOcrBtn.classList.add("hidden");
+            downloadOcrBtn.classList.add("hidden");
+
+            if (!file) {
+                ocrPreviewCard.classList.add("hidden");
+                setOcrImageStatus("OCR meaning is optical character recognition. Click Run OCR to turn image text into editable text.");
+                return;
             }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                ocrPreviewImg.src = e.target.result;
+                ocrPreviewCard.classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+            ocrFileMeta.textContent = file.name + " • " + formatBytes(file.size);
+            setOcrImageStatus("Image ready. Run online OCR to extract text from the selected file.");
         });
-        
-        document.getElementById("ocrBtn").addEventListener("click", async function() {
-            const input = document.getElementById("ocrImageInput");
-            if (!input.files.length) return alert("Please select an image");
-            const resultDiv = document.getElementById("ocrResult");
-            const textDiv = document.getElementById("ocrText");
-            resultDiv.classList.add("hidden");
-            textDiv.innerText = "Processing... (this may take a few seconds)";
-            resultDiv.classList.remove("hidden");
-            
-            const image = input.files[0];
+
+        copyOcrBtn.addEventListener("click", async function() {
+            if (!ocrText.value.trim()) return;
+
             try {
-                const { data: { text } } = await Tesseract.recognize(image, "eng");
-                textDiv.innerText = text || "No text detected. Try a clearer image.";
-            } catch(e) {
-                textDiv.innerText = "Error processing image: " + e.message;
+                await navigator.clipboard.writeText(ocrText.value);
+                setOcrImageStatus("OCR text copied to clipboard.");
+            } catch (error) {
+                setOcrImageStatus("Could not copy automatically. Please copy the text manually.", true);
             }
         });
-        
-        document.getElementById("copyOcrBtn").addEventListener("click", function() {
-            const text = document.getElementById("ocrText").innerText;
-            navigator.clipboard.writeText(text);
-            alert("Text copied to clipboard!");
+
+        downloadOcrBtn.addEventListener("click", function() {
+            if (!ocrText.value.trim()) return;
+
+            const file = ocrInput.files && ocrInput.files[0] ? ocrInput.files[0] : null;
+            const baseName = getOcrImageBaseName(file ? file.name : "");
+            const blob = new Blob([ocrText.value], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = baseName + "_ocr.txt";
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+
+        ocrBtn.addEventListener("click", async function() {
+            const file = ocrInput.files && ocrInput.files[0] ? ocrInput.files[0] : null;
+            if (!file) {
+                alert("Please select a JPG, JPEG, PNG, or image file first.");
+                return;
+            }
+
+            if (!window.Tesseract) {
+                setOcrImageStatus("OCR library failed to load. Please refresh and try again.", true);
+                return;
+            }
+
+            ocrText.value = "";
+            copyOcrBtn.classList.add("hidden");
+            downloadOcrBtn.classList.add("hidden");
+            setOcrImageStatus("Running Tesseract OCR on your image. This may take a few seconds...");
+
+            try {
+                const result = await window.Tesseract.recognize(file, "eng", {
+                    logger: function(message) {
+                        if (message && message.status) {
+                            const progress = typeof message.progress === "number" ? " " + Math.round(message.progress * 100) + "%" : "";
+                            setOcrImageStatus("OCR in progress: " + message.status + progress);
+                        }
+                    }
+                });
+
+                const text = result && result.data && result.data.text ? result.data.text.trim() : "";
+                ocrText.value = text;
+                copyOcrBtn.classList.toggle("hidden", !text);
+                downloadOcrBtn.classList.toggle("hidden", !text);
+
+                if (text) {
+                    setOcrImageStatus("OCR complete. Text extracted successfully from the image.");
+                } else {
+                    setOcrImageStatus("OCR finished, but no readable text was detected. Try a sharper or higher-contrast image.", true);
+                }
+            } catch (error) {
+                setOcrImageStatus("Error processing image OCR: " + error.message, true);
+            }
         });
     </script>';
 }
@@ -7913,8 +9020,19 @@ function getJsonToCsvPureJS() {
 function getQrGeneratorPureJS() {
     return '
     <div class="space-y-6">
+        <div style="display:none;">
+            <h1>Free QR Code Generator Online</h1>
+            <p>Use this QR code generator free tool to create static QR codes for URLs, text, WiFi, business cards, and more.</p>
+            <p>Best free QR code generator, online QR code generator, free QR code generator no sign up, and QR code generator free online workflow in your browser.</p>
+            <p>If you are comparing Adobe QR code generator, Canva QR code generator, Google QR code generator, or the QR code generator tools online, this gives you a privacy-first free option.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-200/70 bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900 p-4">
+            <div class="font-semibold text-blue-900 dark:text-blue-100">Free QR Code Generator</div>
+            <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">Create a QR code instantly with this free QR code generator online. No sign up, no expiry, and instant PNG download.</p>
+        </div>
         <textarea id="qrText" class="w-full h-32 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-xl" placeholder="Enter text or URL"></textarea>
         <button id="generateQrBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold transition">Generate Free Code</button>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 p-4 text-sm text-gray-600 dark:text-gray-300">This QR code generator free tool works well for website links, menus, contact cards, plain text, and quick sharing. It is a free QR code generator online with no sign up requirement for basic static codes.</div>
         <div id="qrResult" class="hidden text-center mt-4">
             <img id="qrImg" class="mx-auto" />
             <br/><a id="dlQr" class="bg-green-600 text-white px-6 py-2 rounded-lg text-sm cursor-pointer mt-2 inline-block shadow-sm" download="qrcode.png">Download PNG</a>
@@ -7938,26 +9056,107 @@ function getQrGeneratorPureJS() {
 function getHtmlToPdfHTML() {
     return '
     <div class="space-y-6">
-        <textarea id="htmlToPdfInput" class="w-full h-56 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="<h1>Hello</h1><p>Paste HTML here...</p>"></textarea>
-        <button id="htmlToPdfBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Convert HTML to PDF</button>
-        <div id="htmlToPdfPreview" class="hidden rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900"></div>
+        <div style="display:none;">
+            <h1>HTML to PDF Converter Online Free</h1>
+            <p>Convert HTML to PDF online free, change HTML to PDF for invoices and reports, and export `.html` layouts as PDF files in your browser.</p>
+        </div>
+        <div class="grid 2xl:grid-cols-[1.05fr_0.95fr] gap-6">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">HTML to PDF</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Convert HTML markup into a polished PDF</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Paste HTML for invoices, reports, receipts, letters, or printable layouts and convert it into PDF instantly. Great for HTML to PDF free workflows and browser-based report generation.</p>
+                    </div>
+                    <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 text-xl">&lt;/&gt;</div>
+                </div>
+
+                <textarea id="htmlToPdfInput" class="w-full h-72 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600 font-mono text-sm" placeholder="&lt;section style=&quot;font-family: Arial, sans-serif; padding: 24px;&quot;&gt;&lt;h1&gt;Invoice #1001&lt;/h1&gt;&lt;p&gt;Client: Any2Convert&lt;/p&gt;&lt;/section&gt;"></textarea>
+
+                <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                    <input id="htmlToPdfFileName" type="text" value="html-to-pdf" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600" placeholder="File name">
+                    <select id="htmlToPdfFormat" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-2xl border border-gray-200 dark:border-gray-600">
+                        <option value="a4" selected>A4 PDF</option>
+                        <option value="letter">Letter PDF</option>
+                    </select>
+                </div>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                    <button id="htmlToPdfPreviewBtn" type="button" class="px-5 py-3 rounded-2xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Preview HTML</button>
+                    <button id="htmlToPdfBtn" type="button" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">Convert HTML to PDF</button>
+                </div>
+
+                <p id="htmlToPdfStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Paste HTML and convert it to PDF for invoices, reports, and printable layouts.</p>
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Live Preview</p>
+                <div id="htmlToPdfPreview" class="mt-4 min-h-[340px] rounded-[1.8rem] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 overflow-auto text-gray-800 dark:text-slate-100 shadow-sm">HTML preview will appear here.</div>
+                <div class="mt-4 rounded-[1.4rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-950/70 p-4">
+                    <p class="text-[11px] font-black uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Use cases</p>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-6">Invoices, receipts, business reports, proposal pages, printable letters, embedded HTML snippets, and online HTML to PDF converter free workflows.</p>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
+        const htmlInput = document.getElementById("htmlToPdfInput");
+        const htmlPreview = document.getElementById("htmlToPdfPreview");
+        const htmlStatus = document.getElementById("htmlToPdfStatus");
+
+        function setHtmlToPdfStatus(message, isError) {
+            htmlStatus.textContent = message || "";
+            htmlStatus.classList.toggle("text-red-500", !!isError);
+            htmlStatus.classList.toggle("dark:text-red-400", !!isError);
+            if (!isError) {
+                htmlStatus.classList.remove("text-red-500", "dark:text-red-400");
+            }
+        }
+
+        function renderHtmlPreview() {
+            const markup = htmlInput.value.trim();
+            if (!markup) {
+                htmlPreview.textContent = "HTML preview will appear here.";
+                setHtmlToPdfStatus("Paste HTML first to preview or convert.", true);
+                return null;
+            }
+            htmlPreview.innerHTML = markup;
+            setHtmlToPdfStatus("HTML preview updated.");
+            return markup;
+        }
+
+        document.getElementById("htmlToPdfPreviewBtn").addEventListener("click", function() {
+            renderHtmlPreview();
+        });
+
         document.getElementById("htmlToPdfBtn").addEventListener("click", async function() {
-            const markup = document.getElementById("htmlToPdfInput").value.trim();
-            if (!markup) return alert("Please paste some HTML.");
-            const preview = document.getElementById("htmlToPdfPreview");
-            preview.innerHTML = markup;
-            preview.classList.remove("hidden");
+            const markup = renderHtmlPreview();
+            if (!markup) return;
             const wrapper = document.createElement("div");
             wrapper.style.padding = "32px";
             wrapper.style.background = "#ffffff";
             wrapper.style.color = "#111827";
+            wrapper.style.fontFamily = "Arial, sans-serif";
+            wrapper.style.width = "100%";
             wrapper.innerHTML = markup;
             document.body.appendChild(wrapper);
-            await html2pdf().set({ margin: 0.4, filename: "html-to-pdf.pdf", html2canvas: { scale: 2 }, jsPDF: { unit: "in", format: "a4", orientation: "portrait" } }).from(wrapper).save();
-            wrapper.remove();
+            try {
+                const fileName = (document.getElementById("htmlToPdfFileName").value.trim() || "html-to-pdf") + ".pdf";
+                const format = document.getElementById("htmlToPdfFormat").value || "a4";
+                setHtmlToPdfStatus("Converting HTML to PDF...");
+                await html2pdf().set({
+                    margin: 0.4,
+                    filename: fileName,
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: "in", format: format, orientation: "portrait" }
+                }).from(wrapper).save();
+                setHtmlToPdfStatus("PDF created successfully.");
+            } catch (error) {
+                setHtmlToPdfStatus("Error converting HTML to PDF: " + error.message, true);
+            } finally {
+                wrapper.remove();
+            }
         });
     </script>';
 }
@@ -10928,58 +12127,107 @@ function getEditPdfHTML() {
             <p>Use this edit PDF tool to edit PDF online free, insert text or images on PDF pages, and download the updated PDF file in your browser.</p>
             <p>Edit PDF text, add pictures, edit PDF free online, and use a visual PDF editor workspace on Mac, Windows, and mobile browsers.</p>
         </div>
-        <div class="rounded-2xl border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-4">
-            <div class="font-semibold text-indigo-900 dark:text-indigo-100">Simple PDF editor</div>
-            <p class="mt-1 text-sm text-indigo-800 dark:text-indigo-200">Upload a PDF, view one large page preview, add text or an image, then download the edited PDF.</p>
+        <div class="pdf-hero-note p-5 md:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <div class="text-[11px] font-black uppercase tracking-[0.28em] text-indigo-700 dark:text-indigo-300">PDF Tools</div>
+                    <div class="mt-2 text-2xl md:text-3xl font-black text-slate-900 dark:text-white">Edit PDF Workspace</div>
+                    <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-700 dark:text-slate-300">Upload a PDF, switch between pages, place new text or images exactly where you want them, and export the updated file in your browser.</p>
+                </div>
+                <div class="rounded-2xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-slate-900/40 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 max-w-md">
+                    This editor currently adds clean overlay text and images on top of the PDF preview. True font-matching edits to existing PDF text need a deeper editing engine than the current browser-only stack.
+                </div>
+            </div>
         </div>
-        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-4 bg-white dark:bg-gray-900">
-            <input type="file" id="editPdfInput" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
-            <div id="editPdfStatus" class="hidden text-sm text-gray-500 text-center"></div>
-            <div id="editPdfControls" class="hidden space-y-4">
-                <div class="grid md:grid-cols-2 gap-4">
-                    <select id="editPdfPageSelect" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></select>
-                    <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
+        <div class="grid xl:grid-cols-[minmax(320px,380px)_minmax(0,1fr)] gap-5">
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 p-5 space-y-4 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Source File</p>
+                    <input type="file" id="editPdfInput" class="w-full mt-3 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept=".pdf">
                 </div>
-                <div class="rounded-3xl border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-950/40 p-4">
-                    <div id="editPdfPageInfo" class="text-sm text-gray-500 mb-3">Upload a PDF to start editing.</div>
-                    <div id="editPdfStageWrap" class="hidden overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
-                        <div class="min-w-max mx-auto">
-                            <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
+                <div id="editPdfStatus" class="hidden text-sm text-slate-500 dark:text-slate-400 text-center rounded-2xl bg-slate-50 dark:bg-slate-900/60 px-4 py-3"></div>
+                <div id="editPdfControls" class="hidden space-y-4">
+                    <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/60 p-4 space-y-4">
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <label class="block text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Page
+                                <select id="editPdfPageSelect" class="w-full p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></select>
+                            </label>
+                            <div class="flex items-end">
+                                <button id="refreshEditPdfPreviewBtn" type="button" class="w-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 py-3 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">Refresh Preview</button>
+                            </div>
                         </div>
+                        <div id="editPdfPageInfo" class="text-sm text-slate-500 dark:text-slate-400">Upload a PDF to start editing.</div>
+                        <div id="editPdfTextHint" class="text-xs leading-6 text-indigo-700 dark:text-indigo-300 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3">Tip: click detected text on the page preview to load it into the editor and replace it directly. Scanned PDFs may need OCR detection for this.</div>
                     </div>
-                    <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-10 text-center text-sm text-gray-500">A large PDF preview will appear here after upload.</div>
-                </div>
-                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-                    <div class="font-semibold text-gray-900 dark:text-gray-100">Text Inserter</div>
-                    <textarea id="editPdfText" class="w-full h-24 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
-                    <div class="grid md:grid-cols-3 gap-3">
-                        <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
-                        <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/45 p-4 space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <div class="font-semibold text-gray-900 dark:text-gray-100">Add Text</div>
+                                <div class="text-sm text-slate-500 dark:text-slate-400">Insert fresh text blocks onto the active page.</div>
+                            </div>
+                            <div class="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 font-black">T</div>
+                        </div>
+                        <textarea id="editPdfText" class="w-full h-28 p-4 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter text to insert"></textarea>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <input type="number" id="editPdfTextSize" min="8" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Text size">
+                            <select id="editPdfTextStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
                             <option value="regular">Regular</option>
                             <option value="bold">Bold</option>
                             <option value="italic">Italic</option>
-                        </select>
-                        <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Add Text</button>
+                            </select>
+                            <button id="addEditPdfTextBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Add Text</button>
+                        </div>
+                    </div>
+                    <div class="rounded-[1.6rem] border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/45 p-4 space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <div class="font-semibold text-gray-900 dark:text-gray-100">Add Image</div>
+                                <div class="text-sm text-slate-500 dark:text-slate-400">Place logos, signatures, stamps, or screenshots on the selected page.</div>
+                            </div>
+                            <div class="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900/8 dark:bg-white/8 text-slate-700 dark:text-slate-200 font-black">IMG</div>
+                        </div>
+                        <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Add Picture</button>
+                            <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
+                        </div>
+                    </div>
+                    <div class="rounded-[1.4rem] border border-blue-100 bg-blue-50/80 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm leading-7 text-blue-900 dark:text-blue-100">
+                        <span class="font-semibold">How it works:</span>
+                        Upload the file, choose a page, place text or an image on the preview, drag it where you want, then export the edited PDF.
+                    </div>
+                    <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition shadow-[0_18px_40px_rgba(59,130,246,0.22)]">Download Edited PDF</button>
+                </div>
+            </div>
+            <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-indigo-50/70 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+                <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+                    <div>
+                        <p class="text-[11px] uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">Live Canvas</p>
+                        <h3 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">Preview and position</h3>
+                        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Your page preview appears here. Select an item and drag it around before downloading.</p>
                     </div>
                 </div>
-                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-                    <div class="font-semibold text-gray-900 dark:text-gray-100">Picture Inserter</div>
-                    <input type="file" id="editPdfImage" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" accept="image/*">
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <button id="addEditPdfImageBtn" type="button" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition">Add Picture</button>
-                        <button id="removeEditPdfOverlayBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected Item</button>
+                <div class="rounded-[1.7rem] border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/35 p-4">
+                    <div id="editPdfStageWrap" class="hidden overflow-auto max-h-[78vh] rounded-2xl border border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-900 p-3">
+                        <div class="min-w-max w-full flex justify-start">
+                            <div id="editPdfStage" class="relative bg-white shadow-lg overflow-visible"></div>
+                        </div>
+                    </div>
+                    <div id="editPdfEmpty" class="rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center text-sm text-gray-500 dark:text-slate-400">A large PDF preview will appear here after upload.</div>
+                    <div id="editPdfZoomWrap" class="hidden mt-4 rounded-[1.35rem] border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/55 px-5 py-4">
+                        <div class="flex items-center justify-between gap-4 mb-3">
+                            <label for="editPdfZoom" class="text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400 font-semibold">Preview Zoom</label>
+                            <div id="editPdfZoomValue" class="px-4 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-200 font-black text-sm text-center min-w-[94px]">100%</div>
+                        </div>
+                        <input type="range" id="editPdfZoom" min="40" max="140" step="5" value="100" class="w-full h-5 accent-indigo-600 cursor-pointer">
                     </div>
                 </div>
-                <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">
-                    How to edit PDF:
-                    Upload the file, choose a page, add text or picture, drag the item on the large preview, and download the edited PDF.
-                </div>
-                <button id="editPdfBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Download Edited PDF</button>
             </div>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 
@@ -10989,12 +12237,16 @@ function getEditPdfHTML() {
         const editPdfPageSelect = document.getElementById("editPdfPageSelect");
         const refreshEditPdfPreviewBtn = document.getElementById("refreshEditPdfPreviewBtn");
         const editPdfPageInfo = document.getElementById("editPdfPageInfo");
+        const editPdfTextHint = document.getElementById("editPdfTextHint");
         const editPdfStageWrap = document.getElementById("editPdfStageWrap");
         const editPdfStage = document.getElementById("editPdfStage");
         const editPdfEmpty = document.getElementById("editPdfEmpty");
+        const editPdfZoomWrap = document.getElementById("editPdfZoomWrap");
         const editPdfText = document.getElementById("editPdfText");
         const editPdfTextSize = document.getElementById("editPdfTextSize");
         const editPdfTextStyle = document.getElementById("editPdfTextStyle");
+        const editPdfZoom = document.getElementById("editPdfZoom");
+        const editPdfZoomValue = document.getElementById("editPdfZoomValue");
         const addEditPdfTextBtn = document.getElementById("addEditPdfTextBtn");
         const editPdfImage = document.getElementById("editPdfImage");
         const addEditPdfImageBtn = document.getElementById("addEditPdfImageBtn");
@@ -11007,6 +12259,8 @@ function getEditPdfHTML() {
         let editPdfPages = [];
         let editPdfCurrentPage = 0;
         let editPdfSelectedOverlayId = null;
+        let editPdfEditingOverlayId = null;
+        let editPdfZoomLevel = 1;
 
         function setEditPdfStatus(message, isError) {
             if (!message) {
@@ -11025,6 +12279,7 @@ function getEditPdfHTML() {
             const hasPages = editPdfPages.length > 0;
             editPdfControls.classList.toggle("hidden", !hasPages);
             editPdfStageWrap.classList.toggle("hidden", !hasPages);
+            editPdfZoomWrap.classList.toggle("hidden", !hasPages);
             editPdfEmpty.classList.toggle("hidden", hasPages);
         }
 
@@ -11055,6 +12310,13 @@ function getEditPdfHTML() {
             return editPdfPages[editPdfCurrentPage];
         }
 
+        function getSelectedTextOverlay(pageData) {
+            if (!pageData || !editPdfSelectedOverlayId) return null;
+            return pageData.overlays.find(function(overlay) {
+                return overlay.id === editPdfSelectedOverlayId && (overlay.type === "text" || overlay.type === "replace-text");
+            }) || null;
+        }
+
         function getTextCss(style) {
             if (style === "bold") {
                 return { fontWeight: "700", fontStyle: "normal" };
@@ -11076,14 +12338,50 @@ function getEditPdfHTML() {
             node.style.top = (overlay.yRatio * stageSize.height) + "px";
             node.style.width = (overlay.widthRatio * stageSize.width) + "px";
 
-            if (overlay.type === "text") {
+            if (overlay.type === "text" || overlay.type === "replace-text") {
                 const textCss = getTextCss(overlay.style);
-                node.className += " px-2 py-1 bg-white/80 rounded-md";
+                node.className += overlay.type === "replace-text" ? " px-1 py-0.5 rounded-sm" : " px-2 py-1 bg-white/80 rounded-md";
                 node.style.fontSize = Math.max(10, overlay.sizeRatio * stageSize.width) + "px";
                 node.style.fontWeight = textCss.fontWeight;
                 node.style.fontStyle = textCss.fontStyle;
                 node.style.color = "#111827";
                 node.textContent = overlay.text;
+                if (overlay.type === "replace-text" && overlay.heightRatio) {
+                    node.style.minHeight = Math.max(18, overlay.heightRatio * stageSize.height) + "px";
+                    node.style.lineHeight = Math.max(18, overlay.heightRatio * stageSize.height) + "px";
+                }
+                if (overlay.type === "replace-text") {
+                    node.style.background = "transparent";
+                    node.style.border = "0";
+                    node.style.boxShadow = "0 0 0 4px rgba(255,255,255,0.95), 0 0 0 8px rgba(255,255,255,0.82)";
+                    node.style.cursor = editPdfEditingOverlayId === overlay.id ? "text" : "pointer";
+                    node.contentEditable = editPdfEditingOverlayId === overlay.id ? "true" : "false";
+                    if (editPdfEditingOverlayId === overlay.id) {
+                        node.classList.add("outline-none");
+                        node.style.boxShadow = "0 0 0 4px rgba(255,255,255,0.98), 0 0 0 8px rgba(99,102,241,0.35)";
+                    }
+                    node.addEventListener("input", function() {
+                        overlay.text = node.textContent || "";
+                        editPdfText.value = overlay.text;
+                    });
+                    node.addEventListener("blur", function() {
+                        overlay.text = (node.textContent || "").trim();
+                        editPdfEditingOverlayId = null;
+                        if (!overlay.text) {
+                            pageData.overlays = pageData.overlays.filter(function(item) {
+                                return item.id !== overlay.id;
+                            });
+                            editPdfSelectedOverlayId = null;
+                        }
+                        renderEditPdfWorkspace();
+                    });
+                    node.addEventListener("keydown", function(event) {
+                        if (event.key === "Escape") {
+                            event.preventDefault();
+                            node.blur();
+                        }
+                    });
+                }
             } else {
                 const image = document.createElement("img");
                 image.src = overlay.src;
@@ -11095,10 +12393,16 @@ function getEditPdfHTML() {
             node.addEventListener("click", function(event) {
                 event.stopPropagation();
                 editPdfSelectedOverlayId = overlay.id;
+                if (overlay.type === "replace-text") {
+                    editPdfEditingOverlayId = overlay.id;
+                }
                 renderEditPdfWorkspace();
             });
 
             node.addEventListener("pointerdown", function(event) {
+                if (overlay.type === "replace-text" && editPdfEditingOverlayId === overlay.id) {
+                    return;
+                }
                 event.preventDefault();
                 event.stopPropagation();
                 editPdfSelectedOverlayId = overlay.id;
@@ -11130,6 +12434,112 @@ function getEditPdfHTML() {
             return node;
         }
 
+        function buildTextTargetNode(pageData, item, stageSize) {
+            if (!item || !item.str || !item.str.trim()) return null;
+
+            const hit = document.createElement("button");
+            hit.type = "button";
+            hit.className = "absolute z-[5] rounded-sm bg-transparent hover:bg-indigo-500/10 focus:bg-indigo-500/10 focus:outline-none border border-transparent hover:border-indigo-400/30";
+            hit.style.left = item.left + "px";
+            hit.style.top = item.top + "px";
+            hit.style.width = item.width + "px";
+            hit.style.height = item.height + "px";
+            hit.title = "Edit detected text";
+
+            hit.addEventListener("click", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                let overlay = pageData.overlays.find(function(entry) {
+                    return entry.type === "replace-text" && entry.sourceKey === item.key;
+                });
+
+                if (!overlay) {
+                    const fontSize = Math.max(10, item.height * 0.78);
+                    overlay = {
+                        id: createOverlayId(),
+                        type: "replace-text",
+                        sourceKey: item.key,
+                        text: item.str,
+                        style: "regular",
+                        xRatio: item.left / stageSize.width,
+                        yRatio: item.top / stageSize.height,
+                        widthRatio: item.width / stageSize.width,
+                        heightRatio: item.height / stageSize.height,
+                        sizeRatio: fontSize / stageSize.width
+                    };
+                    pageData.overlays.push(overlay);
+                }
+
+                editPdfSelectedOverlayId = overlay.id;
+                editPdfEditingOverlayId = overlay.id;
+                editPdfText.value = overlay.text;
+                editPdfTextSize.value = String(Math.max(8, Math.round(overlay.sizeRatio * stageSize.width)));
+                editPdfTextStyle.value = overlay.style;
+                editPdfTextHint.textContent = "Detected text selected. Type directly on the page to replace it, or drag it gently if the OCR position needs adjustment.";
+                renderEditPdfWorkspace();
+            });
+
+            return hit;
+        }
+
+        async function ensureDetectedTextItems(page, viewport, stageSize, canvas, pageData) {
+            if (Array.isArray(pageData.detectedItems)) {
+                return pageData.detectedItems;
+            }
+
+            const detected = [];
+            const textContent = await page.getTextContent({ normalizeWhitespace: true });
+            (textContent.items || []).forEach(function(item, index) {
+                const raw = (item.str || "").trim();
+                if (!raw) return;
+                const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                const width = Math.max(14, item.width * viewport.scale);
+                const height = Math.max(12, Math.abs(item.height || tx[0] || 14) * viewport.scale * 0.9);
+                const left = tx[4];
+                const top = tx[5] - height;
+                detected.push({
+                    key: "pdfjs-" + index + ":" + raw + ":" + Math.round(left) + ":" + Math.round(top),
+                    str: raw,
+                    leftRatio: left / stageSize.width,
+                    topRatio: top / stageSize.height,
+                    widthRatio: width / stageSize.width,
+                    heightRatio: height / stageSize.height
+                });
+            });
+
+            if (detected.length < 8 && window.Tesseract) {
+                editPdfTextHint.textContent = "No native text layer found. Running OCR on this page so detected words can become clickable...";
+                try {
+                    const result = await window.Tesseract.recognize(canvas, "eng");
+                    const lines = (((result || {}).data || {}).lines || []);
+                    lines.forEach(function(line, index) {
+                        const raw = String(line && line.text ? line.text : "").trim();
+                        const box = line && line.bbox ? line.bbox : null;
+                        const confidence = typeof line.confidence === "number" ? line.confidence : 100;
+                        if (confidence < 35) return;
+                        if (!raw || !box) return;
+                        if (raw.length < 2) return;
+                        const width = Math.max(12, box.x1 - box.x0);
+                        const height = Math.max(10, box.y1 - box.y0);
+                        detected.push({
+                            key: "ocr-line-" + index + ":" + raw + ":" + box.x0 + ":" + box.y0,
+                            str: raw,
+                            leftRatio: box.x0 / stageSize.width,
+                            topRatio: box.y0 / stageSize.height,
+                            widthRatio: width / stageSize.width,
+                            heightRatio: height / stageSize.height
+                        });
+                    });
+                } catch (error) {
+                    editPdfTextHint.textContent = "OCR could not detect clickable words on this page. Decorative or low-contrast scanned text may still need manual replacement.";
+                }
+            }
+
+            pageData.detectedItems = detected;
+            return detected;
+        }
+
         async function renderEditPdfWorkspace() {
             const pageData = getCurrentPageData();
             if (!pageData) return;
@@ -11139,10 +12549,10 @@ function getEditPdfHTML() {
 
             const page = await editPdfViewDoc.getPage(editPdfCurrentPage + 1);
             const baseViewport = page.getViewport({ scale: 1 });
-            const availableWidth = Math.max(500, editPdfStageWrap.clientWidth - 32);
-            const availableHeight = Math.max(700, Math.min(window.innerHeight * 0.78, 1100));
-            const fitScale = Math.min(1.5, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
-            const viewport = page.getViewport({ scale: Math.max(0.65, fitScale) });
+            const availableWidth = Math.max(280, editPdfStageWrap.clientWidth - 36);
+            const availableHeight = Math.max(420, Math.min(window.innerHeight * 0.74, 980));
+            const fitScale = Math.min(1.45, availableWidth / baseViewport.width, availableHeight / baseViewport.height);
+            const viewport = page.getViewport({ scale: Math.max(0.28, fitScale * editPdfZoomLevel) });
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d", { alpha: false });
             canvas.width = Math.ceil(viewport.width);
@@ -11155,6 +12565,8 @@ function getEditPdfHTML() {
             editPdfStage.style.height = canvas.height + "px";
             editPdfStage.style.maxWidth = "none";
             editPdfStage.appendChild(canvas);
+            editPdfStageWrap.scrollLeft = 0;
+            editPdfStageWrap.scrollTop = 0;
 
             await page.render({
                 canvasContext: context,
@@ -11162,12 +12574,46 @@ function getEditPdfHTML() {
             }).promise;
 
             const stageSize = { width: canvas.width, height: canvas.height };
+            const detectedItems = await ensureDetectedTextItems(page, viewport, stageSize, canvas, pageData);
+            detectedItems.forEach(function(item) {
+                const target = buildTextTargetNode(pageData, {
+                    key: item.key,
+                    str: item.str,
+                    left: item.leftRatio * stageSize.width,
+                    top: item.topRatio * stageSize.height,
+                    width: item.widthRatio * stageSize.width,
+                    height: item.heightRatio * stageSize.height
+                }, stageSize);
+                if (target) {
+                    editPdfStage.appendChild(target);
+                }
+            });
+
+            if (detectedItems.length) {
+                editPdfTextHint.textContent = "Click detected text on the page preview, then type directly on that same spot.";
+            } else {
+                editPdfTextHint.textContent = "No clickable words were detected on this page. Some scanned or decorative PDFs still need manual replacement workflows.";
+            }
+
             pageData.overlays.forEach(function(overlay) {
-                editPdfStage.appendChild(buildOverlayNode(pageData, overlay, stageSize));
+                const overlayNode = buildOverlayNode(pageData, overlay, stageSize);
+                editPdfStage.appendChild(overlayNode);
+                if (overlay.id === editPdfEditingOverlayId && overlay.type === "replace-text") {
+                    requestAnimationFrame(function() {
+                        overlayNode.focus();
+                        const selection = window.getSelection();
+                        const range = document.createRange();
+                        range.selectNodeContents(overlayNode);
+                        range.collapse(false);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    });
+                }
             });
 
             editPdfStage.onclick = function() {
                 editPdfSelectedOverlayId = null;
+                editPdfEditingOverlayId = null;
                 renderEditPdfWorkspace();
             };
         }
@@ -11185,16 +12631,48 @@ function getEditPdfHTML() {
             }
 
             const size = Math.max(8, parseInt(editPdfTextSize.value || "22", 10));
-            pageData.overlays.push({
-                id: createOverlayId(),
-                type: "text",
-                text: text,
-                style: editPdfTextStyle.value,
-                xRatio: 0.14,
-                yRatio: 0.16,
-                widthRatio: 0.34,
-                sizeRatio: size / 700
-            });
+            const selectedOverlay = getSelectedTextOverlay(pageData);
+            if (selectedOverlay) {
+                selectedOverlay.text = text;
+                selectedOverlay.style = editPdfTextStyle.value;
+                selectedOverlay.sizeRatio = size / 700;
+                editPdfEditingOverlayId = selectedOverlay.id;
+            } else {
+                pageData.overlays.push({
+                    id: createOverlayId(),
+                    type: "text",
+                    text: text,
+                    style: editPdfTextStyle.value,
+                    xRatio: 0.14,
+                    yRatio: 0.16,
+                    widthRatio: 0.34,
+                    sizeRatio: size / 700
+                });
+            }
+            renderEditPdfWorkspace();
+        });
+
+        editPdfText.addEventListener("input", function() {
+            const pageData = getCurrentPageData();
+            const selectedOverlay = getSelectedTextOverlay(pageData);
+            if (!selectedOverlay) return;
+            selectedOverlay.text = this.value;
+            renderEditPdfWorkspace();
+        });
+
+        editPdfTextSize.addEventListener("input", function() {
+            const pageData = getCurrentPageData();
+            const selectedOverlay = getSelectedTextOverlay(pageData);
+            if (!selectedOverlay) return;
+            selectedOverlay.sizeRatio = Math.max(8, parseInt(this.value || "22", 10)) / 700;
+            renderEditPdfWorkspace();
+        });
+
+        editPdfTextStyle.addEventListener("change", function() {
+            const pageData = getCurrentPageData();
+            const selectedOverlay = getSelectedTextOverlay(pageData);
+            if (!selectedOverlay) return;
+            selectedOverlay.style = this.value;
             renderEditPdfWorkspace();
         });
 
@@ -11230,6 +12708,20 @@ function getEditPdfHTML() {
             renderEditPdfWorkspace();
         });
 
+        editPdfZoom.addEventListener("input", function() {
+            editPdfZoomLevel = Math.max(0.4, parseInt(this.value || "100", 10) / 100);
+            editPdfZoomValue.textContent = Math.round(editPdfZoomLevel * 100) + "%";
+            if (editPdfPages.length) {
+                renderEditPdfWorkspace();
+            }
+        });
+
+        window.addEventListener("resize", function() {
+            if (editPdfPages.length) {
+                renderEditPdfWorkspace();
+            }
+        });
+
         removeEditPdfOverlayBtn.addEventListener("click", function() {
             const pageData = getCurrentPageData();
             if (!pageData || !editPdfSelectedOverlayId) {
@@ -11241,7 +12733,24 @@ function getEditPdfHTML() {
                 return item.id !== editPdfSelectedOverlayId;
             });
             editPdfSelectedOverlayId = null;
+            editPdfEditingOverlayId = null;
             renderEditPdfWorkspace();
+        });
+
+        window.addEventListener("keydown", function(event) {
+            const tag = document.activeElement ? document.activeElement.tagName : "";
+            const isTypingInForm = tag === "INPUT" || tag === "TEXTAREA" || (document.activeElement && document.activeElement.isContentEditable);
+            if (isTypingInForm) return;
+            if ((event.key === "Delete" || event.key === "Backspace") && editPdfSelectedOverlayId) {
+                const pageData = getCurrentPageData();
+                if (!pageData) return;
+                pageData.overlays = pageData.overlays.filter(function(item) {
+                    return item.id !== editPdfSelectedOverlayId;
+                });
+                editPdfSelectedOverlayId = null;
+                editPdfEditingOverlayId = null;
+                renderEditPdfWorkspace();
+            }
         });
 
         editPdfInput.addEventListener("change", async function() {
@@ -11249,6 +12758,7 @@ function getEditPdfHTML() {
             editPdfPages = [];
             editPdfCurrentPage = 0;
             editPdfSelectedOverlayId = null;
+            editPdfEditingOverlayId = null;
             editPdfStage.innerHTML = "";
             updateEditPdfVisibility();
 
@@ -11263,10 +12773,14 @@ function getEditPdfHTML() {
                 editPdfDoc = await PDFLib.PDFDocument.load(editPdfBytes);
                 editPdfViewDoc = await pdfjsLib.getDocument({ data: editPdfBytes }).promise;
                 for (let i = 0; i < editPdfDoc.getPageCount(); i++) {
-                    editPdfPages.push({ overlays: [] });
+                    editPdfPages.push({ overlays: [], detectedItems: null });
                 }
                 updateEditPdfVisibility();
                 rebuildEditPdfPageSelect();
+                editPdfZoom.value = "100";
+                editPdfZoomLevel = 1;
+                editPdfZoomValue.textContent = "100%";
+                editPdfTextHint.textContent = "Tip: click detected text on the page preview to load it into the editor and replace it directly. Scanned PDFs may need OCR detection for this.";
                 await renderEditPdfWorkspace();
                 setEditPdfStatus("PDF loaded. Add text or pictures and drag them to the right spot.");
             } catch (error) {
@@ -11295,7 +12809,7 @@ function getEditPdfHTML() {
 
                     for (let j = 0; j < overlays.length; j++) {
                         const overlay = overlays[j];
-                        if (overlay.type === "text") {
+                        if (overlay.type === "text" || overlay.type === "replace-text") {
                             let fontName = PDFLib.StandardFonts.Helvetica;
                             if (overlay.style === "bold") fontName = PDFLib.StandardFonts.HelveticaBold;
                             if (overlay.style === "italic") fontName = PDFLib.StandardFonts.HelveticaOblique;
@@ -11306,7 +12820,19 @@ function getEditPdfHTML() {
                             const font = fontCache[fontName];
                             const fontSize = Math.max(8, overlay.sizeRatio * 700);
                             const x = overlay.xRatio * pageWidth;
-                            const y = pageHeight - (overlay.yRatio * pageHeight) - fontSize;
+                            let y = pageHeight - (overlay.yRatio * pageHeight) - fontSize;
+                            if (overlay.type === "replace-text" && overlay.heightRatio) {
+                                const boxHeight = overlay.heightRatio * pageHeight;
+                                const rectY = pageHeight - (overlay.yRatio * pageHeight) - boxHeight;
+                                page.drawRectangle({
+                                    x: x - 1,
+                                    y: rectY - 1,
+                                    width: (overlay.widthRatio * pageWidth) + 4,
+                                    height: boxHeight + 3,
+                                    color: PDFLib.rgb(1, 1, 1)
+                                });
+                                y = rectY + Math.max(1, (boxHeight - fontSize) * 0.45);
+                            }
                             page.drawText(overlay.text, {
                                 x: x,
                                 y: y,
