@@ -1,5 +1,7 @@
 <?php require_once __DIR__ . '/backend/ad_helpers.php'; ?>
 <?php require_once __DIR__ . '/partials/site_chrome.php'; ?>
+<?php require_once __DIR__ . '/backend/track_visit.php'; ?>
+<?php trackVisit('Privacy Page'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,8 +1,10 @@
 <?php
 session_start();
 require_once __DIR__ . '/partials/site_chrome.php';
+require_once __DIR__ . '/backend/track_visit.php';
 
 $topic = $_GET['topic'] ?? '';
+trackVisit('Highlights Page', $topic !== '' ? $topic : 'general');
 $highlights = [
     'no-file-uploads' => [
         'label' => 'No file uploads',

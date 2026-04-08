@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../seo_data.php';
 require_once __DIR__ . '/../partials/site_chrome.php';
 require_once __DIR__ . '/../backend/ad_helpers.php';
+require_once __DIR__ . '/../backend/track_visit.php';
 
 $slug = $_GET['slug'] ?? '';
 $tool = $seo_tools[$slug] ?? null;
@@ -16,6 +17,7 @@ $pageTitle = "The Ultimate Guide to " . $tool['h1'] . " | Any2Convert Blog";
 $pageDesc = "Learn everything about " . strtolower($tool['h1']) . ". " . $tool['meta_desc'];
 $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
 $toolUrl = "https://any2convert.com/" . $slug;
+trackVisit('Blog Guide Page', $slug);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +43,13 @@ $toolUrl = "https://any2convert.com/" . $slug;
     
     <script>tailwind.config = { darkMode: 'class' };</script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GNWNK7QZTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GNWNK7QZTD');
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     
     <!-- Article Schema for SEO -->

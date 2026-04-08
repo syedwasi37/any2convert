@@ -1,6 +1,8 @@
 <?php 
 require_once __DIR__ . '/../backend/ad_helpers.php'; 
 require_once __DIR__ . '/../seo_data.php';
+require_once __DIR__ . '/../backend/track_visit.php';
+trackVisit('Blog Index Page');
 ?>
 <!DOCTYPE html>
 <html lang="en">

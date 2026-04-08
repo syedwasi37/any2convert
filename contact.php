@@ -2,7 +2,9 @@
 session_start();
 require_once 'backend/db.php';
 require_once 'backend/ad_helpers.php';
+require_once 'backend/track_visit.php';
 require_once __DIR__ . '/partials/site_chrome.php';
+trackVisit('Contact Page');
 
 $stmt = $conn->query("SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 10");
 $feedbacks = $stmt->fetchAll();

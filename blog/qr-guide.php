@@ -1,4 +1,6 @@
 <?php require_once __DIR__ . '/../backend/ad_helpers.php'; ?>
+<?php require_once __DIR__ . '/../backend/track_visit.php'; ?>
+<?php trackVisit('Blog Article Page', 'qr-guide'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
