@@ -62,7 +62,7 @@ function renderToolHandlerHTML($tool) {
         case 'pdf_to_pdfa':
             return getPdfToPdfaHTML();
         case 'edit_pdf':
-            return getEditPdfHTML();
+            return getEditPdfSmartHTML();
         case 'redact_pdf':
             return getRedactPdfServerHTML();
         case 'translate_pdf':
