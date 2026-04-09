@@ -56,13 +56,13 @@ $seo_tools = [
         'id' => 'pdf_to_word',
         'h1' => 'Convert PDF to Word Free Online',
         'title' => 'PDF to Word Converter - Free Editable DOCX | Any2Convert',
-        'meta_desc' => 'Convert your PDF files to editable Word documents (DOCX). Free, fast, and secure tool that runs entirely on your device.',
+        'meta_desc' => 'Convert PDF files into editable Word documents (DOCX) with a stronger server-side conversion engine.',
         'icon' => '📝',
         'faqs' => [
             ['q' => 'Will the formatting be preserved?', 'a' => 'We strive to keep the text flow as accurate as possible, converting your PDF text into editable paragraphs in Word.'],
-            ['q' => 'Are there file size limits?', 'a' => 'Because it runs locally in your browser, there are no strict server upload limits, though extremely large PDFs may depend on your device memory.']
+            ['q' => 'How is the conversion handled?', 'a' => 'This upgraded tool uses a server-side PDF conversion pipeline so editable DOCX output is more accurate than a browser-only export.']
         ],
-        'content' => 'Stop retyping text from PDF documents. Use our free PDF to Word converter to instantly transform your locked PDFs into editable DOCX or RTF files. You can open the result in Microsoft Word, Google Docs, or LibreOffice and start editing. Secure client-side processing guarantees your private documents remain private.'
+        'content' => 'Stop retyping text from PDF documents. Use our PDF to Word converter to transform PDFs into editable DOCX files with a stronger server-side conversion engine that aims for better text flow and layout fidelity than a browser-only workaround.'
     ],
     'pdf-to-powerpoint' => [
         'id' => 'pdf_to_ppt',
@@ -79,23 +79,23 @@ $seo_tools = [
         'id' => 'pdf_to_excel',
         'h1' => 'Extract PDF Data to Excel Spreadsheet',
         'title' => 'PDF to Excel - Convert PDF Tables to CSV/XLSX Free',
-        'meta_desc' => 'Extract tabular data from PDF files straight into Excel-compatible CSV formats. Free online data extraction tool.',
+        'meta_desc' => 'Extract tabular data from PDF files into Excel workbooks with a server-side PDF conversion engine.',
         'icon' => '📈',
         'faqs' => [
-            ['q' => 'Can it detect tables?', 'a' => 'Yes, choose the Table Detection method to align text columns into structured spreadsheet rows.']
+            ['q' => 'Can it detect tables?', 'a' => 'Yes. This upgraded version uses a server-side conversion engine that is better suited for extracting structured spreadsheet content from PDFs.']
         ],
-        'content' => 'Don\'t manually copy and paste data from PDF tables into Excel. Our smart PDF to Excel extraction tool reads the text and attempts to align columns into a structured CSV format, ready to be imported and analyzed in Microsoft Excel or Google Sheets.'
+        'content' => 'Don\'t manually copy and paste data from PDF tables into Excel. This upgraded PDF to Excel flow sends the document through a stronger server-side conversion pipeline so structured rows, tables, and worksheets have a better chance of landing cleanly in XLSX.'
     ],
     'merge-pdf' => [
         'id' => 'merge_pdf',
         'h1' => 'Merge PDF Files Online For Free',
         'title' => 'Merge PDF - Combine Multiple PDFs into One | Any2Convert',
-        'meta_desc' => 'Combine multiple PDF documents into a single file quickly and safely. Free offline tool powered by your browser.',
+        'meta_desc' => 'Combine multiple PDF documents into a single file with a stronger server-side merge engine.',
         'icon' => '📑',
         'faqs' => [
-            ['q' => 'Is there a limit to how many files I can merge?', 'a' => 'You can merge dozens of files at once, restricted only by the processing capabilities of your local device.']
+            ['q' => 'How is the merge handled?', 'a' => 'The upgraded merge tool uses a server-side PDF engine so larger multi-file merges are more dependable than a browser-only merge workflow.']
         ],
-        'content' => 'Merge multiple PDF files into one organized document without sending the files to a remote server. This helps when you need one final file for sharing, archiving, printing, submission, or team handoff.',
+        'content' => 'Merge multiple PDF files into one organized document with a stronger server-side merge pipeline. This helps when you need one final file for sharing, archiving, printing, submission, or team handoff without relying on a fragile browser-only merge.',
         'best_for' => [
             'Combining invoices, contracts, and attachments into one final PDF',
             'Joining chapters, class notes, or scanned pages into a single study pack',
@@ -105,7 +105,7 @@ $seo_tools = [
         'steps' => [
             'Add all PDF files you want to combine.',
             'Arrange them in the exact order you want the final document to follow.',
-            'Run the merge process and wait for the local export to finish.',
+            'Run the merge process and wait for the server-side PDF engine to assemble the final file.',
             'Download the combined PDF file and verify page order before sending it out.',
         ],
         'sections' => [
@@ -129,10 +129,10 @@ $seo_tools = [
         'id' => 'compress_pdf',
         'h1' => 'Compress PDF File Size Online',
         'title' => 'Compress PDF - Reduce PDF Size Free | Any2Convert',
-        'meta_desc' => 'Reduce the file size of your PDF documents automatically while maintaining optimal quality. Great for email limits.',
+        'meta_desc' => 'Reduce the file size of your PDF documents with a stronger server-side compression engine.',
         'icon' => '🗜️',
         'faqs' => [
-            ['q' => 'Will my PDF become fuzzy?', 'a' => 'We use optimization techniques that strip unneeded metadata and compress streams without destroying textual clarity.'],
+            ['q' => 'Will my PDF become fuzzy?', 'a' => 'Compression depends on the preset you choose, but the upgraded server-side engine is designed to reduce size more intelligently than flattening pages inside the browser.'],
         ],
         'content' => 'Compress PDF files online when the original document is too large for email, form submissions, client portals, or cloud storage limits. The goal is to reduce size while keeping the document readable and practical to share.',
         'best_for' => [
@@ -179,12 +179,12 @@ $seo_tools = [
         'id' => 'word_to_pdf',
         'h1' => 'Convert Word to PDF Online',
         'title' => 'Word to PDF Converter - Free & Secure | Any2Convert',
-        'meta_desc' => 'Quickly convert your Word documents (DOC, DOCX) to professional PDF formatted files.',
+        'meta_desc' => 'Convert Word documents (DOC, DOCX) to professional PDF files with a stronger server-side conversion engine.',
         'icon' => '🔄',
         'faqs' => [
-            ['q' => 'Does it preserve my layout?', 'a' => 'Yes, standard text, layouts, and formatting are converted into a static PDF document.']
+            ['q' => 'Does it preserve my layout?', 'a' => 'The upgraded server-side conversion flow is built to preserve formatting, spacing, and general layout much more reliably than a browser-only export.']
         ],
-        'content' => 'Converting Word documents to PDF ensures that your resumes, contracts, or assignments look exactly the same on any device. Prevent accidental edits and styling issues by finalizing your DOCX files into beautiful, locked PDF documents.'
+        'content' => 'Converting Word documents to PDF ensures that your resumes, contracts, or assignments look exactly the same on any device. This upgraded Word to PDF tool uses a stronger server-side engine so DOC and DOCX files can be turned into cleaner PDFs with better layout fidelity.'
     ],
     'json-to-csv' => [
         'id' => 'json_to_csv',

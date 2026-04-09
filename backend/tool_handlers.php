@@ -8,19 +8,19 @@ function renderToolHandlerHTML($tool) {
         case 'pdf_to_img':
             return getPdfToImageHTML();
         case 'pdf_to_word':
-            return getPdfToWordHTML();
+            return getPdfToWordServerHTML();
         case 'pdf_to_ppt':
             return getPdfToPptHTML();
         case 'pdf_to_excel':
-            return getPdfToExcelHTML();
+            return getPdfToExcelServerHTML();
         case 'merge_pdf':
-            return getMergePdfHTML();
+            return getMergePdfServerHTML();
         case 'compress_pdf':
-            return getCompressPdfHTML();
+            return getCompressPdfServerHTML();
         case 'protect_pdf':
             return getProtectPdfPureJS();
         case 'word_to_pdf':
-            return getWordToPdfHTML();
+            return getWordToPdfServerHTML();
         case 'excel_to_pdf':
             return getExcelToPdfHTML();
         case 'ppt_to_pdf':
@@ -172,6 +172,334 @@ function renderToolHandlerHTML($tool) {
         default:
             return '<div class="text-center py-12">Tool coming soon!</div>';
     }
+}
+
+function any2convertPdfServiceScript(): string
+{
+    return <<<'HTML'
+    <script>
+        (function () {
+            if (window.any2convertPdfService) return;
+
+            window.any2convertPdfService = {
+                async run(options) {
+                    const formData = new FormData();
+                    formData.append("action", options.action);
+
+                    if (options.multiple) {
+                        const files = Array.from(options.files || []);
+                        files.forEach(function (file) {
+                            formData.append("files[]", file);
+                        });
+                    } else if (options.file) {
+                        formData.append("file", options.file);
+                    }
+
+                    const extraFields = options.extraFields || {};
+                    Object.keys(extraFields).forEach(function (key) {
+                        if (extraFields[key] !== undefined && extraFields[key] !== null && extraFields[key] !== "") {
+                            formData.append(key, extraFields[key]);
+                        }
+                    });
+
+                    const response = await fetch("backend/pdf_service.php", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const responseType = (response.headers.get("content-type") || "").toLowerCase();
+                    if (!response.ok || responseType.includes("application/json")) {
+                        let message = "The server-side PDF task could not be completed.";
+                        try {
+                            const payload = await response.json();
+                            if (payload && payload.error) {
+                                message = payload.error;
+                            }
+                        } catch (error) {
+                            // Ignore JSON parse errors and use the default message.
+                        }
+                        throw new Error(message);
+                    }
+
+                    const fileNameHeader = response.headers.get("X-File-Name");
+                    const blob = await response.blob();
+                    const downloadName = fileNameHeader ? decodeURIComponent(fileNameHeader) : (options.downloadName || "download");
+                    const url = URL.createObjectURL(blob);
+                    const anchor = document.createElement("a");
+                    anchor.href = url;
+                    anchor.download = downloadName;
+                    anchor.click();
+                    setTimeout(function () {
+                        URL.revokeObjectURL(url);
+                    }, 1000);
+
+                    return {
+                        blob: blob,
+                        fileName: downloadName
+                    };
+                }
+            };
+        })();
+    </script>
+    HTML;
+}
+
+function any2convertRenderServerPdfCard(array $config): string
+{
+    $toolId = htmlspecialchars($config['tool_id'], ENT_QUOTES);
+    $title = htmlspecialchars($config['title'], ENT_QUOTES);
+    $heading = htmlspecialchars($config['heading'], ENT_QUOTES);
+    $subheading = htmlspecialchars($config['subheading'], ENT_QUOTES);
+    $buttonLabel = htmlspecialchars($config['button_label'], ENT_QUOTES);
+    $accept = htmlspecialchars($config['accept'], ENT_QUOTES);
+    $action = htmlspecialchars($config['action'], ENT_QUOTES);
+    $multiple = !empty($config['multiple']);
+    $multipleAttr = $multiple ? ' multiple' : '';
+    $singleWord = htmlspecialchars($config['single_word'] ?? 'file', ENT_QUOTES);
+    $multiWord = htmlspecialchars($config['multi_word'] ?? 'files', ENT_QUOTES);
+    $panelNote = htmlspecialchars($config['panel_note'] ?? 'This tool now uses a stronger server-side PDF engine for better fidelity.', ENT_QUOTES);
+    $primaryStatus = htmlspecialchars($config['primary_status'] ?? 'Ready to process your file.', ENT_QUOTES);
+    $extraFieldsHtml = $config['extra_fields_html'] ?? '';
+    $extraFieldsJs = trim($config['extra_fields_js'] ?? '');
+    $downloadName = htmlspecialchars($config['download_name'] ?? 'download', ENT_QUOTES);
+    $successMessage = htmlspecialchars($config['success_message'] ?? 'Your file is ready and has started downloading.', ENT_QUOTES);
+
+    return '
+    <div class="space-y-6">
+        <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+            <div class="flex items-start justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Server PDF Engine</p>
+                    <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">' . $title . '</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">' . $heading . '</p>
+                </div>
+                <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                </div>
+            </div>
+            <label class="block rounded-[1.8rem] border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white/85 dark:bg-slate-950/70 px-6 py-8 text-center cursor-pointer hover:border-blue-500 transition">
+                <input type="file" id="' . $toolId . 'Input" class="hidden" accept="' . $accept . '"' . $multipleAttr . '>
+                <div class="mb-4 flex justify-center text-blue-600 dark:text-blue-300">
+                    <svg width="72" height="56" viewBox="0 0 72 56" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10h18l6 6v24a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z"></path><path d="M28 10v9h9"></path><path d="M44 28h18"></path><path d="m55 19 9 9-9 9"></path></svg>
+                </div>
+                <div class="text-lg font-semibold text-gray-900 dark:text-white">' . $subheading . '</div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Higher-quality conversion using a server-side PDF pipeline instead of a browser-only approximation.</p>
+            </label>
+            <div id="' . $toolId . 'Preview" class="hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/70 px-4 py-3 text-sm text-slate-600 dark:text-slate-300"></div>
+            ' . $extraFieldsHtml . '
+            <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">' . $panelNote . '</div>
+            <button id="' . $toolId . 'Submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">' . $buttonLabel . '</button>
+            <div id="' . $toolId . 'Status" class="text-sm text-gray-500 dark:text-gray-400 text-center">' . $primaryStatus . '</div>
+        </div>
+    </div>
+    ' . any2convertPdfServiceScript() . '
+    <script>
+        (function () {
+            const input = document.getElementById("' . $toolId . 'Input");
+            const preview = document.getElementById("' . $toolId . 'Preview");
+            const submitBtn = document.getElementById("' . $toolId . 'Submit");
+            const status = document.getElementById("' . $toolId . 'Status");
+            const action = "' . $action . '";
+
+            function setStatus(message, isError) {
+                status.textContent = message;
+                status.classList.toggle("text-red-500", !!isError);
+            }
+
+            input.addEventListener("change", function () {
+                const files = Array.from(input.files || []);
+                if (!files.length) {
+                    preview.classList.add("hidden");
+                    preview.innerHTML = "";
+                    setStatus("' . $primaryStatus . '", false);
+                    return;
+                }
+
+                preview.classList.remove("hidden");
+                preview.innerHTML = files.map(function (file) {
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    return "<div class=\"flex items-center justify-between gap-3 py-1\"><span class=\"font-semibold text-slate-800 dark:text-slate-100\">" + file.name + "</span><span class=\"text-xs uppercase tracking-[0.14em] text-slate-400\">" + sizeMB + " MB</span></div>";
+                }).join("");
+                setStatus(files.length + " ' . ($multiple ? $multiWord : $singleWord) . ' ready for server processing.", false);
+            });
+
+            submitBtn.addEventListener("click", async function () {
+                const files = Array.from(input.files || []);
+                if (!files.length) {
+                    setStatus("Please choose at least one file first.", true);
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+                setStatus("Uploading to the server PDF engine and preparing your result...", false);
+
+                try {
+                    const extraFields = {};
+                    ' . $extraFieldsJs . '
+
+                    const result = await window.any2convertPdfService.run({
+                        action: action,
+                        file: files[0],
+                        files: files,
+                        multiple: ' . ($multiple ? 'true' : 'false') . ',
+                        extraFields: extraFields,
+                        downloadName: "' . $downloadName . '"
+                    });
+
+                    setStatus("' . $successMessage . ' Download: " + result.fileName, false);
+                } catch (error) {
+                    setStatus(error.message || "The PDF task could not be completed.", true);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
+                }
+            });
+        })();
+    </script>';
+}
+
+function getPdfToWordServerHTML(): string
+{
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'pdfToWordServer',
+        'title' => 'PDF to Word Converter',
+        'heading' => 'Create editable DOCX files with a server-side PDF conversion engine built for better text recovery and layout fidelity.',
+        'subheading' => 'Upload a PDF and turn it into an editable Word document',
+        'button_label' => 'Convert PDF to DOCX',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'pdf_to_word',
+        'single_word' => 'file',
+        'panel_note' => 'This upgraded version uses server-side document conversion instead of a browser-only approximation, so it is a stronger base for iLovePDF-style quality.',
+        'primary_status' => 'Ready to convert one PDF into DOCX.',
+        'download_name' => 'converted.docx',
+        'success_message' => 'PDF to Word conversion finished.'
+    ]);
+}
+
+function getPdfToExcelServerHTML(): string
+{
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'pdfToExcelServer',
+        'title' => 'PDF to Excel Converter',
+        'heading' => 'Send the PDF through a server-side conversion pipeline so tables and structured content have a better chance of landing in XLSX cleanly.',
+        'subheading' => 'Upload a PDF and export it as an Excel workbook',
+        'button_label' => 'Convert PDF to XLSX',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'pdf_to_excel',
+        'single_word' => 'file',
+        'panel_note' => 'Best for invoices, statements, reports, and PDFs that already contain readable table structure.',
+        'primary_status' => 'Ready to convert one PDF into Excel.',
+        'download_name' => 'converted.xlsx',
+        'success_message' => 'PDF to Excel conversion finished.'
+    ]);
+}
+
+function getWordToPdfServerHTML(): string
+{
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'wordToPdfServer',
+        'title' => 'Word to PDF Converter',
+        'heading' => 'Convert DOC and DOCX files into proper PDFs with a server-side engine instead of relying on an in-browser HTML print approximation.',
+        'subheading' => 'Upload a Word document and export it as PDF',
+        'button_label' => 'Convert Word to PDF',
+        'accept' => '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'action' => 'word_to_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'This path is designed to preserve fonts, spacing, and layout much more reliably than the older browser-only version.',
+        'primary_status' => 'Ready to convert DOC or DOCX into PDF.',
+        'download_name' => 'converted.pdf',
+        'success_message' => 'Word to PDF conversion finished.'
+    ]);
+}
+
+function getMergePdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <div class="grid md:grid-cols-2 gap-4">
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Bookmarks</span>
+                <select id="mergePdfBookmarksToc" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="filename" selected>Filename bookmarks</option>
+                    <option value="title">Document title bookmarks</option>
+                    <option value="disabled">No bookmarks</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Page size normalization</span>
+                <select id="mergePdfPageSize" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="default" selected>Keep original page sizes</option>
+                    <option value="a4">A4</option>
+                    <option value="letter">Letter</option>
+                    <option value="legal">Legal</option>
+                </select>
+            </label>
+        </div>
+        <label class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 px-4 py-3 bg-white/85 dark:bg-slate-950/70">
+            <input type="checkbox" id="mergePdfRemoveDuplicateFonts" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+            <span class="text-sm text-slate-600 dark:text-slate-300">Remove duplicate fonts to keep the merged PDF cleaner.</span>
+        </label>';
+
+    $extraFieldsJs = '
+        extraFields.bookmarks_toc = document.getElementById("mergePdfBookmarksToc").value;
+        extraFields.page_size = document.getElementById("mergePdfPageSize").value;
+        if (document.getElementById("mergePdfRemoveDuplicateFonts").checked) {
+            extraFields.remove_duplicate_fonts = "1";
+        }
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'mergePdfServer',
+        'title' => 'Merge PDF Files',
+        'heading' => 'Combine multiple PDFs with a dedicated server-side merge pipeline so the final result is cleaner and more dependable than a browser-only copy-and-paste merge.',
+        'subheading' => 'Upload two or more PDF files to merge them in order',
+        'button_label' => 'Merge PDFs',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'merge_pdf',
+        'multiple' => true,
+        'single_word' => 'file',
+        'multi_word' => 'files',
+        'panel_note' => 'The merge runs on the server PDF engine and can apply bookmarks or normalized page sizes if you want a cleaner compiled document.',
+        'primary_status' => 'Ready to merge multiple PDFs.',
+        'download_name' => 'merged.pdf',
+        'success_message' => 'Merged PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getCompressPdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <label class="block">
+            <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Compression level</span>
+            <select id="compressPdfServerLevel" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                <option value="low">Low compression, best quality</option>
+                <option value="medium" selected>Balanced compression</option>
+                <option value="high">Higher compression, smaller file</option>
+            </select>
+        </label>';
+
+    $extraFieldsJs = '
+        extraFields.compression_level = document.getElementById("compressPdfServerLevel").value;
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'compressPdfServer',
+        'title' => 'Compress PDF File',
+        'heading' => 'Reduce PDF size with a real server-side compression engine that optimizes images and document structure without rasterizing every page in the browser.',
+        'subheading' => 'Upload a PDF and choose the compression strength',
+        'button_label' => 'Compress PDF',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'compress_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'Balanced and high modes use server compression presets that are much closer to the kind of workflow users expect from mature PDF products.',
+        'primary_status' => 'Ready to compress one PDF.',
+        'download_name' => 'compressed.pdf',
+        'success_message' => 'Compressed PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
 }
 
 function getGenericUnitConverterHTML(array $config): string

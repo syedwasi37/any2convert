@@ -73,7 +73,7 @@
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Acceptable Use</h2>
                     <p>You may use the platform only in ways that do not harm the service, other users, or applicable laws.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Availability</h2>
-                    <p>We aim to keep the platform available and useful, but we cannot guarantee uninterrupted service or perfect results for every browser and file type.</p>
+                    <p>We aim to keep the platform available and useful, but we cannot guarantee uninterrupted service or perfect results for every browser, file type, or third-party processing provider connected to the platform.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Accounts</h2>
                     <p>If you create an account, you are responsible for keeping your login details secure and for activity that happens under your account.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Updates</h2>

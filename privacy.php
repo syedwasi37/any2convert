@@ -74,7 +74,7 @@
                     <p>If you register, we store the information needed to operate your account, such as your name, email address, and password hash.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">File Processing</h2>
                     <p>Many tools are designed to process files locally on your device, usually inside your active browser session, so the file does not need to be uploaded to our servers first.</p>
-                    <p>Some features may still rely on server-side processing or trusted third-party APIs when the task requires it, such as account features, live data, or external AI-powered capabilities. When that happens, the tool or page should make that flow clear.</p>
+                    <p>Some features may still rely on server-side processing or trusted third-party APIs when the task requires it, such as account features, live data, external AI-powered capabilities, or higher-fidelity document conversion flows. When that happens, the tool or page should make that flow clear.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Analytics and Advertising</h2>
                     <p>We may use analytics and advertising services to understand usage and support the platform. Those services may apply their own cookie and tracking policies.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Security</h2>
