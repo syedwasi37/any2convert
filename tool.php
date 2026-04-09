@@ -51,6 +51,7 @@ $wideToolIds = [
     'meme_caption_generator',
     'truth_or_dare_generator',
     'memory_match_game',
+    'edit_pdf',
 ];
 $isWideTool = in_array($tool_id, $wideToolIds, true);
 

@@ -12173,7 +12173,490 @@ function getEditPdfHTML() {
 }
 
 function getEditPdfSmartHTML() {
-    return getEditPdfHTML();
+    return '
+    <div class="space-y-6">
+        <div class="rounded-[2rem] border border-indigo-200/70 bg-indigo-50/80 dark:bg-indigo-950/30 dark:border-indigo-900 p-5">
+            <div class="font-semibold text-indigo-900 dark:text-indigo-100 text-lg">Smart PDF text editor</div>
+            <p class="mt-2 text-sm text-indigo-800 dark:text-indigo-200">Upload a PDF, build a searchable text layer with OCR when needed, then click visible text directly on the page to replace it in place.</p>
+        </div>
+        <div class="grid xl:grid-cols-[420px_minmax(0,1fr)] gap-6">
+            <div class="rounded-[1.8rem] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-4">
+                <label class="block">
+                    <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">PDF file</span>
+                    <input type="file" id="smartEditPdfInput" accept=".pdf,application/pdf" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                </label>
+                <label class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 px-4 py-3 bg-slate-50 dark:bg-slate-950/60">
+                    <input type="checkbox" id="smartEditUseOcr" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm text-slate-600 dark:text-slate-300">Use OCR enhancement for scanned PDFs</span>
+                </label>
+                <button id="smartEditPrepareBtn" type="button" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Prepare Editable Text Layer</button>
+                <div id="smartEditStatus" class="text-sm text-slate-500 dark:text-slate-400">Upload a PDF and prepare the page before editing.</div>
+                <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 p-4 space-y-3">
+                    <div class="font-semibold text-slate-900 dark:text-white">Selection</div>
+                    <div id="smartEditSelectionInfo" class="text-sm text-slate-500 dark:text-slate-400">Click any detected text on the page to edit it in place.</div>
+                    <textarea id="smartEditTextValue" class="w-full h-28 p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Selected text will appear here"></textarea>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="smartEditFontSize" min="8" max="96" value="18" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Font size">
+                        <button id="smartEditDeleteBtn" type="button" class="w-full bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition">Remove Selected</button>
+                    </div>
+                    <button id="smartEditApplyBtn" type="button" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Apply Replacement</button>
+                </div>
+                <button id="smartEditDownloadBtn" type="button" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition">Download Edited PDF</button>
+            </div>
+            <div class="rounded-[1.8rem] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-200">Page</label>
+                        <select id="smartEditPageSelect" class="min-w-[110px] p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600"></select>
+                    </div>
+                    <div class="min-w-[260px] flex-1">
+                        <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                            <span>Preview zoom</span>
+                            <span id="smartEditZoomLabel">100%</span>
+                        </div>
+                        <input id="smartEditZoom" type="range" min="60" max="180" value="100" class="w-full accent-blue-600">
+                    </div>
+                </div>
+                <div id="smartEditCanvasWrap" class="overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950 p-4 min-h-[720px]">
+                    <div id="smartEditStage" class="relative mx-auto bg-white shadow-lg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    ' . any2convertPdfServiceScript() . '
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        (function () {
+            if (!window.pdfjsLib || !window.PDFLib) return;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+            const input = document.getElementById("smartEditPdfInput");
+            const useOcr = document.getElementById("smartEditUseOcr");
+            const prepareBtn = document.getElementById("smartEditPrepareBtn");
+            const status = document.getElementById("smartEditStatus");
+            const pageSelect = document.getElementById("smartEditPageSelect");
+            const zoomInput = document.getElementById("smartEditZoom");
+            const zoomLabel = document.getElementById("smartEditZoomLabel");
+            const stage = document.getElementById("smartEditStage");
+            const selectionInfo = document.getElementById("smartEditSelectionInfo");
+            const textValue = document.getElementById("smartEditTextValue");
+            const fontSizeInput = document.getElementById("smartEditFontSize");
+            const applyBtn = document.getElementById("smartEditApplyBtn");
+            const deleteBtn = document.getElementById("smartEditDeleteBtn");
+            const downloadBtn = document.getElementById("smartEditDownloadBtn");
+
+            let originalFileName = "edited.pdf";
+            let sourcePdfBytes = null;
+            let workingPdfBytes = null;
+            let workingPdf = null;
+            let currentPageIndex = 0;
+            let selectedTextId = null;
+            let pageState = [];
+
+            function setStatus(message, isError) {
+                status.textContent = message || "";
+                status.classList.toggle("text-red-500", !!isError);
+            }
+
+            let pendingFocusId = null;
+
+            function ensurePageState(index) {
+                if (!pageState[index]) {
+                    pageState[index] = { items: [], replacements: [] };
+                }
+                return pageState[index];
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement("div");
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function getSelectedReplacement() {
+                const state = ensurePageState(currentPageIndex);
+                return state.replacements.find(function (item) { return item.id === selectedTextId; }) || null;
+            }
+
+            function rebuildPageSelect(totalPages) {
+                pageSelect.innerHTML = "";
+                for (let i = 0; i < totalPages; i++) {
+                    const option = document.createElement("option");
+                    option.value = String(i);
+                    option.textContent = "Page " + (i + 1);
+                    pageSelect.appendChild(option);
+                }
+                pageSelect.value = String(currentPageIndex);
+            }
+
+            function syncSelectionPanel() {
+                const replacement = getSelectedReplacement();
+                if (!replacement) {
+                    selectionInfo.textContent = "Click any detected text on the page to edit it in place.";
+                    textValue.value = "";
+                    return;
+                }
+
+                selectionInfo.textContent = "Editing text at page " + (currentPageIndex + 1) + " in the exact selected region.";
+                textValue.value = replacement.text;
+                fontSizeInput.value = String(Math.max(8, Math.round(replacement.fontSize)));
+            }
+
+            function groupTextItems(rawItems, viewport) {
+                const pieces = (rawItems || []).map(function (item, index) {
+                    const text = String(item.str || "").trim();
+                    if (!text) return null;
+                    const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                    const fontSize = Math.max(8, Math.abs(tx[0]) || Math.abs(tx[3]) || 12);
+                    const height = Math.max(10, Math.abs(item.height || fontSize));
+                    const width = Math.max(6, item.width * viewport.scale);
+                    return {
+                        id: "piece-" + currentPageIndex + "-" + index,
+                        text: text,
+                        x: tx[4],
+                        y: tx[5] - height,
+                        width: width,
+                        height: height + 4,
+                        fontSize: fontSize,
+                        right: tx[4] + width,
+                        baseline: tx[5]
+                    };
+                }).filter(Boolean);
+
+                pieces.sort(function (a, b) {
+                    const baselineDelta = a.baseline - b.baseline;
+                    if (Math.abs(baselineDelta) > 6) return baselineDelta;
+                    return a.x - b.x;
+                });
+
+                const groups = [];
+                pieces.forEach(function (piece) {
+                    const last = groups[groups.length - 1];
+                    if (!last) {
+                        groups.push({
+                            id: "item-" + currentPageIndex + "-0",
+                            text: piece.text,
+                            x: piece.x,
+                            y: piece.y,
+                            width: piece.width,
+                            height: piece.height,
+                            fontSize: piece.fontSize,
+                            baseline: piece.baseline,
+                            right: piece.right
+                        });
+                        return;
+                    }
+
+                    const sameLine = Math.abs(last.baseline - piece.baseline) <= Math.max(6, piece.fontSize * 0.38);
+                    const closeGap = piece.x - last.right <= Math.max(22, piece.fontSize * 0.9);
+
+                    if (sameLine && closeGap) {
+                        last.text += " " + piece.text;
+                        last.right = Math.max(last.right, piece.right);
+                        last.width = last.right - last.x;
+                        last.height = Math.max(last.height, piece.height);
+                        last.fontSize = Math.max(last.fontSize, piece.fontSize);
+                    } else {
+                        groups.push({
+                            id: "item-" + currentPageIndex + "-" + groups.length,
+                            text: piece.text,
+                            x: piece.x,
+                            y: piece.y,
+                            width: piece.width,
+                            height: piece.height,
+                            fontSize: piece.fontSize,
+                            baseline: piece.baseline,
+                            right: piece.right
+                        });
+                    }
+                });
+
+                return groups.filter(function (item) {
+                    return item.text && item.text.trim() !== "";
+                });
+            }
+
+            function createReplacementFromItem(item, state) {
+                const replacement = {
+                    id: "replace-" + Date.now() + "-" + Math.random().toString(16).slice(2),
+                    itemId: item.id,
+                    text: item.text,
+                    x: item.x,
+                    y: item.y,
+                    width: item.width,
+                    height: item.height,
+                    fontSize: item.fontSize,
+                    scaleX: item.scaleX || 1
+                };
+                state.replacements = state.replacements.filter(function (entry) {
+                    return entry.itemId !== item.id;
+                });
+                state.replacements.push(replacement);
+                selectedTextId = replacement.id;
+                pendingFocusId = replacement.id;
+                syncSelectionPanel();
+                renderCurrentPage();
+            }
+
+            async function renderCurrentPage() {
+                if (!workingPdf) return;
+                const page = await workingPdf.getPage(currentPageIndex + 1);
+                const zoom = Number(zoomInput.value || "100") / 100;
+                const viewport = page.getViewport({ scale: zoom });
+                const state = ensurePageState(currentPageIndex);
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d", { alpha: false });
+                canvas.width = Math.ceil(viewport.width);
+                canvas.height = Math.ceil(viewport.height);
+                canvas.className = "block";
+                context.fillStyle = "#ffffff";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                stage.innerHTML = "";
+                stage.style.width = canvas.width + "px";
+                stage.style.height = canvas.height + "px";
+                stage.appendChild(canvas);
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+
+                const textContent = await page.getTextContent();
+                state.items = groupTextItems(textContent.items || [], viewport);
+
+                state.items.forEach(function (item) {
+                    const existing = state.replacements.find(function (entry) { return entry.itemId === item.id; });
+                    const region = document.createElement("button");
+                    region.type = "button";
+                    region.className = "absolute border border-transparent hover:border-blue-400/80 hover:bg-blue-500/10 transition";
+                    region.style.left = item.x + "px";
+                    region.style.top = item.y + "px";
+                    region.style.width = item.width + "px";
+                    region.style.height = item.height + "px";
+                    region.title = item.text;
+                    region.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        createReplacementFromItem(item, state);
+                    });
+                    stage.appendChild(region);
+
+                    if (existing) {
+                        const overlay = document.createElement("div");
+                        overlay.className = "absolute rounded-md px-1.5 py-0.5 bg-white/95 text-slate-900 shadow-[0_8px_24px_rgba(15,23,42,0.12)]";
+                        if (existing.id === selectedTextId) {
+                            overlay.classList.add("ring-2", "ring-blue-500");
+                        }
+                        overlay.contentEditable = "true";
+                        overlay.spellcheck = false;
+                        overlay.style.left = item.x + "px";
+                        overlay.style.top = item.y + "px";
+                        overlay.style.minWidth = item.width + "px";
+                        overlay.style.minHeight = item.height + "px";
+                        overlay.style.fontSize = Math.max(8, existing.fontSize) + "px";
+                        overlay.style.lineHeight = "1.1";
+                        overlay.style.whiteSpace = "pre-wrap";
+                        overlay.style.outline = "none";
+                        overlay.style.cursor = "text";
+                        overlay.textContent = existing.text;
+
+                        overlay.addEventListener("focus", function () {
+                            selectedTextId = existing.id;
+                            syncSelectionPanel();
+                            renderCurrentPage();
+                        });
+                        overlay.addEventListener("input", function () {
+                            existing.text = overlay.textContent || "";
+                            textValue.value = existing.text;
+                        });
+                        overlay.addEventListener("keydown", function (event) {
+                            if (event.key === "Escape") {
+                                event.preventDefault();
+                                overlay.blur();
+                            }
+                        });
+                        overlay.addEventListener("blur", function () {
+                            existing.text = overlay.textContent || "";
+                            if (!existing.text.trim()) {
+                                state.replacements = state.replacements.filter(function (entry) { return entry.id !== existing.id; });
+                                if (selectedTextId === existing.id) selectedTextId = null;
+                            }
+                            syncSelectionPanel();
+                            renderCurrentPage();
+                        });
+                        stage.appendChild(overlay);
+
+                        if (pendingFocusId === existing.id) {
+                            pendingFocusId = null;
+                            requestAnimationFrame(function () {
+                                overlay.focus();
+                                const selection = window.getSelection();
+                                const range = document.createRange();
+                                range.selectNodeContents(overlay);
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                            });
+                        }
+                    }
+                });
+            }
+
+            async function loadPreparedPdf(bytes) {
+                workingPdfBytes = bytes;
+                workingPdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+                currentPageIndex = 0;
+                selectedTextId = null;
+                pageState = [];
+                rebuildPageSelect(workingPdf.numPages);
+                zoomLabel.textContent = zoomInput.value + "%";
+                await renderCurrentPage();
+                syncSelectionPanel();
+                setStatus("Editable text layer is ready. Click directly on visible text to replace it.", false);
+            }
+
+            prepareBtn.addEventListener("click", async function () {
+                const file = input.files && input.files[0] ? input.files[0] : null;
+                if (!file) {
+                    setStatus("Please choose a PDF first.", true);
+                    return;
+                }
+
+                originalFileName = file.name || "edited.pdf";
+                sourcePdfBytes = new Uint8Array(await file.arrayBuffer());
+                setStatus("Preparing the PDF for direct text editing...", false);
+                prepareBtn.disabled = true;
+
+                try {
+                    if (useOcr.checked) {
+                        const result = await window.any2convertPdfService.run({
+                            action: "ocr_pdf",
+                            file: file,
+                            multiple: false,
+                            extraFields: {
+                                output_type: "pdf",
+                                ocr_language: "auto"
+                            },
+                            downloadName: "ignored.pdf"
+                        });
+                        const preparedBytes = new Uint8Array(await result.blob.arrayBuffer());
+                        await loadPreparedPdf(preparedBytes);
+                    } else {
+                        await loadPreparedPdf(sourcePdfBytes);
+                    }
+                } catch (error) {
+                    setStatus(error.message || "Could not prepare the PDF for editing.", true);
+                } finally {
+                    prepareBtn.disabled = false;
+                }
+            });
+
+            pageSelect.addEventListener("change", async function () {
+                currentPageIndex = parseInt(pageSelect.value || "0", 10);
+                selectedTextId = null;
+                syncSelectionPanel();
+                await renderCurrentPage();
+            });
+
+            zoomInput.addEventListener("input", async function () {
+                zoomLabel.textContent = zoomInput.value + "%";
+                await renderCurrentPage();
+            });
+
+            applyBtn.addEventListener("click", async function () {
+                const replacement = getSelectedReplacement();
+                if (!replacement) {
+                    setStatus("Click the exact text on the page first, then apply your replacement.", true);
+                    return;
+                }
+                replacement.text = textValue.value || "";
+                replacement.fontSize = Math.max(8, parseInt(fontSizeInput.value || "18", 10));
+                await renderCurrentPage();
+                setStatus("Replacement updated on the page. Download the PDF when you are ready.", false);
+            });
+
+            deleteBtn.addEventListener("click", async function () {
+                const state = ensurePageState(currentPageIndex);
+                if (!selectedTextId) {
+                    setStatus("Select a replacement on the page first.", true);
+                    return;
+                }
+                state.replacements = state.replacements.filter(function (entry) {
+                    return entry.id !== selectedTextId;
+                });
+                selectedTextId = null;
+                syncSelectionPanel();
+                await renderCurrentPage();
+                setStatus("Selected replacement removed.", false);
+            });
+
+            downloadBtn.addEventListener("click", async function () {
+                if (!workingPdfBytes) {
+                    setStatus("Prepare the editable PDF first.", true);
+                    return;
+                }
+
+                setStatus("Building edited PDF...", false);
+                try {
+                    const pdfDoc = await PDFLib.PDFDocument.load(workingPdfBytes);
+                    const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+
+                    for (let pageIndex = 0; pageIndex < pageState.length; pageIndex++) {
+                        const state = pageState[pageIndex];
+                        if (!state || !state.replacements.length) continue;
+                        const page = pdfDoc.getPage(pageIndex);
+                        const pageWidth = page.getWidth();
+                        const pageHeight = page.getHeight();
+                        const currentView = await workingPdf.getPage(pageIndex + 1);
+                        const baseViewport = currentView.getViewport({ scale: 1 });
+
+                        state.replacements.forEach(function (replacement) {
+                            const xRatio = replacement.x / baseViewport.width;
+                            const yRatio = replacement.y / baseViewport.height;
+                            const widthRatio = replacement.width / baseViewport.width;
+                            const heightRatio = replacement.height / baseViewport.height;
+                            const x = xRatio * pageWidth;
+                            const y = pageHeight - ((yRatio + heightRatio) * pageHeight);
+                            const width = widthRatio * pageWidth;
+                            const height = heightRatio * pageHeight;
+                            const fontSize = Math.max(8, (replacement.fontSize / baseViewport.width) * pageWidth);
+
+                            page.drawRectangle({
+                                x: x,
+                                y: y,
+                                width: width,
+                                height: height,
+                                color: PDFLib.rgb(1, 1, 1)
+                            });
+                            if ((replacement.text || "").trim() !== "") {
+                                page.drawText(replacement.text, {
+                                    x: x + 1.5,
+                                    y: y + Math.max(2, height - fontSize * 0.92),
+                                    size: fontSize,
+                                    font: font,
+                                    color: PDFLib.rgb(0, 0, 0),
+                                    maxWidth: width
+                                });
+                            }
+                        });
+                    }
+
+                    const bytes = await pdfDoc.save();
+                    const blob = new Blob([bytes], { type: "application/pdf" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    const baseName = (originalFileName || "edited").replace(/\.pdf$/i, "") || "edited";
+                    a.href = url;
+                    a.download = baseName + "-edited.pdf";
+                    a.click();
+                    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+                    setStatus("Edited PDF downloaded successfully.", false);
+                } catch (error) {
+                    setStatus(error.message || "Could not build the edited PDF.", true);
+                }
+            });
+        })();
+    </script>';
 }
 
 function getRedactPdfHTML() {
