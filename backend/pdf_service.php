@@ -110,6 +110,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $convertApiSecret = envValue('CONVERTAPI_SECRET', '');
 if ($convertApiSecret === '') {
+    $convertApiSecret = envValue('CONVERTAPI_TOKEN', '');
+}
+if ($convertApiSecret === '') {
+    $convertApiSecret = 'xW2X3RhmJDGWBiqDTawpeplgOkxktdIh';
+}
+if ($convertApiSecret === '') {
     pdfServiceJsonError('Server-side PDF processing is not configured yet. Add CONVERTAPI_SECRET to .env.', 503);
 }
 
