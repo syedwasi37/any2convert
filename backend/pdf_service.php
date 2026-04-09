@@ -95,6 +95,7 @@ function pdfServiceDownloadName(string $action, array $files): string
         'protect_pdf' => $base . '-protected.pdf',
         'unlock_pdf' => $base . '-unlocked.pdf',
         'ocr_pdf' => $base . '-ocr.pdf',
+        'redact_pdf' => $base . '-redacted.pdf',
         'compress_pdf' => $base . '-compressed.pdf',
         'merge_pdf' => count($files) > 1 ? 'merged.pdf' : ($base . '-merged.pdf'),
         default => $base . '.bin',
@@ -237,6 +238,24 @@ $actionConfig = [
                 'StoreFile' => 'false',
                 'OutputType' => trim((string) ($_POST['output_type'] ?? 'pdf')),
                 'OcrLanguage' => trim((string) ($_POST['ocr_language'] ?? 'auto')),
+            ];
+        },
+    ],
+    'redact_pdf' => [
+        'mode' => 'single',
+        'output' => 'pdf',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/redact',
+        'extra_fields' => static function (): array {
+            $searchText = trim((string) ($_POST['search_text'] ?? ''));
+            if ($searchText === '') {
+                pdfServiceJsonError('Please enter the text you want to redact.');
+            }
+
+            return [
+                'StoreFile' => 'false',
+                'SearchText' => $searchText,
+                'CaseSensitive' => !empty($_POST['case_sensitive']) ? 'true' : 'false',
             ];
         },
     ],

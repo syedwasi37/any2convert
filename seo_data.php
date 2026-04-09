@@ -755,10 +755,10 @@ $seo_tools = [
         'id' => 'redact_pdf',
         'h1' => 'Redact PDF Online',
         'title' => 'Redact PDF - Burn In Keyword Redaction | Any2Convert',
-        'meta_desc' => 'Find a keyword in a PDF and create a rebuilt redacted copy with blacked-out matches.',
+        'meta_desc' => 'Find a keyword in a PDF and create a stronger server-side redacted copy.',
         'icon' => 'RED',
-        'faqs' => [['q' => 'Does it permanently hide the text?', 'a' => 'This tool rebuilds page images after painting redaction boxes, which is stronger than a simple overlay.']],
-        'content' => 'Redact repeated keywords in documents and export a rebuilt PDF with blacked-out matches.'
+        'faqs' => [['q' => 'Does it permanently hide the text?', 'a' => 'The upgraded server-side redaction flow is designed to produce a cleaner redacted PDF than a browser-side visual overlay workflow.']],
+        'content' => 'Redact repeated keywords in documents and export a stronger server-side redacted PDF instead of relying on a screenshot-style rebuild.'
     ],
     'translate-pdf' => [
         'id' => 'translate_pdf',

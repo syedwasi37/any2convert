@@ -64,7 +64,7 @@ function renderToolHandlerHTML($tool) {
         case 'edit_pdf':
             return getEditPdfHTML();
         case 'redact_pdf':
-            return getRedactPdfHTML();
+            return getRedactPdfServerHTML();
         case 'translate_pdf':
             return getTranslatePdfHTML();
         case 'json_to_csv':
@@ -654,6 +654,45 @@ function getOcrPdfServerHTML(): string
         'primary_status' => 'Ready to OCR one PDF.',
         'download_name' => 'ocr.pdf',
         'success_message' => 'OCR processing finished.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getRedactPdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <div class="grid md:grid-cols-[1fr_auto] gap-4 items-end">
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Text to redact</span>
+                <input id="redactPdfSearchText" type="text" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter word or phrase">
+            </label>
+            <label class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 px-4 py-3 bg-white/85 dark:bg-slate-950/70 min-h-[52px]">
+                <input type="checkbox" id="redactPdfCaseSensitive" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                <span class="text-sm text-slate-600 dark:text-slate-300">Match case</span>
+            </label>
+        </div>';
+
+    $extraFieldsJs = '
+        extraFields.search_text = document.getElementById("redactPdfSearchText").value;
+        if (document.getElementById("redactPdfCaseSensitive").checked) {
+            extraFields.case_sensitive = "1";
+        }
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'redactPdfServer',
+        'title' => 'Redact PDF File',
+        'heading' => 'Run keyword-based PDF redaction through the server-side PDF engine so the output is a proper redacted document instead of a rebuilt screenshot copy.',
+        'subheading' => 'Upload a PDF and remove matching text from the final output',
+        'button_label' => 'Redact PDF',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'redact_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'This upgraded version is meant for text-based keyword redaction. It is a stronger base than painting black boxes over a rendered page image.',
+        'primary_status' => 'Ready to redact one PDF by keyword or phrase.',
+        'download_name' => 'redacted.pdf',
+        'success_message' => 'Redacted PDF is ready.',
         'extra_fields_html' => $extraFieldsHtml,
         'extra_fields_js' => $extraFieldsJs,
     ]);
