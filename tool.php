@@ -62,6 +62,9 @@ $toolUrl = $siteUrl . '/' . $slug;
 $toolTitle = $tool_data['title'];
 $toolDescription = $tool_data['meta_desc'];
 $toolFaqs = $tool_data['faqs'] ?? [];
+$toolSections = $tool_data['sections'] ?? [];
+$toolSteps = $tool_data['steps'] ?? [];
+$toolBestFor = $tool_data['best_for'] ?? [];
 
 // Generate dynamic keywords for SEO from H1 and Title
 $clean_h1 = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($tool_data['h1'] . ' ' . $tool_data['title']));
@@ -596,6 +599,46 @@ if (isset($_SESSION['user_name'])) {
     <div class="max-w-4xl mx-auto mt-20 text-slate-600 dark:text-slate-400 text-lg leading-relaxed space-y-6">
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">What is this tool?</h2>
         <p><?= $tool_data['content'] ?></p>
+
+        <?php if (!empty($toolBestFor)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Best For</h2>
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <?php foreach ($toolBestFor as $point): ?>
+                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-base">
+                    <?= htmlspecialchars($point) ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolSteps)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">How To Use It</h2>
+            <div class="space-y-4 mt-6">
+                <?php foreach ($toolSteps as $index => $step): ?>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="h-10 w-10 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold"><?= $index + 1 ?></div>
+                    <div class="text-base text-slate-600 dark:text-slate-300"><?= htmlspecialchars($step) ?></div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolSections)): ?>
+        <?php foreach ($toolSections as $section): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($section['title'] ?? 'More Information') ?></h2>
+            <div class="space-y-4 mt-5">
+                <?php foreach (($section['paragraphs'] ?? []) as $paragraph): ?>
+                <p><?= htmlspecialchars($paragraph) ?></p>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+        <?php endif; ?>
         
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Why use Any2Convert?</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
