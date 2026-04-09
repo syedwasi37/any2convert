@@ -12172,6 +12172,10 @@ function getEditPdfHTML() {
     </script>';
 }
 
+function getEditPdfSmartHTML() {
+    return getEditPdfHTML();
+}
+
 function getRedactPdfHTML() {
     return '
     <div class="space-y-6">
