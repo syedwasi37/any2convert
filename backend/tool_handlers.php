@@ -231,14 +231,17 @@ function any2convertPdfServiceScript(): string
                     const fileNameHeader = response.headers.get("X-File-Name");
                     const blob = await response.blob();
                     const downloadName = fileNameHeader ? decodeURIComponent(fileNameHeader) : (options.downloadName || "download");
-                    const url = URL.createObjectURL(blob);
-                    const anchor = document.createElement("a");
-                    anchor.href = url;
-                    anchor.download = downloadName;
-                    anchor.click();
-                    setTimeout(function () {
-                        URL.revokeObjectURL(url);
-                    }, 1000);
+
+                    if (!options.silent) {
+                        const url = URL.createObjectURL(blob);
+                        const anchor = document.createElement("a");
+                        anchor.href = url;
+                        anchor.download = downloadName;
+                        anchor.click();
+                        setTimeout(function () {
+                            URL.revokeObjectURL(url);
+                        }, 1000);
+                    }
 
                     return {
                         blob: blob,
@@ -12533,6 +12536,7 @@ function getEditPdfSmartHTML() {
                             action: "ocr_pdf",
                             file: file,
                             multiple: false,
+                            silent: true,
                             extraFields: {
                                 output_type: "pdf",
                                 ocr_language: "en",
