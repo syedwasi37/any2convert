@@ -113,7 +113,7 @@ if ($convertApiSecret === '') {
     $convertApiSecret = envValue('CONVERTAPI_TOKEN', '');
 }
 if ($convertApiSecret === '') {
-    $convertApiSecret = 'xW2X3RhmJDGWBiqDTawpeplgOkxktdIh';
+    $convertApiSecret = 'qSzcB1SYa1HFNleMxZtvRNCWWEGjlnBR';
 }
 if ($convertApiSecret === '') {
     pdfServiceJsonError('Server-side PDF processing is not configured yet. Add CONVERTAPI_SECRET to .env.', 503);
