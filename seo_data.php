@@ -68,12 +68,12 @@ $seo_tools = [
         'id' => 'pdf_to_ppt',
         'h1' => 'Convert PDF to PowerPoint Presentation',
         'title' => 'PDF to PPT - Free PDF to PowerPoint Converter',
-        'meta_desc' => 'Turn your PDF slides into an editable PowerPoint presentation format. Secure, instantaneous, and free.',
+        'meta_desc' => 'Turn your PDF slides into editable PowerPoint presentation files with a stronger server-side conversion engine.',
         'icon' => '📊',
         'faqs' => [
-            ['q' => 'Do each of the PDF pages become a slide?', 'a' => 'Yes, every page of your PDF document will be converted into an individual slide in the resulting presentation.'],
+            ['q' => 'Do each of the PDF pages become a slide?', 'a' => 'Yes. The upgraded server-side conversion flow is designed to create editable PPTX output with one slide per page or page group, depending on the source layout.'],
         ],
-        'content' => 'Did you receive a presentation in PDF format but need to present it or edit the slides? Our PDF to PowerPoint tool extracts the text and layout from each PDF page and generates a presentation file you can open in MS PowerPoint or Keynote.'
+        'content' => 'Did you receive a presentation in PDF format but need to present it or edit the slides? This upgraded PDF to PowerPoint tool uses a server-side conversion engine so the exported PPTX is a much stronger starting point than a browser-only page-to-image workflow.'
     ],
     'pdf-to-excel' => [
         'id' => 'pdf_to_excel',
@@ -168,12 +168,12 @@ $seo_tools = [
         'id' => 'protect_pdf',
         'h1' => 'Add Password Protection to PDF',
         'title' => 'Protect PDF - Encrypt and Secure PDF Files Free',
-        'meta_desc' => 'Secure your PDF documents with a strong password. Encrypt your files locally in your browser for absolute privacy.',
+        'meta_desc' => 'Secure your PDF documents with a strong password using a stronger server-side PDF protection engine.',
         'icon' => '🔒',
         'faqs' => [
-            ['q' => 'Is the encryption strong?', 'a' => 'Yes, we utilize standard PDF encryption algorithms to ensure the document cannot be opened without the correct password.']
+            ['q' => 'Is the encryption strong?', 'a' => 'Yes. This upgraded protection flow uses a server-side PDF engine to apply proper password protection and document restrictions more reliably.']
         ],
-        'content' => 'If you are sharing sensitive information like financial records, contracts, or personal documents, adding a password is essential. Our Protect PDF tool encrypts your file directly in your browser. Since no data leaves your device, malicious actors cannot intercept your private documents during upload.'
+        'content' => 'If you are sharing sensitive information like financial records, contracts, or personal documents, adding a password is essential. This upgraded Protect PDF flow uses a stronger server-side PDF engine so password protection and restrictions are applied more reliably than older browser-only attempts.'
     ],
     'word-to-pdf' => [
         'id' => 'word_to_pdf',
@@ -628,10 +628,10 @@ $seo_tools = [
         'id' => 'ocr_pdf',
         'h1' => 'OCR PDF Online',
         'title' => 'OCR PDF - Extract Text from PDF Pages | Any2Convert',
-        'meta_desc' => 'Run OCR on scanned PDF pages and extract text directly in your browser.',
+        'meta_desc' => 'Run OCR on scanned PDF pages with a stronger server-side OCR pipeline and create searchable output.',
         'icon' => 'OCR',
-        'faqs' => [['q' => 'Does it work on scanned PDFs?', 'a' => 'Yes, it is designed for image-based or scanned PDFs.']],
-        'content' => 'Use OCR to pull text out of scanned PDF documents without uploading them.'
+        'faqs' => [['q' => 'Does it work on scanned PDFs?', 'a' => 'Yes. This upgraded OCR PDF flow is designed for scanned and image-based PDFs and can return searchable PDF output or extracted text.']],
+        'content' => 'Use OCR to pull text out of scanned PDF documents through a stronger server-side OCR pipeline so scanned pages have a better chance of becoming searchable and reusable.'
     ],
     'rotate-pdf' => [
         'id' => 'rotate_pdf',
@@ -663,11 +663,11 @@ $seo_tools = [
     'unlock-pdf' => [
         'id' => 'unlock_pdf',
         'h1' => 'Unlock PDF Online',
-        'title' => 'Unlock PDF - Rebuild Viewable Pages | Any2Convert',
-        'meta_desc' => 'Create a new viewable PDF from print-rendered pages.',
+        'title' => 'Unlock PDF - Remove PDF Password Online | Any2Convert',
+        'meta_desc' => 'Unlock protected PDF files with a stronger server-side PDF engine when you know the password.',
         'icon' => 'UNLOCK',
-        'faqs' => [['q' => 'Does it work for every protected PDF?', 'a' => 'No, but it can help with some viewable or printable files by rebuilding pages.']],
-        'content' => 'A best-effort unlock workflow that rebuilds visible PDF pages into a new file.'
+        'faqs' => [['q' => 'Does it work for every protected PDF?', 'a' => 'You still need the correct password, but this upgraded server-side unlock flow is much stronger than a best-effort browser rebuild.']],
+        'content' => 'Unlock a protected PDF when you already know the password and need a cleaner unlocked copy for reading, editing, or downstream workflows. This upgraded version uses a stronger server-side PDF engine.'
     ],
     'sign-pdf' => [
         'id' => 'sign_pdf',

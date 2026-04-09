@@ -90,7 +90,11 @@ function pdfServiceDownloadName(string $action, array $files): string
     return match ($action) {
         'pdf_to_word' => $base . '.docx',
         'pdf_to_excel' => $base . '.xlsx',
+        'pdf_to_ppt' => $base . '.pptx',
         'word_to_pdf' => $base . '.pdf',
+        'protect_pdf' => $base . '-protected.pdf',
+        'unlock_pdf' => $base . '-unlocked.pdf',
+        'ocr_pdf' => $base . '-ocr.pdf',
         'compress_pdf' => $base . '-compressed.pdf',
         'merge_pdf' => count($files) > 1 ? 'merged.pdf' : ($base . '-merged.pdf'),
         default => $base . '.bin',
@@ -126,6 +130,18 @@ $actionConfig = [
         'extra_fields' => static fn(): array => [
             'StoreFile' => 'false',
         ],
+    ],
+    'pdf_to_ppt' => [
+        'mode' => 'single',
+        'output' => 'pptx',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/pptx',
+        'extra_fields' => static function (): array {
+            return [
+                'StoreFile' => 'false',
+                'OcrMode' => trim((string) ($_POST['ocr_mode'] ?? 'auto')),
+            ];
+        },
     ],
     'word_to_pdf' => [
         'mode' => 'single',
@@ -175,6 +191,52 @@ $actionConfig = [
             return [
                 'StoreFile' => 'false',
                 'Preset' => $preset,
+            ];
+        },
+    ],
+    'protect_pdf' => [
+        'mode' => 'single',
+        'output' => 'pdf',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/protect',
+        'extra_fields' => static function (): array {
+            $userPassword = trim((string) ($_POST['user_password'] ?? ''));
+            $ownerPassword = trim((string) ($_POST['owner_password'] ?? $userPassword));
+            if ($userPassword === '') {
+                pdfServiceJsonError('Please provide a PDF password.');
+            }
+
+            return [
+                'StoreFile' => 'false',
+                'UserPassword' => $userPassword,
+                'OwnerPassword' => $ownerPassword !== '' ? $ownerPassword : $userPassword,
+                'PrintDocument' => !empty($_POST['allow_print']) ? 'true' : 'false',
+                'CopyContent' => !empty($_POST['allow_copy']) ? 'true' : 'false',
+            ];
+        },
+    ],
+    'unlock_pdf' => [
+        'mode' => 'single',
+        'output' => 'pdf',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/unprotect',
+        'extra_fields' => static function (): array {
+            return [
+                'StoreFile' => 'false',
+                'Password' => trim((string) ($_POST['password'] ?? '')),
+            ];
+        },
+    ],
+    'ocr_pdf' => [
+        'mode' => 'single',
+        'output' => 'pdf',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/ocr',
+        'extra_fields' => static function (): array {
+            return [
+                'StoreFile' => 'false',
+                'OutputType' => trim((string) ($_POST['output_type'] ?? 'pdf')),
+                'OcrLanguage' => trim((string) ($_POST['ocr_language'] ?? 'auto')),
             ];
         },
     ],
@@ -301,7 +363,9 @@ $contentTypeOut = $config['output'] === 'docx'
     ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     : ($config['output'] === 'xlsx'
         ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        : 'application/pdf');
+        : ($config['output'] === 'pptx'
+            ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            : 'application/pdf'));
 
 header('Content-Type: ' . $contentTypeOut);
 header('Content-Length: ' . strlen($responseBody));
@@ -309,4 +373,3 @@ header('Content-Disposition: attachment; filename="' . rawurlencode($downloadNam
 header('X-File-Name: ' . rawurlencode($downloadName));
 header('X-Tool-Engine: convertapi');
 echo $responseBody;
-

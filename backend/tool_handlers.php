@@ -10,7 +10,7 @@ function renderToolHandlerHTML($tool) {
         case 'pdf_to_word':
             return getPdfToWordServerHTML();
         case 'pdf_to_ppt':
-            return getPdfToPptHTML();
+            return getPdfToPptServerHTML();
         case 'pdf_to_excel':
             return getPdfToExcelServerHTML();
         case 'merge_pdf':
@@ -18,7 +18,7 @@ function renderToolHandlerHTML($tool) {
         case 'compress_pdf':
             return getCompressPdfServerHTML();
         case 'protect_pdf':
-            return getProtectPdfPureJS();
+            return getProtectPdfServerHTML();
         case 'word_to_pdf':
             return getWordToPdfServerHTML();
         case 'excel_to_pdf':
@@ -42,7 +42,7 @@ function renderToolHandlerHTML($tool) {
         case 'repair_pdf':
             return getRepairPdfHTML();
         case 'ocr_pdf':
-            return getOcrPdfHTML();
+            return getOcrPdfServerHTML();
         case 'rotate_pdf':
             return getRotatePdfHTML();
         case 'add_page_numbers':
@@ -50,7 +50,7 @@ function renderToolHandlerHTML($tool) {
         case 'add_watermark':
             return getAddWatermarkHTML();
         case 'unlock_pdf':
-            return getUnlockPdfHTML();
+            return getUnlockPdfServerHTML();
         case 'sign_pdf':
             return getSignPdfHTML();
         case 'crop_pdf':
@@ -497,6 +497,163 @@ function getCompressPdfServerHTML(): string
         'primary_status' => 'Ready to compress one PDF.',
         'download_name' => 'compressed.pdf',
         'success_message' => 'Compressed PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getPdfToPptServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <label class="block">
+            <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">OCR handling</span>
+            <select id="pdfToPptOcrMode" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                <option value="auto" selected>Auto detect</option>
+                <option value="always">Always OCR scanned pages</option>
+                <option value="never">Skip OCR</option>
+            </select>
+        </label>';
+
+    $extraFieldsJs = '
+        extraFields.ocr_mode = document.getElementById("pdfToPptOcrMode").value;
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'pdfToPptServer',
+        'title' => 'PDF to PowerPoint Converter',
+        'heading' => 'Convert PDFs into editable PowerPoint decks through a server-side document engine instead of flattening each page into slide screenshots inside the browser.',
+        'subheading' => 'Upload a PDF and export it as PPTX',
+        'button_label' => 'Convert PDF to PPTX',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'pdf_to_ppt',
+        'single_word' => 'file',
+        'panel_note' => 'Better for decks, reports, and presentation-style PDFs where editable slide structure matters.',
+        'primary_status' => 'Ready to convert one PDF into PowerPoint.',
+        'download_name' => 'converted.pptx',
+        'success_message' => 'PDF to PowerPoint conversion finished.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getProtectPdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <div class="grid md:grid-cols-2 gap-4">
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Open password</span>
+                <input id="protectPdfUserPassword" type="password" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Required password">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Owner password</span>
+                <input id="protectPdfOwnerPassword" type="password" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Optional admin password">
+            </label>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+            <label class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 px-4 py-3 bg-white/85 dark:bg-slate-950/70">
+                <input type="checkbox" id="protectPdfAllowPrint" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                <span class="text-sm text-slate-600 dark:text-slate-300">Allow printing</span>
+            </label>
+            <label class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 px-4 py-3 bg-white/85 dark:bg-slate-950/70">
+                <input type="checkbox" id="protectPdfAllowCopy" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                <span class="text-sm text-slate-600 dark:text-slate-300">Allow copy and extraction</span>
+            </label>
+        </div>';
+
+    $extraFieldsJs = '
+        extraFields.user_password = document.getElementById("protectPdfUserPassword").value;
+        extraFields.owner_password = document.getElementById("protectPdfOwnerPassword").value;
+        if (document.getElementById("protectPdfAllowPrint").checked) {
+            extraFields.allow_print = "1";
+        }
+        if (document.getElementById("protectPdfAllowCopy").checked) {
+            extraFields.allow_copy = "1";
+        }
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'protectPdfServer',
+        'title' => 'Protect PDF File',
+        'heading' => 'Apply real PDF password protection with a server-side engine instead of relying on an inconsistent browser-only encryption path.',
+        'subheading' => 'Upload a PDF and lock it with a password',
+        'button_label' => 'Protect PDF',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'protect_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'This is the stronger route for password-protecting PDFs and controlling whether printing or content copying stays available.',
+        'primary_status' => 'Ready to protect one PDF.',
+        'download_name' => 'protected.pdf',
+        'success_message' => 'Protected PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getUnlockPdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <label class="block">
+            <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Password</span>
+            <input id="unlockPdfPassword" type="password" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Enter the existing PDF password if needed">
+        </label>';
+
+    $extraFieldsJs = '
+        extraFields.password = document.getElementById("unlockPdfPassword").value;
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'unlockPdfServer',
+        'title' => 'Unlock PDF File',
+        'heading' => 'Remove PDF password protection with a server-side document engine instead of a fragile in-browser rebuild flow.',
+        'subheading' => 'Upload a locked PDF and remove access protection',
+        'button_label' => 'Unlock PDF',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'unlock_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'Use this when you know the password and need a cleaner unlocked copy for editing, reading, or downstream workflows.',
+        'primary_status' => 'Ready to unlock one PDF.',
+        'download_name' => 'unlocked.pdf',
+        'success_message' => 'Unlocked PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getOcrPdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <div class="grid md:grid-cols-2 gap-4">
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Output type</span>
+                <select id="ocrPdfOutputType" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="pdf" selected>Searchable PDF</option>
+                    <option value="txt">Plain text</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">OCR language</span>
+                <input id="ocrPdfLanguage" type="text" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="auto, en, ur, ar">
+            </label>
+        </div>';
+
+    $extraFieldsJs = '
+        extraFields.output_type = document.getElementById("ocrPdfOutputType").value;
+        extraFields.ocr_language = document.getElementById("ocrPdfLanguage").value || "auto";
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'ocrPdfServer',
+        'title' => 'OCR PDF Tool',
+        'heading' => 'Run scanned PDFs through a server OCR pipeline so text becomes selectable and searchable without depending only on browser-side OCR performance.',
+        'subheading' => 'Upload a scanned PDF and create searchable output',
+        'button_label' => 'Run OCR on PDF',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'ocr_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'Searchable PDF output is the main goal here, but you can also request extracted text when that fits your workflow better.',
+        'primary_status' => 'Ready to OCR one PDF.',
+        'download_name' => 'ocr.pdf',
+        'success_message' => 'OCR processing finished.',
         'extra_fields_html' => $extraFieldsHtml,
         'extra_fields_js' => $extraFieldsJs,
     ]);
