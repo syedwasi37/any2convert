@@ -655,10 +655,10 @@ $seo_tools = [
         'id' => 'add_watermark',
         'h1' => 'Add Watermark to PDF',
         'title' => 'Add Watermark to PDF Online | Any2Convert',
-        'meta_desc' => 'Stamp custom text watermarks across your PDF pages.',
+        'meta_desc' => 'Add text watermarks to PDFs with a stronger server-side watermark engine.',
         'icon' => 'WM',
-        'faqs' => [['q' => 'Can I add custom text?', 'a' => 'Yes, enter your own watermark text before exporting.']],
-        'content' => 'Apply a text watermark to PDF pages for branding, review, or draft marking.'
+        'faqs' => [['q' => 'Can I control the watermark placement?', 'a' => 'Yes. The upgraded watermark flow lets you choose style, opacity, rotation, page range, and general placement on the page.']],
+        'content' => 'Apply text watermarks to PDF pages with a stronger server-side PDF engine so confidential labels, draft marks, and internal-use stamps are applied more cleanly than a browser-only overlay.'
     ],
     'unlock-pdf' => [
         'id' => 'unlock_pdf',
@@ -673,10 +673,10 @@ $seo_tools = [
         'id' => 'sign_pdf',
         'h1' => 'Sign PDF Online',
         'title' => 'Sign PDF - Add Signature Image to PDF | Any2Convert',
-        'meta_desc' => 'Place a signature image on a selected PDF page directly in your browser.',
+        'meta_desc' => 'Place a signature image on a PDF with a stronger server-side signing flow.',
         'icon' => 'SIGN',
-        'faqs' => [['q' => 'Can I upload a PNG signature?', 'a' => 'Yes, PNG and JPG signatures are supported.']],
-        'content' => 'Upload a handwritten or digital signature image and place it on your PDF.'
+        'faqs' => [['q' => 'Can I upload a PNG signature?', 'a' => 'Yes. A transparent PNG or clean signature image works best with the upgraded server-side placement flow.']],
+        'content' => 'Upload a handwritten or digital signature image and place it on your PDF with a stronger server-side engine so the final signed document has cleaner placement than a browser-only dragged overlay.'
     ],
     'crop-pdf' => [
         'id' => 'crop_pdf',

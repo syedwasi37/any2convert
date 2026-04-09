@@ -48,11 +48,11 @@ function renderToolHandlerHTML($tool) {
         case 'add_page_numbers':
             return getAddPageNumbersHTML();
         case 'add_watermark':
-            return getAddWatermarkHTML();
+            return getAddWatermarkServerHTML();
         case 'unlock_pdf':
             return getUnlockPdfServerHTML();
         case 'sign_pdf':
-            return getSignPdfHTML();
+            return getSignPdfServerHTML();
         case 'crop_pdf':
             return getCropPdfHTML();
         case 'compare_pdf':
@@ -202,6 +202,13 @@ function any2convertPdfServiceScript(): string
                         }
                     });
 
+                    const extraFiles = options.extraFiles || {};
+                    Object.keys(extraFiles).forEach(function (key) {
+                        if (extraFiles[key]) {
+                            formData.append(key, extraFiles[key]);
+                        }
+                    });
+
                     const response = await fetch("backend/pdf_service.php", {
                         method: "POST",
                         body: formData
@@ -336,6 +343,7 @@ function any2convertRenderServerPdfCard(array $config): string
 
                 try {
                     const extraFields = {};
+                    const extraFiles = {};
                     ' . $extraFieldsJs . '
 
                     const result = await window.any2convertPdfService.run({
@@ -344,6 +352,7 @@ function any2convertRenderServerPdfCard(array $config): string
                         files: files,
                         multiple: ' . ($multiple ? 'true' : 'false') . ',
                         extraFields: extraFields,
+                        extraFiles: extraFiles,
                         downloadName: "' . $downloadName . '"
                     });
 
@@ -693,6 +702,160 @@ function getRedactPdfServerHTML(): string
         'primary_status' => 'Ready to redact one PDF by keyword or phrase.',
         'download_name' => 'redacted.pdf',
         'success_message' => 'Redacted PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getAddWatermarkServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <div class="grid md:grid-cols-2 gap-4">
+            <label class="block md:col-span-2">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Watermark text</span>
+                <input id="watermarkPdfText" type="text" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="Confidential, Draft, Internal Use">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Style</span>
+                <select id="watermarkPdfStyle" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="watermark" selected>Watermark</option>
+                    <option value="stamp">Stamp</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Opacity</span>
+                <input id="watermarkPdfOpacity" type="number" min="5" max="100" value="35" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Font size</span>
+                <input id="watermarkPdfFontSize" type="number" min="12" max="96" value="42" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Rotation</span>
+                <input id="watermarkPdfRotate" type="number" min="0" max="360" value="315" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Page range</span>
+                <input id="watermarkPdfPageRange" type="text" value="1-last" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="1-last">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Horizontal position</span>
+                <select id="watermarkPdfHorizontalAlignment" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="left">Left</option>
+                    <option value="center" selected>Center</option>
+                    <option value="right">Right</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Vertical position</span>
+                <select id="watermarkPdfVerticalAlignment" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="top">Top</option>
+                    <option value="center" selected>Center</option>
+                    <option value="bottom">Bottom</option>
+                </select>
+            </label>
+        </div>';
+
+    $extraFieldsJs = '
+        extraFields.watermark_text = document.getElementById("watermarkPdfText").value;
+        extraFields.style = document.getElementById("watermarkPdfStyle").value;
+        extraFields.opacity = document.getElementById("watermarkPdfOpacity").value;
+        extraFields.font_size = document.getElementById("watermarkPdfFontSize").value;
+        extraFields.rotate = document.getElementById("watermarkPdfRotate").value;
+        extraFields.page_range = document.getElementById("watermarkPdfPageRange").value;
+        extraFields.horizontal_alignment = document.getElementById("watermarkPdfHorizontalAlignment").value;
+        extraFields.vertical_alignment = document.getElementById("watermarkPdfVerticalAlignment").value;
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'addWatermarkServer',
+        'title' => 'Add Watermark to PDF',
+        'heading' => 'Apply a real PDF watermark with server-side positioning and styling controls instead of flattening a text overlay in the browser.',
+        'subheading' => 'Upload a PDF and stamp it with watermark text',
+        'button_label' => 'Add Watermark',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'add_watermark',
+        'single_word' => 'file',
+        'panel_note' => 'This upgraded watermark flow is better for repeated document marking, internal drafts, confidential labels, and cleaner PDF output.',
+        'primary_status' => 'Ready to watermark one PDF.',
+        'download_name' => 'watermarked.pdf',
+        'success_message' => 'Watermarked PDF is ready.',
+        'extra_fields_html' => $extraFieldsHtml,
+        'extra_fields_js' => $extraFieldsJs,
+    ]);
+}
+
+function getSignPdfServerHTML(): string
+{
+    $extraFieldsHtml = '
+        <div class="grid md:grid-cols-2 gap-4">
+            <label class="block md:col-span-2">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Signature image</span>
+                <input id="signPdfImage" type="file" accept="image/*" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Page range</span>
+                <input id="signPdfPageRange" type="text" value="1-last" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600" placeholder="1-last">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Scale</span>
+                <input id="signPdfScale" type="number" min="5" max="80" value="22" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Horizontal position</span>
+                <select id="signPdfHorizontalAlignment" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right" selected>Right</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Vertical position</span>
+                <select id="signPdfVerticalAlignment" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <option value="top">Top</option>
+                    <option value="center">Center</option>
+                    <option value="bottom" selected>Bottom</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Offset X</span>
+                <input id="signPdfOffsetX" type="number" value="-12" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+            <label class="block">
+                <span class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Offset Y</span>
+                <input id="signPdfOffsetY" type="number" value="-12" class="w-full p-3 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-600">
+            </label>
+        </div>';
+
+    $extraFieldsJs = '
+        const signatureImageInput = document.getElementById("signPdfImage");
+        if (!signatureImageInput.files.length) {
+            throw new Error("Please upload a signature image first.");
+        }
+        extraFiles.signature_image = signatureImageInput.files[0];
+        extraFields.page_range = document.getElementById("signPdfPageRange").value;
+        extraFields.scale = document.getElementById("signPdfScale").value;
+        extraFields.horizontal_alignment = document.getElementById("signPdfHorizontalAlignment").value;
+        extraFields.vertical_alignment = document.getElementById("signPdfVerticalAlignment").value;
+        extraFields.offset_x = document.getElementById("signPdfOffsetX").value;
+        extraFields.offset_y = document.getElementById("signPdfOffsetY").value;
+        extraFields.style = "stamp";
+        extraFields.opacity = "100";
+    ';
+
+    return any2convertRenderServerPdfCard([
+        'tool_id' => 'signPdfServer',
+        'title' => 'Sign PDF File',
+        'heading' => 'Place a signature image onto your PDF with server-side image watermarking so the final signed output is cleaner and more dependable than dragging a layer in the browser.',
+        'subheading' => 'Upload a PDF and place your signature image',
+        'button_label' => 'Sign PDF',
+        'accept' => '.pdf,application/pdf',
+        'action' => 'sign_pdf',
+        'single_word' => 'file',
+        'panel_note' => 'Best for logo-style signatures, signature PNGs, and quick document approval workflows where you want cleaner server-rendered placement.',
+        'primary_status' => 'Ready to sign one PDF.',
+        'download_name' => 'signed.pdf',
+        'success_message' => 'Signed PDF is ready.',
         'extra_fields_html' => $extraFieldsHtml,
         'extra_fields_js' => $extraFieldsJs,
     ]);

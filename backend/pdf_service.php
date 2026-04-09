@@ -96,6 +96,8 @@ function pdfServiceDownloadName(string $action, array $files): string
         'unlock_pdf' => $base . '-unlocked.pdf',
         'ocr_pdf' => $base . '-ocr.pdf',
         'redact_pdf' => $base . '-redacted.pdf',
+        'add_watermark' => $base . '-watermarked.pdf',
+        'sign_pdf' => $base . '-signed.pdf',
         'compress_pdf' => $base . '-compressed.pdf',
         'merge_pdf' => count($files) > 1 ? 'merged.pdf' : ($base . '-merged.pdf'),
         default => $base . '.bin',
@@ -256,6 +258,63 @@ $actionConfig = [
                 'StoreFile' => 'false',
                 'SearchText' => $searchText,
                 'CaseSensitive' => !empty($_POST['case_sensitive']) ? 'true' : 'false',
+            ];
+        },
+    ],
+    'add_watermark' => [
+        'mode' => 'single',
+        'output' => 'pdf',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/watermark',
+        'extra_fields' => static function (): array {
+            $text = trim((string) ($_POST['watermark_text'] ?? ''));
+            if ($text === '') {
+                pdfServiceJsonError('Please enter watermark text.');
+            }
+
+            return [
+                'StoreFile' => 'false',
+                'Text' => $text,
+                'Opacity' => trim((string) ($_POST['opacity'] ?? '35')),
+                'PageRange' => trim((string) ($_POST['page_range'] ?? '1-last')),
+                'HorizontalAlignment' => trim((string) ($_POST['horizontal_alignment'] ?? 'center')),
+                'VerticalAlignment' => trim((string) ($_POST['vertical_alignment'] ?? 'center')),
+                'Style' => trim((string) ($_POST['style'] ?? 'watermark')),
+                'FontSize' => trim((string) ($_POST['font_size'] ?? '42')),
+                'Rotate' => trim((string) ($_POST['rotate'] ?? '315')),
+            ];
+        },
+    ],
+    'sign_pdf' => [
+        'mode' => 'single',
+        'output' => 'pdf',
+        'allowed_ext' => ['pdf'],
+        'endpoint' => static fn(array $files): string => 'pdf/to/image-watermark',
+        'extra_fields' => static function (): array {
+            if (!isset($_FILES['signature_image']) || !is_array($_FILES['signature_image']) || (($_FILES['signature_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK)) {
+                pdfServiceJsonError('Please upload a signature image.');
+            }
+
+            $signature = $_FILES['signature_image'];
+            if (!is_uploaded_file($signature['tmp_name'])) {
+                pdfServiceJsonError('Signature image could not be verified.');
+            }
+
+            return [
+                'StoreFile' => 'false',
+                'ImageFile' => new CURLFile(
+                    $signature['tmp_name'],
+                    $signature['type'] ?: 'application/octet-stream',
+                    $signature['name']
+                ),
+                'Opacity' => trim((string) ($_POST['opacity'] ?? '100')),
+                'PageRange' => trim((string) ($_POST['page_range'] ?? '1-last')),
+                'HorizontalAlignment' => trim((string) ($_POST['horizontal_alignment'] ?? 'right')),
+                'VerticalAlignment' => trim((string) ($_POST['vertical_alignment'] ?? 'bottom')),
+                'Style' => trim((string) ($_POST['style'] ?? 'stamp')),
+                'Scale' => trim((string) ($_POST['scale'] ?? '22')),
+                'OffsetX' => trim((string) ($_POST['offset_x'] ?? '-12')),
+                'OffsetY' => trim((string) ($_POST['offset_y'] ?? '-12')),
             ];
         },
     ],
