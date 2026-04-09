@@ -434,6 +434,7 @@ $curlError = curl_error($ch);
 $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 curl_close($ch);
+$downloadName = null;
 
 if ($responseBody === false || $curlError !== '') {
     pdfServiceJsonError('PDF service request failed: ' . $curlError, 502);
@@ -442,8 +443,42 @@ if ($responseBody === false || $curlError !== '') {
 $isJson = str_contains(strtolower($contentType), 'application/json');
 if ($isJson) {
     $decoded = json_decode($responseBody, true);
-    $message = $decoded['Message'] ?? $decoded['error'] ?? 'Conversion failed.';
-    pdfServiceJsonError($message, $httpCode >= 400 ? $httpCode : 502);
+
+    if ($httpCode >= 200 && $httpCode < 300 && !empty($decoded['Files'][0])) {
+        $firstFile = $decoded['Files'][0];
+        $fileData = $firstFile['FileData'] ?? null;
+        $remoteFileName = trim((string) ($firstFile['FileName'] ?? ''));
+        $remoteExt = trim((string) ($firstFile['FileExt'] ?? ''));
+
+        if (is_string($fileData) && $fileData !== '') {
+            $binaryData = base64_decode($fileData, true);
+            if ($binaryData === false) {
+                pdfServiceJsonError('The PDF service returned unreadable file data.', 502);
+            }
+
+            if ($remoteFileName !== '') {
+                $downloadName = $remoteFileName;
+            } else {
+                $downloadName = pdfServiceDownloadName($action, $files);
+                if ($remoteExt !== '' && !str_ends_with(strtolower($downloadName), '.' . strtolower($remoteExt))) {
+                    $downloadName .= '.' . $remoteExt;
+                }
+            }
+
+            $responseBody = $binaryData;
+            $contentType = match (strtolower($remoteExt)) {
+                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                default => 'application/pdf',
+            };
+        } else {
+            pdfServiceJsonError('The PDF service completed but did not return file data.', 502);
+        }
+    } else {
+        $message = $decoded['Message'] ?? $decoded['error'] ?? 'Conversion failed.';
+        pdfServiceJsonError($message, $httpCode >= 400 ? $httpCode : 502);
+    }
 }
 
 if ($httpCode < 200 || $httpCode >= 300) {
@@ -452,14 +487,16 @@ if ($httpCode < 200 || $httpCode >= 300) {
     ]);
 }
 
-$downloadName = pdfServiceDownloadName($action, $files);
-$contentTypeOut = $config['output'] === 'docx'
-    ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    : ($config['output'] === 'xlsx'
-        ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        : ($config['output'] === 'pptx'
-            ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-            : 'application/pdf'));
+$downloadName = $downloadName ?? pdfServiceDownloadName($action, $files);
+$contentTypeOut = $contentType !== ''
+    ? $contentType
+    : ($config['output'] === 'docx'
+        ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        : ($config['output'] === 'xlsx'
+            ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            : ($config['output'] === 'pptx'
+                ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                : 'application/pdf')));
 
 header('Content-Type: ' . $contentTypeOut);
 header('Content-Length: ' . strlen($responseBody));
