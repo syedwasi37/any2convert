@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require_once 'backend/db.php';
 require_once 'backend/track_visit.php';
@@ -59,7 +59,7 @@ $tool_slugs = [
 $tools = [
     'pdf' => [
         'title' => 'PDF Tools',
-        'icon' => '📄',
+        'icon' => 'ðŸ“„',
         'tools' => [
             ['id' => 'img_to_pdf', 'name' => 'Image to PDF', 'icon' => 'img_to_pdf', 'desc' => 'Convert JPG, PNG to PDF'],
             ['id' => 'split_pdf', 'name' => 'Split PDF', 'icon' => 'merge_pdf', 'desc' => 'Split one PDF into separate ranges'],
@@ -92,7 +92,7 @@ $tools = [
     ],
     'convert' => [
         'title' => 'Document Converters',
-        'icon' => '🔄',
+        'icon' => 'ðŸ”„',
         'tools' => [
             ['id' => 'word_to_pdf', 'name' => 'Word to PDF', 'icon' => 'word_to_pdf', 'desc' => 'DOC/DOCX to PDF'],
             ['id' => 'excel_to_pdf', 'name' => 'Excel to PDF', 'icon' => 'word_to_pdf', 'desc' => 'Convert spreadsheets to PDF'],
@@ -105,7 +105,7 @@ $tools = [
     ],
     'utility' => [
         'title' => 'Utility Tools',
-        'icon' => '⚡',
+        'icon' => 'âš¡',
         'tools' => [
             ['id' => 'qr_generator', 'name' => 'QR Generator', 'icon' => 'qr_generator', 'desc' => 'Create QR codes instantly'],
             ['id' => 'password_gen', 'name' => 'Password Generator', 'icon' => 'password_gen', 'desc' => 'Secure random passwords'],
@@ -319,7 +319,7 @@ $itemListSchema = [
     <script type="application/ld+json"><?= json_encode($itemListSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
     <style>
-        /* ── LIGHT MODE (default) ── */
+        /* â”€â”€ LIGHT MODE (default) â”€â”€ */
         :root {
             --bg-base:        #F8F8FC;
             --bg-surface:     #FFFFFF;
@@ -340,7 +340,7 @@ $itemListSchema = [
             --amber:          #F59E0B;
         }
 
-        /* ── DARK MODE ── */
+        /* â”€â”€ DARK MODE â”€â”€ */
         html.dark {
             --bg-base:        #0A0A0F;
             --bg-surface:     #111118;
@@ -365,7 +365,7 @@ $itemListSchema = [
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ── Noise texture overlay ── */
+        /* â”€â”€ Noise texture overlay â”€â”€ */
         body::before {
             content: '';
             position: fixed;
@@ -376,7 +376,7 @@ $itemListSchema = [
             opacity: 0.35;
         }
 
-        /* ── Hero ambient glow ── */
+        /* â”€â”€ Hero ambient glow â”€â”€ */
         .hero-glow {
             position: absolute;
             width: 800px; height: 500px;
@@ -386,7 +386,7 @@ $itemListSchema = [
             filter: blur(40px);
         }
 
-        /* ── Navbar ── */
+        /* â”€â”€ Navbar â”€â”€ */
         .navbar {
             background: rgba(248,248,252,0.9);
             backdrop-filter: blur(20px);
@@ -397,7 +397,7 @@ $itemListSchema = [
             background: rgba(10,10,15,0.85);
         }
 
-        /* ── Logo ── */
+        /* â”€â”€ Logo â”€â”€ */
         .logo-text {
             font-weight: 700;
             font-size: 1.1rem;
@@ -406,7 +406,7 @@ $itemListSchema = [
         }
         .logo-dot { color: var(--accent); }
 
-        /* ── Nav pill ── */
+        /* â”€â”€ Nav pill â”€â”€ */
         .nav-pill {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 7px 16px;
@@ -420,7 +420,7 @@ $itemListSchema = [
         }
         .nav-pill:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); border-color: var(--border); }
 
-        /* ── Primary button ── */
+        /* â”€â”€ Primary button â”€â”€ */
         .btn-primary {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 9px 20px;
@@ -448,7 +448,7 @@ $itemListSchema = [
         }
         .btn-primary:active { transform: translateY(0); }
 
-        /* ── Ghost button ── */
+        /* â”€â”€ Ghost button â”€â”€ */
         .btn-ghost {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 9px 20px;
@@ -464,7 +464,7 @@ $itemListSchema = [
         }
         .btn-ghost:hover { color: var(--text-primary); border-color: var(--border-hover); background: rgba(255,255,255,0.04); }
 
-        /* ── Hero ── */
+        /* â”€â”€ Hero â”€â”€ */
         .hero-badge {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 6px 14px;
@@ -501,7 +501,7 @@ $itemListSchema = [
             margin: 0 auto;
         }
 
-        /* ── Stats row ── */
+        /* â”€â”€ Stats row â”€â”€ */
         .stat-item {
             display: flex; align-items: center; gap: 10px;
             padding: 10px 18px;
@@ -571,7 +571,7 @@ $itemListSchema = [
             color: var(--accent);
         }
 
-        /* ── Section label ── */
+        /* â”€â”€ Section label â”€â”€ */
         .section-label {
             display: inline-flex; align-items: center; gap: 8px;
             font-size: 0.72rem;
@@ -595,7 +595,7 @@ $itemListSchema = [
             color: var(--text-primary);
         }
 
-        /* ── Tool Card ── */
+        /* â”€â”€ Tool Card â”€â”€ */
         .tool-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -694,7 +694,7 @@ $itemListSchema = [
         }
         .tool-card:hover .tool-arrow { opacity: 1; transform: translate(0, 0); }
 
-        /* ── Category pill ── */
+        /* â”€â”€ Category pill â”€â”€ */
         .cat-pill {
             display: inline-flex; align-items: center; gap: 6px;
             font-size: 0.72rem;
@@ -706,7 +706,7 @@ $itemListSchema = [
             margin-bottom: 18px;
         }
 
-        /* ── Upload zone ── */
+        /* â”€â”€ Upload zone â”€â”€ */
         .upload-zone {
             border: 2px dashed var(--border);
             border-radius: 14px;
@@ -729,7 +729,7 @@ $itemListSchema = [
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* ── Progress bar ── */
+        /* â”€â”€ Progress bar â”€â”€ */
         .progress-track {
             height: 4px;
             background: rgba(255,255,255,0.06);
@@ -754,7 +754,7 @@ $itemListSchema = [
         }
         @keyframes shimmer { 0%,100%{opacity:0} 50%{opacity:1} }
 
-        /* ── Alert ── */
+        /* â”€â”€ Alert â”€â”€ */
         .alert {
             display: flex; align-items: flex-start; gap: 12px;
             padding: 14px 16px;
@@ -765,7 +765,7 @@ $itemListSchema = [
         .alert-success { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #34D399; }
         .alert-error   { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.25);  color: #F87171; }
 
-        /* ── Modal ── */
+        /* â”€â”€ Modal â”€â”€ */
         .modal-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,0.7);
@@ -811,11 +811,11 @@ $itemListSchema = [
         }
         .modal-close:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #F87171; }
 
-        /* ── Spinner ── */
+        /* â”€â”€ Spinner â”€â”€ */
         .spin { animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── Footer ── */
+        /* â”€â”€ Footer â”€â”€ */
         .footer-link {
             color: var(--text-muted);
             font-size: 0.82rem;
@@ -824,12 +824,12 @@ $itemListSchema = [
         }
         .footer-link:hover { color: var(--text-secondary); }
 
-        /* ── Scrollbar ── */
+        /* â”€â”€ Scrollbar â”€â”€ */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 100px; }
 
-        /* ── Stagger animation for cards ── */
+        /* â”€â”€ Stagger animation for cards â”€â”€ */
         .stagger-in { opacity: 0; transform: translateY(16px); }
         .stagger-in.visible {
             animation: fadeUp 0.4s ease forwards;
@@ -838,7 +838,7 @@ $itemListSchema = [
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Tag / chip ── */
+        /* â”€â”€ Tag / chip â”€â”€ */
         .chip {
             display: inline-flex; align-items: center;
             padding: 5px 12px;
@@ -854,7 +854,7 @@ $itemListSchema = [
         }
         .chip:hover { background: var(--accent-light); border-color: rgba(108,99,255,0.35); color: #A78BFA; }
 
-        /* ── Blog card ── */
+        /* â”€â”€ Blog card â”€â”€ */
         .blog-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -877,7 +877,7 @@ $itemListSchema = [
         .blog-card:hover::after { opacity: 1; }
         .blog-card > * { position: relative; z-index: 1; }
 
-        /* ── Responsive utilities ── */
+        /* â”€â”€ Responsive utilities â”€â”€ */
         @media (max-width: 640px) {
             .hero-title { font-size: 2rem; }
             .hero-sub { font-size: 0.95rem; }
@@ -890,7 +890,7 @@ $itemListSchema = [
             .tool-desc { font-size: 0.76rem; }
         }
 
-        /* ── Dropdown menu ── */
+        /* â”€â”€ Dropdown menu â”€â”€ */
         .dropdown-menu {
             position: absolute; right: 0; top: calc(100% + 8px);
             min-width: 180px;
@@ -920,14 +920,14 @@ $itemListSchema = [
         .dropdown-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .dropdown-item.danger:hover { background: rgba(239,68,68,0.08); color: #F87171; }
 
-        /* ── Theme toggle button ── */
+        /* â”€â”€ Theme toggle button â”€â”€ */
         #themeToggle:hover {
             background: var(--accent-light) !important;
             border-color: rgba(108,99,255,0.3) !important;
             color: var(--accent) !important;
         }
 
-        /* ── Separator ── */
+        /* â”€â”€ Separator â”€â”€ */
         hr.sep { border: none; border-top: 1px solid var(--border); margin: 0 12px; }
 
         body {
@@ -1032,7 +1032,7 @@ $itemListSchema = [
 <body>
 <?= adsRenderPosition($conn, 'header') ?>
 
-<!-- ═══════════════════════════════ NAVBAR ═══════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• NAVBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <nav class="navbar sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-15 py-3">
@@ -1107,7 +1107,7 @@ $itemListSchema = [
 <div id="container-4f0aa3869f7679030b2a11992f594056"></div>
 <?php endif; ?>
 
-<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <header style="position:relative;overflow:hidden;padding:80px 16px 72px;text-align:center;">
     <div class="hero-glow"></div>
     <div style="position:relative;z-index:1;max-width:720px;margin:0 auto;">
@@ -1143,7 +1143,7 @@ $itemListSchema = [
 <div id="container-4f0aa3869f7679030b2a11992f594056"></div>
 <?php endif; ?>
 
-<!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MAIN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <main id="tools" style="max-width:1280px;margin:0 auto;padding:0 20px 100px;">
     <?= adsRenderPosition($conn, 'top_content') ?>
     <div class="tool-search-wrap">
@@ -1318,7 +1318,7 @@ $itemListSchema = [
     </div>
     <?php endif; ?>
 
-    <!-- ── Why section ── -->
+    <!-- â”€â”€ Why section â”€â”€ -->
     <section style="margin-bottom:64px;">
         <div style="text-align:center;margin-bottom:40px;">
             <div class="section-label" style="justify-content:center;">Why Any2Convert</div>
@@ -1348,7 +1348,7 @@ $itemListSchema = [
         </div>
     </section>
 
-    <!-- ── Popular tools ── -->
+    <!-- â”€â”€ Popular tools â”€â”€ -->
     <section style="margin-bottom:64px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
             <h2 class="section-heading">Popular tools</h2>
@@ -1373,7 +1373,7 @@ $itemListSchema = [
         </div>
     </section>
 
-    <!-- ── Blog preview ── -->
+    <!-- â”€â”€ Blog preview â”€â”€ -->
     <section>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
             <h2 class="section-heading">Guides & Tips</h2>
@@ -1415,7 +1415,7 @@ $itemListSchema = [
 <?= adsRenderPosition($conn, 'under_content') ?>
 
 
-<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <footer style="border-top:1px solid var(--border);background:var(--bg-surface);">
     <div style="max-width:1280px;margin:0 auto;padding:48px 20px 32px;">
 
@@ -1459,10 +1459,10 @@ $itemListSchema = [
         </div>
 
         <div style="border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <span style="font-size:0.78rem;color:var(--text-muted);">© 2026 Any2Convert. All rights reserved. Made with ♥ in Karachi, Pakistan.</span>
+            <span style="font-size:0.78rem;color:var(--text-muted);">&copy; <?= date('Y') ?> Any2Convert. All rights reserved. Made with love in Karachi, Pakistan.</span>
             <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-muted);">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                All processing is 100% client-side
+                Local-first processing on your device
             </div>
         </div>
 
@@ -1470,7 +1470,7 @@ $itemListSchema = [
 </footer>
 <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
 
-<!-- ═══════════════════════════════ TOOL MODAL ═══════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TOOL MODAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="toolModal" class="modal-overlay" onclick="closeToolModal(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -1480,21 +1480,21 @@ $itemListSchema = [
                 </div>
                 <h3 id="modalTitle" style="font-size:0.95rem;font-weight:600;color:var(--text-primary);letter-spacing:-0.01em;">Tool</h3>
             </div>
-            <button onclick="closeToolModal()" class="modal-close" title="Close">✕</button>
+            <button onclick="closeToolModal()" class="modal-close" title="Close">âœ•</button>
         </div>
 
         <!-- Upload zone (shown while loading or as UI guide in modal) -->
         <div id="modalContent" style="padding:24px;">
             <div style="text-align:center;padding:40px 0;">
                 <div style="display:inline-flex;width:40px;height:40px;border-radius:50%;border:3px solid transparent;border-top-color:var(--accent);animation:spin 0.8s linear infinite;"></div>
-                <p style="margin-top:12px;font-size:0.84rem;color:var(--text-muted);">Loading tool…</p>
+                <p style="margin-top:12px;font-size:0.84rem;color:var(--text-muted);">Loading toolâ€¦</p>
             </div>
         </div>
 
     </div>
 </div>
 
-<!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SCRIPTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <script>
 const toolDependencyMap = {
     img_to_pdf: ["https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"],
@@ -1622,7 +1622,7 @@ function isKnownToolId(toolId) {
     return Object.prototype.hasOwnProperty.call(toolSlugMap, toolId);
 }
 
-// ── Theme (light default, dark optional, persisted) ──
+// â”€â”€ Theme (light default, dark optional, persisted) â”€â”€
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -1639,7 +1639,7 @@ function toggleDarkMode() {
     }
 })();
 
-// ── Stagger animation observer ──
+// â”€â”€ Stagger animation observer â”€â”€
 (function(){
     const io = new IntersectionObserver((entries) => {
         entries.forEach(e => {
@@ -1657,7 +1657,7 @@ function toggleDarkMode() {
     });
 })();
 
-// ── Execute scripts in dynamically loaded HTML ──
+// â”€â”€ Execute scripts in dynamically loaded HTML â”€â”€
 async function executeScripts(container) {
     document.querySelectorAll('script[data-dynamic-tool-script="1"]').forEach(script => script.remove());
     const scripts = Array.from(container.querySelectorAll('script'));
@@ -1683,7 +1683,7 @@ async function executeScripts(container) {
     }
 }
 
-// ── Tool modal ──
+// â”€â”€ Tool modal â”€â”€
 function openTool(toolId) {
     if (redirectToToolPage(toolId)) {
         return;
@@ -1695,7 +1695,7 @@ function openTool(toolId) {
     content.innerHTML = `
         <div style="text-align:center;padding:48px 0;">
             <div style="display:inline-flex;width:36px;height:36px;border-radius:50%;border:3px solid transparent;border-top-color:var(--accent);animation:spin 0.8s linear infinite;"></div>
-            <p style="margin-top:14px;font-size:0.82rem;color:var(--text-muted);">Loading tool…</p>
+            <p style="margin-top:14px;font-size:0.82rem;color:var(--text-muted);">Loading toolâ€¦</p>
         </div>`;
 
     modal.classList.add('flex');
@@ -1773,7 +1773,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeToolModal();
 });
 
-// ── Homepage tool search + filters ──
+// â”€â”€ Homepage tool search + filters â”€â”€
 (function() {
     const searchInput = document.getElementById('toolSearchInput');
     const filterButtons = Array.from(document.querySelectorAll('[data-tool-filter]'));
@@ -1831,3 +1831,4 @@ document.addEventListener('keydown', e => {
 
 </body>
 </html>
+

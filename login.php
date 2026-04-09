@@ -234,7 +234,7 @@ $google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" . $clien
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
                     <div class="rounded-[1.6rem] p-5" style="background:var(--soft);">
                         <p class="text-xs font-black uppercase tracking-[0.18em]" style="color:var(--muted);">Private</p>
-                        <p class="font-black mt-2">Browser-first workflow</p>
+                        <p class="font-black mt-2">Local-first workflow</p>
                     </div>
                     <div class="rounded-[1.6rem] p-5" style="background:var(--soft);">
                         <p class="text-xs font-black uppercase tracking-[0.18em]" style="color:var(--muted);">Fast</p>
