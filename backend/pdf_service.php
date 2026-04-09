@@ -242,10 +242,20 @@ $actionConfig = [
         'allowed_ext' => ['pdf'],
         'endpoint' => static fn(array $files): string => 'pdf/to/ocr',
         'extra_fields' => static function (): array {
+            $language = strtolower(trim((string) ($_POST['ocr_language'] ?? 'en')));
+            $allowedLanguages = [
+                'ar', 'ca', 'zh-cn', 'zh-tw', 'da', 'nl', 'en', 'fi', 'fa', 'de',
+                'el', 'he', 'it', 'ja', 'ko', 'lt', 'no', 'pl', 'pt', 'ro',
+                'ru', 'sl', 'es', 'sv', 'tr', 'ua', 'th'
+            ];
+            $ocrMode = strtolower(trim((string) ($_POST['ocr_mode'] ?? 'auto')));
+            $allowedModes = ['auto', 'always', 'reprocess'];
+
             return [
                 'StoreFile' => 'false',
                 'OutputType' => trim((string) ($_POST['output_type'] ?? 'pdf')),
-                'OcrLanguage' => trim((string) ($_POST['ocr_language'] ?? 'auto')),
+                'OcrLanguage' => in_array($language, $allowedLanguages, true) ? $language : 'en',
+                'OcrMode' => in_array($ocrMode, $allowedModes, true) ? $ocrMode : 'auto',
             ];
         },
     ],

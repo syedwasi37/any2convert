@@ -12535,7 +12535,8 @@ function getEditPdfSmartHTML() {
                             multiple: false,
                             extraFields: {
                                 output_type: "pdf",
-                                ocr_language: "auto"
+                                ocr_language: "en",
+                                ocr_mode: "auto"
                             },
                             downloadName: "ignored.pdf"
                         });
