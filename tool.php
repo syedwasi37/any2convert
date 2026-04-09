@@ -585,7 +585,7 @@ if (isset($_SESSION['user_name'])) {
 
 <header class="text-center pt-16 pb-10 px-6">
     <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight"><?= htmlspecialchars($tool_data['h1']) ?></h1>
-    <p class="text-lg text-slate-500 dark:text-slate-400">Fast, secure, and powered locally in your browser.</p>
+    <p class="text-lg text-slate-500 dark:text-slate-400">Fast, secure, and built for local processing on your device whenever possible.</p>
 </header>
 
 <main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
@@ -643,8 +643,8 @@ if (isset($_SESSION['user_name'])) {
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Why use Any2Convert?</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <strong class="block text-lg text-slate-900 dark:text-white mb-2">100% Privacy</strong>
-                All operations execute using Javascript and WebAssembly right on your machine. Your files are not uploaded to our cloud servers.
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Local-First Processing</strong>
+                Most file operations run directly on your device, so private documents are handled locally instead of being sent through a remote upload queue.
             </div>
             <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <strong class="block text-lg text-slate-900 dark:text-white mb-2">Unlimited Free Usage</strong>

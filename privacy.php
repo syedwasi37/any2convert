@@ -8,22 +8,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | Any2Convert</title>
-    <meta name="description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
+    <meta name="description" content="Read the Any2Convert privacy policy covering account data, local on-device file processing, analytics, advertising, and security practices.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#3B82F6">
     <link rel="canonical" href="https://any2convert.com/privacy.php">
     <meta property="og:title" content="Privacy Policy | Any2Convert">
-    <meta property="og:description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
+    <meta property="og:description" content="Read the Any2Convert privacy policy covering account data, local on-device file processing, analytics, advertising, and security practices.">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com/privacy.php">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Privacy Policy | Any2Convert">
-    <meta name="twitter:description" content="Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.">
+    <meta name="twitter:description" content="Read the Any2Convert privacy policy covering account data, local on-device file processing, analytics, advertising, and security practices.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:url" content="https://any2convert.com/privacy.php">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy | Any2Convert","url":"https://any2convert.com/privacy.php","description":"Read the Any2Convert privacy policy covering account data, browser-based file processing, analytics, advertising, and security practices.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy | Any2Convert","url":"https://any2convert.com/privacy.php","description":"Read the Any2Convert privacy policy covering account data, local on-device file processing, analytics, advertising, and security practices.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
     <script>
     tailwind.config = {
         darkMode: 'class'
@@ -73,7 +73,8 @@
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Account Information</h2>
                     <p>If you register, we store the information needed to operate your account, such as your name, email address, and password hash.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">File Processing</h2>
-                    <p>Many tools are designed to run in the browser so files can stay on your device instead of being uploaded to our servers.</p>
+                    <p>Many tools are designed to process files locally on your device, usually inside your active browser session, so the file does not need to be uploaded to our servers first.</p>
+                    <p>Some features may still rely on server-side processing or trusted third-party APIs when the task requires it, such as account features, live data, or external AI-powered capabilities. When that happens, the tool or page should make that flow clear.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Analytics and Advertising</h2>
                     <p>We may use analytics and advertising services to understand usage and support the platform. Those services may apply their own cookie and tracking policies.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Security</h2>

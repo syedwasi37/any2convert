@@ -10,7 +10,7 @@ $highlights = [
         'label' => 'No file uploads',
         'eyebrow' => 'Privacy first',
         'title' => 'Your files stay on your device from start to finish.',
-        'intro' => 'Any2Convert is designed to work in the browser, so your private documents and images are not uploaded to a remote processing queue just to finish a basic task.',
+        'intro' => 'Any2Convert is designed for local on-device processing, so your private documents and images are not uploaded to a remote processing queue just to finish a basic task.',
         'accent' => '#10b981',
         'glow' => 'rgba(16,185,129,0.16)',
         'points' => [
@@ -20,7 +20,7 @@ $highlights = [
         ],
         'details' => [
             ['title' => 'Why it matters', 'body' => 'A lot of online tools ask for uploads even when the job can be done on-device. That adds delay and forces users to trust a third party with personal files.'],
-            ['title' => 'How Any2Convert handles it', 'body' => 'We rely on browser APIs, JavaScript, and WebAssembly-based processing where possible, so the work happens where the file already is.'],
+            ['title' => 'How Any2Convert handles it', 'body' => 'We rely on local processing technologies where possible, so the work happens on the device that already has the file instead of a remote conversion queue.'],
             ['title' => 'Best for', 'body' => 'Private PDFs, resumes, contracts, statements, screenshots, and quick one-off conversions where privacy matters.'],
         ],
     ],
@@ -28,7 +28,7 @@ $highlights = [
         'label' => 'Instant processing',
         'eyebrow' => 'Speed built in',
         'title' => 'The tool starts working right away, without a remote queue slowing you down.',
-        'intro' => 'Instead of uploading, waiting, converting on a remote server, and then downloading again, many Any2Convert tools begin processing immediately inside the browser.',
+        'intro' => 'Instead of uploading, waiting, converting on a remote server, and then downloading again, many Any2Convert tools begin processing immediately on your device.',
         'accent' => '#6c63ff',
         'glow' => 'rgba(108,99,255,0.18)',
         'points' => [
@@ -61,10 +61,10 @@ $highlights = [
         ],
     ],
     'works-in-browser' => [
-        'label' => 'Works in browser',
+        'label' => 'Runs on your device',
         'eyebrow' => 'No app required',
         'title' => 'Open the page, use the tool, and finish the job without installing anything.',
-        'intro' => 'The site is built to be usable right away in a normal browser session, whether someone is on a work laptop, a shared machine, or a phone.',
+        'intro' => 'The site is built to be usable right away on the device you already have in front of you, whether that is a work laptop, a shared machine, or a phone.',
         'accent' => '#3b82f6',
         'glow' => 'rgba(59,130,246,0.18)',
         'points' => [
@@ -73,7 +73,7 @@ $highlights = [
             'Great for fast tasks when users do not want extra setup.',
         ],
         'details' => [
-            ['title' => 'Why browser-first helps', 'body' => 'Users can go from search result to completed task in one flow instead of stopping to download software or register for access.'],
+            ['title' => 'Why local access helps', 'body' => 'Users can go from search result to completed task in one flow instead of stopping to download software or hand a basic conversion off to a remote queue.'],
             ['title' => 'Who benefits', 'body' => 'Students, office users, travelers, and anyone working from a locked-down machine or temporary device.'],
             ['title' => 'What it enables', 'body' => 'Faster discovery, lower friction, and more repeat usage because the site is always one tab away.'],
         ],
@@ -159,8 +159,8 @@ if ($data === null) {
 
 $pageTitle = $data ? ($data['label'] . ' | Any2Convert') : 'Page not found | Any2Convert';
 $pageDescription = $data
-    ? trim(($data['intro'] ?? '') . ' Learn more about how Any2Convert approaches privacy, speed, and browser-based usability.')
-    : 'Learn more about Any2Convert features, privacy, speed, and browser-based workflows.';
+    ? trim(($data['intro'] ?? '') . ' Learn more about how Any2Convert approaches privacy, speed, and local on-device usability.')
+    : 'Learn more about Any2Convert features, privacy, speed, and local on-device workflows.';
 $canonicalUrl = $data
     ? 'https://any2convert.com/highlights.php?topic=' . rawurlencode($topic)
     : 'https://any2convert.com/highlights.php';

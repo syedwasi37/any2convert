@@ -8,22 +8,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | Any2Convert</title>
-    <meta name="description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first browser tools, and how the product is evolving.">
+    <meta name="description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first on-device tools, and how the product is evolving.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#3B82F6">
     <link rel="canonical" href="https://any2convert.com/about.php">
     <meta property="og:title" content="About Us | Any2Convert">
-    <meta property="og:description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first browser tools, and how the product is evolving.">
+    <meta property="og:description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first on-device tools, and how the product is evolving.">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com/about.php">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="About Us | Any2Convert">
-    <meta name="twitter:description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first browser tools, and how the product is evolving.">
+    <meta name="twitter:description" content="Learn what Any2Convert is building, why the platform focuses on privacy-first on-device tools, and how the product is evolving.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:url" content="https://any2convert.com/about.php">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Any2Convert","url":"https://any2convert.com/about.php","description":"Learn what Any2Convert is building and why the platform focuses on privacy-first browser tools.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Any2Convert","url":"https://any2convert.com/about.php","description":"Learn what Any2Convert is building and why the platform focuses on privacy-first on-device tools.","isPartOf":{"@type":"WebSite","name":"Any2Convert","url":"https://any2convert.com/"}}</script>
     <script>
     tailwind.config = {
         darkMode: 'class'
@@ -71,9 +71,9 @@
                 <div class="space-y-6 text-slate-600 leading-relaxed font-medium mt-8">
                     <p>Any2Convert is designed to make file conversion fast, practical, and easier to trust. We focus on tools that feel simple to use without looking basic.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Why We Built It</h2>
-                    <p>Too many converter sites feel cluttered, slow, or unclear about privacy. Our goal is to build a cleaner experience with tools that work quickly and stay straightforward.</p>
+                    <p>Too many converter sites feel cluttered, slow, or unclear about privacy. Our goal is to build a cleaner experience with tools that work quickly, feel modern, and stay straightforward.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">How We Think</h2>
-                    <p>We care about privacy-first browser workflows, lightweight interfaces, and features that are actually useful for everyday work.</p>
+                    <p>We care about privacy-first local workflows, lightweight interfaces, and features that are actually useful for everyday work. Where possible, tools process files directly on your device instead of sending them away first.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Where We Are Going</h2>
                     <p>Any2Convert will keep growing as an all-in-one workspace for PDF, image, and utility tools with a better user experience than typical converter sites.</p>
                 </div>

@@ -230,7 +230,7 @@ function any2convertRenderFooter(): void
                         </div>
                         <span style="font-weight:700;font-size:0.95rem;color:var(--text-main, var(--text-primary, #111118));">Any2Convert<span style="color:var(--accent, #6c63ff);">.</span></span>
                     </div>
-                    <p style="font-size:0.8rem;color:var(--text-muted, var(--text-soft, #626280));line-height:1.7;max-width:220px;">Free online document tools built around your privacy. No uploads, no tracking.</p>
+                    <p style="font-size:0.8rem;color:var(--text-muted, var(--text-soft, #626280));line-height:1.7;max-width:220px;">Free online tools with local on-device processing, cleaner workflows, and privacy-first defaults.</p>
                 </div>
                 <div>
                     <div class="site-footer-heading">Tools</div>
@@ -262,7 +262,7 @@ function any2convertRenderFooter(): void
                 <span style="font-size:0.78rem;color:var(--text-muted, var(--text-soft, #626280));">&copy; <?= date('Y') ?> Any2Convert. All rights reserved. Made with love in Karachi, Pakistan.</span>
                 <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-muted, var(--text-soft, #626280));">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green, #10b981)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    All processing is 100% client-side
+                    Local-first processing on your device
                 </div>
             </div>
         </div>

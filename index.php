@@ -12,7 +12,7 @@ $trustHighlights = [
     ['slug' => 'no-file-uploads', 'label' => 'No file uploads', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'],
     ['slug' => 'instant-processing', 'label' => 'Instant processing', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'],
     ['slug' => 'free-forever', 'label' => 'Free forever', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'],
-    ['slug' => 'works-in-browser', 'label' => 'Works in browser', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'],
+    ['slug' => 'works-in-browser', 'label' => 'Runs on your device', 'icon' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'],
 ];
 
 // Lookup table for slugs
@@ -237,7 +237,7 @@ $websiteSchema = [
     '@type' => 'WebSite',
     'name' => 'Any2Convert',
     'url' => $siteUrl . '/',
-    'description' => 'Free online PDF, image, calculator, converter, OCR, and utility tools with privacy-first browser processing.',
+    'description' => 'Free online PDF, image, calculator, converter, OCR, and utility tools with privacy-first local processing on your device.',
     'inLanguage' => 'en',
     'potentialAction' => [
         '@type' => 'SearchAction',
@@ -275,7 +275,7 @@ $itemListSchema = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Any2Convert | Free All-in-One PDF & Document Converter Suite</title>
     <link rel="icon" type="image/png" href="mylogo.png">
-    <meta name="description" content="Free online PDF tools: Convert images to PDF, merge, compress, protect PDFs. Also includes OCR, JSON to CSV, QR codes. 100% client-side processing - your files never leave your device.">
+    <meta name="description" content="Free online PDF tools: Convert images to PDF, merge, compress, protect PDFs. Also includes OCR, JSON to CSV, QR codes. Local-first processing keeps many files on your device.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#3B82F6">
     <meta name="keywords" content="pdf to word, image to pdf, pdf converter, merge pdf, compress pdf, ocr tool, json to csv, free online tools">
@@ -291,7 +291,7 @@ $itemListSchema = [
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Any2Convert - Free PDF & Document Tools">
-    <meta name="twitter:description" content="Fast online PDF and image tools with client-side privacy.">
+    <meta name="twitter:description" content="Fast online PDF and image tools with local on-device privacy.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:url" content="https://any2convert.com/">
 
@@ -1114,7 +1114,7 @@ $itemListSchema = [
 
         <div class="hero-badge">
             <span></span>
-            All processing is 100% private — files stay on your device
+            Local-first processing keeps many file tasks on your device
         </div>
 
         <h1 class="hero-title">
@@ -1327,10 +1327,10 @@ $itemListSchema = [
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <?php
             $features = [
-                ['slug'=>'files-never-leave-your-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 'color'=>'var(--green)', 'bg'=>'rgba(16,185,129,0.1)', 'title'=>'Files never leave your device', 'desc'=>'All processing runs directly in your browser using WebAssembly and JavaScript.'],
+                ['slug'=>'files-never-leave-your-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 'color'=>'var(--green)', 'bg'=>'rgba(16,185,129,0.1)', 'title'=>'Files stay on your device', 'desc'=>'Many tools process files locally on your device instead of pushing them through a remote upload flow.'],
                 ['slug'=>'instant-results', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'color'=>'var(--accent)', 'bg'=>'rgba(108,99,255,0.1)', 'title'=>'Instant results', 'desc'=>'No server round-trips. Conversions happen in milliseconds, regardless of file size.'],
                 ['slug'=>'always-free-no-watermarks', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', 'color'=>'var(--amber)', 'bg'=>'rgba(245,158,11,0.1)', 'title'=>'Always free, no watermarks', 'desc'=>'No hidden fees, no paywalls, no branding added to your files.'],
-                ['slug'=>'works-on-any-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>', 'color'=>'var(--blue)', 'bg'=>'rgba(59,130,246,0.1)', 'title'=>'Works on any device', 'desc'=>'Desktop, tablet, or phone - Any2Convert works everywhere, no app needed.'],
+                ['slug'=>'works-on-any-device', 'icon'=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>', 'color'=>'var(--blue)', 'bg'=>'rgba(59,130,246,0.1)', 'title'=>'Runs on the device you already have', 'desc'=>'Desktop, tablet, or phone - open the page and get to work without installing anything first.'],
             ];
             foreach($features as $f):
                 $featureSlug = $f['slug'] ?? 'works-on-any-device'; ?>
@@ -1427,7 +1427,7 @@ $itemListSchema = [
                     </div>
                     <span style="font-weight:700;font-size:0.95rem;color:var(--text-primary);">Any2Convert</span>
                 </div>
-                <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.7;max-width:220px;">Free online document tools built around your privacy. No uploads, no tracking.</p>
+                <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.7;max-width:220px;">Free online tools with local on-device processing, cleaner workflows, and privacy-first defaults.</p>
             </div>
 
             <div>
