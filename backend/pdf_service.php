@@ -82,6 +82,297 @@ function pdfServiceDetectExtension(string $fileName): string
     return strtolower((string) pathinfo($fileName, PATHINFO_EXTENSION));
 }
 
+function pdfServiceFindExecutable(array $candidates): ?string
+{
+    $pathEntries = array_filter(array_map('trim', explode(PATH_SEPARATOR, (string) getenv('PATH'))));
+    $pathExt = array_filter(array_map('trim', explode(PATH_SEPARATOR, (string) getenv('PATHEXT') ?: '.EXE;.BAT;.CMD')));
+
+    foreach ($candidates as $candidate) {
+        if ($candidate === '') {
+            continue;
+        }
+
+        if (str_contains($candidate, DIRECTORY_SEPARATOR) || preg_match('/^[A-Za-z]:\\\\/', $candidate)) {
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+            continue;
+        }
+
+        foreach ($pathEntries as $dir) {
+            $base = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $candidate;
+            if (is_file($base)) {
+                return $base;
+            }
+            foreach ($pathExt as $ext) {
+                $withExt = $base . $ext;
+                if (is_file($withExt)) {
+                    return $withExt;
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+function pdfServiceTempDir(): string
+{
+    $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'any2convert_pdf_local';
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0777, true);
+    }
+    return $dir;
+}
+
+function pdfServiceCreateTempFile(string $suffix): string
+{
+    $base = tempnam(pdfServiceTempDir(), 'a2c_');
+    if ($base === false) {
+        pdfServiceJsonError('Could not create a temporary working file.', 500);
+    }
+
+    $target = $base . $suffix;
+    @rename($base, $target);
+    return $target;
+}
+
+function pdfServiceStoreUpload(array $file): string
+{
+    $extension = pdfServiceDetectExtension($file['name'] ?? '');
+    $suffix = $extension !== '' ? '.' . $extension : '.bin';
+    $target = pdfServiceCreateTempFile($suffix);
+    if (!@copy($file['tmp_name'], $target)) {
+        pdfServiceJsonError('Uploaded file could not be staged for processing.', 500);
+    }
+    return $target;
+}
+
+function pdfServiceRunCommand(array $parts): array
+{
+    $escaped = array_map(static fn(string $part): string => escapeshellarg($part), $parts);
+    $command = implode(' ', $escaped) . ' 2>&1';
+    $output = [];
+    $exitCode = 0;
+    exec($command, $output, $exitCode);
+    return [
+        'exit_code' => $exitCode,
+        'output' => trim(implode(PHP_EOL, $output)),
+    ];
+}
+
+function pdfServiceLocalCapabilities(): array
+{
+    static $capabilities = null;
+    if ($capabilities !== null) {
+        return $capabilities;
+    }
+
+    $qpdf = pdfServiceFindExecutable(['qpdf', 'C:\\Program Files\\qpdf\\bin\\qpdf.exe']);
+    $ghostscript = pdfServiceFindExecutable([
+        'gswin64c',
+        'gs',
+        'C:\\Program Files\\gs\\gs10.05.0\\bin\\gswin64c.exe',
+        'C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe',
+    ]);
+    $tesseract = pdfServiceFindExecutable(['tesseract', 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe']);
+    $libreoffice = pdfServiceFindExecutable([
+        'soffice',
+        'libreoffice',
+        'C:\\Program Files\\LibreOffice\\program\\soffice.exe',
+    ]);
+
+    $capabilities = [
+        'binaries' => [
+            'qpdf' => $qpdf,
+            'ghostscript' => $ghostscript,
+            'tesseract' => $tesseract,
+            'libreoffice' => $libreoffice,
+        ],
+        'actions' => [
+            'merge_pdf' => $qpdf !== null,
+            'protect_pdf' => $qpdf !== null,
+            'unlock_pdf' => $qpdf !== null,
+            'compress_pdf' => $ghostscript !== null,
+            'ocr_pdf' => $tesseract !== null,
+            'word_to_pdf' => $libreoffice !== null,
+            'pdf_to_word' => false,
+            'pdf_to_excel' => false,
+            'pdf_to_ppt' => false,
+            'redact_pdf' => false,
+            'add_watermark' => false,
+            'sign_pdf' => false,
+        ],
+    ];
+
+    return $capabilities;
+}
+
+function pdfServiceLocalActionSupported(string $action): bool
+{
+    $capabilities = pdfServiceLocalCapabilities();
+    return !empty($capabilities['actions'][$action]);
+}
+
+function pdfServiceLocalActionReason(string $action): string
+{
+    $capabilities = pdfServiceLocalCapabilities();
+    $missing = [];
+    switch ($action) {
+        case 'merge_pdf':
+        case 'protect_pdf':
+        case 'unlock_pdf':
+            if (empty($capabilities['binaries']['qpdf'])) {
+                $missing[] = 'qpdf';
+            }
+            break;
+        case 'compress_pdf':
+            if (empty($capabilities['binaries']['ghostscript'])) {
+                $missing[] = 'ghostscript';
+            }
+            break;
+        case 'ocr_pdf':
+            if (empty($capabilities['binaries']['tesseract'])) {
+                $missing[] = 'tesseract';
+            }
+            break;
+        case 'word_to_pdf':
+            if (empty($capabilities['binaries']['libreoffice'])) {
+                $missing[] = 'libreoffice';
+            }
+            break;
+    }
+
+    if ($missing) {
+        return 'Local PDF engine is not ready for this tool yet. Missing binary: ' . implode(', ', $missing) . '.';
+    }
+
+    return 'Local PDF engine does not support this action yet.';
+}
+
+function pdfServiceEmitFile(string $downloadName, string $contentType, string $binaryBody, string $engine): never
+{
+    header('Content-Type: ' . $contentType);
+    header('Content-Length: ' . strlen($binaryBody));
+    header('Content-Disposition: attachment; filename="' . rawurlencode($downloadName) . '"; filename*=UTF-8\'\'' . rawurlencode($downloadName));
+    header('X-File-Name: ' . rawurlencode($downloadName));
+    header('X-Tool-Engine: ' . $engine);
+    echo $binaryBody;
+    exit;
+}
+
+function pdfServiceHandleLocalAction(string $action, array $files): never
+{
+    $downloadName = pdfServiceDownloadName($action, $files);
+    $capabilities = pdfServiceLocalCapabilities();
+
+    switch ($action) {
+        case 'merge_pdf': {
+            $qpdf = $capabilities['binaries']['qpdf'] ?? null;
+            if (!$qpdf) {
+                pdfServiceJsonError(pdfServiceLocalActionReason($action), 503);
+            }
+
+            $localFiles = array_map('pdfServiceStoreUpload', $files);
+            $output = pdfServiceCreateTempFile('.pdf');
+            $args = [$qpdf, '--empty', '--pages'];
+            foreach ($localFiles as $localFile) {
+                $args[] = $localFile;
+            }
+            $args[] = '--';
+            $args[] = $output;
+
+            $result = pdfServiceRunCommand($args);
+            foreach ($localFiles as $localFile) {
+                @unlink($localFile);
+            }
+            if ($result['exit_code'] !== 0 || !is_file($output)) {
+                @unlink($output);
+                pdfServiceJsonError('Local merge failed. ' . ($result['output'] ?: 'qpdf did not produce an output file.'), 502);
+            }
+
+            $binary = (string) file_get_contents($output);
+            @unlink($output);
+            pdfServiceEmitFile($downloadName, 'application/pdf', $binary, 'local-qpdf');
+        }
+        case 'protect_pdf': {
+            $qpdf = $capabilities['binaries']['qpdf'] ?? null;
+            if (!$qpdf) {
+                pdfServiceJsonError(pdfServiceLocalActionReason($action), 503);
+            }
+
+            $userPassword = trim((string) ($_POST['user_password'] ?? ''));
+            $ownerPassword = trim((string) ($_POST['owner_password'] ?? $userPassword));
+            if ($userPassword === '') {
+                pdfServiceJsonError('Please provide a PDF password.');
+            }
+
+            $input = pdfServiceStoreUpload($files[0]);
+            $output = pdfServiceCreateTempFile('.pdf');
+            $printSetting = !empty($_POST['allow_print']) ? 'full' : 'none';
+            $extractSetting = !empty($_POST['allow_copy']) ? 'y' : 'n';
+            $result = pdfServiceRunCommand([
+                $qpdf,
+                '--encrypt',
+                $userPassword,
+                $ownerPassword !== '' ? $ownerPassword : $userPassword,
+                '256',
+                '--print=' . $printSetting,
+                '--extract=' . $extractSetting,
+                '--',
+                $input,
+                $output,
+            ]);
+
+            @unlink($input);
+            if ($result['exit_code'] !== 0 || !is_file($output)) {
+                @unlink($output);
+                pdfServiceJsonError('Local PDF protection failed. ' . ($result['output'] ?: 'qpdf did not produce an output file.'), 502);
+            }
+
+            $binary = (string) file_get_contents($output);
+            @unlink($output);
+            pdfServiceEmitFile($downloadName, 'application/pdf', $binary, 'local-qpdf');
+        }
+        case 'unlock_pdf': {
+            $qpdf = $capabilities['binaries']['qpdf'] ?? null;
+            if (!$qpdf) {
+                pdfServiceJsonError(pdfServiceLocalActionReason($action), 503);
+            }
+
+            $password = trim((string) ($_POST['password'] ?? ''));
+            if ($password === '') {
+                pdfServiceJsonError('Please enter the current PDF password.');
+            }
+
+            $input = pdfServiceStoreUpload($files[0]);
+            $output = pdfServiceCreateTempFile('.pdf');
+            $result = pdfServiceRunCommand([
+                $qpdf,
+                '--password=' . $password,
+                '--decrypt',
+                '--',
+                $input,
+                $output,
+            ]);
+
+            @unlink($input);
+            if ($result['exit_code'] !== 0 || !is_file($output)) {
+                @unlink($output);
+                pdfServiceJsonError('Local PDF unlock failed. ' . ($result['output'] ?: 'qpdf did not produce an output file.'), 502);
+            }
+
+            $binary = (string) file_get_contents($output);
+            @unlink($output);
+            pdfServiceEmitFile($downloadName, 'application/pdf', $binary, 'local-qpdf');
+        }
+        default:
+            pdfServiceJsonError(pdfServiceLocalActionReason($action), 503, [
+                'engine' => 'local',
+            ]);
+    }
+}
+
 function pdfServiceDownloadName(string $action, array $files): string
 {
     $firstName = $files[0]['name'] ?? 'converted';
@@ -106,17 +397,6 @@ function pdfServiceDownloadName(string $action, array $files): string
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     pdfServiceJsonError('Only POST requests are allowed.', 405);
-}
-
-$convertApiSecret = envValue('CONVERTAPI_SECRET', '');
-if ($convertApiSecret === '') {
-    $convertApiSecret = envValue('CONVERTAPI_TOKEN', '');
-}
-if ($convertApiSecret === '') {
-    $convertApiSecret = 'qSzcB1SYa1HFNleMxZtvRNCWWEGjlnBR';
-}
-if ($convertApiSecret === '') {
-    pdfServiceJsonError('Server-side PDF processing is not configured yet. Add CONVERTAPI_SECRET to .env.', 503);
 }
 
 $action = trim((string) ($_POST['action'] ?? ''));
@@ -388,6 +668,26 @@ foreach ($files as $file) {
     if (!is_uploaded_file($file['tmp_name'])) {
         pdfServiceJsonError('Uploaded file could not be verified.');
     }
+}
+
+$pdfEngine = strtolower((string) envValue('PDF_SERVICE_ENGINE', 'auto'));
+if (!in_array($pdfEngine, ['auto', 'convertapi', 'local'], true)) {
+    $pdfEngine = 'auto';
+}
+
+if ($pdfEngine === 'local' || ($pdfEngine === 'auto' && pdfServiceLocalActionSupported($action))) {
+    pdfServiceHandleLocalAction($action, $files);
+}
+
+$convertApiSecret = envValue('CONVERTAPI_SECRET', '');
+if ($convertApiSecret === '') {
+    $convertApiSecret = envValue('CONVERTAPI_TOKEN', '');
+}
+if ($convertApiSecret === '') {
+    $convertApiSecret = 'qSzcB1SYa1HFNleMxZtvRNCWWEGjlnBR';
+}
+if ($convertApiSecret === '') {
+    pdfServiceJsonError('Server-side PDF processing is not configured yet. Add CONVERTAPI_SECRET to .env.', 503);
 }
 
 $endpoint = ($config['endpoint'])($files);
