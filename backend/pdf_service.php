@@ -168,12 +168,20 @@ function pdfServiceLocalCapabilities(): array
         return $capabilities;
     }
 
-    $qpdf = pdfServiceFindExecutable(['qpdf', 'C:\\Program Files\\qpdf\\bin\\qpdf.exe']);
+    $qpdf = pdfServiceFindExecutable([
+        'qpdf',
+        'C:\\Program Files\\qpdf\\bin\\qpdf.exe',
+        'C:\\Program Files\\qpdf 12.3.2\\bin\\qpdf.exe',
+    ]);
     $ghostscript = pdfServiceFindExecutable([
         'gswin64c',
         'gs',
         'C:\\Program Files\\gs\\gs10.05.0\\bin\\gswin64c.exe',
         'C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe',
+    ]);
+    $mutool = pdfServiceFindExecutable([
+        'mutool',
+        'C:\\Users\\syedw\\AppData\\Local\\Microsoft\\WinGet\\Packages\\ArtifexSoftware.mutool_Microsoft.Winget.Source_8wekyb3d8bbwe\\mupdf-1.23.0-windows\\mutool.exe',
     ]);
     $tesseract = pdfServiceFindExecutable(['tesseract', 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe']);
     $libreoffice = pdfServiceFindExecutable([
@@ -186,6 +194,7 @@ function pdfServiceLocalCapabilities(): array
         'binaries' => [
             'qpdf' => $qpdf,
             'ghostscript' => $ghostscript,
+            'mutool' => $mutool,
             'tesseract' => $tesseract,
             'libreoffice' => $libreoffice,
         ],
@@ -193,7 +202,7 @@ function pdfServiceLocalCapabilities(): array
             'merge_pdf' => $qpdf !== null,
             'protect_pdf' => $qpdf !== null,
             'unlock_pdf' => $qpdf !== null,
-            'compress_pdf' => $ghostscript !== null,
+            'compress_pdf' => $ghostscript !== null || $mutool !== null,
             'ocr_pdf' => $tesseract !== null,
             'word_to_pdf' => $libreoffice !== null,
             'pdf_to_word' => false,
@@ -227,8 +236,8 @@ function pdfServiceLocalActionReason(string $action): string
             }
             break;
         case 'compress_pdf':
-            if (empty($capabilities['binaries']['ghostscript'])) {
-                $missing[] = 'ghostscript';
+            if (empty($capabilities['binaries']['ghostscript']) && empty($capabilities['binaries']['mutool'])) {
+                $missing[] = 'ghostscript or mutool';
             }
             break;
         case 'ocr_pdf':
