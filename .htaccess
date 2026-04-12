@@ -4,6 +4,15 @@ RewriteEngine On
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 </IfModule>
 
+RewriteCond %{THE_REQUEST} \s/+index\.php(?:[\s?]|$) [NC]
+RewriteRule ^index\.php$ / [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+blog/index\.php(?:[\s?]|$) [NC]
+RewriteRule ^blog/index\.php$ /blog/ [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+tool\.php\?slug=([a-zA-Z0-9-]+) [NC]
+RewriteRule ^tool\.php$ /%1? [R=301,L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9-]+)/?$ tool.php?slug=$1 [L,QSA]

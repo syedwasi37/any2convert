@@ -1261,7 +1261,7 @@ $itemListSchema = [
             ?>
             <?php $tool_slug = $tool_slugs[$tool['id']] ?? $tool['id']; ?>
             <a
-                href="tool.php?slug=<?= urlencode($tool_slug) ?>"
+                href="/<?= htmlspecialchars($tool_slug) ?>"
                 class="tool-card stagger-in"
                 data-tool-id="<?= htmlspecialchars($tool['id']) ?>"
                 data-tool-name="<?= htmlspecialchars(strtolower($tool['name'])) ?>"
@@ -1368,7 +1368,7 @@ $itemListSchema = [
             foreach($popular as [$id,$label]): 
                 $slug = $tool_slugs[$id] ?? $id;
             ?>
-            <a href="tool.php?slug=<?= urlencode($slug) ?>" class="chip"><?= $label ?></a>
+            <a href="/<?= htmlspecialchars($slug) ?>" class="chip"><?= $label ?></a>
             <?php endforeach; ?>
         </div>
     </section>
@@ -1433,10 +1433,10 @@ $itemListSchema = [
             <div>
                 <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">Tools</div>
                 <div style="display:flex;flex-direction:column;gap:9px;">
-                    <a href="tool.php?slug=image-to-pdf" class="footer-link">Image to PDF</a>
-                    <a href="tool.php?slug=pdf-to-word" class="footer-link">PDF to Word</a>
-                    <a href="tool.php?slug=merge-pdf" class="footer-link">Merge PDF</a>
-                    <a href="tool.php?slug=ocr-image-to-text" class="footer-link">OCR Tool</a>
+                    <a href="/image-to-pdf" class="footer-link">Image to PDF</a>
+                    <a href="/pdf-to-word" class="footer-link">PDF to Word</a>
+                    <a href="/merge-pdf" class="footer-link">Merge PDF</a>
+                    <a href="/ocr-image-to-text" class="footer-link">OCR Tool</a>
                 </div>
             </div>
 
@@ -1614,7 +1614,7 @@ const toolSlugMap = {
 function redirectToToolPage(toolId) {
     const slug = toolSlugMap[toolId];
     if (!slug) return false;
-    window.location.href = `tool.php?slug=${encodeURIComponent(slug)}`;
+    window.location.href = `/${encodeURIComponent(slug)}`;
     return true;
 }
 
