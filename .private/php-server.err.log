@@ -1,0 +1,6 @@
+[Sun Apr 12 23:43:12 2026] PHP 8.0.30 Development Server (http://127.0.0.1:8123) started
+[Sun Apr 12 23:43:12 2026] 127.0.0.1:55341 Accepted
+[Sun Apr 12 23:43:12 2026] PHP Warning:  session_start(): open(C:\xampp\tmp\sess_dbop9hstlme31cd46pl1oi86tf, O_RDWR) failed: Permission denied (13) in C:\any2convert\index.php on line 2
+[Sun Apr 12 23:43:12 2026] PHP Warning:  session_start(): Failed to read session data: files (path: C:\xampp\tmp) in C:\any2convert\index.php on line 2
+[Sun Apr 12 23:43:12 2026] 127.0.0.1:55341 [500]: GET /index.php
+[Sun Apr 12 23:43:12 2026] 127.0.0.1:55341 Closing

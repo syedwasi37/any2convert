@@ -67,6 +67,39 @@ $toolSections = $tool_data['sections'] ?? [];
 $toolSteps = $tool_data['steps'] ?? [];
 $toolBestFor = $tool_data['best_for'] ?? [];
 
+function stripEmptyStructuredData($value) {
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $clean = [];
+    foreach ($value as $key => $item) {
+        $item = stripEmptyStructuredData($item);
+        if ($item === null || $item === '' || $item === []) {
+            continue;
+        }
+        $clean[$key] = $item;
+    }
+
+    return $clean;
+}
+
+function sanitizeSoftwareApplicationSchema(array $schema): array {
+    // Google flags self-authored or invalid rating/review markup on tool pages.
+    unset(
+        $schema['aggregateRating'],
+        $schema['review'],
+        $schema['reviews'],
+        $schema['ratingValue'],
+        $schema['ratingCount'],
+        $schema['reviewCount'],
+        $schema['bestRating'],
+        $schema['worstRating']
+    );
+
+    return stripEmptyStructuredData($schema);
+}
+
 $webPageSchema = [
     '@context' => 'https://schema.org',
     '@type' => 'WebPage',
@@ -98,6 +131,7 @@ $softwareSchema = [
         'priceCurrency' => 'USD',
     ],
 ];
+$softwareSchema = sanitizeSoftwareApplicationSchema($softwareSchema);
 $breadcrumbSchema = [
     '@context' => 'https://schema.org',
     '@type' => 'BreadcrumbList',
