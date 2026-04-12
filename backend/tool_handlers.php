@@ -276,30 +276,30 @@ function any2convertRenderServerPdfCard(array $config): string
 
     return '
     <div class="space-y-6">
-        <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
-            <div class="flex items-start justify-between gap-4 mb-6">
+        <div class="server-pdf-card">
+            <div class="server-pdf-head">
                 <div>
-                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">PDF conversion</p>
-                    <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">' . $title . '</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">' . $heading . '</p>
+                    <p class="server-pdf-eyebrow">PDF conversion</p>
+                    <h3 class="server-pdf-title">' . $title . '</h3>
+                    <p class="server-pdf-copy">' . $heading . '</p>
                 </div>
-                <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                <div class="server-pdf-icon hidden sm:flex">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
                 </div>
             </div>
-            <label class="block rounded-[1.8rem] border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white/85 dark:bg-slate-950/70 px-6 py-8 text-center cursor-pointer hover:border-blue-500 transition">
+            <label class="server-pdf-dropzone">
                 <input type="file" id="' . $toolId . 'Input" class="hidden" accept="' . $accept . '"' . $multipleAttr . '>
                 <div class="mb-4 flex justify-center text-blue-600 dark:text-blue-300">
                     <svg width="72" height="56" viewBox="0 0 72 56" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10h18l6 6v24a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z"></path><path d="M28 10v9h9"></path><path d="M44 28h18"></path><path d="m55 19 9 9-9 9"></path></svg>
                 </div>
-                <div class="text-lg font-semibold text-gray-900 dark:text-white">' . $subheading . '</div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Choose a file and start the conversion.</p>
+                <div class="server-pdf-drop-title">' . $subheading . '</div>
+                <p class="server-pdf-drop-copy">Choose a file and start the conversion.</p>
             </label>
-            <div id="' . $toolId . 'Preview" class="hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/70 px-4 py-3 text-sm text-slate-600 dark:text-slate-300"></div>
+            <div id="' . $toolId . 'Preview" class="server-pdf-preview hidden"></div>
             ' . $extraFieldsHtml . '
-            ' . ($panelNote !== '' ? '<div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">' . $panelNote . '</div>' : '') . '
+            ' . ($panelNote !== '' ? '<div class="server-pdf-note">' . $panelNote . '</div>' : '') . '
             <button id="' . $toolId . 'Submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">' . $buttonLabel . '</button>
-            <div id="' . $toolId . 'Status" class="text-sm text-gray-500 dark:text-gray-400 text-center">' . $primaryStatus . '</div>
+            <div id="' . $toolId . 'Status" class="server-pdf-status">' . $primaryStatus . '</div>
         </div>
     </div>
     ' . any2convertPdfServiceScript() . '

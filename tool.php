@@ -653,6 +653,129 @@ $faqSchema = [
             border: 1px solid rgba(148,163,184,0.18);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
         }
+        .server-pdf-card {
+            border-radius: 30px;
+            border: 1px solid rgba(186,205,255,0.42);
+            background:
+                radial-gradient(circle at top right, rgba(108,99,255,0.1), transparent 22%),
+                linear-gradient(180deg, rgba(255,255,255,0.98), rgba(243,247,255,0.94));
+            padding: 24px;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.78);
+        }
+        html.dark .server-pdf-card {
+            border-color: rgba(148,163,184,0.18);
+            background:
+                radial-gradient(circle at top right, rgba(108,99,255,0.12), transparent 22%),
+                linear-gradient(180deg, rgba(16,20,36,0.98), rgba(10,14,28,0.96));
+            box-shadow: 0 28px 64px rgba(2,6,23,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .server-pdf-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+        .server-pdf-eyebrow {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #2563eb;
+            margin: 0;
+        }
+        .server-pdf-title {
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            color: var(--text-primary);
+        }
+        .server-pdf-copy {
+            margin-top: 12px;
+            max-width: 42rem;
+            font-size: 0.98rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        .server-pdf-icon {
+            align-items: center;
+            justify-content: center;
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(59,130,246,0.12));
+            color: #2563eb;
+            border: 1px solid rgba(186,205,255,0.4);
+        }
+        html.dark .server-pdf-icon {
+            color: #bfdbfe;
+            background: linear-gradient(135deg, rgba(108,99,255,0.16), rgba(59,130,246,0.14));
+            border-color: rgba(148,163,184,0.18);
+        }
+        .server-pdf-dropzone {
+            display: block;
+            border-radius: 26px;
+            border: 2px dashed rgba(186,205,255,0.55);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.94));
+            padding: 32px 22px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.22s cubic-bezier(.22,1,.36,1), border-color 0.22s ease, box-shadow 0.22s ease;
+        }
+        .server-pdf-dropzone:hover {
+            transform: translateY(-2px);
+            border-color: rgba(96,165,250,0.7);
+            box-shadow: 0 18px 42px rgba(15,23,42,0.06);
+        }
+        html.dark .server-pdf-dropzone {
+            border-color: rgba(148,163,184,0.2);
+            background: linear-gradient(180deg, rgba(14,18,33,0.98), rgba(9,13,25,0.96));
+        }
+        .server-pdf-drop-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .server-pdf-drop-copy {
+            margin-top: 8px;
+            font-size: 0.94rem;
+            color: var(--text-secondary);
+        }
+        .server-pdf-preview {
+            margin-top: 16px;
+            border-radius: 22px;
+            border: 1px solid rgba(186,205,255,0.42);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.94));
+            padding: 12px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.76), 0 14px 30px rgba(15,23,42,0.05);
+        }
+        html.dark .server-pdf-preview {
+            border-color: rgba(148,163,184,0.18);
+            background: linear-gradient(180deg, rgba(13,18,32,0.98), rgba(9,13,25,0.96));
+        }
+        .server-pdf-note {
+            margin-top: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(186,205,255,0.42);
+            background: linear-gradient(180deg, rgba(244,247,255,0.96), rgba(235,242,255,0.92));
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        html.dark .server-pdf-note {
+            border-color: rgba(148,163,184,0.18);
+            background: linear-gradient(180deg, rgba(19,24,41,0.96), rgba(12,16,30,0.94));
+            color: #c7d2e6;
+        }
+        .server-pdf-status {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
         .tool-container .uploaded-file-card {
             display: flex;
             align-items: center;
@@ -777,8 +900,8 @@ if (isset($_SESSION['user_name'])) {
 ]); ?>
 
 <header class="text-center pt-16 pb-10 px-6">
-    <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight"><?= htmlspecialchars($tool_data['h1']) ?></h1>
-    <p class="text-lg text-slate-500 dark:text-slate-400">Clear steps, practical output, and tool-specific guidance for real file work.</p>
+    <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary);"><?= htmlspecialchars($tool_data['h1']) ?></h1>
+    <p class="text-lg" style="color: var(--text-secondary);">Clear steps, practical output, and tool-specific guidance for real file work.</p>
 </header>
 
 <main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
