@@ -67,10 +67,6 @@ $toolSections = $tool_data['sections'] ?? [];
 $toolSteps = $tool_data['steps'] ?? [];
 $toolBestFor = $tool_data['best_for'] ?? [];
 
-// Generate dynamic keywords for SEO from H1 and Title
-$clean_h1 = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($tool_data['h1'] . ' ' . $tool_data['title']));
-$dynamic_keywords = implode(', ', array_unique(array_filter(explode(' ', $clean_h1), fn($w) => strlen($w) > 2))) . ', free, online, tool, any2convert';
-
 $webPageSchema = [
     '@context' => 'https://schema.org',
     '@type' => 'WebPage',
@@ -146,7 +142,6 @@ $faqSchema = [
     <title><?= htmlspecialchars($toolTitle) ?></title>
     <link rel="icon" type="image/png" href="mylogo.png">
     <meta name="description" content="<?= htmlspecialchars($toolDescription) ?>">
-    <meta name="keywords" content="<?= htmlspecialchars($dynamic_keywords) ?>">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#3B82F6">
     <meta name="application-name" content="Any2Convert">
@@ -668,16 +663,6 @@ if (isset($_SESSION['user_name'])) {
             <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">Want to learn more?</h3>
             <p class="text-blue-700 dark:text-blue-300 mb-6 max-w-2xl mx-auto text-base">Read our comprehensive guide and step-by-step tutorial on how to get the most out of <?= htmlspecialchars($tool_data['title']) ?>.</p>
             <a href="blog/guide.php?slug=<?= urlencode($slug) ?>" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 dark:shadow-none text-base">Read the Full Guide</a>
-        </div>
-        
-        <!-- SEO Tags / Keywords -->
-        <div class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Related Keywords</h3>
-            <div class="flex flex-wrap gap-2">
-                <?php foreach (array_slice(explode(',', $dynamic_keywords), 0, 10) as $tag): ?>
-                    <span class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm capitalize hover:text-blue-600 dark:hover:text-blue-400 transition cursor-default border border-slate-200 dark:border-slate-700"><?= htmlspecialchars(trim($tag)) ?></span>
-                <?php endforeach; ?>
-            </div>
         </div>
     </div>
 </main>

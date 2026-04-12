@@ -53,7 +53,6 @@
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body class="min-h-screen">
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -64,28 +63,30 @@
     ]); ?>
     <main class="page-shell">
         <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
-            <?= adsRenderPosition($conn, 'top_content') ?>
             <div class="panel rounded-[2.75rem] p-8 md:p-12">
                 <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Privacy</p>
                 <h1 class="text-4xl font-black mt-4 text-slate-900 tracking-tight">Privacy Policy</h1>
                 <div class="space-y-6 text-slate-600 leading-relaxed font-medium mt-8">
-                    <p>Any2Convert is built with a privacy-first approach. This page explains the basic ways data may be used when you browse the site or create an account.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Account Information</h2>
-                    <p>If you register, we store the information needed to operate your account, such as your name, email address, and password hash.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">File Processing</h2>
-                    <p>Many tools are designed to process files locally on your device, usually inside your active browser session, so the file does not need to be uploaded to our servers first.</p>
-                    <p>Some features may still rely on server-side processing or trusted third-party APIs when the task requires it, such as account features, live data, external AI-powered capabilities, or higher-fidelity document conversion flows. When that happens, the tool or page should make that flow clear.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Analytics and Advertising</h2>
-                    <p>We may use analytics and advertising services to understand usage and support the platform. Those services may apply their own cookie and tracking policies.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Security</h2>
-                    <p>We take reasonable steps to improve account and platform security, but no online system can guarantee complete protection in every scenario.</p>
+                    <p>This policy explains what information Any2Convert may collect, how files are handled when you use the tools, how analytics and advertising technologies may be used, and what practical choices users have when they browse the site or create an account.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Information We Collect</h2>
+                    <p>If you create an account, we may store your name, email address, password hash, profile preferences, and tool-related account activity needed to keep the service working. If you contact us, we may store the information you submit in your message so we can respond and improve support quality.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">How Files Are Handled</h2>
+                    <p>Many tools are designed to run locally in your browser, which means the file is processed on your device and does not need to be uploaded to our server first. That local-first approach is used where it makes sense because it can reduce privacy risk and make simple tasks faster.</p>
+                    <p>Some tools may require server-side processing or trusted third-party conversion infrastructure to produce better output for advanced workflows such as document conversion, OCR, or heavier PDF tasks. When a workflow depends on server processing, we aim to make that clear on the tool page so the user understands the difference before starting.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Cookies, Analytics, And Ads</h2>
+                    <p>We use analytics services to understand which pages are useful, which tools are failing, and how visitors move through the website. We may also use advertising technologies, including Google services, to support the site. These services can use cookies, device information, and similar technologies according to their own policies and applicable law.</p>
+                    <p>If ad personalization, consent banners, or regional cookie controls apply in your location, those controls may influence how advertising cookies are used. Blocking cookies in your browser may also affect some non-essential analytics or ad functionality.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Third-Party Services</h2>
+                    <p>Any2Convert may rely on third-party providers for analytics, authentication, conversion infrastructure, or payment-related features if those are introduced. Those providers process information under their own terms and privacy policies. We try to limit these integrations to services that are relevant to operating or improving the platform.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Retention And Security</h2>
+                    <p>We keep account and support information only as long as needed for operational, legal, security, or product-improvement reasons. We take reasonable technical and administrative steps to protect data, but no online service can promise absolute security in every scenario.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Your Questions And Requests</h2>
+                    <p>If you have a privacy question, need clarification about file handling, or want to contact us about account data, you can use the support page on this website. We review legitimate privacy and account requests as reasonably as possible.</p>
                 </div>
             </div>
         </div>
     </main>
-    <?= adsRenderPosition($conn, 'under_content') ?>
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

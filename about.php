@@ -53,7 +53,6 @@
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body class="min-h-screen">
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -64,25 +63,24 @@
     ]); ?>
     <main class="page-shell">
         <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
-            <?= adsRenderPosition($conn, 'top_content') ?>
             <div class="panel rounded-[2.75rem] p-8 md:p-12">
                 <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">About</p>
                 <h1 class="text-4xl font-black mt-4 text-slate-900 tracking-tight">About Any2Convert</h1>
                 <div class="space-y-6 text-slate-600 leading-relaxed font-medium mt-8">
-                    <p>Any2Convert is designed to make file conversion fast, practical, and easier to trust. We focus on tools that feel simple to use without looking basic.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Why We Built It</h2>
-                    <p>Too many converter sites feel cluttered, slow, or unclear about privacy. Our goal is to build a cleaner experience with tools that work quickly, feel modern, and stay straightforward.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">How We Think</h2>
-                    <p>We care about privacy-first local workflows, lightweight interfaces, and features that are actually useful for everyday work. Where possible, tools process files directly on your device instead of sending them away first.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Where We Are Going</h2>
-                    <p>Any2Convert will keep growing as an all-in-one workspace for PDF, image, and utility tools with a better user experience than typical converter sites.</p>
+                    <p>Any2Convert is a practical file-tools website for people who need to get real work done: merging PDFs before a deadline, shrinking an image for a form upload, converting a spreadsheet export, or cleaning up a document before sending it to a client. The goal is not to flood the web with hundreds of empty utilities. The goal is to keep improving a smaller set of tools that are genuinely helpful, understandable, and fast to use.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">What We Are Trying To Build</h2>
+                    <p>We want the site to feel like a dependable everyday workspace rather than a confusing ad page with a button in the middle. That means clearer instructions, fewer misleading claims, more honest tool descriptions, and better context around what each tool is good at, what its limits are, and how it handles your files.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">How File Processing Works</h2>
+                    <p>Some Any2Convert tools run directly in the browser so your file stays on your device throughout the task. Other tools, especially heavier document-conversion workflows, may rely on server-side processing when that produces better output. We try to describe that behavior clearly on the relevant tool pages so users can make an informed choice before uploading anything sensitive.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Who Uses It</h2>
+                    <p>The site is built for students, office workers, freelancers, recruiters, designers, and anyone who keeps running into file-format friction. A good converter is rarely glamorous, but it can save a lot of time when you are dealing with resumes, invoices, school forms, screenshots, scanned records, contracts, or content for the web.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">What We Are Improving</h2>
+                    <p>We are actively improving content quality, usability, accessibility, and tool accuracy. That includes rewriting thin help content, making pages more transparent about privacy and processing, and removing features that look flashy but do not provide real value. If a tool is limited, we would rather say that clearly than pretend it does more than it really can.</p>
                 </div>
             </div>
         </div>
     </main>
-    <?= adsRenderPosition($conn, 'under_content') ?>
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

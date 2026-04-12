@@ -53,7 +53,6 @@
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body class="min-h-screen">
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -64,27 +63,28 @@
     ]); ?>
     <main class="page-shell">
         <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
-            <?= adsRenderPosition($conn, 'top_content') ?>
             <div class="panel rounded-[2.75rem] p-8 md:p-12">
                 <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Terms</p>
                 <h1 class="text-4xl font-black mt-4 text-slate-900 tracking-tight">Terms of Service</h1>
                 <div class="space-y-6 text-slate-600 leading-relaxed font-medium mt-8">
-                    <p>By using Any2Convert, you agree to these terms. Please use the service responsibly and only for lawful purposes.</p>
+                    <p>These terms describe the basic rules for using Any2Convert. They are meant to set reasonable expectations around acceptable use, accounts, file processing, and service availability. By using the site, you agree to follow them.</p>
                     <h2 class="text-xl font-bold text-slate-900 uppercase">Acceptable Use</h2>
-                    <p>You may use the platform only in ways that do not harm the service, other users, or applicable laws.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Availability</h2>
-                    <p>We aim to keep the platform available and useful, but we cannot guarantee uninterrupted service or perfect results for every browser, file type, or third-party processing provider connected to the platform.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Accounts</h2>
-                    <p>If you create an account, you are responsible for keeping your login details secure and for activity that happens under your account.</p>
-                    <h2 class="text-xl font-bold text-slate-900 uppercase">Updates</h2>
-                    <p>We may update the service, these terms, or available features over time. Continued use means you accept those changes.</p>
+                    <p>You may use the platform only for lawful purposes and in ways that do not abuse the service, interfere with other users, attempt unauthorized access, distribute harmful material, or violate the rights of another person or organization.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Your Files And Content</h2>
+                    <p>You are responsible for the files, text, and content you upload or process. You should only use files you have the legal right to use. If a tool handles sensitive documents, it is your responsibility to decide whether that workflow is appropriate for the material involved.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Accounts And Security</h2>
+                    <p>If you create an account, you are responsible for maintaining the security of your login details and for activity that happens under your account. If you believe your account has been accessed without permission, you should contact support as soon as possible.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Tool Accuracy And Availability</h2>
+                    <p>We work to keep the service useful and available, but converters, OCR tools, AI-assisted features, and document-processing workflows are not guaranteed to be perfect for every file type or use case. Some outputs may require manual review, especially for scanned, damaged, or unusual documents.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Changes To The Service</h2>
+                    <p>We may improve, remove, limit, or replace features over time. We may also update these terms if the product changes. Continued use of the site after those updates means you accept the revised terms.</p>
+                    <h2 class="text-xl font-bold text-slate-900 uppercase">Liability And Practical Limits</h2>
+                    <p>Any2Convert is provided on an as-available basis. We try to keep the tools helpful and safe, but we cannot promise uninterrupted access, error-free conversion, or suitability for every business, legal, academic, or compliance workflow. Users should review important outputs before relying on them.</p>
                 </div>
             </div>
         </div>
     </main>
-    <?= adsRenderPosition($conn, 'under_content') ?>
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>

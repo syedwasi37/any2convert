@@ -138,7 +138,6 @@ if (isset($_SESSION['user_id'])) {
     <?php any2convertRenderChromeStyles(); ?>
 </head>
 <body class="min-h-screen">
-    <?= adsRenderPosition($conn, 'header') ?>
     <?php any2convertRenderTopbar([
         'home_href' => 'index.php',
         'links' => [
@@ -149,18 +148,26 @@ if (isset($_SESSION['user_id'])) {
 
     <main class="contact-shell">
         <div class="max-w-6xl mx-auto px-6 py-12 relative z-10">
-            <?= adsRenderPosition($conn, 'top_content') ?>
-
             <div class="mb-10 text-center">
                 <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Support & Feedback</p>
                 <h1 class="text-4xl font-black tracking-tight mt-3 text-slate-900">Talk to the Any2Convert team</h1>
-                <p class="text-slate-500 mt-3 max-w-2xl mx-auto">Share feedback, report issues, or drop a suggestion. Replies from admin will also appear here for everyone to see.</p>
+                <p class="text-slate-500 mt-3 max-w-3xl mx-auto">Use this page to report bugs, ask for help with a tool, suggest improvements, or tell us where a workflow is confusing. The more specific your message is, the easier it is for us to reproduce and fix the issue.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div class="panel p-8 md:p-12 rounded-[3rem] h-fit">
                     <h2 class="text-3xl font-black mb-2 text-slate-900 tracking-tight">Send Feedback</h2>
-                    <p class="text-slate-400 mb-8 font-medium italic">Your thoughts help us grow.</p>
+                    <p class="text-slate-400 mb-8 font-medium italic">Good support reports save time for everyone.</p>
+
+                    <div class="mb-8 rounded-[2rem] border border-white/60 bg-white/70 px-5 py-5 text-left text-sm leading-7 text-slate-600">
+                        <p class="font-bold text-slate-900 mb-2">Helpful things to include</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>The exact tool page you used.</li>
+                            <li>What file type you uploaded, if any.</li>
+                            <li>What you expected to happen and what happened instead.</li>
+                            <li>The exact error message if one appeared.</li>
+                        </ul>
+                    </div>
 
                     <form action="backend/contact_logic.php" method="POST" class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,6 +196,15 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
                 <div class="space-y-6">
+                    <div class="panel p-8 rounded-[2.5rem]">
+                        <h2 class="text-2xl font-black text-slate-900 mb-3">Support notes</h2>
+                        <div class="space-y-3 text-slate-600 leading-relaxed">
+                            <p>We read bug reports, account issues, tool suggestions, and conversion-quality feedback here. Support quality improves a lot when the report includes the tool name, file type, and the exact step where things failed.</p>
+                            <p>If your message is about a broken conversion, include whether the issue happened before upload, during processing, or after download. That makes it easier to tell whether the problem is in the interface, browser processing, or a server-side conversion step.</p>
+                            <p>Public community feedback shown below may be trimmed, moderated, or hidden if it is spammy, abusive, or not useful to other visitors.</p>
+                        </div>
+                    </div>
+
                     <h2 class="text-2xl font-black text-slate-900 mb-6">Recent Community Feedback</h2>
 
                     <?php foreach ($feedbacks as $fb): ?>
@@ -217,9 +233,7 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </main>
 
-    <?= adsRenderPosition($conn, 'under_content') ?>
     <?php any2convertRenderFooter(); ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>
