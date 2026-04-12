@@ -267,7 +267,7 @@ function any2convertRenderServerPdfCard(array $config): string
     $multipleAttr = $multiple ? ' multiple' : '';
     $singleWord = htmlspecialchars($config['single_word'] ?? 'file', ENT_QUOTES);
     $multiWord = htmlspecialchars($config['multi_word'] ?? 'files', ENT_QUOTES);
-    $panelNote = htmlspecialchars($config['panel_note'] ?? 'This tool now uses a stronger server-side PDF engine for better fidelity.', ENT_QUOTES);
+    $panelNote = htmlspecialchars($config['panel_note'] ?? '', ENT_QUOTES);
     $primaryStatus = htmlspecialchars($config['primary_status'] ?? 'Ready to process your file.', ENT_QUOTES);
     $extraFieldsHtml = $config['extra_fields_html'] ?? '';
     $extraFieldsJs = trim($config['extra_fields_js'] ?? '');
@@ -279,7 +279,7 @@ function any2convertRenderServerPdfCard(array $config): string
         <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/70 to-cyan-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
             <div class="flex items-start justify-between gap-4 mb-6">
                 <div>
-                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">Server PDF Engine</p>
+                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600 dark:text-blue-400">PDF conversion</p>
                     <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">' . $title . '</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">' . $heading . '</p>
                 </div>
@@ -293,11 +293,11 @@ function any2convertRenderServerPdfCard(array $config): string
                     <svg width="72" height="56" viewBox="0 0 72 56" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10h18l6 6v24a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z"></path><path d="M28 10v9h9"></path><path d="M44 28h18"></path><path d="m55 19 9 9-9 9"></path></svg>
                 </div>
                 <div class="text-lg font-semibold text-gray-900 dark:text-white">' . $subheading . '</div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Higher-quality conversion using a server-side PDF pipeline instead of a browser-only approximation.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Choose a file and start the conversion.</p>
             </label>
             <div id="' . $toolId . 'Preview" class="hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/70 px-4 py-3 text-sm text-slate-600 dark:text-slate-300"></div>
             ' . $extraFieldsHtml . '
-            <div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">' . $panelNote . '</div>
+            ' . ($panelNote !== '' ? '<div class="rounded-2xl border border-blue-100 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-4 text-sm text-blue-900 dark:text-blue-100">' . $panelNote . '</div>' : '') . '
             <button id="' . $toolId . 'Submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">' . $buttonLabel . '</button>
             <div id="' . $toolId . 'Status" class="text-sm text-gray-500 dark:text-gray-400 text-center">' . $primaryStatus . '</div>
         </div>
@@ -342,7 +342,7 @@ function any2convertRenderServerPdfCard(array $config): string
 
                 submitBtn.disabled = true;
                 submitBtn.classList.add("opacity-70", "cursor-not-allowed");
-                setStatus("Uploading to the server PDF engine and preparing your result...", false);
+                setStatus("Uploading your file and preparing the result...", false);
 
                 try {
                     const extraFields = {};
@@ -376,13 +376,13 @@ function getPdfToWordServerHTML(): string
     return any2convertRenderServerPdfCard([
         'tool_id' => 'pdfToWordServer',
         'title' => 'PDF to Word Converter',
-        'heading' => 'Create editable DOCX files with a server-side PDF conversion engine built for better text recovery and layout fidelity.',
+        'heading' => 'Convert a PDF into an editable DOCX file with cleaner text recovery and a more usable Word output.',
         'subheading' => 'Upload a PDF and turn it into an editable Word document',
         'button_label' => 'Convert PDF to DOCX',
         'accept' => '.pdf,application/pdf',
         'action' => 'pdf_to_word',
         'single_word' => 'file',
-        'panel_note' => 'This upgraded version uses server-side document conversion instead of a browser-only approximation, so it is a stronger base for iLovePDF-style quality.',
+        'panel_note' => 'Best for text-based PDFs, office documents, resumes, forms, and reports that need light editing in Word afterward.',
         'primary_status' => 'Ready to convert one PDF into DOCX.',
         'download_name' => 'converted.docx',
         'success_message' => 'PDF to Word conversion finished.'

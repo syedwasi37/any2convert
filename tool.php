@@ -665,7 +665,7 @@ if (isset($_SESSION['user_name'])) {
 
 <header class="text-center pt-16 pb-10 px-6">
     <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight"><?= htmlspecialchars($tool_data['h1']) ?></h1>
-    <p class="text-lg text-slate-500 dark:text-slate-400">Fast, secure, and built for local processing on your device whenever possible.</p>
+    <p class="text-lg text-slate-500 dark:text-slate-400">Clear steps, practical output, and tool-specific guidance for real file work.</p>
 </header>
 
 <main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
