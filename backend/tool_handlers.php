@@ -1622,7 +1622,7 @@ function getAtsResumeCheckerHTML() {
     <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.05fr_0.95fr] gap-6">
         <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
             <div style="display:none;">
-                <h1>ATS Resume Checker Free Online</h1>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white">ATS Resume Checker Free Online</h2>
                 <p>Use this ATS resume checker to scan your resume, improve ATS resume keywords, and check your ATS resume score against a job description.</p>
                 <p>Find missing ATS resume keywords, test your ATS resume format, and use this free ATS resume checker online before you apply.</p>
                 <p>If you want to know what is an ATS resume, what is ATS resume scanning, or how an ATS resume scanner works, this tool gives you a fast ATS resume test in your browser.</p>
@@ -3553,7 +3553,7 @@ function getImageToPdfHTML() {
     <div class="space-y-6" role="main" aria-label="Image to PDF Converter Tool">
         
         <div style="display:none;">
-            <h1>Image to PDF Converter - Convert Image to PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Image to PDF Converter - Convert Image to PDF Online Free</h2>
             <p>Use our free image to pdf converter to add image to pdf without uploading files. Best tool to convert an image to pdf for free download.</p>
         </div>
 
@@ -3653,7 +3653,7 @@ function getImageToPdfHTML() {
     <div class="space-y-6">
 
         <div style="display:none;">
-            <h1>PDF to Image Converter - Convert PDF to Image Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Image Converter - Convert PDF to Image Online Free</h2>
             <p>Best free pdf to image converter to convert pdf to image file. High quality pdf to image free tool online.</p>
         </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToImgInput\').click()">
@@ -3781,7 +3781,7 @@ function getPdfToWordHTML() {
     return '
     <div class="space-y-6">
             <div class="text-gray-900" style="font-size: 1px;">
-                <h1>PDF to Word Converter - Convert PDF to Word Online Free</h1>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Word Converter - Convert PDF to Word Online Free</h2>
                 <p>Looking for a free pdf to word converter? Learn how to convert pdf to word doc easily. High-quality pdf to word free tool with formatting preserved.</p>
             </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToWordInput\').click()">
@@ -4030,7 +4030,7 @@ function getPdfToPptHTML() {
     return '
     <div class="space-y-6">
      <div style="display:none;">
-            <h1>PDF to Word Converter - Convert PDF to PowePoint PPT Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Word Converter - Convert PDF to PowePoint PPT Online Free</h2>
             <p>Looking for a free pdf to PowePoint PPT converter? Learn how to convert pdf to PowePoint PPT doc easily. High-quality pdf to word free tool with formatting preserved.</p>
         </div>
         <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById(\'pdfToPptInput\').click()">
@@ -4162,7 +4162,7 @@ function getPdfToExcelHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>PDF to Excel Converter Free - Convert PDF to Excel Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Excel Converter Free - Convert PDF to Excel Online</h2>
             <p>Use this free PDF to Excel converter to convert PDF to Excel, export PDF to Excel spreadsheet files, and learn how to convert a PDF to Excel without losing structure.</p>
             <p>Convert PDF to Excel free with an online PDF to Excel converter, free PDF to Excel converter workflow, and simple steps for converting PDF to Excel spreadsheet data.</p>
         </div>
@@ -4545,7 +4545,7 @@ function getMergePdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Merge PDF Free - Merge PDF Files Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Merge PDF Free - Merge PDF Files Online Free</h2>
             <p>Use this free merge PDF tool to merge PDF files, merge PDF online, and learn how to merge PDF files quickly in one secure workflow.</p>
             <p>Merge PDF online free, combine PDF pages in order, and use a free merge PDF experience for personal, school, and office documents.</p>
         </div>
@@ -4614,7 +4614,7 @@ function getCompressPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Compress PDF Free - Compress PDF Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Compress PDF Free - Compress PDF Online</h2>
             <p>Use this compress PDF tool to compress PDF online free, reduce PDF file size, and learn how to compress PDF file size while keeping pages readable.</p>
             <p>Compress PDF files, compress PDF file size for free, and optimize documents on Mac, Windows, and mobile browsers.</p>
         </div>
@@ -4744,7 +4744,7 @@ function getProtectPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Password Protect PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Password Protect PDF Online Free</h2>
             <p>Use this password protect PDF tool to protect PDF files online free, add a password to a PDF file, and secure documents from opening, copying, or editing without permission.</p>
             <p>Learn how to password protect PDF files, protect PDF from editing, and create a password protected PDF file in your browser on Mac, Windows, and mobile.</p>
         </div>
@@ -5480,7 +5480,7 @@ function getPasswordGenHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Password Generator Free Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Password Generator Free Online</h2>
             <p>Use this password generator to create a strong password, secure password, or random password generator result directly in your browser.</p>
             <p>Generate a password with 8, 12, 14, 15, or 16 characters using this strong random password generator free tool.</p>
             <p>If you need a password generator online, random password generator, or strong password generator for safer accounts, this tool helps instantly.</p>
@@ -7194,7 +7194,7 @@ function getHeicConverterHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>HEIC to JPG PNG PDF Converter Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">HEIC to JPG PNG PDF Converter Online Free</h2>
             <p>Use this HEIC to JPG converter to convert HEIC to JPG free, change HEIC to JPEG, convert HEIC to PNG, or export HEIC images as PDF directly in your browser.</p>
             <p>Free HEIC to JPG converter, HEIC to JPEG converter, and HEIC to PNG converter for Windows, Mac, and iPhone workflows without uploading files to a server.</p>
         </div>
@@ -7336,7 +7336,7 @@ function getJpgConverterHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>JPG to PNG JPEG PDF Converter Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">JPG to PNG JPEG PDF Converter Online Free</h2>
             <p>Use this JPG to PNG converter and JPG to PDF converter to convert JPG to PNG free, change JPG to PNG, convert JPG to PDF free, or export JPG files as JPEG directly in your browser.</p>
             <p>Free JPG to PNG converter, JPG to PDF converter free, online JPG to PDF converter, and convert JPG to PNG online free workflows for Windows, Mac, iPhone, and Android browsers.</p>
         </div>
@@ -7496,7 +7496,7 @@ function getWebpConverterHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>WEBP to JPG PNG JPEG PDF Converter Free Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">WEBP to JPG PNG JPEG PDF Converter Free Online</h2>
             <p>Use this WEBP to JPG converter to convert WEBP to JPG, WEBP to PNG, WEBP to JPEG, or WEBP to PDF quickly in your browser.</p>
             <p>Convert WEBP to JPG free, use a WEBP to PNG converter free, or convert WEBP to PDF online free without installing software.</p>
             <p>If you need to know how to convert WEBP to JPG, how to convert WEBP to PNG, or how to convert WEBP to PDF, upload your WEBP image, choose the output format, and download instantly.</p>
@@ -7657,7 +7657,7 @@ function getVideoToAudioHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Video to MP3 Converter Free Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Video to MP3 Converter Free Online</h2>
             <p>Use this video to MP3 converter to convert video to MP3, turn video to MP3, and extract audio from MP4, MOV, WEBM, AVI, MKV, and more.</p>
             <p>This online video to MP3 converter free tool helps you convert video to MP3 locally in your browser with no upload required.</p>
             <p>Looking for how to convert video to MP3, iPhone video to MP3, TikTok video to MP3, or Instagram video to MP3? Upload your file, choose a format, and download the audio.</p>
@@ -7916,7 +7916,7 @@ function getVideoCompressorHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Compress Video Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Compress Video Online Free</h2>
             <p>Compress video files online free and reduce video file size directly in your browser without uploading to a server.</p>
             <p>Use this video compressor to shrink MP4, MOV, WEBM, AVI, MKV, and other common video files for sharing, storage, or faster uploads.</p>
         </div>
@@ -8180,7 +8180,7 @@ function getOcrToolHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Online OCR Image to Text Tool</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Online OCR Image to Text Tool</h2>
             <p>Free online OCR for JPG, JPEG, PNG, WEBP, screenshots, receipts, scanned pages, and document photos.</p>
             <p>OCR meaning is optical character recognition. This OCR tool uses Tesseract OCR technology to turn images into editable text in your browser.</p>
         </div>
@@ -8629,7 +8629,7 @@ function getProtectPdfPureJS() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Password Protect PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Password Protect PDF Online Free</h2>
             <p>Use this password protect PDF tool to protect PDF files online free, add a password to a PDF file, and secure documents from easy opening or editing.</p>
             <p>Learn how to password protect PDF files, protect PDF from editing, and create a password protected PDF file in your browser without uploading to external software.</p>
         </div>
@@ -8795,7 +8795,7 @@ function getSplitPdfHTML() {
     <div class="space-y-6" role="main" aria-label="Split PDF Online Free Tool">
         
         <div style="display:none;">
-            <h1>Split PDF Online Free - Best Tool to Split PDF Files</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Split PDF Online Free - Best Tool to Split PDF Files</h2>
             <p>Learn how to split pdf pages or how to split pdf into multiple files instantly. Our split pdf free online tool is the best alternative to Adobe Acrobat split pdf.</p>
         </div>
 
@@ -8866,7 +8866,7 @@ function getRemovePagesHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Remove Pages from PDF Free - Remove Pages from PDF Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Remove Pages from PDF Free - Remove Pages from PDF Online</h2>
             <p>Use this remove pages from PDF tool to remove pages from PDF online free, learn how to remove pages from PDF files, and clean up your document in seconds.</p>
             <p>Remove pages from PDF free on Windows, Mac, Android, iPhone, and other devices with a simple browser-based workflow.</p>
         </div>
@@ -9072,7 +9072,7 @@ function getExtractPagesHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Extract Pages from PDF Free - Extract Pages from PDF Online</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Extract Pages from PDF Free - Extract Pages from PDF Online</h2>
             <p>Use this tool to extract pages from PDF online free, learn how to extract pages from PDF documents, and download only the pages you need.</p>
             <p>Extract pages from PDF free on Mac, Windows, Linux, and mobile devices with a simple visual page selector.</p>
             <p>Use it as a split PDF tool to split PDF pages, split PDF into individual pages, split PDF into multiple files, and manage split PDF files online free.</p>
@@ -9278,7 +9278,7 @@ function getOrganizePdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Organize PDF Online Free - Organize PDF Pages</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Organize PDF Online Free - Organize PDF Pages</h2>
             <p>Use this organize PDF tool to organize PDF pages, reorder documents, and learn how to organize PDF pages online free in a visual editor.</p>
             <p>Organize PDF files free, organize PDF files online free, and manage page order, deletion, and blank page insertion in one place.</p>
         </div>
@@ -9632,7 +9632,7 @@ function getRepairPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Repair PDF Online Free - Repair PDF File</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Repair PDF Online Free - Repair PDF File</h2>
             <p>Use this repair PDF tool to repair PDF files online free, rebuild damaged PDF documents, and learn how to repair PDF file issues directly in your browser.</p>
             <p>Repair PDF file online free, repair PDF files with browser-based rebuilding, and create a cleaner copy when a document has minor structure or compatibility issues.</p>
         </div>
@@ -9737,7 +9737,7 @@ function getOcrPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>OCR PDF Online Free - Extract Text From Scanned PDF</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">OCR PDF Online Free - Extract Text From Scanned PDF</h2>
             <p>Use this OCR PDF tool to recognize text from scanned documents, make PDF text selectable, and run free OCR PDF conversion online in your browser.</p>
             <p>Free OCR PDF to text, OCR PDF to Word style content, OCR PDF converter, and online OCR PDF processing for searchable scanned files on Windows, Mac, and mobile.</p>
         </div>
@@ -9967,7 +9967,7 @@ function getRotatePdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Rotate PDF Online Free - Rotate PDF Pages</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Rotate PDF Online Free - Rotate PDF Pages</h2>
             <p>Use this rotate PDF tool to rotate PDF pages online free, permanently rotate PDF files, and save your updated document after visual page editing.</p>
             <p>Rotate PDF file pages on Mac, Windows, and mobile browsers with per-page controls or apply one angle to all pages at once.</p>
         </div>
@@ -10210,7 +10210,7 @@ function getAddPageNumbersHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Add Page Number to PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Add Page Number to PDF Online Free</h2>
             <p>Use this tool to add page number to PDF online free, number PDF pages in your browser, and download the updated PDF file with page numbering applied.</p>
             <p>Learn how to add page number to PDF document files on Mac, Windows, and mobile using a simple add page number to PDF free workflow.</p>
         </div>
@@ -10250,7 +10250,7 @@ function getAddWatermarkHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Add Watermark to PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Add Watermark to PDF Online Free</h2>
             <p>Add watermark to PDF online free with text or image watermark placement, choose a position visually, and download the updated PDF in your browser.</p>
             <p>Use this PDF watermark tool to add watermark to PDF files, place text or logo marks on every page, and preview the watermark before downloading.</p>
         </div>
@@ -10597,7 +10597,7 @@ function getUnlockPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Unlock PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Unlock PDF Online Free</h2>
             <p>Use this unlock PDF tool to unlock PDF files online free, enter the PDF password, and download an unlocked PDF document for viewing or editing.</p>
             <p>Learn how to unlock PDF, unlock PDF for editing, and unlock PDF password protected files in your browser with a simple upload and password flow.</p>
         </div>
@@ -10722,7 +10722,7 @@ function getSignPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Sign PDF Online Free - E Sign PDF</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Sign PDF Online Free - E Sign PDF</h2>
             <p>Use this sign PDF tool to sign PDF online free, create a PDF signature, e sign PDF documents, and place signatures visually on the page before downloading.</p>
             <p>Create a free PDF signature, draw a digital PDF signature, type an e sign, fill and sign PDF files, and sign PDF documents in your browser.</p>
         </div>
@@ -11201,7 +11201,7 @@ function getCropPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Crop PDF Online Free - Crop PDF Pages</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Crop PDF Online Free - Crop PDF Pages</h2>
             <p>Use this crop PDF tool to crop PDF online free, choose the crop area visually, and save cropped PDF pages directly in your browser.</p>
             <p>Learn how to crop PDF files, crop PDF pages online, and trim PDF page edges on Mac, Windows, and mobile with a visual crop box editor.</p>
         </div>
@@ -11514,7 +11514,7 @@ function getComparePdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Compare PDF Online Free - Compare PDF Files Side by Side</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Compare PDF Online Free - Compare PDF Files Side by Side</h2>
             <p>Use this compare PDF tool to compare PDF files online, review PDF documents side by side, and find text differences between uploaded PDF files.</p>
             <p>Learn how to compare PDF documents, compare PDF files for differences, and compare PDF side by side directly in your browser.</p>
         </div>
@@ -11706,7 +11706,7 @@ function getPdfToPdfaHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Convert PDF to PDF/A Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Convert PDF to PDF/A Online Free</h2>
             <p>Use this PDF to PDF/A tool to create a PDF/A style export online, improve long-term document compatibility, and rebuild PDF files for archival-focused use.</p>
             <p>Convert PDF to PDF/A free in your browser, create an archival PDF export, and generate a cleaner PDF/A-style document for storage and sharing.</p>
         </div>
@@ -11752,7 +11752,7 @@ function getEditPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Edit PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Edit PDF Online Free</h2>
             <p>Use this edit PDF tool to edit PDF online free, insert text or images on PDF pages, and download the updated PDF file in your browser.</p>
             <p>Edit PDF text, add pictures, edit PDF free online, and use a visual PDF editor workspace on Mac, Windows, and mobile browsers.</p>
         </div>
@@ -12668,7 +12668,7 @@ function getRedactPdfHTML() {
     return '
     <div class="space-y-6">
         <div style="display:none;">
-            <h1>Redact PDF Online Free</h1>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Redact PDF Online Free</h2>
             <p>Use this redact PDF tool to redact PDF online free, hide sensitive PDF text, and download a rebuilt redacted copy directly in your browser.</p>
             <p>Learn how to redact PDF for free, redact PDF text online, and create a free redact PDF workflow without Adobe.</p>
         </div>

@@ -67,6 +67,53 @@ $toolSections = $tool_data['sections'] ?? [];
 $toolSteps = $tool_data['steps'] ?? [];
 $toolBestFor = $tool_data['best_for'] ?? [];
 
+function buildFallbackFaqs(array $toolData): array {
+    $toolName = $toolData['h1'] ?? 'this tool';
+
+    return [
+        [
+            'q' => 'Is ' . $toolName . ' free to use?',
+            'a' => 'Yes. Any2Convert offers this tool free in the browser without a forced paid upgrade for normal usage.',
+        ],
+        [
+            'q' => 'Does ' . $toolName . ' work on mobile and desktop?',
+            'a' => 'Yes. The tool is designed to run in a modern browser on phones, tablets, laptops, and desktop devices.',
+        ],
+        [
+            'q' => 'Are my files uploaded to a server?',
+            'a' => 'Many Any2Convert tools process files locally in the browser whenever possible. For server-side tools, use only files you are comfortable processing online.',
+        ],
+    ];
+}
+
+function buildRelatedTools(array $allTools, string $currentSlug, int $limit = 6): array {
+    $slugs = array_keys($allTools);
+    $currentIndex = array_search($currentSlug, $slugs, true);
+    if ($currentIndex === false || count($slugs) <= 1) {
+        return [];
+    }
+
+    $related = [];
+    $total = count($slugs);
+    $offset = 1;
+    while (count($related) < min($limit, $total - 1)) {
+        foreach ([$offset, -$offset] as $direction) {
+            $candidateIndex = ($currentIndex + $direction + $total) % $total;
+            $candidateSlug = $slugs[$candidateIndex];
+            if ($candidateSlug === $currentSlug || isset($related[$candidateSlug])) {
+                continue;
+            }
+            $related[$candidateSlug] = $allTools[$candidateSlug];
+            if (count($related) >= min($limit, $total - 1)) {
+                break 2;
+            }
+        }
+        $offset++;
+    }
+
+    return $related;
+}
+
 function stripEmptyStructuredData($value) {
     if (!is_array($value)) {
         return $value;
@@ -99,6 +146,9 @@ function sanitizeSoftwareApplicationSchema(array $schema): array {
 
     return stripEmptyStructuredData($schema);
 }
+
+$displayFaqs = !empty($toolFaqs) ? $toolFaqs : buildFallbackFaqs($tool_data);
+$relatedTools = buildRelatedTools($seo_tools, $slug);
 
 $webPageSchema = [
     '@context' => 'https://schema.org',
@@ -163,7 +213,7 @@ $faqSchema = [
                 'text' => $faq['a'],
             ],
         ];
-    }, $toolFaqs),
+    }, $displayFaqs),
 ];
 
 // Get the rest of index.css and navbar
@@ -214,7 +264,7 @@ $faqSchema = [
     <script type="application/ld+json"><?= json_encode($webPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
     <script type="application/ld+json"><?= json_encode($softwareSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
     <script type="application/ld+json"><?= json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
-    <?php if (!empty($toolFaqs)): ?>
+    <?php if (!empty($displayFaqs)): ?>
     <script type="application/ld+json"><?= json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
     <?php endif; ?>
 
@@ -626,9 +676,11 @@ if (isset($_SESSION['user_name'])) {
     </div>
     
     <!-- SEO CONTENT -->
-    <div class="max-w-4xl mx-auto mt-20 text-slate-600 dark:text-slate-400 text-lg leading-relaxed space-y-6">
+    <div class="seo-content max-w-4xl mx-auto mt-20 text-slate-600 dark:text-slate-400 text-lg leading-relaxed space-y-6">
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">What is this tool?</h2>
         <p><?= $tool_data['content'] ?></p>
+        <p><?= htmlspecialchars($tool_data['h1']) ?> helps when you need a faster way to finish a focused task without installing software, moving between multiple apps, or sending files through a long workflow. For search visibility and user trust, each tool page on Any2Convert is built to explain what the tool does, who it helps, and what to check before you rely on the output.</p>
+        <p>Use this page as both a working tool and a reference. The sections below explain common use cases, practical tips, and follow-up steps so visitors can solve the task now and understand the result before downloading, sharing, printing, or reusing the file.</p>
 
         <?php if (!empty($toolBestFor)): ?>
         <div class="mt-10">
@@ -669,6 +721,14 @@ if (isset($_SESSION['user_name'])) {
         </div>
         <?php endforeach; ?>
         <?php endif; ?>
+
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Practical Tips</h2>
+            <div class="space-y-4 mt-5">
+                <p>Before exporting the final result, review the output once on the same device where you plan to use it. That catches common issues such as page order, cropped content, unexpected formatting, readability problems, or missing details in generated files.</p>
+                <p>If the input contains sensitive information, avoid sharing the source file more widely than necessary. Any2Convert focuses on privacy-first workflows and local processing where possible, but you should still treat personal, financial, legal, and business documents carefully.</p>
+            </div>
+        </div>
         
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Why use Any2Convert?</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -681,10 +741,25 @@ if (isset($_SESSION['user_name'])) {
                 Enjoy lifetime free conversions. We do not enforce paid tiers, size limits, or watermarks on your generated files.
             </div>
         </div>
+
+        <?php if (!empty($relatedTools)): ?>
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Related Tools</h2>
+            <p class="mt-4">Explore other tools that solve nearby tasks, help with the next step in the workflow, or give users another way to prepare, convert, edit, or verify their files.</p>
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <?php foreach ($relatedTools as $relatedSlug => $relatedTool): ?>
+                <a href="/<?= htmlspecialchars($relatedSlug) ?>" class="block p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-600 transition">
+                    <div class="text-lg font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($relatedTool['h1']) ?></div>
+                    <div class="mt-2 text-base text-slate-600 dark:text-slate-300"><?= htmlspecialchars($relatedTool['meta_desc']) ?></div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
         
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Frequently Asked Questions</h2>
         <div class="space-y-4 mt-6">
-            <?php foreach ($tool_data['faqs'] as $faq): ?>
+            <?php foreach ($displayFaqs as $faq): ?>
             <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
                 <div class="font-bold text-slate-900 dark:text-white text-lg mb-2"><?= htmlspecialchars($faq['q']) ?></div>
                 <div class="text-base"><?= htmlspecialchars($faq['a']) ?></div>

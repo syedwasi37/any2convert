@@ -11,4 +11,4 @@ Disallow: /otp_verify.php
 Disallow: /error_log
 Disallow: /sess_*
 
-Sitemap: https://any2convert.com/sitemap.php
+Sitemap: https://any2convert.com/sitemap.xml
