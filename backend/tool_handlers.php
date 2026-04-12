@@ -328,7 +328,8 @@ function any2convertRenderServerPdfCard(array $config): string
                 preview.classList.remove("hidden");
                 preview.innerHTML = files.map(function (file) {
                     const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                    return "<div class=\"flex items-center justify-between gap-3 py-1\"><span class=\"font-semibold text-slate-800 dark:text-slate-100\">" + file.name + "</span><span class=\"text-xs uppercase tracking-[0.14em] text-slate-400\">" + sizeMB + " MB</span></div>";
+                    const extension = (file.name.split(".").pop() || "file").slice(0, 5);
+                    return "<div class=\"uploaded-file-card\"><div class=\"uploaded-file-meta\"><div class=\"uploaded-file-name\">" + file.name + "</div><div class=\"uploaded-file-sub\">" + sizeMB + " MB selected and ready</div></div><div class=\"uploaded-file-ext\">" + extension + "</div></div>";
                 }).join("");
                 setStatus(files.length + " ' . ($multiple ? $multiWord : $singleWord) . ' ready for server processing.", false);
             });

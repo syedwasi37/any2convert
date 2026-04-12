@@ -351,6 +351,67 @@ $faqSchema = [
             max-width: 1180px;
             padding: 34px;
         }
+        .tool-container h1,
+        .tool-container h2,
+        .tool-container h3,
+        .tool-container h4,
+        .tool-container strong,
+        .tool-container label,
+        .tool-container legend {
+            color: var(--text-primary);
+        }
+        .tool-container p,
+        .tool-container li,
+        .tool-container span,
+        .tool-container div {
+            color: inherit;
+        }
+        .tool-container .text-slate-900,
+        .tool-container .text-slate-800,
+        .tool-container .text-slate-700,
+        .tool-container .text-gray-900,
+        .tool-container .text-gray-800,
+        .tool-container .text-gray-700 {
+            color: var(--text-primary) !important;
+        }
+        .tool-container .text-slate-600,
+        .tool-container .text-slate-500,
+        .tool-container .text-slate-400,
+        .tool-container .text-gray-600,
+        .tool-container .text-gray-500,
+        .tool-container .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        html:not(.dark) .tool-container .text-white {
+            color: var(--text-primary) !important;
+        }
+        html:not(.dark) .tool-container [class*="bg-white"],
+        html:not(.dark) .tool-container [class*="bg-slate-50"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,249,255,0.93)) !important;
+            border-color: rgba(186,205,255,0.34) !important;
+        }
+        html:not(.dark) .tool-container [class*="bg-slate-900"],
+        html:not(.dark) .tool-container [class*="bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(253,254,255,0.99), rgba(241,246,255,0.95)) !important;
+            color: var(--text-primary) !important;
+            border-color: rgba(186,205,255,0.4) !important;
+        }
+        html:not(.dark) .tool-container [class*="from-slate-900"],
+        html:not(.dark) .tool-container [class*="from-slate-950"],
+        html:not(.dark) .tool-container [class*="via-slate-900"],
+        html:not(.dark) .tool-container [class*="via-slate-950"],
+        html:not(.dark) .tool-container [class*="to-slate-900"],
+        html:not(.dark) .tool-container [class*="to-slate-950"] {
+            --tw-gradient-from: rgba(255,255,255,0.98) var(--tw-gradient-from-position) !important;
+            --tw-gradient-via: rgba(244,247,255,0.96) var(--tw-gradient-via-position) !important;
+            --tw-gradient-to: rgba(234,240,255,0.92) var(--tw-gradient-to-position) !important;
+        }
+        html:not(.dark) .tool-container [class*="border-slate-800"],
+        html:not(.dark) .tool-container [class*="border-slate-700"],
+        html:not(.dark) .tool-container [class*="border-gray-800"],
+        html:not(.dark) .tool-container [class*="border-gray-700"] {
+            border-color: rgba(186,205,255,0.4) !important;
+        }
         .tool-container::before {
             content: "";
             position: absolute;
@@ -591,6 +652,58 @@ $faqSchema = [
             border-radius: 26px;
             border: 1px solid rgba(148,163,184,0.18);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .tool-container .uploaded-file-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(186,205,255,0.36);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,248,255,0.94));
+            box-shadow: 0 14px 30px rgba(15,23,42,0.06);
+        }
+        .tool-container .uploaded-file-meta {
+            min-width: 0;
+        }
+        .tool-container .uploaded-file-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tool-container .uploaded-file-sub {
+            margin-top: 4px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+        }
+        .tool-container .uploaded-file-ext {
+            flex-shrink: 0;
+            min-width: 56px;
+            text-align: center;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(59,130,246,0.12));
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        html.dark .tool-container .uploaded-file-card {
+            background: linear-gradient(180deg, rgba(20,24,39,0.96), rgba(12,16,29,0.92));
+            border-color: rgba(148,163,184,0.2);
+            box-shadow: 0 16px 36px rgba(2,6,23,0.34);
+        }
+        html.dark .tool-container .uploaded-file-sub {
+            color: #9aa5bd;
+        }
+        html.dark .tool-container .uploaded-file-ext {
+            background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(59,130,246,0.18));
+            color: #dbe7ff;
         }
         .tool-container.tool-container-wide canvas,
         .tool-container.tool-container-wide video,
