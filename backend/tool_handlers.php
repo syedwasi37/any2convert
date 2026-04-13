@@ -3601,7 +3601,7 @@ function getImageToPdfHTML() {
                     div.className = "relative";
                     // Added alt tag for SEO on preview images
                     div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg" alt="convert image to pdf"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">✓</span>`;
->>>>>>> 1a066413361175037281af2d18e2b6c509191792
+                    imgPreview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
@@ -3640,7 +3640,15 @@ function getImageToPdfHTML() {
                 const x = (pageWidth - finalWidth) / 2;
                 const y = (pageHeight - finalHeight) / 2;
 
-                doc.addImage(imgData, "JPEG", x, y, finalWidth, finalHeight, undefined, "NONE");
+                const canvas = document.createElement("canvas");
+                canvas.width = imgWidth;
+                canvas.height = imgHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+
+                doc.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", x, y, finalWidth, finalHeight, undefined, "NONE");
             }
             // SEO Optimized Filename
             doc.save("Any2Convert-image-to-pdf.pdf");
