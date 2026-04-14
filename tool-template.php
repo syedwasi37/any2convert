@@ -1,0 +1,1307 @@
+<?php
+declare(strict_types=1);
+
+session_start();
+require_once 'seo_data.php';
+require_once 'backend/track_visit.php';
+require_once 'backend/ad_helpers.php';
+require_once __DIR__ . '/partials/site_chrome.php';
+
+$slug = $any2convertToolSlug ?? ($_GET['slug'] ?? '');
+$tool_data = $seo_tools[$slug] ?? null;
+
+if ($tool_data && isset($any2convertToolOverride) && is_array($any2convertToolOverride)) {
+    $tool_data = array_replace_recursive($tool_data, $any2convertToolOverride);
+}
+
+if (!$tool_data) {
+    http_response_code(404);
+    require __DIR__ . '/pages/404.php';
+    exit;
+}
+
+$tool_id = $tool_data['id'];
+trackVisit('Tool Page', $tool_id);
+
+$wideToolIds = [
+    'currency_converter',
+    'length_converter',
+    'weight_converter',
+    'temperature_converter',
+    'area_converter',
+    'volume_converter',
+    'speed_converter',
+    'time_converter',
+    'invoice_generator',
+    'ats_resume_checker',
+    'social_image_resizer',
+    'jwt_decoder',
+    'bank_statement_to_excel',
+    'grammar_checker',
+    'paraphrase_tool',
+    'percentage_calculator',
+    'loan_calculator',
+    'bmi_calculator',
+    'age_calculator',
+    'sensitivity_converter',
+    'reaction_time_test',
+    'cps_test',
+    'gamer_tag_generator',
+    'clip_to_gif',
+    'tournament_bracket_generator',
+    'spin_wheel',
+    'random_name_picker',
+    'typing_speed_test',
+    'meme_caption_generator',
+    'truth_or_dare_generator',
+    'memory_match_game',
+    'edit_pdf',
+];
+$isWideTool = in_array($tool_id, $wideToolIds, true);
+
+require_once 'backend/tool_handlers.php';
+$tool_html = renderToolHandlerHTML($tool_id);
+
+$siteUrl = 'https://any2convert.com';
+$toolUrl = $siteUrl . '/' . $slug;
+$toolTitle = $tool_data['title'];
+$toolDescription = $tool_data['meta_desc'];
+$toolFaqs = $tool_data['faqs'] ?? [];
+$toolSections = $tool_data['sections'] ?? [];
+$toolSteps = $tool_data['steps'] ?? [];
+$toolBestFor = $tool_data['best_for'] ?? [];
+$toolIntro = $tool_data['intro'] ?? '';
+$toolKeywords = $tool_data['keyword_targets'] ?? [];
+$toolUseCases = $tool_data['use_cases'] ?? [];
+$toolFeatures = $tool_data['features'] ?? [];
+$toolInternalLinks = $tool_data['internal_links'] ?? [];
+
+function slugToKeywordLabel(string $slug): string {
+    return ucwords(str_replace('-', ' ', $slug));
+}
+
+function buildKeywordTargets(array $toolData, string $slug): array {
+    if (!empty($toolData['keyword_targets'])) {
+        return $toolData['keyword_targets'];
+    }
+
+    $base = strtolower($toolData['h1'] ?? slugToKeywordLabel($slug));
+    $base = preg_replace('/\s+online$/', '', $base);
+
+    return array_values(array_unique([
+        $base . ' free online',
+        $base . ' no signup',
+        $base . ' without watermark',
+        $base . ' fast online tool',
+        $base . ' browser tool',
+        $base . ' online tool',
+    ]));
+}
+
+function buildUseCases(array $toolData): array {
+    if (!empty($toolData['use_cases'])) {
+        return $toolData['use_cases'];
+    }
+
+    return [
+        'Use the tool for one focused file task without downloading a large desktop app first.',
+        'Handle document preparation, sharing, conversion, or cleanup from a dedicated page that can rank independently.',
+        'Give users a direct landing page that matches the exact job they searched for on Google.',
+    ];
+}
+
+function buildFeatures(array $toolData): array {
+    if (!empty($toolData['features'])) {
+        return $toolData['features'];
+    }
+
+    return [
+        'Server-rendered headings, copy, and FAQs so search engines can crawl the page source easily.',
+        'Existing handler output embedded directly into the page without rewriting the underlying tool logic.',
+        'Fast browser-first workflow designed for users on desktop, tablet, and mobile.',
+    ];
+}
+
+function buildInternalLinkPhrases(array $relatedTools, array $customPhrases = []): array {
+    if (!empty($customPhrases)) {
+        return $customPhrases;
+    }
+
+    $phrases = [];
+    foreach ($relatedTools as $relatedSlug => $relatedTool) {
+        $phrases[] = [
+            'slug' => $relatedSlug,
+            'anchor' => $relatedTool['h1'],
+            'context' => 'Continue with ' . $relatedTool['h1'] . ' if the next step in your workflow needs it.',
+        ];
+    }
+
+    return $phrases;
+}
+
+function buildFallbackFaqs(array $toolData): array {
+    $toolName = $toolData['h1'] ?? 'this tool';
+
+    return [
+        [
+            'q' => 'Is ' . $toolName . ' free to use?',
+            'a' => 'Yes. Any2Convert offers this tool free in the browser without a forced paid upgrade for normal usage.',
+        ],
+        [
+            'q' => 'Does ' . $toolName . ' work on mobile and desktop?',
+            'a' => 'Yes. The tool is designed to run in a modern browser on phones, tablets, laptops, and desktop devices.',
+        ],
+        [
+            'q' => 'Are my files uploaded to a server?',
+            'a' => 'Many Any2Convert tools process files locally in the browser whenever possible. For server-side tools, use only files you are comfortable processing online.',
+        ],
+    ];
+}
+
+function buildRelatedTools(array $allTools, string $currentSlug, int $limit = 6, array $preferredSlugs = []): array {
+    if (!empty($preferredSlugs)) {
+        $preferred = [];
+        foreach ($preferredSlugs as $slug) {
+            if ($slug === $currentSlug || !isset($allTools[$slug])) {
+                continue;
+            }
+            $preferred[$slug] = $allTools[$slug];
+            if (count($preferred) >= $limit) {
+                return $preferred;
+            }
+        }
+        if (!empty($preferred)) {
+            return $preferred;
+        }
+    }
+
+    $slugs = array_keys($allTools);
+    $currentIndex = array_search($currentSlug, $slugs, true);
+    if ($currentIndex === false || count($slugs) <= 1) {
+        return [];
+    }
+
+    $related = [];
+    $total = count($slugs);
+    $offset = 1;
+    while (count($related) < min($limit, $total - 1)) {
+        foreach ([$offset, -$offset] as $direction) {
+            $candidateIndex = ($currentIndex + $direction + $total) % $total;
+            $candidateSlug = $slugs[$candidateIndex];
+            if ($candidateSlug === $currentSlug || isset($related[$candidateSlug])) {
+                continue;
+            }
+            $related[$candidateSlug] = $allTools[$candidateSlug];
+            if (count($related) >= min($limit, $total - 1)) {
+                break 2;
+            }
+        }
+        $offset++;
+    }
+
+    return $related;
+}
+
+function stripEmptyStructuredData($value) {
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $clean = [];
+    foreach ($value as $key => $item) {
+        $item = stripEmptyStructuredData($item);
+        if ($item === null || $item === '' || $item === []) {
+            continue;
+        }
+        $clean[$key] = $item;
+    }
+
+    return $clean;
+}
+
+function sanitizeSoftwareApplicationSchema(array $schema): array {
+    // Google flags self-authored or invalid rating/review markup on tool pages.
+    unset(
+        $schema['aggregateRating'],
+        $schema['review'],
+        $schema['reviews'],
+        $schema['ratingValue'],
+        $schema['ratingCount'],
+        $schema['reviewCount'],
+        $schema['bestRating'],
+        $schema['worstRating']
+    );
+
+    return stripEmptyStructuredData($schema);
+}
+
+$displayFaqs = !empty($toolFaqs) ? $toolFaqs : buildFallbackFaqs($tool_data);
+$relatedTools = buildRelatedTools($seo_tools, $slug, 6, $tool_data['related_slugs'] ?? []);
+$toolKeywords = buildKeywordTargets($tool_data, $slug);
+$toolUseCases = buildUseCases($tool_data);
+$toolFeatures = buildFeatures($tool_data);
+$toolInternalLinks = buildInternalLinkPhrases($relatedTools, $toolInternalLinks);
+
+$webPageSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'WebPage',
+    'name' => $tool_data['h1'],
+    'url' => $toolUrl,
+    'description' => $toolDescription,
+    'isPartOf' => [
+        '@type' => 'WebSite',
+        'name' => 'Any2Convert',
+        'url' => $siteUrl . '/',
+    ],
+    'breadcrumb' => [
+        '@id' => $toolUrl . '#breadcrumb',
+    ],
+];
+$softwareSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'SoftwareApplication',
+    'name' => $tool_data['h1'],
+    'applicationCategory' => 'UtilitiesApplication',
+    'applicationSubCategory' => 'Online File and Utility Tool',
+    'operatingSystem' => 'Web',
+    'url' => $toolUrl,
+    'description' => $toolDescription,
+    'isAccessibleForFree' => true,
+    'offers' => [
+        '@type' => 'Offer',
+        'price' => '0',
+        'priceCurrency' => 'USD',
+    ],
+];
+$softwareSchema = sanitizeSoftwareApplicationSchema($softwareSchema);
+$breadcrumbSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    '@id' => $toolUrl . '#breadcrumb',
+    'itemListElement' => [
+        [
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => $siteUrl . '/',
+        ],
+        [
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => $tool_data['h1'],
+            'item' => $toolUrl,
+        ],
+    ],
+];
+$faqSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => array_map(static function ($faq) {
+        return [
+            '@type' => 'Question',
+            'name' => $faq['q'],
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => $faq['a'],
+            ],
+        ];
+    }, $displayFaqs),
+];
+
+// Get the rest of index.css and navbar
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($toolTitle) ?></title>
+    <link rel="icon" type="image/png" href="mylogo.png">
+    <meta name="description" content="<?= htmlspecialchars($toolDescription) ?>">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="application-name" content="Any2Convert">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta property="og:title" content="<?= htmlspecialchars($toolTitle) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($toolDescription) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Any2Convert">
+    <meta property="og:url" content="<?= htmlspecialchars($toolUrl) ?>">
+    <meta property="og:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($toolTitle) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($toolDescription) ?>">
+    <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
+    <meta name="twitter:url" content="<?= htmlspecialchars($toolUrl) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars($toolUrl) ?>">
+
+    <script>
+    tailwind.config = {
+        darkMode: 'class'
+    };
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GNWNK7QZTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GNWNK7QZTD');
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json"><?= json_encode($webPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($softwareSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <script type="application/ld+json"><?= json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <?php if (!empty($displayFaqs)): ?>
+    <script type="application/ld+json"><?= json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <?php endif; ?>
+
+    <style>
+        /* Shared Styles from index.php */
+        :root {
+            --bg-base:        #F8F8FC;
+            --bg-surface:     #FFFFFF;
+            --bg-card:        #FFFFFF;
+            --bg-card-hover:  #F3F3FA;
+            --border:         rgba(0,0,0,0.08);
+            --border-hover:   rgba(108,99,255,0.35);
+            --border-strong:  rgba(108,99,255,0.28);
+            --text-primary:   #111118;
+            --text-secondary: #464666;
+            --text-muted:     #707096;
+            --text-main:      #111118;
+            --accent:         #6C63FF;
+            --accent-light:   rgba(108,99,255,0.08);
+            --accent-glow:    rgba(108,99,255,0.3);
+            --nav-bg:         rgba(248,248,252,0.9);
+            --nav-border:     rgba(0,0,0,0.08);
+            --pill-bg:        rgba(255,255,255,0.86);
+            --pill-text:      #20253d;
+            --red:            #EF4444;
+            --blue:           #3B82F6;
+            --violet:         #8B5CF6;
+            --green:          #10B981;
+            --amber:          #F59E0B;
+        }
+        html.dark {
+            --bg-base:        #0A0A0F;
+            --bg-surface:     #111118;
+            --bg-card:        #16161F;
+            --bg-card-hover:  #1C1C28;
+            --border:         rgba(255,255,255,0.07);
+            --border-hover:   rgba(255,255,255,0.15);
+            --border-strong:  rgba(96,165,250,0.35);
+            --text-primary:   #F0F0F8;
+            --text-secondary: #8B8BA7;
+            --text-muted:     #4A4A62;
+            --text-main:      #F0F0F8;
+            --accent-light:   rgba(108,99,255,0.15);
+            --accent-glow:    rgba(108,99,255,0.4);
+            --nav-bg:         rgba(10,10,15,0.85);
+            --nav-border:     rgba(255,255,255,0.07);
+            --pill-bg:        rgba(22,22,31,0.96);
+            --pill-text:      #F0F0F8;
+        }
+        * { font-family: 'DM Sans', sans-serif; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            animation: toolPageFade 0.6s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes toolPageFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .navbar { background: rgba(248,248,252,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        html.dark .navbar { background: rgba(10,10,15,0.85); }
+        .logo-text { font-weight: 700; font-size: 1.1rem; color: var(--text-primary); }
+        .logo-dot { color: var(--accent); }
+        .nav-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); border: 1px solid transparent; text-decoration: none; }
+        .nav-pill:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); border-color: var(--border); }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; background: var(--accent); color: #fff; border-radius: 9px; font-size: 0.875rem; font-weight: 600; text-decoration:none; }
+        .btn-primary:hover { background: #7B73FF; box-shadow: 0 8px 25px var(--accent-glow); }
+
+        .tool-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease, border-color 0.28s ease;
+        }
+        .tool-container.tool-container-wide {
+            max-width: 1180px;
+            padding: 34px;
+        }
+        .tool-container h1,
+        .tool-container h2,
+        .tool-container h3,
+        .tool-container h4,
+        .tool-container strong,
+        .tool-container label,
+        .tool-container legend {
+            color: var(--text-primary);
+        }
+        .tool-container p,
+        .tool-container li,
+        .tool-container span,
+        .tool-container div {
+            color: inherit;
+        }
+        .tool-container .text-slate-900,
+        .tool-container .text-slate-800,
+        .tool-container .text-slate-700,
+        .tool-container .text-gray-900,
+        .tool-container .text-gray-800,
+        .tool-container .text-gray-700 {
+            color: var(--text-primary) !important;
+        }
+        .tool-container .text-slate-600,
+        .tool-container .text-slate-500,
+        .tool-container .text-slate-400,
+        .tool-container .text-gray-600,
+        .tool-container .text-gray-500,
+        .tool-container .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        html:not(.dark) .tool-container .text-white {
+            color: var(--text-primary) !important;
+        }
+        html:not(.dark) .tool-container [class*="bg-white"],
+        html:not(.dark) .tool-container [class*="bg-slate-50"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,249,255,0.93)) !important;
+            border-color: rgba(186,205,255,0.34) !important;
+        }
+        html:not(.dark) .tool-container [class*="bg-slate-900"],
+        html:not(.dark) .tool-container [class*="bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(253,254,255,0.99), rgba(241,246,255,0.95)) !important;
+            color: var(--text-primary) !important;
+            border-color: rgba(186,205,255,0.4) !important;
+        }
+        html:not(.dark) .tool-container [class*="from-slate-900"],
+        html:not(.dark) .tool-container [class*="from-slate-950"],
+        html:not(.dark) .tool-container [class*="via-slate-900"],
+        html:not(.dark) .tool-container [class*="via-slate-950"],
+        html:not(.dark) .tool-container [class*="to-slate-900"],
+        html:not(.dark) .tool-container [class*="to-slate-950"] {
+            --tw-gradient-from: rgba(255,255,255,0.98) var(--tw-gradient-from-position) !important;
+            --tw-gradient-via: rgba(244,247,255,0.96) var(--tw-gradient-via-position) !important;
+            --tw-gradient-to: rgba(234,240,255,0.92) var(--tw-gradient-to-position) !important;
+        }
+        html:not(.dark) .tool-container [class*="border-slate-800"],
+        html:not(.dark) .tool-container [class*="border-slate-700"],
+        html:not(.dark) .tool-container [class*="border-gray-800"],
+        html:not(.dark) .tool-container [class*="border-gray-700"] {
+            border-color: rgba(186,205,255,0.4) !important;
+        }
+        .tool-container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(108,99,255,0.08), transparent 24%, transparent 68%, rgba(59,130,246,0.08));
+            opacity: 0.9;
+        }
+        .tool-container > * {
+            position: relative;
+            z-index: 1;
+        }
+        .tool-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 58px rgba(15,23,42,0.12);
+            border-color: var(--border-hover);
+        }
+        @media (max-width: 768px) {
+            .tool-container {
+                padding: 16px;
+                margin: 18px auto;
+                border-radius: 14px;
+                box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+            }
+            header h1 {
+                font-size: 1.8rem !important;
+                line-height: 1.25;
+            }
+            .seo-content {
+                font-size: 0.98rem;
+                line-height: 1.7;
+            }
+        }
+        
+        /* Shared tool form polish */
+        .tool-container input[type="file"],
+        .tool-container input[type="text"],
+        .tool-container input[type="number"],
+        .tool-container select,
+        .tool-container textarea {
+            width: 100%;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: transform 0.24s cubic-bezier(.22,1,.36,1), border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .tool-container input[type="file"]:focus,
+        .tool-container input[type="text"]:focus,
+        .tool-container input[type="number"]:focus,
+        .tool-container select:focus,
+        .tool-container textarea:focus {
+            outline: none;
+            border-color: var(--border-hover);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            transform: translateY(-1px);
+        }
+        .tool-container input[type="file"] {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .tool-container input[type="file"]::file-selector-button {
+            margin-right: 12px;
+            border: 0;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--accent), #7b73ff);
+            cursor: pointer;
+            transition: transform 0.16s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            box-shadow: 0 8px 18px var(--accent-glow);
+        }
+        .tool-container input[type="file"]::file-selector-button:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+        .tool-container button {
+            letter-spacing: 0.01em;
+            border-radius: 14px;
+            box-shadow: 0 12px 22px rgba(59, 130, 246, 0.25);
+            transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.24s ease, filter 0.2s ease;
+        }
+        .tool-container button:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 18px 32px rgba(59, 130, 246, 0.28);
+            filter: saturate(1.06);
+        }
+        .tool-container button:active {
+            transform: translateY(0);
+        }
+
+        /* Bring newer wide tools closer to the homepage visual language in light mode */
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,255,0.92)) !important;
+            color: #0f172a !important;
+            border-color: rgba(148,163,184,0.24) !important;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.10) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-900"] {
+            background: linear-gradient(180deg, rgba(248,250,255,0.94), rgba(237,242,255,0.88)) !important;
+            color: #0f172a !important;
+            border-color: rgba(148,163,184,0.24) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/5"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/10"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/[0.03]"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/[0.05]"] {
+            background: rgba(255,255,255,0.78) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="from-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="from-slate-900"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="via-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="via-slate-900"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="to-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="to-slate-900"] {
+            --tw-gradient-from: rgba(255,255,255,0.98) var(--tw-gradient-from-position) !important;
+            --tw-gradient-via: rgba(244,247,255,0.94) var(--tw-gradient-via-position) !important;
+            --tw-gradient-to: rgba(234,240,255,0.9) var(--tw-gradient-to-position) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-gradient-to-br"][class*="dark:from-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-gradient-to-br"][class*="dark:from-slate-900"] {
+            background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(243,247,255,0.96) 54%, rgba(231,244,255,0.92) 100%) !important;
+            border-color: rgba(186,205,255,0.5) !important;
+            box-shadow: 0 24px 68px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/92"][class*="dark:bg-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/85"][class*="dark:bg-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/80"][class*="dark:bg-slate-950"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-white/75"][class*="dark:bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.94)) !important;
+            border-color: rgba(186,205,255,0.42) !important;
+            box-shadow: 0 18px 44px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.76) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-950"][class*="text-white"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-900"][class*="text-white"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(241,246,255,0.93)) !important;
+            color: #0f172a !important;
+            border-color: rgba(186,205,255,0.42) !important;
+            box-shadow: 0 20px 44px rgba(15,23,42,0.08) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="text-white"] {
+            color: #0f172a !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="text-slate-300"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="text-slate-400"] {
+            color: #64748b !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="border-white/10"] {
+            border-color: rgba(148,163,184,0.24) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide pre[class*="bg-slate-950"] {
+            background: linear-gradient(180deg, rgba(244,247,255,0.98), rgba(233,239,252,0.94)) !important;
+            border-color: rgba(148,163,184,0.24) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 16px 30px rgba(15,23,42,0.08) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-50/85"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-50/80"],
+        html:not(.dark) .tool-container.tool-container-wide [class*="bg-slate-50"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(246,248,255,0.9)) !important;
+        }
+        html:not(.dark) .tool-container.tool-container-wide [class*="shadow-black/20"] {
+            box-shadow: 0 24px 60px rgba(15,23,42,0.08) !important;
+        }
+
+        /* Premium polish layer for the newer wide tools */
+        .tool-container.tool-container-wide {
+            background:
+                radial-gradient(circle at top left, rgba(108,99,255,0.12), transparent 22%),
+                radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 20%),
+                linear-gradient(180deg, rgba(255,255,255,0.82), rgba(248,250,255,0.74));
+        }
+        html.dark .tool-container.tool-container-wide {
+            background:
+                radial-gradient(circle at top left, rgba(108,99,255,0.12), transparent 22%),
+                radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 20%),
+                linear-gradient(180deg, rgba(15,23,42,0.78), rgba(2,6,23,0.92));
+        }
+        .tool-container.tool-container-wide > div[class*="max-w-"] {
+            gap: 1.5rem !important;
+        }
+        .tool-container.tool-container-wide :is(
+            div[class*="rounded-[34px]"],
+            div[class*="rounded-[32px]"],
+            div[class*="rounded-[28px]"],
+            div[class*="rounded-[24px]"],
+            label[class*="rounded-[28px]"],
+            label[class*="rounded-[24px]"]
+        ) {
+            backdrop-filter: blur(18px);
+            transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s ease, border-color 0.24s ease, background 0.24s ease;
+        }
+        .tool-container.tool-container-wide :is(
+            div[class*="rounded-[34px]"],
+            div[class*="rounded-[32px]"],
+            div[class*="rounded-[28px]"]
+        ):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 54px rgba(15,23,42,0.12);
+        }
+        html.dark .tool-container.tool-container-wide :is(
+            div[class*="rounded-[34px]"],
+            div[class*="rounded-[32px]"],
+            div[class*="rounded-[28px]"]
+        ):hover {
+            box-shadow: 0 26px 56px rgba(2,6,23,0.38);
+        }
+        .tool-container.tool-container-wide h2,
+        .tool-container.tool-container-wide h3 {
+            letter-spacing: -0.03em;
+        }
+        .tool-container.tool-container-wide p[class*="tracking-[0.34em]"],
+        .tool-container.tool-container-wide p[class*="tracking-[0.3em]"],
+        .tool-container.tool-container-wide p[class*="tracking-[0.28em]"] {
+            opacity: 0.98;
+        }
+        .tool-container.tool-container-wide :is(input, select, textarea) {
+            min-height: 54px;
+            border-radius: 20px !important;
+        }
+        .tool-container.tool-container-wide textarea {
+            line-height: 1.65;
+        }
+        .tool-container.tool-container-wide button {
+            min-height: 52px;
+            font-weight: 700;
+        }
+        .tool-container.tool-container-wide button[id*="Start"],
+        .tool-container.tool-container-wide button[id*="Analyze"],
+        .tool-container.tool-container-wide button[id*="Generate"],
+        .tool-container.tool-container-wide button[id*="Resize"],
+        .tool-container.tool-container-wide button[id*="Download"],
+        .tool-container.tool-container-wide button[id*="Extract"],
+        .tool-container.tool-container-wide button[id*="Decode"] {
+            box-shadow: 0 18px 34px rgba(59,130,246,0.18);
+        }
+        .tool-container.tool-container-wide pre {
+            border-radius: 26px;
+            border: 1px solid rgba(148,163,184,0.18);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .server-pdf-card {
+            border-radius: 30px;
+            border: 1px solid rgba(186,205,255,0.42);
+            background:
+                radial-gradient(circle at top right, rgba(108,99,255,0.1), transparent 22%),
+                linear-gradient(180deg, rgba(255,255,255,0.98), rgba(243,247,255,0.94));
+            padding: 24px;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.78);
+        }
+        html.dark .server-pdf-card {
+            border-color: rgba(148,163,184,0.18);
+            background:
+                radial-gradient(circle at top right, rgba(108,99,255,0.12), transparent 22%),
+                linear-gradient(180deg, rgba(16,20,36,0.98), rgba(10,14,28,0.96));
+            box-shadow: 0 28px 64px rgba(2,6,23,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .server-pdf-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+        .server-pdf-eyebrow {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #2563eb;
+            margin: 0;
+        }
+        .server-pdf-title {
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            color: var(--text-primary);
+        }
+        .server-pdf-copy {
+            margin-top: 12px;
+            max-width: 42rem;
+            font-size: 0.98rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        .server-pdf-icon {
+            align-items: center;
+            justify-content: center;
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(59,130,246,0.12));
+            color: #2563eb;
+            border: 1px solid rgba(186,205,255,0.4);
+        }
+        html.dark .server-pdf-icon {
+            color: #bfdbfe;
+            background: linear-gradient(135deg, rgba(108,99,255,0.16), rgba(59,130,246,0.14));
+            border-color: rgba(148,163,184,0.18);
+        }
+        .server-pdf-dropzone {
+            display: block;
+            border-radius: 26px;
+            border: 2px dashed rgba(186,205,255,0.55);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.94));
+            padding: 32px 22px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.22s cubic-bezier(.22,1,.36,1), border-color 0.22s ease, box-shadow 0.22s ease;
+        }
+        .server-pdf-dropzone:hover {
+            transform: translateY(-2px);
+            border-color: rgba(96,165,250,0.7);
+            box-shadow: 0 18px 42px rgba(15,23,42,0.06);
+        }
+        html.dark .server-pdf-dropzone {
+            border-color: rgba(148,163,184,0.2);
+            background: linear-gradient(180deg, rgba(14,18,33,0.98), rgba(9,13,25,0.96));
+        }
+        .server-pdf-drop-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .server-pdf-drop-copy {
+            margin-top: 8px;
+            font-size: 0.94rem;
+            color: var(--text-secondary);
+        }
+        .server-pdf-preview {
+            margin-top: 16px;
+            border-radius: 22px;
+            border: 1px solid rgba(186,205,255,0.42);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.94));
+            padding: 12px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.76), 0 14px 30px rgba(15,23,42,0.05);
+        }
+        html.dark .server-pdf-preview {
+            border-color: rgba(148,163,184,0.18);
+            background: linear-gradient(180deg, rgba(13,18,32,0.98), rgba(9,13,25,0.96));
+        }
+        .server-pdf-note {
+            margin-top: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(186,205,255,0.42);
+            background: linear-gradient(180deg, rgba(244,247,255,0.96), rgba(235,242,255,0.92));
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        html.dark .server-pdf-note {
+            border-color: rgba(148,163,184,0.18);
+            background: linear-gradient(180deg, rgba(19,24,41,0.96), rgba(12,16,30,0.94));
+            color: #c7d2e6;
+        }
+        .server-pdf-status {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        .tool-container .uploaded-file-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(186,205,255,0.36);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,248,255,0.94));
+            box-shadow: 0 14px 30px rgba(15,23,42,0.06);
+        }
+        .tool-container .uploaded-file-meta {
+            min-width: 0;
+        }
+        .tool-container .uploaded-file-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tool-container .uploaded-file-sub {
+            margin-top: 4px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+        }
+        .tool-container .uploaded-file-ext {
+            flex-shrink: 0;
+            min-width: 56px;
+            text-align: center;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(59,130,246,0.12));
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        html.dark .tool-container .uploaded-file-card {
+            background: linear-gradient(180deg, rgba(20,24,39,0.96), rgba(12,16,29,0.92));
+            border-color: rgba(148,163,184,0.2);
+            box-shadow: 0 16px 36px rgba(2,6,23,0.34);
+        }
+        html.dark .tool-container .uploaded-file-sub {
+            color: #9aa5bd;
+        }
+        html.dark .tool-container .uploaded-file-ext {
+            background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(59,130,246,0.18));
+            color: #dbe7ff;
+        }
+        .tool-container.tool-container-wide canvas,
+        .tool-container.tool-container-wide video,
+        .tool-container.tool-container-wide audio,
+        .tool-container.tool-container-wide img {
+            border-radius: 24px;
+        }
+        .tool-container.tool-container-wide table {
+            overflow: hidden;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .tool-container.tool-container-wide tbody tr {
+            transition: background 0.22s ease;
+        }
+        .tool-container.tool-container-wide tbody tr:hover {
+            background: rgba(108,99,255,0.05);
+        }
+        .tool-container.tool-container-wide [id*="Status"],
+        .tool-container.tool-container-wide [id*="status"] {
+            font-weight: 500;
+        }
+        .tool-container.tool-container-wide [id*="Result"],
+        .tool-container.tool-container-wide [id*="result"],
+        .tool-container.tool-container-wide [id*="Score"],
+        .tool-container.tool-container-wide [id*="score"] {
+            text-wrap: balance;
+        }
+        @media (max-width: 768px) {
+            .tool-container.tool-container-wide {
+                background:
+                    radial-gradient(circle at top center, rgba(108,99,255,0.10), transparent 24%),
+                    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,255,0.78));
+            }
+            html.dark .tool-container.tool-container-wide {
+                background:
+                    radial-gradient(circle at top center, rgba(108,99,255,0.10), transparent 24%),
+                    linear-gradient(180deg, rgba(15,23,42,0.82), rgba(2,6,23,0.94));
+            }
+            .tool-container.tool-container-wide :is(
+                div[class*="rounded-[34px]"],
+                div[class*="rounded-[32px]"],
+                div[class*="rounded-[28px]"],
+                label[class*="rounded-[28px]"],
+                label[class*="rounded-[24px]"]
+            ) {
+                border-radius: 24px !important;
+            }
+        }
+
+        /* Need these libraries depending on tool */
+    </style>
+    <?php any2convertRenderChromeStyles(); ?>
+</head>
+<body>
+<?= adsRenderPosition($conn, 'header') ?>
+
+<?php
+$isAdminUser = isset($_SESSION['email']) && $_SESSION['email'] === 'syedwasiulhassanshah@any2convert.com';
+$dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
+$toolTopbarCta = '';
+if (isset($_SESSION['user_name'])) {
+    $toolTopbarCta = '<a href="' . htmlspecialchars($dashboardHref, ENT_QUOTES) . '" class="site-nav-pill">Dashboard</a>';
+} else {
+    $toolTopbarCta = '<a href="login.php" class="site-nav-pill">Sign in</a><a href="signup.php" class="btn-primary" style="text-decoration:none;font-size:0.84rem;padding:9px 18px;border-radius:999px;">Get started</a>';
+}
+?>
+<?php any2convertRenderTopbar([
+    'home_href' => 'index.php',
+    'cta_html' => $toolTopbarCta,
+]); ?>
+
+<header class="text-center pt-16 pb-10 px-6">
+    <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary);"><?= htmlspecialchars($tool_data['h1']) ?></h1>
+    <p class="text-lg max-w-4xl mx-auto" style="color: var(--text-secondary);">
+        <?= htmlspecialchars($toolIntro !== '' ? $toolIntro : 'Clear steps, practical output, and tool-specific guidance for real file work.') ?>
+    </p>
+</header>
+
+<main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
+    <?= adsRenderPosition($conn, 'top_content') ?>
+    <!-- TOOL INTERFACE -->
+    <div class="tool-container<?= $isWideTool ? ' tool-container-wide' : '' ?>" id="modalContent">
+        <?= $tool_html ?>
+    </div>
+    
+    <!-- SEO CONTENT -->
+    <div class="seo-content max-w-4xl mx-auto mt-20 text-slate-600 dark:text-slate-400 text-lg leading-relaxed space-y-6">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">What is this tool?</h2>
+        <p><?= htmlspecialchars($tool_data['content']) ?></p>
+        <p><?= htmlspecialchars($tool_data['h1']) ?> helps when you need a faster way to finish a focused task without installing software, moving between multiple apps, or sending files through a long workflow. For search visibility and user trust, each tool page on Any2Convert is built to explain what the tool does, who it helps, and what to check before you rely on the output.</p>
+        <p>Use this page as both a working tool and a reference. The sections below explain common use cases, practical tips, and follow-up steps so visitors can solve the task now and understand the result before downloading, sharing, printing, or reusing the file.</p>
+
+        <?php if (!empty($toolKeywords)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Keyword Targets</h2>
+            <div class="flex flex-wrap gap-3 mt-6">
+                <?php foreach ($toolKeywords as $keyword): ?>
+                <span class="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200"><?= htmlspecialchars($keyword) ?></span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolBestFor)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Best For</h2>
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <?php foreach ($toolBestFor as $point): ?>
+                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-base">
+                    <?= htmlspecialchars($point) ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolUseCases)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Real-World Use Cases</h2>
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <?php foreach ($toolUseCases as $useCase): ?>
+                <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-base">
+                    <?= htmlspecialchars($useCase) ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolFeatures)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Key Features</h2>
+            <div class="space-y-4 mt-6">
+                <?php foreach ($toolFeatures as $feature): ?>
+                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-base">
+                    <?= htmlspecialchars($feature) ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolSteps)): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">How To Use It</h2>
+            <div class="space-y-4 mt-6">
+                <?php foreach ($toolSteps as $index => $step): ?>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="h-10 w-10 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold"><?= $index + 1 ?></div>
+                    <div class="text-base text-slate-600 dark:text-slate-300"><?= htmlspecialchars($step) ?></div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolSections)): ?>
+        <?php foreach ($toolSections as $section): ?>
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($section['title'] ?? 'More Information') ?></h2>
+            <div class="space-y-4 mt-5">
+                <?php foreach (($section['paragraphs'] ?? []) as $paragraph): ?>
+                <p><?= htmlspecialchars($paragraph) ?></p>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+        <?php endif; ?>
+
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Practical Tips</h2>
+            <div class="space-y-4 mt-5">
+                <p>Before exporting the final result, review the output once on the same device where you plan to use it. That catches common issues such as page order, cropped content, unexpected formatting, readability problems, or missing details in generated files.</p>
+                <p>If the input contains sensitive information, avoid sharing the source file more widely than necessary. Any2Convert focuses on privacy-first workflows and local processing where possible, but you should still treat personal, financial, legal, and business documents carefully.</p>
+            </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Why use Any2Convert?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Local-First Processing</strong>
+                Most file operations run directly on your device, so private documents are handled locally instead of being sent through a remote upload queue.
+            </div>
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Unlimited Free Usage</strong>
+                Enjoy lifetime free conversions. We do not enforce paid tiers, size limits, or watermarks on your generated files.
+            </div>
+        </div>
+
+        <?php if (!empty($relatedTools)): ?>
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Related Tools</h2>
+            <p class="mt-4">Explore other tools that solve nearby tasks, help with the next step in the workflow, or give users another way to prepare, convert, edit, or verify their files.</p>
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <?php foreach ($relatedTools as $relatedSlug => $relatedTool): ?>
+                <a href="/<?= htmlspecialchars($relatedSlug) ?>" class="block p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-600 transition">
+                    <div class="text-lg font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($relatedTool['h1']) ?></div>
+                    <div class="mt-2 text-base text-slate-600 dark:text-slate-300"><?= htmlspecialchars($relatedTool['meta_desc']) ?></div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($toolInternalLinks)): ?>
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">You May Also Like</h2>
+            <div class="space-y-4 mt-6">
+                <?php foreach ($toolInternalLinks as $link): ?>
+                <p>
+                    <a href="/<?= htmlspecialchars($link['slug']) ?>" class="font-semibold text-blue-600 dark:text-blue-300"><?= htmlspecialchars($link['anchor']) ?></a>
+                    <?= htmlspecialchars(' - ' . ($link['context'] ?? 'A related tool for the next step in this workflow.')) ?>
+                </p>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+        
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Frequently Asked Questions</h2>
+        <div class="space-y-4 mt-6">
+            <?php foreach ($displayFaqs as $faq): ?>
+            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                <div class="font-bold text-slate-900 dark:text-white text-lg mb-2"><?= htmlspecialchars($faq['q']) ?></div>
+                <div class="text-base"><?= htmlspecialchars($faq['a']) ?></div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        
+        <!-- Read Full Guide CTA (Internal Blog Link) -->
+        <div class="mt-12 p-8 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800 text-center">
+            <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">Want to learn more?</h3>
+            <p class="text-blue-700 dark:text-blue-300 mb-6 max-w-2xl mx-auto text-base">Read our comprehensive guide and step-by-step tutorial on how to get the most out of <?= htmlspecialchars($tool_data['title']) ?>.</p>
+            <a href="blog/guide.php?slug=<?= urlencode($slug) ?>" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 dark:shadow-none text-base">Read the Full Guide</a>
+        </div>
+    </div>
+</main>
+<?= adsRenderPosition($conn, 'under_content') ?>
+
+<?php any2convertRenderFooter(); ?>
+
+<?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
+
+<script>
+const toolDependencyMap = {
+    img_to_pdf: ["https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"],
+    protect_pdf: ["https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"],
+    bank_statement_to_excel: [
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    ],
+};
+
+function loadScriptOnce(src) {
+    window.__any2convertLoadedScripts = window.__any2convertLoadedScripts || {};
+    if (window.__any2convertLoadedScripts[src]) {
+        return window.__any2convertLoadedScripts[src];
+    }
+    window.__any2convertLoadedScripts[src] = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = false;
+        script.dataset.src = src;
+        script.onload = () => {
+            if (src.includes('/pdf.js/')) {
+                window.pdfjsLib && (window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js");
+            }
+            resolve();
+        };
+        script.onerror = () => reject(new Error('Failed to load required library.'));
+        document.body.appendChild(script);
+    });
+    return window.__any2convertLoadedScripts[src];
+}
+
+function ensureToolDependencies(toolId) {
+    const dependencies = toolDependencyMap[toolId] || [];
+    return Promise.all(dependencies.map(loadScriptOnce));
+}
+
+window.any2convertLeaderboard = {
+    escape(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+    async fetch(toolKey) {
+        const response = await fetch(`backend/leaderboard.php?tool=${encodeURIComponent(toolKey)}`, {
+            credentials: 'same-origin'
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Could not load leaderboard.');
+        }
+        return data;
+    },
+    async save(toolKey, payload) {
+        const response = await fetch('backend/save_leaderboard_score.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tool: toolKey, ...payload })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Could not save leaderboard score.');
+        }
+        return data;
+    },
+    render(container, data, options = {}) {
+        if (!container) return;
+        const emptyText = options.emptyText || 'No scores yet. Be the first to set one.';
+        const loginText = options.loginText || 'Log in to save your result on the public leaderboard.';
+        const entries = Array.isArray(data?.entries) ? data.entries : [];
+
+        if (!entries.length) {
+            container.innerHTML = `
+                <div class="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">
+                    ${this.escape(emptyText)}
+                    <div class="mt-2 text-xs uppercase tracking-[0.18em] ${data?.authenticated ? 'text-emerald-500 dark:text-emerald-300' : 'text-slate-400'}">
+                        ${this.escape(data?.authenticated ? 'Your next strong run can take the top spot.' : loginText)}
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = entries.map((entry) => `
+            <div class="flex items-start justify-between gap-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 px-4 py-3">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-xs font-black text-white dark:bg-white dark:text-slate-900">${entry.rank}</span>
+                        <span class="truncate text-sm font-bold text-slate-900 dark:text-white">${this.escape(entry.display_name)}</span>
+                    </div>
+                    ${entry.score_meta ? `<div class="mt-2 text-xs text-slate-500 dark:text-slate-400">${this.escape(entry.score_meta)}</div>` : ''}
+                </div>
+                <div class="shrink-0 text-right">
+                    <div class="text-sm font-black text-slate-900 dark:text-white">${this.escape(entry.score_label)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+};
+
+
+// Ensure dynamic javascript returned by backend actually executes
+async function executeScripts(container) {
+    document.querySelectorAll('script[data-dynamic-tool-script="1"]').forEach(script => script.remove());
+    const scripts = Array.from(container.querySelectorAll('script'));
+
+    for (const oldScript of scripts) {
+        const newScript = document.createElement('script');
+        newScript.dataset.dynamicToolScript = '1';
+
+        if (oldScript.src) {
+            await new Promise((resolve, reject) => {
+                newScript.src = oldScript.src;
+                newScript.async = false;
+                newScript.onload = resolve;
+                newScript.onerror = () => reject(new Error(`Failed to load script: ${oldScript.src}`));
+                oldScript.parentNode.removeChild(oldScript);
+                document.body.appendChild(newScript);
+            });
+        } else {
+            newScript.textContent = oldScript.textContent;
+            oldScript.parentNode.removeChild(oldScript);
+            document.body.appendChild(newScript);
+        }
+    }
+}
+
+// On load, execute scripts inside modalContent
+document.addEventListener('DOMContentLoaded', () => {
+    ensureToolDependencies(<?= json_encode($tool_id) ?>).then(() => {
+        executeScripts(document.getElementById('modalContent'));
+    }).catch(() => {
+        document.getElementById('modalContent').innerHTML = '<div style="padding:24px;text-align:center;color:#ef4444;">A required tool library could not be loaded.</div>';
+    });
+});
+</script>
+<?php any2convertRenderThemeScript(); ?>
+</body>
+</html>

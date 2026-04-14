@@ -201,11 +201,23 @@ $seo_tools = [
     'merge-pdf' => [
         'id' => 'merge_pdf',
         'h1' => 'Merge PDF Files Online For Free',
-        'title' => 'Merge PDF - Combine Multiple PDFs into One | Any2Convert',
-        'meta_desc' => 'Combine multiple PDF documents into a single file with a stronger server-side merge engine.',
+        'title' => 'Merge PDF Online Free - Combine PDF Files Into One Without Signup',
+        'meta_desc' => 'Merge PDF online free to combine multiple PDF files into one clean document. Fast PDF merger tool for email, applications, reports, and client-ready files.',
         'icon' => '📑',
+        'intro' => 'Merge PDF online when you need several files to become one polished document that is easier to share, upload, print, archive, or review. This dedicated tool page is built to rank for PDF merger searches while still reusing your existing tool logic, so visitors can land directly on the exact task they need. Use it to combine contracts, invoices, application attachments, scanned pages, reports, proposals, class notes, or supporting documents into one final PDF without sending people through a generic homepage first.',
+        'keyword_targets' => [
+            'merge pdf online free',
+            'combine pdf files online no signup',
+            'free pdf merger without watermark',
+            'merge multiple pdf into one file online',
+            'fast pdf merge tool',
+            'online tool to combine pdf documents',
+        ],
         'faqs' => [
-            ['q' => 'How is the merge handled?', 'a' => 'The upgraded merge tool uses a server-side PDF engine so larger multi-file merges are more dependable than a browser-only merge workflow.']
+            ['q' => 'How is the merge handled?', 'a' => 'The upgraded merge tool uses a server-side PDF engine so larger multi-file merges are more dependable than a browser-only merge workflow.'],
+            ['q' => 'Can I control the order of the merged PDF?', 'a' => 'Yes. Put the files in the sequence you want before running the merge so the final reading order stays clean and intentional.'],
+            ['q' => 'Why merge PDFs instead of sending separate attachments?', 'a' => 'A single combined PDF is easier for recruiters, clients, schools, and internal teams to review because everything is in one document instead of spread across multiple files.'],
+            ['q' => 'Is this merge PDF tool free to use?', 'a' => 'Yes. The page is designed as a free online PDF merger workflow for normal usage.'],
         ],
         'content' => 'Merge multiple PDF files into one organized document with a stronger server-side merge pipeline. This helps when you need one final file for sharing, archiving, printing, submission, or team handoff without relying on a fragile browser-only merge.',
         'best_for' => [
@@ -213,6 +225,29 @@ $seo_tools = [
             'Joining chapters, class notes, or scanned pages into a single study pack',
             'Preparing one upload file for applications, portals, or client delivery',
             'Keeping page order under your control before downloading the merged result',
+        ],
+        'use_cases' => [
+            'Create one application bundle from a resume, cover letter, certificates, and ID pages.',
+            'Send one client handoff file instead of several scattered attachments.',
+            'Combine scanned paperwork into a single printable or archivable document.',
+            'Build one neat report from individual chapter or appendix PDFs.',
+        ],
+        'features' => [
+            'Dedicated server-rendered landing page with crawlable copy, title tags, FAQs, and internal links.',
+            'Existing merge handler output embedded directly into the page without rebuilding the tool logic.',
+            'Clear page-level intent so Google can understand this URL is specifically about merging PDFs online.',
+        ],
+        'related_slugs' => [
+            'split-pdf',
+            'compress-pdf',
+            'remove-pdf-pages',
+            'organize-pdf',
+            'pdf-to-word',
+        ],
+        'internal_links' => [
+            ['slug' => 'split-pdf', 'anchor' => 'Split PDF Online', 'context' => 'Try our Split PDF tool when you need to break one large document into smaller files first.'],
+            ['slug' => 'compress-pdf', 'anchor' => 'Compress PDF File Size Online', 'context' => 'Use Compress PDF after merging if the final file is too large for email or portal uploads.'],
+            ['slug' => 'organize-pdf', 'anchor' => 'Organize PDF Pages', 'context' => 'Open Organize PDF if you want to rearrange page order before sending the final document.'],
         ],
         'steps' => [
             'Add all PDF files you want to combine.',
@@ -229,10 +264,31 @@ $seo_tools = [
                 ],
             ],
             [
+                'title' => 'Why Individual Tool Pages Matter For SEO',
+                'paragraphs' => [
+                    'A dedicated merge PDF page gives search engines stronger relevance signals than a single homepage modal ever can. The URL, title, heading, intro copy, FAQs, and supporting sections all confirm that this page exists to help users combine PDFs online.',
+                    'That matters because people usually search for one very specific task. When the page intent matches the query precisely, the tool has a much better chance of earning impressions and clicks.',
+                ],
+            ],
+            [
                 'title' => 'What To Check Before Downloading',
                 'paragraphs' => [
                     'Before saving the final file, make sure the page order matches your intended reading flow. Documents like contracts, statements, or application packets can become confusing if one file is inserted in the wrong position.',
                     'It is also worth checking orientation and duplicate pages so the merged result looks intentional and ready to share.',
+                ],
+            ],
+            [
+                'title' => 'Real Workflow Benefits Of Combining PDFs',
+                'paragraphs' => [
+                    'Merged PDFs save time for both the sender and the recipient. Instead of downloading several attachments, renaming files, and guessing reading order, the recipient gets a single clean document with a predictable flow.',
+                    'That improvement is small on the surface but important in hiring, client delivery, accounting, compliance, and admissions workflows where clarity affects response speed and trust.',
+                ],
+            ],
+            [
+                'title' => 'What To Do After Merging',
+                'paragraphs' => [
+                    'Once the files are merged, the next step often depends on the final use case. You may want to compress the combined PDF, remove a few pages, or convert the finished document into another format.',
+                    'Good internal linking helps here. A strong merge PDF page should not be a dead end; it should guide users toward the next relevant tool naturally.',
                 ],
             ],
         ],
@@ -240,11 +296,23 @@ $seo_tools = [
     'compress-pdf' => [
         'id' => 'compress_pdf',
         'h1' => 'Compress PDF File Size Online',
-        'title' => 'Compress PDF - Reduce PDF Size Free | Any2Convert',
-        'meta_desc' => 'Reduce the file size of your PDF documents with a stronger server-side compression engine.',
+        'title' => 'Compress PDF Online Free - Reduce PDF Size Without Watermark',
+        'meta_desc' => 'Compress PDF online free and reduce PDF file size for email, WhatsApp, forms, and uploads. Fast PDF size reducer with a dedicated SEO-friendly page.',
         'icon' => '🗜️',
+        'intro' => 'Compress PDF online when a document is too large for email attachments, portal limits, messaging apps, or cloud storage quotas. This page is designed as a dedicated ranking asset for PDF size reduction searches while still using your existing compression handler underneath. Users can land directly on a clear page title, crawlable heading structure, and visible content that explains when and how to reduce PDF size without sacrificing more quality than necessary. It is useful for scanned paperwork, reports, client deliverables, resumes, forms, statements, and any PDF that must stay under a strict upload limit.',
+        'keyword_targets' => [
+            'compress pdf online free',
+            'reduce pdf size without watermark',
+            'pdf size reducer online no signup',
+            'fast pdf compression tool',
+            'compress large pdf for email',
+            'online tool to shrink pdf file size',
+        ],
         'faqs' => [
             ['q' => 'Will my PDF become fuzzy?', 'a' => 'Compression depends on the preset you choose, but the upgraded server-side engine is designed to reduce size more intelligently than flattening pages inside the browser.'],
+            ['q' => 'Why should I compress a PDF before sending it?', 'a' => 'Smaller PDFs upload faster, fit within attachment limits more easily, and are less frustrating for recipients to download on slower connections.'],
+            ['q' => 'Can I use this tool for scanned documents?', 'a' => 'Yes. Compression is especially useful for scanned PDFs, which often become oversized because of image-heavy pages.'],
+            ['q' => 'Is this a free online PDF compressor?', 'a' => 'Yes. This page is built as a focused free online PDF compressor workflow.'],
         ],
         'content' => 'Compress PDF files online when the original document is too large for email, form submissions, client portals, or cloud storage limits. The goal is to reduce size while keeping the document readable and practical to share.',
         'best_for' => [
@@ -252,6 +320,29 @@ $seo_tools = [
             'Making scanned documents easier to store and transfer',
             'Cleaning up oversized reports, brochures, and presentation exports',
             'Keeping text readable while lowering unnecessary file weight',
+        ],
+        'use_cases' => [
+            'Bring a resume or application PDF under an upload cap before submission.',
+            'Shrink scanned statements or receipts so they are easier to email and archive.',
+            'Reduce a client-ready proposal before sending it through a portal or CRM.',
+            'Make a brochure or presentation PDF download faster on mobile connections.',
+        ],
+        'features' => [
+            'Server-rendered SEO content so the page can rank independently for PDF compression searches.',
+            'Existing compression tool UI embedded directly on the page with no separate SPA dependency.',
+            'Clear guidance that helps users choose practical file size reduction instead of blindly chasing the smallest possible output.',
+        ],
+        'related_slugs' => [
+            'merge-pdf',
+            'split-pdf',
+            'pdf-to-word',
+            'protect-pdf',
+            'remove-pdf-pages',
+        ],
+        'internal_links' => [
+            ['slug' => 'merge-pdf', 'anchor' => 'Merge PDF Files Online For Free', 'context' => 'Use Merge PDF first if your final package still needs multiple source files combined.'],
+            ['slug' => 'protect-pdf', 'anchor' => 'Add Password Protection to PDF', 'context' => 'Try Protect PDF after compression when the smaller file still contains sensitive information.'],
+            ['slug' => 'remove-pdf-pages', 'anchor' => 'Remove Pages from PDF', 'context' => 'Open Remove Pages if the best way to lower file size is to delete unnecessary content entirely.'],
         ],
         'steps' => [
             'Upload the PDF file you want to reduce in size.',
@@ -268,10 +359,31 @@ $seo_tools = [
                 ],
             ],
             [
+                'title' => 'Why A Dedicated Compress PDF Page Performs Better',
+                'paragraphs' => [
+                    'Users searching for a PDF compressor are usually trying to solve a very immediate problem: their file is too large right now. A dedicated page with a focused title, visible intro, keyword coverage, and direct tool access serves that intent much better than a generic tools homepage.',
+                    'That same focus improves crawlability. Search engines can understand that this URL is specifically about reducing PDF size online, which supports stronger indexing and better query alignment.',
+                ],
+            ],
+            [
                 'title' => 'How To Judge Compression Quality',
                 'paragraphs' => [
                     'The best compressed PDF is not always the smallest one. For forms, legal documents, resumes, and statements, readability matters more than extreme reduction.',
                     'After compressing, quickly inspect small text, signatures, stamps, and charts so you know the file is still suitable for the purpose you need.',
+                ],
+            ],
+            [
+                'title' => 'When To Compress And When To Remove Content Instead',
+                'paragraphs' => [
+                    'Compression is the right choice when the document needs to stay visually complete but simply must become smaller. If the file includes redundant pages, duplicate scans, or unnecessary appendices, removing those pages may be even more effective than compression alone.',
+                    'That is why compress PDF pages should usually link to related cleanup workflows like page removal, splitting, and merging. The best user experience often involves more than one tool.',
+                ],
+            ],
+            [
+                'title' => 'Common Places Where Smaller PDFs Matter',
+                'paragraphs' => [
+                    'Attachment limits show up everywhere: job portals, visa systems, school admissions, customer service forms, government submissions, insurance claims, and partner dashboards. A large file can block the entire task even when the document itself is otherwise correct.',
+                    'Having a dedicated online PDF size reducer page means users can solve that bottleneck quickly and continue the original task without breaking their workflow.',
                 ],
             ],
         ],
@@ -795,16 +907,53 @@ $seo_tools = [
     'split-pdf' => [
         'id' => 'split_pdf',
         'h1' => 'Split PDF Online',
-        'title' => 'Split PDF - Separate Every Page into a PDF | Any2Convert',
-        'meta_desc' => 'Split a PDF into separate page files directly in your browser.',
+        'title' => 'Split PDF Online Free - Separate PDF Pages into New Files | Any2Convert',
+        'meta_desc' => 'Split PDF online free and separate one PDF into smaller page files without installing software. Fast browser-based splitting for cleaner sharing and uploads.',
         'icon' => 'SPLIT',
-        'faqs' => [['q' => 'Does it create one file per page?', 'a' => 'Yes, it splits pages into separate PDFs and downloads them in a ZIP.']],
+        'intro' => 'Split PDF online when one large document contains more pages than you actually need. This page gives you a server-rendered tool interface, clear instructions, and visible guidance that search engines can crawl without depending on JavaScript. Use it to separate statements, reports, combined scans, application packets, contracts, or classroom material into smaller files that are easier to send, store, and review. Because the tool is presented on its own URL, users can land directly on the exact task they searched for instead of opening a generic homepage first and then hunting for the right option.',
+        'keyword_targets' => [
+            'split pdf online free',
+            'separate pdf pages online no signup',
+            'split large pdf into smaller files',
+            'pdf splitter without watermark',
+            'fast split pdf tool',
+            'online tool to extract each pdf page',
+        ],
+        'faqs' => [
+            ['q' => 'Does it create one file per page?', 'a' => 'Yes. The split PDF flow can generate separate PDF files and package them for download so you can keep only the pages that matter.'],
+            ['q' => 'Why would I split a PDF instead of sending the original file?', 'a' => 'Splitting helps when the original document contains private pages, extra appendices, or unrelated material that should not be shared with the recipient.'],
+            ['q' => 'Can I use split PDF for school, office, or legal paperwork?', 'a' => 'Yes. It is useful for coursework, HR packets, statements, proposals, compliance documents, and other workflows where only selected pages need to move forward.'],
+            ['q' => 'Will the original PDF be changed?', 'a' => 'No. Splitting creates new output files so the source PDF remains untouched on your device unless you choose to replace it yourself.'],
+        ],
         'content' => 'Split a PDF into smaller parts when you only need a few pages, separate documents, or single-page files. This is useful for submissions, sharing, archiving, and extracting only the pages that matter.',
         'best_for' => [
             'Separating one large PDF into individual page files',
             'Extracting only the pages needed for email or upload',
             'Breaking combined scans into smaller documents',
             'Saving selected pages without editing the original source file',
+        ],
+        'use_cases' => [
+            'Send only one relevant page from a long report or statement.',
+            'Break a combined scan into separate documents for upload.',
+            'Separate a large application pack into cleaner single-purpose files.',
+            'Store only the pages you need instead of keeping a bulky original everywhere.',
+        ],
+        'features' => [
+            'Dedicated server-rendered landing page built for split PDF queries instead of hidden homepage content.',
+            'Existing split handler output embedded directly into the page without rewriting the actual tool logic.',
+            'Helpful next-step links so users can move into merge, remove, extract, or compress workflows after splitting.',
+        ],
+        'related_slugs' => [
+            'merge-pdf',
+            'remove-pdf-pages',
+            'extract-pdf-pages',
+            'organize-pdf',
+            'compress-pdf',
+        ],
+        'internal_links' => [
+            ['slug' => 'merge-pdf', 'anchor' => 'Merge PDF Files Online For Free', 'context' => 'Try our Merge PDF tool if you later want to recombine selected pages into a new final document.'],
+            ['slug' => 'extract-pdf-pages', 'anchor' => 'Extract Pages from PDF', 'context' => 'Use Extract Pages when you want a smaller curated file instead of one separate file for every page.'],
+            ['slug' => 'compress-pdf', 'anchor' => 'Compress PDF File Size Online', 'context' => 'Open Compress PDF after splitting if the new files still need to meet a strict upload limit.'],
         ],
         'steps' => [
             'Upload the PDF file you want to split.',
@@ -818,6 +967,34 @@ $seo_tools = [
                 'paragraphs' => [
                     'Many PDFs contain more pages than you actually need. For example, a full report may include one appendix, a statement may contain one important page, or a combined scan may bundle unrelated paperwork together.',
                     'Splitting helps keep file sharing cleaner and avoids sending unnecessary pages to clients, teachers, recruiters, or support teams.',
+                ],
+            ],
+            [
+                'title' => 'Why A Dedicated Split PDF Page Helps SEO And Users',
+                'paragraphs' => [
+                    'When a PDF tool lives only inside a homepage grid or a JavaScript modal, search engines often have trouble understanding the exact task being solved. A dedicated split PDF URL gives Google a clear page title, heading structure, visible descriptive copy, and internal links that match the user query much more closely.',
+                    'That same structure also helps visitors. Someone searching for how to split PDF pages online can land directly on the correct tool, read what it does in plain language, and start the task immediately without opening a generic dashboard first.',
+                ],
+            ],
+            [
+                'title' => 'When Splitting A PDF Is Better Than Editing It',
+                'paragraphs' => [
+                    'If the only goal is to separate pages, splitting is usually faster and safer than opening a full editor. You do not need to change text, replace graphics, or rebuild formatting. You simply isolate the pages that belong together and save them as smaller outputs.',
+                    'This is especially useful for application portals, customer support uploads, invoice submissions, and document verification workflows where one clean file is easier to approve than a long mixed document.',
+                ],
+            ],
+            [
+                'title' => 'Practical Review Checks Before You Download',
+                'paragraphs' => [
+                    'After splitting the document, check that page numbering, orientation, and page order still match the intended workflow. A wrong sequence can create confusion when the new files are shared with a client, hiring manager, teacher, or admin team.',
+                    'It is also smart to confirm that private pages were excluded properly. If the original PDF included signatures, IDs, financial details, or attachments, review the new files once before sending them anywhere else.',
+                ],
+            ],
+            [
+                'title' => 'Related Workflows After You Split A PDF',
+                'paragraphs' => [
+                    'Once the pages are separated, many users continue with another PDF task. Some merge selected pages into a smaller package, some remove unwanted pages permanently, and others compress the new files before email or upload.',
+                    'That is why internal linking matters on SEO pages. A strong split PDF page should naturally guide the visitor to the next likely step instead of leaving them to search the whole site again.',
                 ],
             ],
         ],

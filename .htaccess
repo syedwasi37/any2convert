@@ -13,6 +13,9 @@ RewriteRule ^blog/index\.php$ /blog/ [R=301,L]
 RewriteCond %{THE_REQUEST} \s/+tool\.php\?slug=([a-zA-Z0-9-]+) [NC]
 RewriteRule ^tool\.php$ /%1? [R=301,L]
 
+RewriteCond %{THE_REQUEST} \s/+router\.php(?:[\s?]|$) [NC]
+RewriteRule ^router\.php$ / [R=301,L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^([a-zA-Z0-9-]+)/?$ tool.php?slug=$1 [L,QSA]
+RewriteRule ^([a-zA-Z0-9-]+)/?$ router.php?page=$1 [L,QSA]
