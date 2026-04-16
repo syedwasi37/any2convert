@@ -13,7 +13,7 @@ if (!$tool) {
     exit;
 }
 
-$pageTitle = "The Ultimate Guide to " . $tool['h1'] . " | Any2Convert Blog";
+$pageTitle = $tool['h1'] . " Guide | Any2Convert";
 $pageDesc = "Learn everything about " . strtolower($tool['h1']) . ". " . $tool['meta_desc'];
 $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
 $toolUrl = "https://any2convert.com/" . $slug;
