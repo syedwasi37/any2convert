@@ -631,8 +631,16 @@ $itemListSchema = [
             border-radius: 14px;
             background: var(--bg-card);
         }
+        .tool-search-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
         .tool-search-input {
             width: 100%;
+            min-width: 220px;
+            flex: 1 1 280px;
             border: 1px solid var(--border);
             background: var(--bg-surface);
             color: var(--text-primary);
@@ -644,6 +652,39 @@ $itemListSchema = [
             outline: none;
             border-color: var(--border-hover);
             box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .tool-search-clear {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+        .tool-search-clear:hover,
+        .tool-search-clear:focus-visible {
+            background: var(--bg-surface);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+            outline: none;
+        }
+        .tool-search-clear[hidden] {
+            display: none !important;
+        }
+        .tool-search-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .tool-search-status strong {
+            color: var(--text-primary);
         }
         .tool-filter-chip {
             border: 1px solid var(--border);
@@ -659,6 +700,11 @@ $itemListSchema = [
             color: #fff;
             border-color: transparent;
             background: var(--accent);
+        }
+        .tool-filter-chip:focus-visible {
+            outline: none;
+            border-color: var(--border-hover);
+            box-shadow: 0 0 0 3px var(--accent-light);
         }
 
         /* tool icon container */
@@ -1147,25 +1193,31 @@ $itemListSchema = [
 <main id="tools" style="max-width:1280px;margin:0 auto;padding:0 20px 100px;">
     <?= adsRenderPosition($conn, 'top_content') ?>
     <div class="tool-search-wrap">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <input id="toolSearchInput" class="tool-search-input" type="text" placeholder="Search tools (e.g. compress, edit, OCR, image...)">
+        <div class="tool-search-row">
+            <label for="toolSearchInput" class="sr-only">Search tools</label>
+            <input id="toolSearchInput" class="tool-search-input" type="search" placeholder="Search tools like compress, OCR, image, calculator..." autocomplete="off" enterkeyhint="search">
+            <button id="toolSearchClear" class="tool-search-clear" type="button" hidden>Clear</button>
+        </div>
+        <div class="tool-search-meta">
+            <div id="toolSearchStatus" class="tool-search-status" aria-live="polite">Showing <strong>all tools</strong>.</div>
+            <div>Tip: filter by category or type a few letters to narrow the list.</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-            <button class="tool-filter-chip active" data-tool-filter="all" type="button">All</button>
-            <button class="tool-filter-chip" data-tool-filter="pdf" type="button">PDF</button>
-            <button class="tool-filter-chip" data-tool-filter="convert" type="button">Converters</button>
-            <button class="tool-filter-chip" data-tool-filter="utility" type="button">Utility</button>
-            <button class="tool-filter-chip" data-tool-filter="conversion" type="button">Conversion</button>
-            <button class="tool-filter-chip" data-tool-filter="calculator" type="button">Calculators</button>
-            <button class="tool-filter-chip" data-tool-filter="business" type="button">Business</button>
-            <button class="tool-filter-chip" data-tool-filter="writing" type="button">Writing</button>
-            <button class="tool-filter-chip" data-tool-filter="developer" type="button">Developer</button>
-            <button class="tool-filter-chip" data-tool-filter="gaming" type="button">Gaming</button>
-            <button class="tool-filter-chip" data-tool-filter="fun" type="button">Fun</button>
+            <button class="tool-filter-chip active" data-tool-filter="all" type="button" aria-pressed="true">All</button>
+            <button class="tool-filter-chip" data-tool-filter="pdf" type="button" aria-pressed="false">PDF</button>
+            <button class="tool-filter-chip" data-tool-filter="convert" type="button" aria-pressed="false">Converters</button>
+            <button class="tool-filter-chip" data-tool-filter="utility" type="button" aria-pressed="false">Utility</button>
+            <button class="tool-filter-chip" data-tool-filter="conversion" type="button" aria-pressed="false">Conversion</button>
+            <button class="tool-filter-chip" data-tool-filter="calculator" type="button" aria-pressed="false">Calculators</button>
+            <button class="tool-filter-chip" data-tool-filter="business" type="button" aria-pressed="false">Business</button>
+            <button class="tool-filter-chip" data-tool-filter="writing" type="button" aria-pressed="false">Writing</button>
+            <button class="tool-filter-chip" data-tool-filter="developer" type="button" aria-pressed="false">Developer</button>
+            <button class="tool-filter-chip" data-tool-filter="gaming" type="button" aria-pressed="false">Gaming</button>
+            <button class="tool-filter-chip" data-tool-filter="fun" type="button" aria-pressed="false">Fun</button>
         </div>
     </div>
     <div id="toolNoResults" class="hidden-by-filter" style="margin:12px 0 24px;padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--text-secondary);text-align:center;">
-        No tools found for your search.
+        No tools matched that search. Try a broader keyword or switch back to All.
     </div>
 
     <?php
@@ -1776,6 +1828,8 @@ document.addEventListener('keydown', e => {
 // â”€â”€ Homepage tool search + filters â”€â”€
 (function() {
     const searchInput = document.getElementById('toolSearchInput');
+    const clearButton = document.getElementById('toolSearchClear');
+    const status = document.getElementById('toolSearchStatus');
     const filterButtons = Array.from(document.querySelectorAll('[data-tool-filter]'));
     const cards = Array.from(document.querySelectorAll('.tool-card[data-tool-category]'));
     const sections = Array.from(document.querySelectorAll('.tool-category-section'));
@@ -1783,8 +1837,41 @@ document.addEventListener('keydown', e => {
     if (!searchInput || !cards.length) return;
     let activeFilter = 'all';
 
+    function syncUrl(query, filter) {
+        const url = new URL(window.location.href);
+        if (query) {
+            url.searchParams.set('q', query);
+        } else {
+            url.searchParams.delete('q');
+        }
+        if (filter && filter !== 'all') {
+            url.searchParams.set('category', filter);
+        } else {
+            url.searchParams.delete('category');
+        }
+        const next = `${url.pathname}${url.search}${url.hash}`;
+        window.history.replaceState({}, '', next);
+    }
+
+    function updateStatus(visibleCards, query) {
+        if (!status) return;
+        const filterLabel = activeFilter === 'all'
+            ? 'all categories'
+            : `${activeFilter} tools`;
+        if (!visibleCards) {
+            status.textContent = `Showing 0 tools in ${filterLabel}.`;
+            return;
+        }
+        if (query) {
+            status.textContent = `Showing ${visibleCards} tools for "${query}" in ${filterLabel}.`;
+            return;
+        }
+        status.textContent = `Showing ${visibleCards} tools in ${filterLabel}.`;
+    }
+
     function applyToolFilters() {
-        const query = searchInput.value.trim().toLowerCase();
+        const rawQuery = searchInput.value.trim();
+        const query = rawQuery.toLowerCase();
         let visibleCards = 0;
         cards.forEach(card => {
             const category = card.dataset.toolCategory || '';
@@ -1801,20 +1888,48 @@ document.addEventListener('keydown', e => {
             section.classList.toggle('hidden-by-filter', !hasVisible);
         });
         noResults.classList.toggle('hidden-by-filter', visibleCards > 0);
+        if (clearButton) {
+            clearButton.hidden = rawQuery === '';
+        }
+        updateStatus(visibleCards, rawQuery);
+        syncUrl(rawQuery, activeFilter);
     }
 
     searchInput.addEventListener('input', applyToolFilters);
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            searchInput.value = '';
+            applyToolFilters();
+            searchInput.focus();
+        });
+    }
     filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             activeFilter = btn.dataset.toolFilter || 'all';
-            filterButtons.forEach(b => b.classList.toggle('active', b === btn));
+            filterButtons.forEach(b => {
+                const isActive = b === btn;
+                b.classList.toggle('active', isActive);
+                b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
             applyToolFilters();
         });
     });
 
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');
+    const category = params.get('category');
     if (q) searchInput.value = q;
+    if (category) {
+        const matchingButton = filterButtons.find((btn) => btn.dataset.toolFilter === category);
+        if (matchingButton) {
+            activeFilter = category;
+            filterButtons.forEach((btn) => {
+                const isActive = btn === matchingButton;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        }
+    }
     applyToolFilters();
 })();
 </script>
