@@ -6,3 +6,7 @@
 # Private/generated data
 error_log
 uploads/
+sess_*
+_tool_rendered.html
+_pdf_to_word_inline.js
+patch_tools*.py
