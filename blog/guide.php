@@ -118,10 +118,31 @@ trackVisit('Blog Guide Page', $slug);
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://any2convert.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://any2convert.com/blog/"},{"@type":"ListItem","position":3,"name":"<?= htmlspecialchars($tool['h1']) ?> Guide","item":"<?= htmlspecialchars($canonical) ?>"}]}</script>
     
     <style>
-        :root { --bg-accent: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 35%, #eef2ff 100%); --panel-bg: rgba(255,255,255,0.92); --panel-border: rgba(148,163,184,0.16); --text-main:#0f172a; --text-soft:#64748b; --nav-bg:rgba(255,255,255,0.72); --nav-border:rgba(148,163,184,0.14); --pill-bg:rgba(255,255,255,0.86); --pill-text:#334155; }
-        html.dark { --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%); --panel-bg: rgba(15,23,42,0.82); --panel-border: rgba(148,163,184,0.16); --text-main:#e2e8f0; --text-soft:#94a3b8; --nav-bg:rgba(2,6,23,0.76); --nav-border:rgba(148,163,184,0.16); --pill-bg:rgba(15,23,42,0.92); --pill-text:#cbd5e1; }
+        :root { --bg-accent: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 35%, #eef2ff 100%); --panel-bg: rgba(255,255,255,0.92); --panel-border: rgba(148,163,184,0.16); --text-main:#0f172a; --text-soft:#64748b; --text-strong:#1e293b; --nav-bg:rgba(255,255,255,0.72); --nav-border:rgba(148,163,184,0.14); --pill-bg:rgba(255,255,255,0.86); --pill-text:#334155; --faq-bg:#f8fafc; --faq-border:#e2e8f0; }
+        html.dark { --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%); --panel-bg: rgba(15,23,42,0.82); --panel-border: rgba(148,163,184,0.16); --text-main:#e2e8f0; --text-soft:#94a3b8; --text-strong:#f8fafc; --nav-bg:rgba(2,6,23,0.76); --nav-border:rgba(148,163,184,0.16); --pill-bg:rgba(15,23,42,0.92); --pill-text:#cbd5e1; --faq-bg:rgba(30,41,59,0.55); --faq-border:rgba(71,85,105,0.7); }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-accent); color: var(--text-main); }
         .panel { background: var(--panel-bg); backdrop-filter: blur(18px); border: 1px solid var(--panel-border); box-shadow: 0 24px 70px rgba(15,23,42,0.08); }
+        .guide-body { color: var(--text-soft); }
+        .guide-body h1,
+        .guide-body h2,
+        .guide-body h3,
+        .guide-body h4,
+        .guide-body strong {
+            color: var(--text-strong);
+        }
+        .guide-body a {
+            color: #2563eb;
+        }
+        .guide-body a:hover {
+            color: #1d4ed8;
+        }
+        .guide-intro {
+            color: var(--text-strong);
+        }
+        .guide-faq {
+            background: var(--faq-bg);
+            border-color: var(--faq-border);
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -136,14 +157,14 @@ trackVisit('Blog Guide Page', $slug);
     </nav>
 
     <main class="max-w-4xl mx-auto px-6 py-12">
-        <article class="panel rounded-[2.75rem] p-8 md:p-12">
+        <article class="panel guide-body rounded-[2.75rem] p-8 md:p-12">
             <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Tool Guide</p>
-            <h1 class="text-4xl md:text-5xl font-black mt-4 text-slate-900 dark:text-white leading-tight">Mastering <?= htmlspecialchars($tool['h1']) ?></h1>
+            <h1 class="text-4xl md:text-5xl font-black mt-4 leading-tight">Mastering <?= htmlspecialchars($tool['h1']) ?></h1>
             
-            <div class="prose dark:prose-invert max-w-none mt-10 text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
-                <p class="text-xl font-medium text-slate-800 dark:text-slate-200 mb-8"><?= htmlspecialchars($tool['meta_desc']) ?></p>
+            <div class="max-w-none mt-10 text-lg leading-relaxed">
+                <p class="guide-intro text-xl font-medium mb-8"><?= htmlspecialchars($tool['meta_desc']) ?></p>
                 
-                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">Why Do You Need This?</h2>
+                <h2 class="text-2xl font-bold mt-10 mb-4">Why Do You Need This?</h2>
                 <p><?= htmlspecialchars($tool['content']) ?></p>
                 <?php if ($usesServerProcessing): ?>
                     <p class="mt-4">This workflow may use secure server-side processing for the heavy conversion step when that produces a better result. For sensitive files, review the tool page and privacy policy first so you know whether the job stays in the browser or is handled on the server.</p>
@@ -152,7 +173,7 @@ trackVisit('Blog Guide Page', $slug);
                 <?php endif; ?>
 
                 <?php if (!empty($bestFor)): ?>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">Best For</h2>
+                    <h2 class="text-2xl font-bold mt-10 mb-4">Best For</h2>
                     <ul class="list-disc pl-6 space-y-3 mt-4">
                         <?php foreach ($bestFor as $item): ?>
                             <li><?= htmlspecialchars($item) ?></li>
@@ -160,7 +181,7 @@ trackVisit('Blog Guide Page', $slug);
                     </ul>
                 <?php endif; ?>
 
-                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">How to Use the Tool</h2>
+                <h2 class="text-2xl font-bold mt-10 mb-4">How to Use the Tool</h2>
                 <ul class="list-disc pl-6 space-y-3 mt-4">
                     <?php if (!empty($steps)): ?>
                         <?php foreach ($steps as $index => $step): ?>
@@ -176,7 +197,7 @@ trackVisit('Blog Guide Page', $slug);
 
                 <?php foreach ($sections as $section): ?>
                     <?php if (empty($section['title']) || empty($section['paragraphs']) || !is_array($section['paragraphs'])) continue; ?>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4"><?= htmlspecialchars($section['title']) ?></h2>
+                    <h2 class="text-2xl font-bold mt-10 mb-4"><?= htmlspecialchars($section['title']) ?></h2>
                     <?php foreach ($section['paragraphs'] as $paragraph): ?>
                         <p class="mt-4"><?= htmlspecialchars($paragraph) ?></p>
                     <?php endforeach; ?>
@@ -190,17 +211,18 @@ trackVisit('Blog Guide Page', $slug);
                     </a>
                 </div>
 
-                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">Frequently Asked Questions</h2>
+                <h2 class="text-2xl font-bold mt-10 mb-4">Frequently Asked Questions</h2>
                 <div class="space-y-6 mt-6">
                     <?php foreach($tool['faqs'] as $faq): ?>
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-                            <h4 class="font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($faq['q']) ?></h4>
-                            <p class="mt-2 text-base text-slate-600 dark:text-slate-400"><?= htmlspecialchars($faq['a']) ?></p>
+                        <div class="guide-faq p-5 rounded-2xl border">
+                            <h4 class="font-bold"><?= htmlspecialchars($faq['q']) ?></h4>
+                            <p class="mt-2 text-base"><?= htmlspecialchars($faq['a']) ?></p>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
         </article>
     </main>
+    <?php any2convertRenderThemeScript(); ?>
 </body>
 </html>
