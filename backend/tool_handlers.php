@@ -3311,9 +3311,9 @@ function getMemoryMatchGameHTML() {
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
                     <span class="block text-[11px] uppercase tracking-[0.22em] text-slate-400 mb-2">Difficulty</span>
                     <select id="memoryDifficulty" class="w-full min-h-[56px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 text-[15px] font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/30">
-                        <option value="12">Easy � 12 cards</option>
-                        <option value="16" selected>Normal � 16 cards</option>
-                        <option value="20">Hard � 20 cards</option>
+                        <option value="12">Easy - 12 cards</option>
+                        <option value="16" selected>Normal - 16 cards</option>
+                        <option value="20">Hard - 20 cards</option>
                     </select>
                 </label>
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
@@ -3404,7 +3404,7 @@ function getMemoryMatchGameHTML() {
                 const best = JSON.parse(localStorage.getItem(bestKey) || "{}");
                 const key = `${difficultyEl.value}-${themeEl.value}`;
                 if (best[key]) {
-                    bestEl.textContent = `Best: ${best[key].moves} moves � ${best[key].time}`;
+                    bestEl.textContent = `Best: ${best[key].moves} moves - ${best[key].time}`;
                 } else {
                     bestEl.textContent = "Best: --";
                 }
@@ -3439,7 +3439,7 @@ function getMemoryMatchGameHTML() {
                     primary_score: moves,
                     secondary_score: seconds,
                     score_label: `${moves} moves`,
-                    score_meta: `${formatTime(seconds)} � ${difficultyEl.options[difficultyEl.selectedIndex].text}`
+                    score_meta: `${formatTime(seconds)} - ${difficultyEl.options[difficultyEl.selectedIndex].text}`
                 }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
 
@@ -3554,9 +3554,9 @@ function getMemoryMatchGameHTML() {
                 const deck = createDeck();
                 board.className = `grid gap-3 ${deck.length >= 20 ? "grid-cols-4 md:grid-cols-5" : "grid-cols-4"}`;
                 board.innerHTML = deck.map((card) => `
-                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square overflow-hidden rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-slate-100 dark:bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-fuchsia-400/40 hover:bg-fuchsia-50 dark:hover:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35" style="perspective:1000px;">
-                        <span data-card-front class="absolute inset-[1px] rounded-[22px] border border-slate-200 dark:border-white/10 bg-gradient-to-br from-white via-fuchsia-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400 transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg);transform-style:preserve-3d;">Flip</span>
-                        <span data-card-back class="absolute inset-[1px] rounded-[22px] border border-fuchsia-200 dark:border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-100 via-pink-50 to-indigo-100 dark:from-fuchsia-500/15 dark:via-pink-500/10 dark:to-indigo-500/15 flex items-center justify-center text-4xl transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(-180deg);transform-style:preserve-3d;">${card.symbol}</span>
+                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square overflow-hidden rounded-[24px] bg-transparent transition duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35" style="perspective:1000px;">
+                        <span data-card-front class="absolute inset-0 rounded-[24px] border border-slate-200/70 dark:border-white/10 bg-gradient-to-br from-white via-slate-50 to-indigo-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_10px_24px_rgba(15,23,42,0.08)] dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_24px_rgba(2,6,23,0.38)] flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400 transition duration-500 group-hover:border-fuchsia-300/60 dark:group-hover:border-fuchsia-400/30" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg);transform-style:preserve-3d;">Flip</span>
+                        <span data-card-back class="absolute inset-0 rounded-[24px] border border-fuchsia-200/80 dark:border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-100 via-pink-50 to-indigo-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.75),0_10px_24px_rgba(168,85,247,0.12)] dark:from-fuchsia-500/15 dark:via-pink-500/10 dark:to-indigo-500/15 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_10px_24px_rgba(76,29,149,0.28)] flex items-center justify-center text-4xl transition duration-500 group-hover:border-fuchsia-300/70 dark:group-hover:border-fuchsia-400/30" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(-180deg);transform-style:preserve-3d;">${card.symbol}</span>
                     </button>
                 `).join("");
                 board.querySelectorAll("button").forEach((button) => button.addEventListener("click", handleCardClick));
