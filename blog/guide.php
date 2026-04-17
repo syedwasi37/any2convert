@@ -17,6 +17,21 @@ $pageTitle = $tool['h1'] . " Guide | Any2Convert";
 $pageDesc = "Learn everything about " . strtolower($tool['h1']) . ". " . $tool['meta_desc'];
 $canonical = "https://any2convert.com/blog/guide.php?slug=" . urlencode($slug);
 $toolUrl = "https://any2convert.com/" . $slug;
+$faqText = '';
+if (!empty($tool['faqs']) && is_array($tool['faqs'])) {
+    foreach ($tool['faqs'] as $faq) {
+        $faqText .= ' ' . ($faq['q'] ?? '') . ' ' . ($faq['a'] ?? '');
+    }
+}
+$detectionText = strtolower(($tool['meta_desc'] ?? '') . ' ' . ($tool['content'] ?? '') . ' ' . $faqText);
+$usesServerProcessing = str_contains($detectionText, 'server-side')
+    || str_contains($detectionText, 'server side')
+    || str_contains($detectionText, 'uploaded')
+    || str_contains($detectionText, 'upload')
+    || str_contains($detectionText, 'conversion engine');
+$bestFor = $tool['best_for'] ?? [];
+$steps = $tool['steps'] ?? [];
+$sections = $tool['sections'] ?? [];
 trackVisit('Blog Guide Page', $slug);
 ?>
 <!DOCTYPE html>
@@ -94,19 +109,46 @@ trackVisit('Blog Guide Page', $slug);
                 
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">Why Do You Need This?</h2>
                 <p><?= htmlspecialchars($tool['content']) ?></p>
-                <p class="mt-4">In today's fast-paced digital environment, having access to a reliable, browser-based solution saves time. You don't need to install heavy software or worry about your files being uploaded to sketchy servers. Everything happens instantly, directly on your machine.</p>
+                <?php if ($usesServerProcessing): ?>
+                    <p class="mt-4">This workflow may use secure server-side processing for the heavy conversion step when that produces a better result. For sensitive files, review the tool page and privacy policy first so you know whether the job stays in the browser or is handled on the server.</p>
+                <?php else: ?>
+                    <p class="mt-4">This tool is best when you want a fast browser workflow without installing desktop software. For everyday file tasks, keeping the process inside the browser can reduce friction and make the result easier to review immediately.</p>
+                <?php endif; ?>
+
+                <?php if (!empty($bestFor)): ?>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">Best For</h2>
+                    <ul class="list-disc pl-6 space-y-3 mt-4">
+                        <?php foreach ($bestFor as $item): ?>
+                            <li><?= htmlspecialchars($item) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
 
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4">How to Use the Tool</h2>
                 <ul class="list-disc pl-6 space-y-3 mt-4">
-                    <li><strong>Step 1:</strong> Navigate to the <a href="<?= htmlspecialchars($toolUrl) ?>" class="text-blue-500 font-bold hover:underline"><?= htmlspecialchars($tool['title']) ?></a> page.</li>
-                    <li><strong>Step 2:</strong> Upload your file or input your data into the clean, user-friendly interface.</li>
-                    <li><strong>Step 3:</strong> Click the action button. The processing is done instantly in your browser.</li>
-                    <li><strong>Step 4:</strong> Download your highly optimized, watermark-free result.</li>
+                    <?php if (!empty($steps)): ?>
+                        <?php foreach ($steps as $index => $step): ?>
+                            <li><strong>Step <?= $index + 1 ?>:</strong> <?= htmlspecialchars($step) ?></li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li><strong>Step 1:</strong> Open the <a href="<?= htmlspecialchars($toolUrl) ?>" class="text-blue-500 font-bold hover:underline"><?= htmlspecialchars($tool['title']) ?></a> page.</li>
+                        <li><strong>Step 2:</strong> Add your file or enter the data the tool needs.</li>
+                        <li><strong>Step 3:</strong> Start the task and wait for the tool to finish processing.</li>
+                        <li><strong>Step 4:</strong> Review the output carefully before downloading or sharing it.</li>
+                    <?php endif; ?>
                 </ul>
+
+                <?php foreach ($sections as $section): ?>
+                    <?php if (empty($section['title']) || empty($section['paragraphs']) || !is_array($section['paragraphs'])) continue; ?>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-10 mb-4"><?= htmlspecialchars($section['title']) ?></h2>
+                    <?php foreach ($section['paragraphs'] as $paragraph): ?>
+                        <p class="mt-4"><?= htmlspecialchars($paragraph) ?></p>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
 
                 <div class="my-12 p-8 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800 text-center">
                     <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">Ready to try it out?</h3>
-                    <p class="text-sm text-blue-600 dark:text-blue-300 mb-6">100% Free. No installation. No data collection.</p>
+                    <p class="text-sm text-blue-600 dark:text-blue-300 mb-6"><?= $usesServerProcessing ? 'Free to use. Review the tool page for processing details before uploading sensitive files.' : 'Free to use with no desktop installation required.' ?></p>
                     <a href="<?= htmlspecialchars($toolUrl) ?>" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none">
                         Open Tool
                     </a>

@@ -107,20 +107,25 @@ trackVisit('Blog Index Page');
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
                         <h2 class="text-3xl font-black text-slate-900 dark:text-white">Tool Guides & Tutorials</h2>
-                        <p class="text-slate-500 mt-2">Step-by-step guides for all 80+ free utilities available on Any2Convert.</p>
+                        <p class="text-slate-500 mt-2">Practical guides that explain what each tool is good at, when it works best, and what to review before you rely on the result.</p>
                     </div>
-                    <input type="text" id="guideSearch" placeholder="Search guides..." class="px-4 py-3 rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] text-[var(--text-main)] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition w-full sm:w-64 font-medium">
+                    <div class="w-full sm:w-80">
+                        <input type="text" id="guideSearch" placeholder="Search guides..." class="px-4 py-3 rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] text-[var(--text-main)] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition w-full font-medium">
+                        <p id="guideSearchStatus" class="text-sm text-slate-500 mt-2">Showing every guide.</p>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="guideGrid">
                     <?php foreach($seo_tools as $slug => $data): ?>
-                    <a href="guide.php?slug=<?= urlencode($slug) ?>" class="guide-card panel rounded-3xl p-5 hover:-translate-y-1 transition-transform flex items-center gap-4" data-title="<?= htmlspecialchars(strtolower($data['h1'])) ?>">
+                    <?php $guideSearchText = strtolower(($data['h1'] ?? '') . ' ' . ($data['meta_desc'] ?? '') . ' ' . ($data['content'] ?? '')); ?>
+                    <a href="guide.php?slug=<?= urlencode($slug) ?>" class="guide-card panel rounded-3xl p-5 hover:-translate-y-1 transition-transform block" data-search="<?= htmlspecialchars($guideSearchText) ?>">
                         <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-2xl flex-shrink-0">
                             <?= $data['icon'] ?? '💡' ?>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-slate-900 dark:text-white leading-snug line-clamp-2"><?= htmlspecialchars($data['h1']) ?></h3>
-                            <p class="text-xs text-blue-500 mt-1 font-semibold uppercase tracking-wider">Read Guide</p>
+                        <div class="mt-4">
+                            <h3 class="font-bold text-slate-900 dark:text-white leading-snug"><?= htmlspecialchars($data['h1']) ?></h3>
+                            <p class="text-sm text-slate-500 mt-2 leading-6"><?= htmlspecialchars($data['meta_desc'] ?? '') ?></p>
+                            <p class="text-xs text-blue-500 mt-4 font-semibold uppercase tracking-wider">Read Guide</p>
                         </div>
                     </a>
                     <?php endforeach; ?>
@@ -133,15 +138,18 @@ trackVisit('Blog Index Page');
     <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <script>
         // Live Search for Guides
-        document.getElementById('guideSearch').addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase();
-            document.querySelectorAll('.guide-card').forEach(card => {
-                if (card.dataset.title.includes(term)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
+        const guideSearch = document.getElementById('guideSearch');
+        const guideStatus = document.getElementById('guideSearchStatus');
+        const guideCards = Array.from(document.querySelectorAll('.guide-card'));
+        guideSearch.addEventListener('input', function(e) {
+            const term = e.target.value.trim().toLowerCase();
+            let visible = 0;
+            guideCards.forEach(card => {
+                const show = !term || card.dataset.search.includes(term);
+                card.style.display = show ? 'block' : 'none';
+                if (show) visible++;
             });
+            guideStatus.textContent = term ? `Showing ${visible} guide${visible === 1 ? '' : 's'} for "${term}".` : 'Showing every guide.';
         });
 
         const savedTheme = localStorage.getItem('theme');

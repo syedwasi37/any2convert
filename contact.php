@@ -6,9 +6,6 @@ require_once 'backend/track_visit.php';
 require_once __DIR__ . '/partials/site_chrome.php';
 trackVisit('Contact Page');
 
-$stmt = $conn->query("SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 10");
-$feedbacks = $stmt->fetchAll();
-
 $isAdminUser = isset($_SESSION['email']) && $_SESSION['email'] === 'syedwasiulhassanshah@any2convert.com';
 $backHref = 'index.php';
 $backLabel = 'Back Home';
@@ -201,33 +198,9 @@ if (isset($_SESSION['user_id'])) {
                         <div class="space-y-3 text-slate-600 leading-relaxed">
                             <p>We read bug reports, account issues, tool suggestions, and conversion-quality feedback here. Support quality improves a lot when the report includes the tool name, file type, and the exact step where things failed.</p>
                             <p>If your message is about a broken conversion, include whether the issue happened before upload, during processing, or after download. That makes it easier to tell whether the problem is in the interface, browser processing, or a server-side conversion step.</p>
-                            <p>Public community feedback shown below may be trimmed, moderated, or hidden if it is spammy, abusive, or not useful to other visitors.</p>
+                            <p>To protect visitors from spam, misleading promotions, and irrelevant submissions, support messages sent through this page are reviewed privately and are not published automatically.</p>
                         </div>
                     </div>
-
-                    <h2 class="text-2xl font-black text-slate-900 mb-6">Recent Community Feedback</h2>
-
-                    <?php foreach ($feedbacks as $fb): ?>
-                        <div class="panel p-6 rounded-[2rem]">
-                            <div class="flex justify-between items-center mb-3 gap-4">
-                                <h4 class="font-bold text-slate-800"><?= htmlspecialchars($fb['name']) ?></h4>
-                                <div class="flex text-yellow-500 text-sm">
-                                    <?php for ($i = 1; $i <= (int) $fb['rating']; $i++): ?>
-                                        &#9733;
-                                    <?php endfor; ?>
-                                </div>
-                            </div>
-                            <p class="text-slate-500 text-sm mb-4">"<?= htmlspecialchars($fb['message']) ?>"</p>
-
-                            <?php if (!empty($fb['reply'])): ?>
-                                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 ml-4 relative">
-                                    <div class="absolute -left-3 top-4 text-blue-200">&#8617;</div>
-                                    <p class="text-[10px] font-black uppercase text-blue-400 mb-1">Admin Reply</p>
-                                    <p class="text-blue-800 text-sm font-medium"><?= htmlspecialchars($fb['reply']) ?></p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

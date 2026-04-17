@@ -71,42 +71,45 @@ $toolSections = $tool_data['sections'] ?? [];
 $toolSteps = $tool_data['steps'] ?? [];
 $toolBestFor = $tool_data['best_for'] ?? [];
 $toolIntro = $tool_data['intro'] ?? '';
-$toolKeywords = $tool_data['keyword_targets'] ?? [];
 $toolUseCases = $tool_data['use_cases'] ?? [];
 $toolFeatures = $tool_data['features'] ?? [];
 $toolInternalLinks = $tool_data['internal_links'] ?? [];
-
-function slugToKeywordLabel(string $slug): string {
-    return ucwords(str_replace('-', ' ', $slug));
-}
-
-function buildKeywordTargets(array $toolData, string $slug): array {
-    if (!empty($toolData['keyword_targets'])) {
-        return $toolData['keyword_targets'];
-    }
-
-    $base = strtolower($toolData['h1'] ?? slugToKeywordLabel($slug));
-    $base = preg_replace('/\s+online$/', '', $base);
-
-    return array_values(array_unique([
-        $base . ' free online',
-        $base . ' no signup',
-        $base . ' without watermark',
-        $base . ' fast online tool',
-        $base . ' browser tool',
-        $base . ' online tool',
-    ]));
-}
+$toolSummaryText = strtolower(($tool_data['meta_desc'] ?? '') . ' ' . ($tool_data['content'] ?? '') . ' ' . implode(' ', $toolSteps));
+$usesServerProcessing = str_contains($toolSummaryText, 'server-side')
+    || str_contains($toolSummaryText, 'server side')
+    || str_contains($toolSummaryText, 'upload')
+    || str_contains($toolSummaryText, 'conversion engine');
+$processingLabel = $usesServerProcessing ? 'May use secure server-side processing' : 'Usually works directly in the browser';
 
 function buildUseCases(array $toolData): array {
     if (!empty($toolData['use_cases'])) {
         return $toolData['use_cases'];
     }
 
+    $description = strtolower($toolData['meta_desc'] ?? '');
+    $content = strtolower($toolData['content'] ?? '');
+    $combined = $description . ' ' . $content;
+
+    if (str_contains($combined, 'pdf')) {
+        return [
+            'Useful for email attachments, form submissions, document cleanup, and quick PDF prep before sharing.',
+            'Helps with office files, school paperwork, contracts, reports, scanned pages, and admin tasks that need one clear workflow.',
+            'A practical option when you want a single-purpose PDF page instead of a larger desktop suite.',
+        ];
+    }
+
+    if (str_contains($combined, 'image') || str_contains($combined, 'photo')) {
+        return [
+            'Useful for screenshots, product images, social-media assets, scans, and everyday photo cleanup jobs.',
+            'Helps when you want one image task done quickly without opening a heavier design tool.',
+            'A good fit for small visual edits where speed and clarity matter more than advanced studio features.',
+        ];
+    }
+
     return [
-        'Use the tool for one focused file task without downloading a large desktop app first.',
-        'Handle document preparation, sharing, conversion, or cleanup from a dedicated page that can rank independently.',
-        'Give users a direct landing page that matches the exact job they searched for on Google.',
+        'Use the tool for one focused task without downloading a large desktop app first.',
+        'Handle common file, text, or utility work from a page built around one job instead of a cluttered dashboard.',
+        'Move from input to result quickly when you need a practical answer and not a long setup process.',
     ];
 }
 
@@ -115,10 +118,22 @@ function buildFeatures(array $toolData): array {
         return $toolData['features'];
     }
 
+    $description = strtolower($toolData['meta_desc'] ?? '');
+    $content = strtolower($toolData['content'] ?? '');
+    $combined = $description . ' ' . $content;
+
+    if (str_contains($combined, 'server-side') || str_contains($combined, 'server side') || str_contains($combined, 'upload')) {
+        return [
+            'Focused interface for one workflow so the important controls are easier to find.',
+            'Tool-specific instructions and follow-up guidance on the same page as the converter itself.',
+            'Built for browser use on desktop and mobile, with heavier processing used only when the workflow needs it.',
+        ];
+    }
+
     return [
-        'Server-rendered headings, copy, and FAQs so search engines can crawl the page source easily.',
-        'Existing handler output embedded directly into the page without rewriting the underlying tool logic.',
-        'Fast browser-first workflow designed for users on desktop, tablet, and mobile.',
+        'Focused layout that keeps the main task, guidance, and FAQs on one page.',
+        'Browser-friendly workflow designed to work cleanly on desktop, tablet, and mobile.',
+        'Practical supporting copy so users know what the tool is good at and what to review afterward.',
     ];
 }
 
@@ -237,7 +252,6 @@ function sanitizeSoftwareApplicationSchema(array $schema): array {
 
 $displayFaqs = !empty($toolFaqs) ? $toolFaqs : buildFallbackFaqs($tool_data);
 $relatedTools = buildRelatedTools($seo_tools, $slug, 6, $tool_data['related_slugs'] ?? []);
-$toolKeywords = buildKeywordTargets($tool_data, $slug);
 $toolUseCases = buildUseCases($tool_data);
 $toolFeatures = buildFeatures($tool_data);
 $toolInternalLinks = buildInternalLinkPhrases($relatedTools, $toolInternalLinks);
@@ -996,6 +1010,15 @@ if (isset($_SESSION['user_name'])) {
     <p class="text-lg max-w-4xl mx-auto" style="color: var(--text-secondary);">
         <?= htmlspecialchars($toolIntro !== '' ? $toolIntro : 'Clear steps, practical output, and tool-specific guidance for real file work.') ?>
     </p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3 text-sm">
+        <span class="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 font-medium text-slate-700 dark:text-slate-200"><?= htmlspecialchars($processingLabel) ?></span>
+        <?php if (!empty($toolBestFor)): ?>
+        <span class="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 font-medium text-slate-700 dark:text-slate-200"><?= count($toolBestFor) ?> practical use cases covered</span>
+        <?php endif; ?>
+        <?php if (!empty($displayFaqs)): ?>
+        <span class="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 font-medium text-slate-700 dark:text-slate-200"><?= count($displayFaqs) ?> FAQs on this page</span>
+        <?php endif; ?>
+    </div>
 </header>
 
 <main class="mx-auto px-6 pb-20" style="max-width: <?= $isWideTool ? '1280px' : '1000px' ?>;">
@@ -1007,21 +1030,10 @@ if (isset($_SESSION['user_name'])) {
     
     <!-- SEO CONTENT -->
     <div class="seo-content max-w-4xl mx-auto mt-20 text-slate-600 dark:text-slate-400 text-lg leading-relaxed space-y-6">
-        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">What is this tool?</h2>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">What This Tool Does</h2>
         <p><?= htmlspecialchars($tool_data['content']) ?></p>
-        <p><?= htmlspecialchars($tool_data['h1']) ?> helps when you need a faster way to finish a focused task without installing software, moving between multiple apps, or sending files through a long workflow. For search visibility and user trust, each tool page on Any2Convert is built to explain what the tool does, who it helps, and what to check before you rely on the output.</p>
-        <p>Use this page as both a working tool and a reference. The sections below explain common use cases, practical tips, and follow-up steps so visitors can solve the task now and understand the result before downloading, sharing, printing, or reusing the file.</p>
-
-        <?php if (!empty($toolKeywords)): ?>
-        <div class="mt-10">
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Keyword Targets</h2>
-            <div class="flex flex-wrap gap-3 mt-6">
-                <?php foreach ($toolKeywords as $keyword): ?>
-                <span class="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200"><?= htmlspecialchars($keyword) ?></span>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php endif; ?>
+        <p><?= htmlspecialchars($tool_data['h1']) ?> is meant to solve one job cleanly, with the working interface at the top and the supporting guidance below it. The goal is to help you finish the task quickly and still understand what to check before you rely on the result.</p>
+        <p><?= $usesServerProcessing ? 'Some workflows on this page may hand work off to a secure server-side step when that produces a better result. If you are handling sensitive files, review the page instructions and privacy details before uploading anything important.' : 'For lightweight jobs, browser-based processing keeps the workflow simple and lets you review the result immediately on the same device.' ?></p>
 
         <?php if (!empty($toolBestFor)): ?>
         <div class="mt-10">
@@ -1093,19 +1105,19 @@ if (isset($_SESSION['user_name'])) {
             <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Practical Tips</h2>
             <div class="space-y-4 mt-5">
                 <p>Before exporting the final result, review the output once on the same device where you plan to use it. That catches common issues such as page order, cropped content, unexpected formatting, readability problems, or missing details in generated files.</p>
-                <p>If the input contains sensitive information, avoid sharing the source file more widely than necessary. Any2Convert focuses on privacy-first workflows and local processing where possible, but you should still treat personal, financial, legal, and business documents carefully.</p>
+                <p><?= $usesServerProcessing ? 'If the input contains sensitive information, avoid uploading more than you need and keep copies only as long as necessary. Use only files you are comfortable processing online when a workflow depends on server-side conversion.' : 'If the input contains sensitive information, avoid sharing the source file more widely than necessary. Local browser processing can reduce exposure, but you should still treat personal, financial, legal, and business documents carefully.' ?></p>
             </div>
         </div>
         
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-12">Why use Any2Convert?</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Local-First Processing</strong>
-                Most file operations run directly on your device, so private documents are handled locally instead of being sent through a remote upload queue.
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2"><?= $usesServerProcessing ? 'Clear Processing Expectations' : 'Local-First Processing' ?></strong>
+                <?= $usesServerProcessing ? 'The strongest output sometimes needs server-side conversion, but this page explains that tradeoff more clearly so visitors know what kind of workflow they are using.' : 'Most lightweight file operations run directly on your device, so private documents can often be handled locally instead of being sent through a remote upload queue.' ?>
             </div>
             <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Unlimited Free Usage</strong>
-                Enjoy lifetime free conversions. We do not enforce paid tiers, size limits, or watermarks on your generated files.
+                <strong class="block text-lg text-slate-900 dark:text-white mb-2">Task-Focused Guidance</strong>
+                Each page includes steps, use cases, practical tips, and FAQs so you can judge the output instead of treating the tool like a black box.
             </div>
         </div>
 
