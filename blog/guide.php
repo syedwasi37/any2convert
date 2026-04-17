@@ -32,6 +32,42 @@ $usesServerProcessing = str_contains($detectionText, 'server-side')
 $bestFor = $tool['best_for'] ?? [];
 $steps = $tool['steps'] ?? [];
 $sections = $tool['sections'] ?? [];
+if (empty($bestFor)) {
+    $bestFor = [
+        'Handling one focused browser task without opening extra software.',
+        'Finishing a file, image, or utility job quickly before the next workflow step.',
+        'Reducing friction for uploads, sharing, reporting, or basic cleanup work.',
+        'Using a single-purpose page with instructions and follow-up guidance in one place.',
+    ];
+}
+if (empty($steps)) {
+    $steps = [
+        'Open the tool page and add the file, text, or input the workflow needs.',
+        'Adjust any option that affects the output or quality of the result.',
+        'Run the task and wait for the browser or server processing step to finish.',
+        'Review the result carefully before downloading, copying, or sharing it.',
+    ];
+}
+if (empty($sections)) {
+    $sections = [
+        [
+            'title' => 'When This Tool Helps Most',
+            'paragraphs' => [
+                'This tool is most helpful when you have one clear job to finish and want the interface, explanation, and output steps on one page. That usually makes the workflow easier to follow than jumping between several unrelated apps or tabs.',
+                'It is especially useful for everyday admin work, quick content preparation, and simple tasks where speed matters but you still want enough context to review the output properly.',
+            ],
+        ],
+        [
+            'title' => 'What To Review Before Using The Result',
+            'paragraphs' => [
+                'Always check the final output once before you send, publish, upload, or archive it. Common issues are easier to catch immediately than after someone else receives the result.',
+                $usesServerProcessing
+                    ? 'If this workflow depends on server-side processing, only upload files you are comfortable handling online and avoid including unnecessary sensitive material.'
+                    : 'If the task stays in the browser, that can reduce friction and help keep simple jobs local to your device, but you should still handle sensitive content carefully.',
+            ],
+        ],
+    ];
+}
 trackVisit('Blog Guide Page', $slug);
 ?>
 <!DOCTYPE html>

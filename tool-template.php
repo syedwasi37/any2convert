@@ -67,13 +67,13 @@ $toolUrl = $siteUrl . '/' . $slug;
 $toolTitle = $tool_data['title'];
 $toolDescription = $tool_data['meta_desc'];
 $toolFaqs = $tool_data['faqs'] ?? [];
-$toolSections = $tool_data['sections'] ?? [];
-$toolSteps = $tool_data['steps'] ?? [];
-$toolBestFor = $tool_data['best_for'] ?? [];
 $toolIntro = $tool_data['intro'] ?? '';
 $toolUseCases = $tool_data['use_cases'] ?? [];
 $toolFeatures = $tool_data['features'] ?? [];
 $toolInternalLinks = $tool_data['internal_links'] ?? [];
+$toolBestFor = $tool_data['best_for'] ?? [];
+$toolSteps = $tool_data['steps'] ?? [];
+$toolSections = $tool_data['sections'] ?? [];
 $toolSummaryText = strtolower(($tool_data['meta_desc'] ?? '') . ' ' . ($tool_data['content'] ?? '') . ' ' . implode(' ', $toolSteps));
 $usesServerProcessing = str_contains($toolSummaryText, 'server-side')
     || str_contains($toolSummaryText, 'server side')
@@ -110,6 +110,114 @@ function buildUseCases(array $toolData): array {
         'Use the tool for one focused task without downloading a large desktop app first.',
         'Handle common file, text, or utility work from a page built around one job instead of a cluttered dashboard.',
         'Move from input to result quickly when you need a practical answer and not a long setup process.',
+    ];
+}
+
+function buildBestFor(array $toolData): array {
+    if (!empty($toolData['best_for'])) {
+        return $toolData['best_for'];
+    }
+
+    $description = strtolower($toolData['meta_desc'] ?? '');
+    $content = strtolower($toolData['content'] ?? '');
+    $combined = $description . ' ' . $content;
+
+    if (str_contains($combined, 'pdf')) {
+        return [
+            'Quick document prep before email, upload, printing, or record keeping.',
+            'Office paperwork, school files, reports, contracts, and scanned documents.',
+            'One-off PDF tasks where opening a larger desktop app would be overkill.',
+            'Situations where you want the tool, instructions, and follow-up checks on one page.',
+        ];
+    }
+
+    if (str_contains($combined, 'image') || str_contains($combined, 'photo')) {
+        return [
+            'Screenshots, product images, creative assets, and simple visual cleanup work.',
+            'Fast browser edits when you only need one image task completed cleanly.',
+            'Preparing images for uploads, forms, sharing, or presentation use.',
+            'Everyday photo work where convenience matters more than a full design suite.',
+        ];
+    }
+
+    if (str_contains($combined, 'converter') || str_contains($combined, 'convert')) {
+        return [
+            'Changing a file or data format so the next app or person can use it more easily.',
+            'Quick cleanup before reporting, sharing, uploading, or continuing a workflow.',
+            'Single-purpose browser tasks that do not justify installing dedicated software.',
+            'Everyday admin work where speed and clarity matter more than extra features.',
+        ];
+    }
+
+    return [
+        'Fast browser-based tasks that only need one clear workflow.',
+        'Everyday work where you want input, output, and guidance in one place.',
+        'Quick checks, conversions, or generators that do not need a full desktop app.',
+        'Simple jobs where a focused tool is easier than a multi-feature platform.',
+    ];
+}
+
+function buildSteps(array $toolData): array {
+    if (!empty($toolData['steps'])) {
+        return $toolData['steps'];
+    }
+
+    $title = $toolData['h1'] ?? 'this tool';
+    $description = strtolower($toolData['meta_desc'] ?? '');
+    $content = strtolower($toolData['content'] ?? '');
+    $combined = $description . ' ' . $content;
+
+    if (str_contains($combined, 'upload') || str_contains($combined, 'pdf') || str_contains($combined, 'image') || str_contains($combined, 'video')) {
+        return [
+            'Open ' . $title . ' and add the file or content the tool needs.',
+            'Adjust any relevant option so the output matches the job you are trying to finish.',
+            'Run the task and wait for the processing step to complete.',
+            'Review the result carefully before downloading, sharing, or reusing it.',
+        ];
+    }
+
+    return [
+        'Open ' . $title . ' and enter the information or content you want to work with.',
+        'Choose any available option or format that matches your goal.',
+        'Run the tool and inspect the generated result on the page.',
+        'Copy, download, or reuse the output once it looks correct.',
+    ];
+}
+
+function buildSections(array $toolData): array {
+    if (!empty($toolData['sections'])) {
+        return $toolData['sections'];
+    }
+
+    $title = $toolData['h1'] ?? 'This tool';
+    $description = strtolower($toolData['meta_desc'] ?? '');
+    $content = strtolower($toolData['content'] ?? '');
+    $combined = $description . ' ' . $content;
+
+    $firstSection = [
+        'title' => 'When ' . preg_replace('/\s+online$/i', '', $title) . ' Helps',
+        'paragraphs' => [
+            'This tool is most useful when you have one specific job to finish and do not want to jump between multiple apps to get there. A focused workflow is often faster, easier to review, and less frustrating for everyday tasks.',
+            'Instead of treating the page like a black box, use the guidance here to decide whether the tool fits your input, the kind of result you expect, and the level of review you should do before sharing the output.',
+        ],
+    ];
+
+    $secondParagraphs = [
+        'Always review the final output before you send, publish, upload, or archive it. Small issues such as formatting shifts, cropped content, OCR mistakes, or file-order problems are easier to catch immediately than after someone else receives the result.',
+    ];
+
+    if (str_contains($combined, 'server-side') || str_contains($combined, 'server side') || str_contains($combined, 'upload')) {
+        $secondParagraphs[] = 'If the workflow depends on server-side processing, only upload files you are comfortable handling online and avoid including anything unnecessary in the source document.';
+    } else {
+        $secondParagraphs[] = 'If the task runs locally in the browser, that can reduce friction and help keep simple jobs on your own device, but you should still treat sensitive files carefully.';
+    }
+
+    return [
+        $firstSection,
+        [
+            'title' => 'What To Check Before You Rely On The Result',
+            'paragraphs' => $secondParagraphs,
+        ],
     ];
 }
 
@@ -252,6 +360,9 @@ function sanitizeSoftwareApplicationSchema(array $schema): array {
 
 $displayFaqs = !empty($toolFaqs) ? $toolFaqs : buildFallbackFaqs($tool_data);
 $relatedTools = buildRelatedTools($seo_tools, $slug, 6, $tool_data['related_slugs'] ?? []);
+$toolBestFor = buildBestFor($tool_data);
+$toolSteps = buildSteps($tool_data);
+$toolSections = buildSections($tool_data);
 $toolUseCases = buildUseCases($tool_data);
 $toolFeatures = buildFeatures($tool_data);
 $toolInternalLinks = buildInternalLinkPhrases($relatedTools, $toolInternalLinks);
