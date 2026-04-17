@@ -3372,9 +3372,9 @@ function getMemoryMatchGameHTML() {
     <script>
         (() => {
             const themes = {
-                emoji: ["??","??","??","??","??","??","?","??","??","??"],
-                gaming: ["??","???","??","??","??","??","??","???","??","??"],
-                space: ["??","??","??","?","??","??","??","??","?????","??"]
+                emoji: ["\u{1F60E}","\u{1F389}","\u{1F525}","\u{1F31F}","\u{1F984}","\u{1F3A7}","\u{1F680}","\u{1F4A1}","\u{1F31C}","\u{1F308}"],
+                gaming: ["\u{1F3AE}","\u{1F579}\u{FE0F}","\u{1F3C6}","\u{1F5A5}\u{FE0F}","\u{1F3AF}","\u{1F9E9}","\u{1F52B}","\u{1F47E}","\u{2B50}","\u{1F3B2}"],
+                space: ["\u{1F680}","\u{1FA90}","\u{1F31D}","\u{2604}\u{FE0F}","\u{1F31F}","\u{1F6F8}","\u{1F30C}","\u{1FA90}","\u{1F9D1}\u200D\u{1F680}","\u{1F6F0}\u{FE0F}"]
             };
             const board = document.getElementById("memoryBoard");
             const movesEl = document.getElementById("memoryMoves");
