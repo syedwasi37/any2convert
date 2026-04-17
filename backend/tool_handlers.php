@@ -1265,7 +1265,7 @@ function getCurrencyConverterHTML(): string
                     <div>
                         <p class="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Rates</p>
                         <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Live Currency Converter</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Convert between major currencies with live daily rates from Frankfurter using official institutions and central-bank sources.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Convert between major currencies with live daily reference rates and a broader no-key rate fallback for pairs that need it.</p>
                     </div>
                     <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 text-xl">$</div>
                 </div>
@@ -1300,6 +1300,7 @@ function getCurrencyConverterHTML(): string
                     <div class="px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-sm font-semibold">Daily reference rates, no key required</div>
                 </div>
                 <p id="currencyStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Loading latest currency list and rates...</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Rates by <a href="https://www.exchangerate-api.com" class="underline hover:text-emerald-600 dark:hover:text-emerald-300" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a> when the broader live feed is needed.</p>
             </div>
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-emerald-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
                 <p class="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Output</p>
@@ -1335,6 +1336,13 @@ function getCurrencyConverterHTML(): string
 
             let currencies = {};
             const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
+            const currencyNames = (() => {
+                try {
+                    return new Intl.DisplayNames([navigator.language || "en"], { type: "currency" });
+                } catch (error) {
+                    return null;
+                }
+            })();
             const presets = [
                 { label: "USD to PKR", from: "USD", to: "PKR", value: 1 },
                 { label: "EUR to USD", from: "EUR", to: "USD", value: 1 },
@@ -1359,7 +1367,58 @@ function getCurrencyConverterHTML(): string
 
             function currencyLabel(code) {
                 const item = currencies[code];
-                return typeof item === "string" ? item : (item?.name || code);
+                if (typeof item === "string") return item;
+                if (item?.name) return item.name;
+                try {
+                    return currencyNames?.of(code) || code;
+                } catch (error) {
+                    return code;
+                }
+            }
+
+            async function fetchJsonWithTimeout(url, timeoutMs = 15000) {
+                const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+                const timeoutId = controller ? window.setTimeout(() => controller.abort(), timeoutMs) : null;
+                try {
+                    const response = await fetch(url, controller ? { signal: controller.signal } : undefined);
+                    if (!response.ok) throw new Error("Request failed.");
+                    return await response.json();
+                } catch (error) {
+                    if (error && error.name === "AbortError") {
+                        throw new Error("Currency service timed out. Please try again.");
+                    }
+                    throw error;
+                } finally {
+                    if (timeoutId) {
+                        window.clearTimeout(timeoutId);
+                    }
+                }
+            }
+
+            function normalizeCurrencyCatalog(payload) {
+                if (Array.isArray(payload)) {
+                    return payload.reduce((acc, item) => {
+                        if (item && item.iso_code) {
+                            acc[item.iso_code] = item;
+                        }
+                        return acc;
+                    }, {});
+                }
+
+                if (payload && typeof payload === "object") {
+                    return payload;
+                }
+
+                return {};
+            }
+
+            function buildFallbackCurrencyCatalog(payload) {
+                const rates = payload?.rates && typeof payload.rates === "object" ? payload.rates : {};
+                const codes = new Set(["USD", ...Object.keys(rates)]);
+                return Array.from(codes).reduce((acc, code) => {
+                    acc[code] = { iso_code: code, name: currencyNames?.of(code) || code };
+                    return acc;
+                }, {});
             }
 
             function currencyFlagUrl(code) {
@@ -1423,18 +1482,12 @@ function getCurrencyConverterHTML(): string
             }
 
             async function loadCurrencies() {
-                const resp = await fetch("https://api.frankfurter.dev/v2/currencies");
-                if (!resp.ok) throw new Error("Could not load currency list.");
-                const payload = await resp.json();
-                if (Array.isArray(payload)) {
-                    currencies = payload.reduce((acc, item) => {
-                        if (item && item.iso_code) {
-                            acc[item.iso_code] = item;
-                        }
-                        return acc;
-                    }, {});
-                } else {
-                    currencies = payload || {};
+                try {
+                    const payload = await fetchJsonWithTimeout("https://api.frankfurter.dev/v2/currencies");
+                    currencies = normalizeCurrencyCatalog(payload);
+                } catch (error) {
+                    const fallbackPayload = await fetchJsonWithTimeout("https://open.er-api.com/v6/latest/USD");
+                    currencies = buildFallbackCurrencyCatalog(fallbackPayload);
                 }
                 const codes = Object.keys(currencies).sort((a, b) => {
                     const aPreferred = preferred.includes(a) ? preferred.indexOf(a) : 999;
@@ -1474,31 +1527,16 @@ function getCurrencyConverterHTML(): string
                 if (!base || !quote) return;
                 status.textContent = "Fetching live exchange rates...";
                 try {
-                    const rateResp = await fetch(`https://api.frankfurter.dev/v2/rate/${encodeURIComponent(base)}/${encodeURIComponent(quote)}`);
-                    if (!rateResp.ok) throw new Error("Rate request failed.");
-                    const ratePayload = await rateResp.json();
-                    const rate = ratePayload?.rate;
-                    const dateLabel = ratePayload?.date;
+                    const ratePayload = await fetchJsonWithTimeout(`https://open.er-api.com/v6/latest/${encodeURIComponent(base)}`);
+                    const rate = ratePayload?.rates?.[quote];
+                    const dateLabel = ratePayload?.time_last_update_utc || ratePayload?.time_next_update_utc;
                     if (!Number.isFinite(Number(rate))) throw new Error("No live rate available.");
                     const converted = (Number.isFinite(amount) ? amount : 0) * Number(rate);
                     syncCurrencyDisplays();
                     resultText.innerHTML = `<span class="flex flex-wrap items-center gap-3 break-words">${currencyFlagMarkup(quote, "w-10 h-7")}<span class="break-all">${formatAmount(converted, quote)}</span></span>`;
-                    metaText.innerHTML = `<span class="flex flex-wrap items-center gap-2 leading-6 break-words"><span class="inline-flex items-center gap-2">${currencyFlagMarkup(base, "w-6 h-4")}<span>${amount || 0} ${base}</span></span><span>=</span><span class="inline-flex items-center gap-2">${currencyFlagMarkup(quote, "w-6 h-4")}<span>${converted.toFixed(4)} ${quote}</span></span><span>using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.</span></span>`;
+                    metaText.innerHTML = `<span class="flex flex-wrap items-center gap-2 leading-6 break-words"><span class="inline-flex items-center gap-2">${currencyFlagMarkup(base, "w-6 h-4")}<span>${amount || 0} ${base}</span></span><span>=</span><span class="inline-flex items-center gap-2">${currencyFlagMarkup(quote, "w-6 h-4")}<span>${converted.toFixed(4)} ${quote}</span></span><span>using live rate ${Number(rate).toFixed(6)} from ExchangeRate-API on ${dateLabel || "the latest daily update"}.</span></span>`;
                     status.textContent = "Live exchange rate updated.";
-                    const requestedQuotes = preferred.filter((code) => code !== base).slice(0, 6);
-                    const quickResp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
-                    if (quickResp.ok) {
-                        const quickPayload = await quickResp.json();
-                        const quickMap = {};
-                        if (Array.isArray(quickPayload)) {
-                            quickPayload.forEach((item) => {
-                                if (item && item.quote) quickMap[item.quote] = item.rate;
-                            });
-                        }
-                        renderQuickRates(base, quickMap);
-                    } else {
-                        quickRates.innerHTML = "";
-                    }
+                    renderQuickRates(base, ratePayload?.rates || {});
                 } catch (error) {
                     status.textContent = error.message || "Could not fetch live rates right now.";
                     metaText.textContent = "Please try refreshing the live currency feed.";
