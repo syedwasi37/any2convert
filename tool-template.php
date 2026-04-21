@@ -5,10 +5,13 @@ session_start();
 require_once 'seo_data.php';
 require_once 'backend/track_visit.php';
 require_once 'backend/ad_helpers.php';
+require_once 'backend/tool_registry.php';
 require_once __DIR__ . '/partials/site_chrome.php';
 
 $slug = $any2convertToolSlug ?? ($_GET['slug'] ?? '');
-$tool_data = $seo_tools[$slug] ?? null;
+$resolvedTool = any2convertResolveToolFromSlug($seo_tools, (string) $slug);
+$slug = $resolvedTool['slug'];
+$tool_data = $resolvedTool['tool'];
 
 if ($tool_data && isset($any2convertToolOverride) && is_array($any2convertToolOverride)) {
     $tool_data = array_replace_recursive($tool_data, $any2convertToolOverride);
@@ -342,20 +345,19 @@ function stripEmptyStructuredData($value) {
     return $clean;
 }
 
-function sanitizeSoftwareApplicationSchema(array $schema): array {
-    // Google flags self-authored or invalid rating/review markup on tool pages.
-    unset(
-        $schema['aggregateRating'],
-        $schema['review'],
-        $schema['reviews'],
-        $schema['ratingValue'],
-        $schema['ratingCount'],
-        $schema['reviewCount'],
-        $schema['bestRating'],
-        $schema['worstRating']
-    );
+function sanitizeSoftwareApplicationSchema(array $schema): ?array {
+    $schema = stripEmptyStructuredData($schema);
 
-    return stripEmptyStructuredData($schema);
+    $hasAggregateRating = !empty($schema['aggregateRating']);
+    $hasReview = !empty($schema['review']) || !empty($schema['reviews']);
+
+    // Only output SoftwareApplication when the page has genuine review data.
+    // Otherwise Google/SEMrush flags it as invalid because rating or review is required.
+    if (!$hasAggregateRating && !$hasReview) {
+        return null;
+    }
+
+    return $schema;
 }
 
 $displayFaqs = !empty($toolFaqs) ? $toolFaqs : buildFallbackFaqs($tool_data);
@@ -398,6 +400,10 @@ $softwareSchema = [
         'priceCurrency' => 'USD',
     ],
 ];
+$softwareSchemaExtras = $tool_data['software_schema'] ?? [];
+if (is_array($softwareSchemaExtras)) {
+    $softwareSchema = array_replace_recursive($softwareSchema, $softwareSchemaExtras);
+}
 $softwareSchema = sanitizeSoftwareApplicationSchema($softwareSchema);
 $breadcrumbSchema = [
     '@context' => 'https://schema.org',
@@ -479,7 +485,9 @@ $faqSchema = [
 
     <!-- Schema Markup -->
     <script type="application/ld+json"><?= json_encode($webPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <?php if ($softwareSchema !== null): ?>
     <script type="application/ld+json"><?= json_encode($softwareSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    <?php endif; ?>
     <script type="application/ld+json"><?= json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
     <?php if (!empty($displayFaqs)): ?>
     <script type="application/ld+json"><?= json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
@@ -1238,7 +1246,7 @@ if (isset($_SESSION['user_name'])) {
             <p class="mt-4">Explore other tools that solve nearby tasks, help with the next step in the workflow, or give users another way to prepare, convert, edit, or verify their files.</p>
             <div class="grid md:grid-cols-2 gap-4 mt-6">
                 <?php foreach ($relatedTools as $relatedSlug => $relatedTool): ?>
-                <a href="/<?= htmlspecialchars($relatedSlug) ?>" class="block p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-600 transition">
+                <a href="./tool.php?page=<?= urlencode($relatedSlug) ?>" class="block p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-600 transition">
                     <div class="text-lg font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($relatedTool['h1']) ?></div>
                     <div class="mt-2 text-base text-slate-600 dark:text-slate-300"><?= htmlspecialchars($relatedTool['meta_desc']) ?></div>
                 </a>
@@ -1253,7 +1261,7 @@ if (isset($_SESSION['user_name'])) {
             <div class="space-y-4 mt-6">
                 <?php foreach ($toolInternalLinks as $link): ?>
                 <p>
-                    <a href="/<?= htmlspecialchars($link['slug']) ?>" class="font-semibold text-blue-600 dark:text-blue-300"><?= htmlspecialchars($link['anchor']) ?></a>
+                    <a href="./tool.php?page=<?= urlencode($link['slug']) ?>" class="font-semibold text-blue-600 dark:text-blue-300"><?= htmlspecialchars($link['anchor']) ?></a>
                     <?= htmlspecialchars(' - ' . ($link['context'] ?? 'A related tool for the next step in this workflow.')) ?>
                 </p>
                 <?php endforeach; ?>
