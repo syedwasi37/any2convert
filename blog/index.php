@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../backend/track_visit.php';
 trackVisit('Blog Index Page');
 ?>
@@ -43,7 +43,7 @@ trackVisit('Blog Index Page');
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <style>
         :root { --bg-accent: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 35%, #eef2ff 100%); --panel-bg: rgba(255,255,255,0.92); --panel-soft:#f8fafc; --panel-border: rgba(148,163,184,0.16); --text-main:#0f172a; --text-soft:#64748b; --nav-bg:rgba(255,255,255,0.72); --nav-border:rgba(148,163,184,0.14); --pill-bg:rgba(255,255,255,0.86); --pill-text:#334155; --glow:rgba(59,130,246,0.16);}
-        html.dark { --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%); --panel-bg: rgba(15,23,42,0.82); --panel-soft: rgba(15,23,42,0.92); --panel-border: rgba(148,163,184,0.16); --text-main:#e2e8f0; --text-soft:#94a3b8; --nav-bg:rgba(2,6,23,0.76); --nav-border:rgba(148,163,184,0.16); --pill-bg:rgba(15,23,42,0.92); --pill-text:#cbd5e1; --glow:rgba(96,165,250,0.18);}
+        html.dark { --bg-accent: radial-gradient(circle at top, #1d4ed8 0%, #0f172a 32%, #020617 100%); --panel-bg: rgba(15,23,42,0.82); --panel-soft: rgba(15,23,42,0.92); --panel-border: rgba(148,163,184,0.16); --text-main:#e2e8f0; --text-soft:#94a3b8; --nav-bg:rgba(2,6,23,0.76); --nav-border:rgba(148,163,184,0.16); --pill-bg:rgba(15,23,42,0.92); --pill-text:#cbd5e1; --glow:rgba(96,165,250,0.18); }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg-accent); color: var(--text-main); }
         .page-shell { position: relative; }
         .page-shell::before { content:''; position:absolute; inset:0 auto auto 50%; width:64rem; height:22rem; transform:translateX(-50%); background:radial-gradient(circle, var(--glow) 0%, transparent 70%); filter:blur(24px); pointer-events:none; z-index:0; }
@@ -51,9 +51,10 @@ trackVisit('Blog Index Page');
         .nav-pill, .theme-toggle { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; border-radius:999px; background:var(--pill-bg); color:var(--pill-text); border:1px solid var(--panel-border); font-weight:700; font-size:.88rem; text-decoration:none; }
         .theme-toggle { width:46px; height:46px; padding:0; }
         .panel { background: var(--panel-bg); backdrop-filter: blur(18px); border: 1px solid var(--panel-border); box-shadow: 0 24px 70px rgba(15,23,42,0.08); }
-        html.dark .bg-white, html.dark .bg-slate-50 { background: var(--panel-soft) !important; }
+        html.dark .bg-white, html.dark .bg-slate-50, html.dark .bg-white\/70 { background: var(--panel-soft) !important; }
         html.dark .text-slate-900, html.dark .text-slate-800, html.dark .text-slate-700 { color: var(--text-main) !important; }
         html.dark .text-slate-500, html.dark .text-slate-400, html.dark .text-slate-600 { color: var(--text-soft) !important; }
+        html.dark [class*='border-[var(--panel-border)]'] { border-color: var(--panel-border) !important; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -63,7 +64,7 @@ trackVisit('Blog Index Page');
             <div class="flex flex-wrap items-center gap-3">
                 <a href="../index.php" class="nav-pill">Home</a>
                 <a href="../contact.php" class="nav-pill">Support</a>
-                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
+                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme"></button>
             </div>
         </div>
     </nav>
@@ -109,7 +110,7 @@ trackVisit('Blog Index Page');
                         </div>
                         <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
                             <p class="font-bold text-slate-900 mb-2">Less filler</p>
-                            <p>We are removing thin, auto-generated �ultimate guide� pages that mostly repeated the same template without enough standalone value.</p>
+                            <p>We are removing thin, auto-generated “ultimate guide” pages that mostly repeated the same template without enough standalone value.</p>
                         </div>
                         <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
                             <p class="font-bold text-slate-900 mb-2">Clear separation</p>
@@ -125,9 +126,15 @@ trackVisit('Blog Index Page');
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');
         const themeToggle = document.getElementById('themeToggle');
-        const applyThemeLabel = () => { themeToggle.textContent = document.documentElement.classList.contains('dark') ? '?' : '?'; };
+        const moonIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        const sunIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>';
+        const applyThemeLabel = () => { themeToggle.innerHTML = document.documentElement.classList.contains('dark') ? sunIcon : moonIcon; };
         applyThemeLabel();
-        themeToggle.addEventListener('click', () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); applyThemeLabel(); });
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            applyThemeLabel();
+        });
     </script>
 </body>
 </html>
