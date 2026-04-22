@@ -278,20 +278,19 @@ $itemListSchema = [
     <meta name="description" content="Free online PDF tools: Convert images to PDF, merge, compress, protect PDFs. Also includes OCR, JSON to CSV, QR codes. Local-first processing keeps many files on your device.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#3B82F6">
-    <meta name="keywords" content="pdf to word, image to pdf, pdf converter, merge pdf, compress pdf, ocr tool, json to csv, free online tools">
     <meta name="author" content="Any2Convert">
     <meta name="application-name" content="Any2Convert">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="canonical" href="https://any2convert.com/">
     <meta property="og:title" content="Any2Convert - Free PDF & Document Tools">
-    <meta property="og:description" content="15+ free tools to convert, edit, and secure your documents. No uploads, 100% private.">
+    <meta property="og:description" content="Free online PDF, image, OCR, calculator, and utility tools with clearer guidance and practical file workflows.">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Any2Convert">
     <meta property="og:url" content="https://any2convert.com">
     <meta property="og:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Any2Convert - Free PDF & Document Tools">
-    <meta name="twitter:description" content="Fast online PDF and image tools with local on-device privacy.">
+    <meta name="twitter:description" content="Free online PDF, image, OCR, calculator, and utility tools with practical guidance for everyday file work.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:url" content="https://any2convert.com/">
 

@@ -1,4 +1,3 @@
-<?php require_once __DIR__ . '/../backend/ad_helpers.php'; ?>
 <?php require_once __DIR__ . '/../backend/track_visit.php'; ?>
 <?php trackVisit('Blog Article Page', 'security-benefits'); ?>
 <!DOCTYPE html>
@@ -52,7 +51,6 @@
     </style>
 </head>
 <body class="min-h-screen">
-    <?= adsRenderPosition($conn, 'header') ?>
     <nav class="topbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <a href="../index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
@@ -66,7 +64,6 @@
 
     <main class="page-shell">
         <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
-            <?= adsRenderPosition($conn, 'top_content') ?>
             <article class="panel rounded-[2.75rem] p-8 md:p-12">
                 <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Tech Insights</p>
                 <h1 class="text-4xl md:text-5xl font-black mt-4 text-slate-900 leading-tight">Why Converting Images to PDF is Better for Security</h1>
@@ -80,6 +77,12 @@
                     <p>Separate JPG or PNG files can be lost, reordered, or edited independently. A PDF keeps the pages in one consistent document, which helps preserve context and structure.</p>
                     <h2 class="text-2xl font-bold text-slate-900 mt-8">3. Browser-Side Privacy</h2>
                     <p>On Any2Convert, the image-to-PDF workflow is designed to run directly in the browser. That means your private files can stay on your device instead of being uploaded somewhere else.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-8">4. Easier review before sending</h2>
+                    <p>When several screenshots or scanned pages are merged into one PDF, it becomes easier to review the complete packet before sharing it. That reduces the chance of sending files out of order or forgetting an important page.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-8">5. Better fit for forms and submissions</h2>
+                    <p>Many schools, offices, and portals ask for PDFs specifically because they are more consistent to archive, print, and review. Converting images first can prevent upload friction later.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-8">6. Still worth checking the content</h2>
+                    <p>A PDF format alone does not make a file secure. You should still review whether the document includes personal details, signatures, or account information that should not be shared widely. Format choice helps, but judgment still matters.</p>
                 </div>
 
                 <div class="mt-12 p-8 bg-blue-50 rounded-[2rem] border border-blue-100 text-center">
@@ -92,8 +95,6 @@
             </article>
         </div>
     </main>
-    <?= adsRenderPosition($conn, 'under_content') ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <script>
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');

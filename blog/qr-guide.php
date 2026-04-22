@@ -1,4 +1,3 @@
-<?php require_once __DIR__ . '/../backend/ad_helpers.php'; ?>
 <?php require_once __DIR__ . '/../backend/track_visit.php'; ?>
 <?php trackVisit('Blog Article Page', 'qr-guide'); ?>
 <!DOCTYPE html>
@@ -52,7 +51,6 @@
     </style>
 </head>
 <body class="min-h-screen">
-    <?= adsRenderPosition($conn, 'header') ?>
     <nav class="topbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <a href="../index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
@@ -66,7 +64,6 @@
 
     <main class="page-shell">
         <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
-            <?= adsRenderPosition($conn, 'top_content') ?>
             <article class="panel rounded-[2.75rem] p-8 md:p-12">
                 <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Business Guide</p>
                 <h1 class="text-4xl md:text-5xl font-black mt-4 text-slate-900 leading-tight">How to Create High-Quality QR Codes for Business</h1>
@@ -80,6 +77,12 @@
                     <p>Dark foreground on a light background remains the safest option. Fancy colors can work, but poor contrast quickly hurts readability.</p>
                     <h2 class="text-2xl font-bold text-slate-900 mt-8">3. Test Before Publishing</h2>
                     <p>Always test with multiple devices before printing or launching a campaign. A quick test can save you from expensive mistakes later.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-8">4. Match the size to the real-world use case</h2>
+                    <p>A code on a business card, shop counter, poster, or product box does not have the same scanning distance. The final print size should reflect how far away the user will stand when scanning it.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-8">5. Avoid burying the code in clutter</h2>
+                    <p>Even a technically valid QR code can perform badly if the surrounding design is noisy. Leave breathing room around the code and make the call to action obvious so people know why they should scan it.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-8">6. Review where the scan leads</h2>
+                    <p>Businesses often focus on the QR graphic and forget the landing page. A fast, mobile-friendly destination matters just as much as the code itself. If the destination is broken or confusing, the scan experience still fails.</p>
                 </div>
 
                 <div class="mt-12 p-8 bg-blue-50 rounded-[2rem] border border-blue-100 text-center">
@@ -92,8 +95,6 @@
             </article>
         </div>
     </main>
-    <?= adsRenderPosition($conn, 'under_content') ?>
-    <?= adsRenderPosition($conn, 'footer_sticky_bottom') ?>
     <script>
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');
