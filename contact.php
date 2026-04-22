@@ -86,51 +86,22 @@ if (isset($_SESSION['user_id'])) {
             --bg-surface: rgba(14,18,36,.70);
             --text-muted: #a7afcf;
         }
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg-accent);
-            color: var(--text-main);
-        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg-accent); color: var(--text-main); }
         .contact-shell { position: relative; }
-        .contact-shell::before {
-            content: '';
-            position: absolute;
-            inset: 0 auto auto 50%;
-            width: 58rem;
-            height: 18rem;
-            transform: translateX(-50%);
-            background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
-            filter: blur(24px);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(18px);
-            border: 1px solid var(--panel-border);
-            box-shadow: 0 24px 70px rgba(15,23,42,0.08);
-        }
+        .contact-shell::before { content: ''; position: absolute; inset: 0 auto auto 50%; width: 58rem; height: 18rem; transform: translateX(-50%); background: radial-gradient(circle, var(--glow) 0%, transparent 70%); filter: blur(24px); pointer-events: none; z-index: 0; }
+        .panel { background: var(--panel-bg); backdrop-filter: blur(18px); border: 1px solid var(--panel-border); box-shadow: 0 24px 70px rgba(15,23,42,0.08); }
         .star-rating { direction: rtl; display: inline-flex; }
         .star-rating input { display: none; }
         .star-rating label { color: #cbd5e1; cursor: pointer; font-size: 2rem; transition: 0.2s; }
-        .star-rating input:checked ~ label,
-        .star-rating label:hover,
-        .star-rating label:hover ~ label { color: #f59e0b; }
-        html.dark .bg-white,
-        html.dark .bg-slate-50 { background: var(--panel-soft) !important; }
-        html.dark .text-slate-900,
-        html.dark .text-slate-800 { color: var(--text-main) !important; }
-        html.dark .text-slate-500,
-        html.dark .text-slate-400,
-        html.dark .text-slate-600 { color: var(--text-soft) !important; }
-        html.dark .border-slate-100,
-        html.dark .border-white,
-        html.dark .border-blue-100 { border-color: var(--panel-border) !important; }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #f59e0b; }
+        html.dark .bg-white, html.dark .bg-slate-50 { background: var(--panel-soft) !important; }
+        html.dark .text-slate-900, html.dark .text-slate-800 { color: var(--text-main) !important; }
+        html.dark .text-slate-500, html.dark .text-slate-400, html.dark .text-slate-600 { color: var(--text-soft) !important; }
+        html.dark .border-slate-100, html.dark .border-white, html.dark .border-blue-100 { border-color: var(--panel-border) !important; }
         html.dark .bg-blue-50 { background: rgba(37,99,235,0.18) !important; }
         html.dark .text-blue-800 { color: #dbeafe !important; }
         html.dark .text-blue-400 { color: #93c5fd !important; }
-        html.dark input,
-        html.dark textarea { background: rgba(15,23,42,0.92) !important; color: var(--text-main) !important; }
+        html.dark input, html.dark textarea { background: rgba(15,23,42,0.92) !important; color: var(--text-main) !important; }
     </style>
     <?php any2convertRenderChromeStyles(); ?>
 </head>

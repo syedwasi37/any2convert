@@ -1,3 +1,4 @@
+﻿@ -1,11531 +0,0 @@
 ﻿<?php
 // backend/tool_handlers.php
 
@@ -2910,7 +2911,6 @@ function getImageToPdfHTML() {
                     div.className = "relative";
                     // Added alt tag for SEO on preview images
                     div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg" alt="convert image to pdf"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">✓</span>`;
->>>>>>> 1a066413361175037281af2d18e2b6c509191792
                 };
                 reader.readAsDataURL(file);
             });

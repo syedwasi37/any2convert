@@ -1265,7 +1265,7 @@ function getCurrencyConverterHTML(): string
                     <div>
                         <p class="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Rates</p>
                         <h3 class="text-2xl font-black text-gray-900 dark:text-white mt-2">Live Currency Converter</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Convert between major currencies with live daily rates from Frankfurter using official institutions and central-bank sources.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 max-w-2xl">Convert between major currencies with live daily reference rates and a broader no-key rate fallback for pairs that need it.</p>
                     </div>
                     <div class="hidden sm:flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 text-xl">$</div>
                 </div>
@@ -1300,6 +1300,7 @@ function getCurrencyConverterHTML(): string
                     <div class="px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-sm font-semibold">Daily reference rates, no key required</div>
                 </div>
                 <p id="currencyStatus" class="text-sm text-gray-500 dark:text-gray-400 mt-4">Loading latest currency list and rates...</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Rates by <a href="https://www.exchangerate-api.com" class="underline hover:text-emerald-600 dark:hover:text-emerald-300" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a> when the broader live feed is needed.</p>
             </div>
             <div class="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-slate-50 via-white to-emerald-50/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 p-6">
                 <p class="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600 dark:text-emerald-400">Live Output</p>
@@ -1335,6 +1336,13 @@ function getCurrencyConverterHTML(): string
 
             let currencies = {};
             const preferred = ["USD", "EUR", "GBP", "PKR", "AED", "SAR", "INR", "CAD", "AUD", "JPY"];
+            const currencyNames = (() => {
+                try {
+                    return new Intl.DisplayNames([navigator.language || "en"], { type: "currency" });
+                } catch (error) {
+                    return null;
+                }
+            })();
             const presets = [
                 { label: "USD to PKR", from: "USD", to: "PKR", value: 1 },
                 { label: "EUR to USD", from: "EUR", to: "USD", value: 1 },
@@ -1359,7 +1367,58 @@ function getCurrencyConverterHTML(): string
 
             function currencyLabel(code) {
                 const item = currencies[code];
-                return typeof item === "string" ? item : (item?.name || code);
+                if (typeof item === "string") return item;
+                if (item?.name) return item.name;
+                try {
+                    return currencyNames?.of(code) || code;
+                } catch (error) {
+                    return code;
+                }
+            }
+
+            async function fetchJsonWithTimeout(url, timeoutMs = 15000) {
+                const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+                const timeoutId = controller ? window.setTimeout(() => controller.abort(), timeoutMs) : null;
+                try {
+                    const response = await fetch(url, controller ? { signal: controller.signal } : undefined);
+                    if (!response.ok) throw new Error("Request failed.");
+                    return await response.json();
+                } catch (error) {
+                    if (error && error.name === "AbortError") {
+                        throw new Error("Currency service timed out. Please try again.");
+                    }
+                    throw error;
+                } finally {
+                    if (timeoutId) {
+                        window.clearTimeout(timeoutId);
+                    }
+                }
+            }
+
+            function normalizeCurrencyCatalog(payload) {
+                if (Array.isArray(payload)) {
+                    return payload.reduce((acc, item) => {
+                        if (item && item.iso_code) {
+                            acc[item.iso_code] = item;
+                        }
+                        return acc;
+                    }, {});
+                }
+
+                if (payload && typeof payload === "object") {
+                    return payload;
+                }
+
+                return {};
+            }
+
+            function buildFallbackCurrencyCatalog(payload) {
+                const rates = payload?.rates && typeof payload.rates === "object" ? payload.rates : {};
+                const codes = new Set(["USD", ...Object.keys(rates)]);
+                return Array.from(codes).reduce((acc, code) => {
+                    acc[code] = { iso_code: code, name: currencyNames?.of(code) || code };
+                    return acc;
+                }, {});
             }
 
             function currencyFlagUrl(code) {
@@ -1423,18 +1482,12 @@ function getCurrencyConverterHTML(): string
             }
 
             async function loadCurrencies() {
-                const resp = await fetch("https://api.frankfurter.dev/v2/currencies");
-                if (!resp.ok) throw new Error("Could not load currency list.");
-                const payload = await resp.json();
-                if (Array.isArray(payload)) {
-                    currencies = payload.reduce((acc, item) => {
-                        if (item && item.iso_code) {
-                            acc[item.iso_code] = item;
-                        }
-                        return acc;
-                    }, {});
-                } else {
-                    currencies = payload || {};
+                try {
+                    const payload = await fetchJsonWithTimeout("https://api.frankfurter.dev/v2/currencies");
+                    currencies = normalizeCurrencyCatalog(payload);
+                } catch (error) {
+                    const fallbackPayload = await fetchJsonWithTimeout("https://open.er-api.com/v6/latest/USD");
+                    currencies = buildFallbackCurrencyCatalog(fallbackPayload);
                 }
                 const codes = Object.keys(currencies).sort((a, b) => {
                     const aPreferred = preferred.includes(a) ? preferred.indexOf(a) : 999;
@@ -1474,31 +1527,16 @@ function getCurrencyConverterHTML(): string
                 if (!base || !quote) return;
                 status.textContent = "Fetching live exchange rates...";
                 try {
-                    const rateResp = await fetch(`https://api.frankfurter.dev/v2/rate/${encodeURIComponent(base)}/${encodeURIComponent(quote)}`);
-                    if (!rateResp.ok) throw new Error("Rate request failed.");
-                    const ratePayload = await rateResp.json();
-                    const rate = ratePayload?.rate;
-                    const dateLabel = ratePayload?.date;
+                    const ratePayload = await fetchJsonWithTimeout(`https://open.er-api.com/v6/latest/${encodeURIComponent(base)}`);
+                    const rate = ratePayload?.rates?.[quote];
+                    const dateLabel = ratePayload?.time_last_update_utc || ratePayload?.time_next_update_utc;
                     if (!Number.isFinite(Number(rate))) throw new Error("No live rate available.");
                     const converted = (Number.isFinite(amount) ? amount : 0) * Number(rate);
                     syncCurrencyDisplays();
                     resultText.innerHTML = `<span class="flex flex-wrap items-center gap-3 break-words">${currencyFlagMarkup(quote, "w-10 h-7")}<span class="break-all">${formatAmount(converted, quote)}</span></span>`;
-                    metaText.innerHTML = `<span class="flex flex-wrap items-center gap-2 leading-6 break-words"><span class="inline-flex items-center gap-2">${currencyFlagMarkup(base, "w-6 h-4")}<span>${amount || 0} ${base}</span></span><span>=</span><span class="inline-flex items-center gap-2">${currencyFlagMarkup(quote, "w-6 h-4")}<span>${converted.toFixed(4)} ${quote}</span></span><span>using live rate ${Number(rate).toFixed(6)} on ${dateLabel || "latest update"}.</span></span>`;
+                    metaText.innerHTML = `<span class="flex flex-wrap items-center gap-2 leading-6 break-words"><span class="inline-flex items-center gap-2">${currencyFlagMarkup(base, "w-6 h-4")}<span>${amount || 0} ${base}</span></span><span>=</span><span class="inline-flex items-center gap-2">${currencyFlagMarkup(quote, "w-6 h-4")}<span>${converted.toFixed(4)} ${quote}</span></span><span>using live rate ${Number(rate).toFixed(6)} from ExchangeRate-API on ${dateLabel || "the latest daily update"}.</span></span>`;
                     status.textContent = "Live exchange rate updated.";
-                    const requestedQuotes = preferred.filter((code) => code !== base).slice(0, 6);
-                    const quickResp = await fetch(`https://api.frankfurter.dev/v2/rates?base=${encodeURIComponent(base)}&quotes=${encodeURIComponent(requestedQuotes.join(","))}`);
-                    if (quickResp.ok) {
-                        const quickPayload = await quickResp.json();
-                        const quickMap = {};
-                        if (Array.isArray(quickPayload)) {
-                            quickPayload.forEach((item) => {
-                                if (item && item.quote) quickMap[item.quote] = item.rate;
-                            });
-                        }
-                        renderQuickRates(base, quickMap);
-                    } else {
-                        quickRates.innerHTML = "";
-                    }
+                    renderQuickRates(base, ratePayload?.rates || {});
                 } catch (error) {
                     status.textContent = error.message || "Could not fetch live rates right now.";
                     metaText.textContent = "Please try refreshing the live currency feed.";
@@ -1622,7 +1660,7 @@ function getAtsResumeCheckerHTML() {
     return <<<'HTML'
     <div class="max-w-6xl mx-auto grid xl:grid-cols-[1.05fr_0.95fr] gap-6">
         <div class="rounded-[32px] border border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/75 shadow-xl p-6 md:p-7 space-y-5">
-            <div style="display:none;">
+            <div style="">
                 <h2 class="text-3xl font-black text-slate-900 dark:text-white">ATS Resume Checker Free Online</h2>
                 <p>Use this ATS resume checker to scan your resume, improve ATS resume keywords, and check your ATS resume score against a job description.</p>
                 <p>Find missing ATS resume keywords, test your ATS resume format, and use this free ATS resume checker online before you apply.</p>
@@ -3273,9 +3311,9 @@ function getMemoryMatchGameHTML() {
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
                     <span class="block text-[11px] uppercase tracking-[0.22em] text-slate-400 mb-2">Difficulty</span>
                     <select id="memoryDifficulty" class="w-full min-h-[56px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 text-[15px] font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/30">
-                        <option value="12">Easy � 12 cards</option>
-                        <option value="16" selected>Normal � 16 cards</option>
-                        <option value="20">Hard � 20 cards</option>
+                        <option value="12">Easy - 12 cards</option>
+                        <option value="16" selected>Normal - 16 cards</option>
+                        <option value="20">Hard - 20 cards</option>
                     </select>
                 </label>
                 <label class="rounded-[24px] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/80 p-4">
@@ -3334,9 +3372,9 @@ function getMemoryMatchGameHTML() {
     <script>
         (() => {
             const themes = {
-                emoji: ["??","??","??","??","??","??","?","??","??","??"],
-                gaming: ["??","???","??","??","??","??","??","???","??","??"],
-                space: ["??","??","??","?","??","??","??","??","?????","??"]
+                emoji: ["\u{1F60E}","\u{1F389}","\u{1F525}","\u{1F31F}","\u{1F984}","\u{1F3A7}","\u{1F680}","\u{1F4A1}","\u{1F31C}","\u{1F308}"],
+                gaming: ["\u{1F3AE}","\u{1F579}\u{FE0F}","\u{1F3C6}","\u{1F5A5}\u{FE0F}","\u{1F3AF}","\u{1F9E9}","\u{1F52B}","\u{1F47E}","\u{2B50}","\u{1F3B2}"],
+                space: ["\u{1F680}","\u{1FA90}","\u{1F31D}","\u{2604}\u{FE0F}","\u{1F31F}","\u{1F6F8}","\u{1F30C}","\u{1FA90}","\u{1F9D1}\u200D\u{1F680}","\u{1F6F0}\u{FE0F}"]
             };
             const board = document.getElementById("memoryBoard");
             const movesEl = document.getElementById("memoryMoves");
@@ -3366,7 +3404,7 @@ function getMemoryMatchGameHTML() {
                 const best = JSON.parse(localStorage.getItem(bestKey) || "{}");
                 const key = `${difficultyEl.value}-${themeEl.value}`;
                 if (best[key]) {
-                    bestEl.textContent = `Best: ${best[key].moves} moves � ${best[key].time}`;
+                    bestEl.textContent = `Best: ${best[key].moves} moves - ${best[key].time}`;
                 } else {
                     bestEl.textContent = "Best: --";
                 }
@@ -3401,7 +3439,7 @@ function getMemoryMatchGameHTML() {
                     primary_score: moves,
                     secondary_score: seconds,
                     score_label: `${moves} moves`,
-                    score_meta: `${formatTime(seconds)} � ${difficultyEl.options[difficultyEl.selectedIndex].text}`
+                    score_meta: `${formatTime(seconds)} - ${difficultyEl.options[difficultyEl.selectedIndex].text}`
                 }).then(() => loadLeaderboard()).catch(() => loadLeaderboard());
             }
 
@@ -3516,9 +3554,9 @@ function getMemoryMatchGameHTML() {
                 const deck = createDeck();
                 board.className = `grid gap-3 ${deck.length >= 20 ? "grid-cols-4 md:grid-cols-5" : "grid-cols-4"}`;
                 board.innerHTML = deck.map((card) => `
-                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square overflow-hidden rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-slate-100 dark:bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-fuchsia-400/40 hover:bg-fuchsia-50 dark:hover:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35" style="perspective:1000px;">
-                        <span data-card-front class="absolute inset-[1px] rounded-[22px] border border-slate-200 dark:border-white/10 bg-gradient-to-br from-white via-fuchsia-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400 transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg);transform-style:preserve-3d;">Flip</span>
-                        <span data-card-back class="absolute inset-[1px] rounded-[22px] border border-fuchsia-200 dark:border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-100 via-pink-50 to-indigo-100 dark:from-fuchsia-500/15 dark:via-pink-500/10 dark:to-indigo-500/15 flex items-center justify-center text-4xl transition duration-500" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(-180deg);transform-style:preserve-3d;">${card.symbol}</span>
+                    <button type="button" data-symbol="${card.symbol}" data-flipped="0" data-matched="0" class="group relative aspect-square overflow-hidden rounded-[24px] bg-transparent transition duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/35" style="perspective:1000px;">
+                        <span data-card-front class="absolute inset-0 rounded-[24px] border border-slate-200/70 dark:border-white/10 bg-gradient-to-br from-white via-slate-50 to-indigo-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_10px_24px_rgba(15,23,42,0.08)] dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_24px_rgba(2,6,23,0.38)] flex items-center justify-center text-xs font-black uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400 transition duration-500 group-hover:border-fuchsia-300/60 dark:group-hover:border-fuchsia-400/30" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg);transform-style:preserve-3d;">Flip</span>
+                        <span data-card-back class="absolute inset-0 rounded-[24px] border border-fuchsia-200/80 dark:border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-100 via-pink-50 to-indigo-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.75),0_10px_24px_rgba(168,85,247,0.12)] dark:from-fuchsia-500/15 dark:via-pink-500/10 dark:to-indigo-500/15 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_10px_24px_rgba(76,29,149,0.28)] flex items-center justify-center text-4xl transition duration-500 group-hover:border-fuchsia-300/70 dark:group-hover:border-fuchsia-400/30" style="backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(-180deg);transform-style:preserve-3d;">${card.symbol}</span>
                     </button>
                 `).join("");
                 board.querySelectorAll("button").forEach((button) => button.addEventListener("click", handleCardClick));
@@ -3553,7 +3591,7 @@ function getImageToPdfHTML() {
     return '
     <div class="space-y-6" role="main" aria-label="Image to PDF Converter Tool">
         
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Image to PDF Converter - Convert Image to PDF Online Free</h2>
             <p>Use our free image to pdf converter to add image to pdf without uploading files. Best tool to convert an image to pdf for free download.</p>
         </div>
@@ -3601,7 +3639,7 @@ function getImageToPdfHTML() {
                     div.className = "relative";
                     // Added alt tag for SEO on preview images
                     div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg" alt="convert image to pdf"><span class="absolute top-0 right-0 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">✓</span>`;
->>>>>>> 1a066413361175037281af2d18e2b6c509191792
+                    imgPreview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
@@ -3640,7 +3678,15 @@ function getImageToPdfHTML() {
                 const x = (pageWidth - finalWidth) / 2;
                 const y = (pageHeight - finalHeight) / 2;
 
-                doc.addImage(imgData, "JPEG", x, y, finalWidth, finalHeight, undefined, "NONE");
+                const canvas = document.createElement("canvas");
+                canvas.width = imgWidth;
+                canvas.height = imgHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+
+                doc.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", x, y, finalWidth, finalHeight, undefined, "NONE");
             }
             // SEO Optimized Filename
             doc.save("Any2Convert-image-to-pdf.pdf");
@@ -3653,7 +3699,7 @@ function getImageToPdfHTML() {
 
     <div class="space-y-6">
 
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Image Converter - Convert PDF to Image Online Free</h2>
             <p>Best free pdf to image converter to convert pdf to image file. High quality pdf to image free tool online.</p>
         </div>
@@ -4030,7 +4076,7 @@ function getPdfToWordHTML() {
 function getPdfToPptHTML() {
     return '
     <div class="space-y-6">
-     <div style="display:none;">
+     <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Word Converter - Convert PDF to PowePoint PPT Online Free</h2>
             <p>Looking for a free pdf to PowePoint PPT converter? Learn how to convert pdf to PowePoint PPT doc easily. High-quality pdf to word free tool with formatting preserved.</p>
         </div>
@@ -4162,7 +4208,7 @@ function getPdfToPptHTML() {
 function getPdfToExcelHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">PDF to Excel Converter Free - Convert PDF to Excel Online</h2>
             <p>Use this free PDF to Excel converter to convert PDF to Excel, export PDF to Excel spreadsheet files, and learn how to convert a PDF to Excel without losing structure.</p>
             <p>Convert PDF to Excel free with an online PDF to Excel converter, free PDF to Excel converter workflow, and simple steps for converting PDF to Excel spreadsheet data.</p>
@@ -4545,7 +4591,7 @@ function getPdfToExcelHTML() {
 function getMergePdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Merge PDF Free - Merge PDF Files Online Free</h2>
             <p>Use this free merge PDF tool to merge PDF files, merge PDF online, and learn how to merge PDF files quickly in one secure workflow.</p>
             <p>Merge PDF online free, combine PDF pages in order, and use a free merge PDF experience for personal, school, and office documents.</p>
@@ -4614,7 +4660,7 @@ function getMergePdfHTML() {
 function getCompressPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Compress PDF Free - Compress PDF Online</h2>
             <p>Use this compress PDF tool to compress PDF online free, reduce PDF file size, and learn how to compress PDF file size while keeping pages readable.</p>
             <p>Compress PDF files, compress PDF file size for free, and optimize documents on Mac, Windows, and mobile browsers.</p>
@@ -4744,7 +4790,7 @@ function getCompressPdfHTML() {
 function getProtectPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Password Protect PDF Online Free</h2>
             <p>Use this password protect PDF tool to protect PDF files online free, add a password to a PDF file, and secure documents from opening, copying, or editing without permission.</p>
             <p>Learn how to password protect PDF files, protect PDF from editing, and create a password protected PDF file in your browser on Mac, Windows, and mobile.</p>
@@ -5480,7 +5526,7 @@ function getQrGeneratorHTML() {
 function getPasswordGenHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Password Generator Free Online</h2>
             <p>Use this password generator to create a strong password, secure password, or random password generator result directly in your browser.</p>
             <p>Generate a password with 8, 12, 14, 15, or 16 characters using this strong random password generator free tool.</p>
@@ -7194,7 +7240,7 @@ function getImageConverterHTML() {
 function getHeicConverterHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">HEIC to JPG PNG PDF Converter Online Free</h2>
             <p>Use this HEIC to JPG converter to convert HEIC to JPG free, change HEIC to JPEG, convert HEIC to PNG, or export HEIC images as PDF directly in your browser.</p>
             <p>Free HEIC to JPG converter, HEIC to JPEG converter, and HEIC to PNG converter for Windows, Mac, and iPhone workflows without uploading files to a server.</p>
@@ -7336,7 +7382,7 @@ function getHeicConverterHTML() {
 function getJpgConverterHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">JPG to PNG JPEG PDF Converter Online Free</h2>
             <p>Use this JPG to PNG converter and JPG to PDF converter to convert JPG to PNG free, change JPG to PNG, convert JPG to PDF free, or export JPG files as JPEG directly in your browser.</p>
             <p>Free JPG to PNG converter, JPG to PDF converter free, online JPG to PDF converter, and convert JPG to PNG online free workflows for Windows, Mac, iPhone, and Android browsers.</p>
@@ -7496,7 +7542,7 @@ function getJpgConverterHTML() {
 function getWebpConverterHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">WEBP to JPG PNG JPEG PDF Converter Free Online</h2>
             <p>Use this WEBP to JPG converter to convert WEBP to JPG, WEBP to PNG, WEBP to JPEG, or WEBP to PDF quickly in your browser.</p>
             <p>Convert WEBP to JPG free, use a WEBP to PNG converter free, or convert WEBP to PDF online free without installing software.</p>
@@ -7657,7 +7703,7 @@ function getWebpConverterHTML() {
 function getVideoToAudioHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Video to MP3 Converter Free Online</h2>
             <p>Use this video to MP3 converter to convert video to MP3, turn video to MP3, and extract audio from MP4, MOV, WEBM, AVI, MKV, and more.</p>
             <p>This online video to MP3 converter free tool helps you convert video to MP3 locally in your browser with no upload required.</p>
@@ -7916,7 +7962,7 @@ function getVideoToAudioHTML() {
 function getVideoCompressorHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Compress Video Online Free</h2>
             <p>Compress video files online free and reduce video file size directly in your browser without uploading to a server.</p>
             <p>Use this video compressor to shrink MP4, MOV, WEBM, AVI, MKV, and other common video files for sharing, storage, or faster uploads.</p>
@@ -8180,7 +8226,7 @@ function getVideoCompressorHTML() {
 function getOcrToolHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Online OCR Image to Text Tool</h2>
             <p>Free online OCR for JPG, JPEG, PNG, WEBP, screenshots, receipts, scanned pages, and document photos.</p>
             <p>OCR meaning is optical character recognition. This OCR tool uses Tesseract OCR technology to turn images into editable text in your browser.</p>
@@ -8629,7 +8675,7 @@ function getWordToPdfPureJS() {
 function getProtectPdfPureJS() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Password Protect PDF Online Free</h2>
             <p>Use this password protect PDF tool to protect PDF files online free, add a password to a PDF file, and secure documents from easy opening or editing.</p>
             <p>Learn how to password protect PDF files, protect PDF from editing, and create a password protected PDF file in your browser without uploading to external software.</p>
@@ -8795,7 +8841,7 @@ function getSplitPdfHTML() {
     return '
     <div class="space-y-6" role="main" aria-label="Split PDF Online Free Tool">
         
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Split PDF Online Free - Best Tool to Split PDF Files</h2>
             <p>Learn how to split pdf pages or how to split pdf into multiple files instantly. Our split pdf free online tool is the best alternative to Adobe Acrobat split pdf.</p>
         </div>
@@ -8866,7 +8912,7 @@ function getSplitPdfHTML() {
 function getRemovePagesHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Remove Pages from PDF Free - Remove Pages from PDF Online</h2>
             <p>Use this remove pages from PDF tool to remove pages from PDF online free, learn how to remove pages from PDF files, and clean up your document in seconds.</p>
             <p>Remove pages from PDF free on Windows, Mac, Android, iPhone, and other devices with a simple browser-based workflow.</p>
@@ -9072,7 +9118,7 @@ function getRemovePagesHTML() {
 function getExtractPagesHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Extract Pages from PDF Free - Extract Pages from PDF Online</h2>
             <p>Use this tool to extract pages from PDF online free, learn how to extract pages from PDF documents, and download only the pages you need.</p>
             <p>Extract pages from PDF free on Mac, Windows, Linux, and mobile devices with a simple visual page selector.</p>
@@ -9278,7 +9324,7 @@ function getExtractPagesHTML() {
 function getOrganizePdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Organize PDF Online Free - Organize PDF Pages</h2>
             <p>Use this organize PDF tool to organize PDF pages, reorder documents, and learn how to organize PDF pages online free in a visual editor.</p>
             <p>Organize PDF files free, organize PDF files online free, and manage page order, deletion, and blank page insertion in one place.</p>
@@ -9632,7 +9678,7 @@ function getOptimizePdfHTML() {
 function getRepairPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Repair PDF Online Free - Repair PDF File</h2>
             <p>Use this repair PDF tool to repair PDF files online free, rebuild damaged PDF documents, and learn how to repair PDF file issues directly in your browser.</p>
             <p>Repair PDF file online free, repair PDF files with browser-based rebuilding, and create a cleaner copy when a document has minor structure or compatibility issues.</p>
@@ -9737,7 +9783,7 @@ function getRepairPdfHTML() {
 function getOcrPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">OCR PDF Online Free - Extract Text From Scanned PDF</h2>
             <p>Use this OCR PDF tool to recognize text from scanned documents, make PDF text selectable, and run free OCR PDF conversion online in your browser.</p>
             <p>Free OCR PDF to text, OCR PDF to Word style content, OCR PDF converter, and online OCR PDF processing for searchable scanned files on Windows, Mac, and mobile.</p>
@@ -9967,7 +10013,7 @@ function getOcrPdfHTML() {
 function getRotatePdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Rotate PDF Online Free - Rotate PDF Pages</h2>
             <p>Use this rotate PDF tool to rotate PDF pages online free, permanently rotate PDF files, and save your updated document after visual page editing.</p>
             <p>Rotate PDF file pages on Mac, Windows, and mobile browsers with per-page controls or apply one angle to all pages at once.</p>
@@ -10210,7 +10256,7 @@ function getRotatePdfHTML() {
 function getAddPageNumbersHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Add Page Number to PDF Online Free</h2>
             <p>Use this tool to add page number to PDF online free, number PDF pages in your browser, and download the updated PDF file with page numbering applied.</p>
             <p>Learn how to add page number to PDF document files on Mac, Windows, and mobile using a simple add page number to PDF free workflow.</p>
@@ -10250,7 +10296,7 @@ function getAddPageNumbersHTML() {
 function getAddWatermarkHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Add Watermark to PDF Online Free</h2>
             <p>Add watermark to PDF online free with text or image watermark placement, choose a position visually, and download the updated PDF in your browser.</p>
             <p>Use this PDF watermark tool to add watermark to PDF files, place text or logo marks on every page, and preview the watermark before downloading.</p>
@@ -10597,7 +10643,7 @@ function getAddWatermarkHTML() {
 function getUnlockPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Unlock PDF Online Free</h2>
             <p>Use this unlock PDF tool to unlock PDF files online free, enter the PDF password, and download an unlocked PDF document for viewing or editing.</p>
             <p>Learn how to unlock PDF, unlock PDF for editing, and unlock PDF password protected files in your browser with a simple upload and password flow.</p>
@@ -10722,7 +10768,7 @@ function getUnlockPdfHTML() {
 function getSignPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Sign PDF Online Free - E Sign PDF</h2>
             <p>Use this sign PDF tool to sign PDF online free, create a PDF signature, e sign PDF documents, and place signatures visually on the page before downloading.</p>
             <p>Create a free PDF signature, draw a digital PDF signature, type an e sign, fill and sign PDF files, and sign PDF documents in your browser.</p>
@@ -11201,7 +11247,7 @@ function getSignPdfHTML() {
 function getCropPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Crop PDF Online Free - Crop PDF Pages</h2>
             <p>Use this crop PDF tool to crop PDF online free, choose the crop area visually, and save cropped PDF pages directly in your browser.</p>
             <p>Learn how to crop PDF files, crop PDF pages online, and trim PDF page edges on Mac, Windows, and mobile with a visual crop box editor.</p>
@@ -11514,7 +11560,7 @@ function getCropPdfHTML() {
 function getComparePdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Compare PDF Online Free - Compare PDF Files Side by Side</h2>
             <p>Use this compare PDF tool to compare PDF files online, review PDF documents side by side, and find text differences between uploaded PDF files.</p>
             <p>Learn how to compare PDF documents, compare PDF files for differences, and compare PDF side by side directly in your browser.</p>
@@ -11706,7 +11752,7 @@ function getAiSummarizerHTML() {
 function getPdfToPdfaHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Convert PDF to PDF/A Online Free</h2>
             <p>Use this PDF to PDF/A tool to create a PDF/A style export online, improve long-term document compatibility, and rebuild PDF files for archival-focused use.</p>
             <p>Convert PDF to PDF/A free in your browser, create an archival PDF export, and generate a cleaner PDF/A-style document for storage and sharing.</p>
@@ -11752,7 +11798,7 @@ function getPdfToPdfaHTML() {
 function getEditPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Edit PDF Online Free</h2>
             <p>Use this edit PDF tool to edit PDF online free, insert text or images on PDF pages, and download the updated PDF file in your browser.</p>
             <p>Edit PDF text, add pictures, edit PDF free online, and use a visual PDF editor workspace on Mac, Windows, and mobile browsers.</p>
@@ -12668,7 +12714,7 @@ function getEditPdfSmartHTML() {
 function getRedactPdfHTML() {
     return '
     <div class="space-y-6">
-        <div style="display:none;">
+        <div style="">
             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Redact PDF Online Free</h2>
             <p>Use this redact PDF tool to redact PDF online free, hide sensitive PDF text, and download a rebuilt redacted copy directly in your browser.</p>
             <p>Learn how to redact PDF for free, redact PDF text online, and create a free redact PDF workflow without Adobe.</p>

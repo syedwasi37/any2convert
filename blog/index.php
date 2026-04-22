@@ -63,7 +63,7 @@ trackVisit('Blog Index Page');
             <div class="flex flex-wrap items-center gap-3">
                 <a href="../index.php" class="nav-pill">Home</a>
                 <a href="../contact.php" class="nav-pill">Support</a>
-                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">â˜¾</button>
+                <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☾</button>
             </div>
         </div>
     </nav>
@@ -109,7 +109,7 @@ trackVisit('Blog Index Page');
                         </div>
                         <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
                             <p class="font-bold text-slate-900 mb-2">Less filler</p>
-                            <p>We are removing thin, auto-generated “ultimate guide” pages that mostly repeated the same template without enough standalone value.</p>
+                            <p>We are removing thin, auto-generated �ultimate guide� pages that mostly repeated the same template without enough standalone value.</p>
                         </div>
                         <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
                             <p class="font-bold text-slate-900 mb-2">Clear separation</p>
@@ -125,7 +125,7 @@ trackVisit('Blog Index Page');
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') document.documentElement.classList.add('dark');
         const themeToggle = document.getElementById('themeToggle');
-        const applyThemeLabel = () => { themeToggle.textContent = document.documentElement.classList.contains('dark') ? 'â˜€' : 'â˜¾'; };
+        const applyThemeLabel = () => { themeToggle.textContent = document.documentElement.classList.contains('dark') ? '?' : '?'; };
         applyThemeLabel();
         themeToggle.addEventListener('click', () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); applyThemeLabel(); });
     </script>
