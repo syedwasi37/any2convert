@@ -100,7 +100,22 @@ trackVisit('Blog Index Page');
             </section>
         </div>
     </main>
-    <footer style="border-top:1px solid var(--border);background:var(--bg-surface);">
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+        const themeToggle = document.getElementById('themeToggle');
+        const moonIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        const sunIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>';
+        const applyThemeLabel = () => { themeToggle.innerHTML = document.documentElement.classList.contains('dark') ? sunIcon : moonIcon; };
+        applyThemeLabel();
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            applyThemeLabel();
+        });
+    </script>
+</body>
+<footer style="border-top:1px solid var(--border);background:var(--bg-surface);">
     <div style="max-width:1280px;margin:0 auto;padding:48px 20px 32px;">
 
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;" class="footer-grid">
@@ -152,20 +167,4 @@ trackVisit('Blog Index Page');
 
     </div>
 </footer>
-
-    <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-        const themeToggle = document.getElementById('themeToggle');
-        const moonIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-        const sunIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>';
-        const applyThemeLabel = () => { themeToggle.innerHTML = document.documentElement.classList.contains('dark') ? sunIcon : moonIcon; };
-        applyThemeLabel();
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyThemeLabel();
-        });
-    </script>
-</body>
 </html>
