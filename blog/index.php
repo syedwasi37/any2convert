@@ -108,10 +108,7 @@ trackVisit('Blog Index Page');
                             <p class="font-bold text-slate-900 mb-2">Original guidance</p>
                             <p>We keep articles here when they explain a workflow, tradeoff, or decision that is helpful even if you never click a tool button.</p>
                         </div>
-                        <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
-                            <p class="font-bold text-slate-900 mb-2">Less filler</p>
-                            <p>We are removing thin, auto-generated “ultimate guide” pages that mostly repeated the same template without enough standalone value.</p>
-                        </div>
+                        
                         <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
                             <p class="font-bold text-slate-900 mb-2">Clear separation</p>
                             <p>Tool pages handle uploads and step-by-step usage. The blog focuses on explanation, context, and practical decisions around those workflows.</p>
