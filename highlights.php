@@ -176,7 +176,7 @@ $dashboardHref = $isAdminUser ? 'admin/dashboard.php' : 'dashboard.php';
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <link rel="icon" type="image/png" href="mylogo.png">
     <meta name="description" content="<?= htmlspecialchars($pageDescription) ?>">
-    <meta name="robots" content="<?= $data ? 'index, follow, max-image-preview:large' : 'noindex, follow' ?>">
+    <meta name="robots" content="noindex, follow, max-image-preview:large">
     <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($pageTitle) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($pageDescription) ?>">

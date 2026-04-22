@@ -643,7 +643,7 @@ if (isset($_SESSION['user_name'])) {
             <p class="mt-4">Explore other tools that solve nearby tasks, help with the next step in the workflow, or give users another way to prepare, convert, edit, or verify their files.</p>
             <div class="grid md:grid-cols-2 gap-4 mt-6">
                 <?php foreach ($relatedTools as $relatedSlug => $relatedTool): ?>
-                <a href="./tool.php?page=<?= urlencode($relatedSlug) ?>" class="block p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-600 transition">
+                <a href="/<?= urlencode($relatedSlug) ?>" class="block p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-600 transition">
                     <div class="text-lg font-bold text-slate-900 dark:text-white"><?= htmlspecialchars($relatedTool['h1']) ?></div>
                     <div class="mt-2 text-base text-slate-600 dark:text-slate-300"><?= htmlspecialchars($relatedTool['meta_desc']) ?></div>
                 </a>
@@ -658,7 +658,7 @@ if (isset($_SESSION['user_name'])) {
             <div class="space-y-4 mt-6">
                 <?php foreach ($toolInternalLinks as $link): ?>
                 <p>
-                    <a href="./tool.php?page=<?= urlencode($link['slug']) ?>" class="font-semibold text-blue-600 dark:text-blue-300"><?= htmlspecialchars($link['anchor']) ?></a>
+                    <a href="/<?= urlencode($link['slug']) ?>" class="font-semibold text-blue-600 dark:text-blue-300"><?= htmlspecialchars($link['anchor']) ?></a>
                     <?= htmlspecialchars(' - ' . ($link['context'] ?? 'A related tool for the next step in this workflow.')) ?>
                 </p>
                 <?php endforeach; ?>
@@ -674,13 +674,6 @@ if (isset($_SESSION['user_name'])) {
                 <div class="text-base"><?= htmlspecialchars($faq['a']) ?></div>
             </div>
             <?php endforeach; ?>
-        </div>
-        
-        <!-- Read Full Guide CTA (Internal Blog Link) -->
-        <div class="mt-12 p-8 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800 text-center">
-            <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">Want to learn more?</h3>
-            <p class="text-blue-700 dark:text-blue-300 mb-6 max-w-2xl mx-auto text-base">Read our comprehensive guide and step-by-step tutorial on how to get the most out of <?= htmlspecialchars($tool_data['title']) ?>.</p>
-            <a href="blog/guide.php?slug=<?= urlencode($slug) ?>" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 dark:shadow-none text-base">Read the Full Guide</a>
         </div>
     </div>
 </main>
