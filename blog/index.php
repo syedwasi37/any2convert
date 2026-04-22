@@ -100,12 +100,7 @@ trackVisit('Blog Index Page');
             </section>
         </div>
     </main>
-
-    <footer class="bg-slate-100 border-t border-slate-200 py-12">
-        <div class="max-w-6xl mx-auto px-6">
-            <p class="text-slate-500 text-sm">© 2023 Your Company. All rights reserved.</p>
-        </div>
-    </footer>
+    
 
     <script>
         const savedTheme = localStorage.getItem('theme');
