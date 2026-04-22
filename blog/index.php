@@ -99,23 +99,7 @@ trackVisit('Blog Index Page');
                 </a>
             </section>
 
-            <section class="mt-16 mb-10">
-                <div class="panel rounded-[2.5rem] p-8 md:p-10">
-                    <p class="text-xs font-black uppercase tracking-[0.3em] text-blue-500">Editorial standards</p>
-                    <h2 class="text-3xl font-black text-slate-900 mt-4">What belongs in the blog</h2>
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5 text-sm leading-7 text-slate-600">
-                        <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
-                            <p class="font-bold text-slate-900 mb-2">Original guidance</p>
-                            <p>We keep articles here when they explain a workflow, tradeoff, or decision that is helpful even if you never click a tool button.</p>
-                        </div>
-                        
-                        <div class="rounded-[1.75rem] border border-[var(--panel-border)] bg-white/70 px-5 py-5">
-                            <p class="font-bold text-slate-900 mb-2">Clear separation</p>
-                            <p>Tool pages handle uploads and step-by-step usage. The blog focuses on explanation, context, and practical decisions around those workflows.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            
         </div>
     </main>
 
