@@ -60,10 +60,11 @@ trackVisit('Blog Index Page');
 <body class="min-h-screen">
     <nav class="topbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <a href="../index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
+            <a href="/" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
             <div class="flex flex-wrap items-center gap-3">
-                <a href="../index.php" class="nav-pill">Home</a>
-                <a href="../contact.php" class="nav-pill">Support</a>
+                <a href="/" class="nav-pill">Home</a>
+                <a href="/about.php" class="nav-pill">About Us</a>
+                <a href="/blog/" class="nav-pill">Blog</a>
                 <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme"></button>
             </div>
         </div>

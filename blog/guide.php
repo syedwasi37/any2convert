@@ -125,9 +125,11 @@ trackVisit('Blog Guide Page', $slug);
 <body class="min-h-screen">
     <nav class="sticky top-0 z-40 backdrop-blur-[18px] bg-[var(--nav-bg)] border-b border-[var(--nav-border)]">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <a href="../index.php" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
+            <a href="/" class="text-2xl font-extrabold text-blue-600 tracking-tighter italic">ANY2CONVERT</a>
             <div class="flex flex-wrap items-center gap-3">
-                <a href="index.php" class="px-4 py-2 rounded-full font-bold text-sm bg-[var(--pill-bg)] text-[var(--pill-text)] border border-[var(--panel-border)]">All Blogs</a>
+                <a href="/" class="px-4 py-2 rounded-full font-bold text-sm bg-[var(--pill-bg)] text-[var(--pill-text)] border border-[var(--panel-border)]">Home</a>
+                <a href="/about.php" class="px-4 py-2 rounded-full font-bold text-sm bg-[var(--pill-bg)] text-[var(--pill-text)] border border-[var(--panel-border)]">About Us</a>
+                <a href="/blog/" class="px-4 py-2 rounded-full font-bold text-sm bg-[var(--pill-bg)] text-[var(--pill-text)] border border-[var(--panel-border)]">Blog</a>
                 <a href="<?= htmlspecialchars($toolUrl) ?>" class="px-4 py-2 rounded-full font-bold text-sm bg-blue-600 text-white">Open Tool</a>
             </div>
         </div>
