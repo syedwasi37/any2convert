@@ -281,6 +281,7 @@ $itemListSchema = [
     <meta name="author" content="Any2Convert">
     <meta name="application-name" content="Any2Convert">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="google-adsense-account" content="ca-pub-4031884874698168">
     <link rel="canonical" href="https://any2convert.com/">
     <meta property="og:title" content="Any2Convert - Free PDF & Document Tools">
     <meta property="og:description" content="Free online PDF, image, OCR, calculator, and utility tools with clearer guidance and practical file workflows.">
@@ -293,6 +294,7 @@ $itemListSchema = [
     <meta name="twitter:description" content="Free online PDF, image, OCR, calculator, and utility tools with practical guidance for everyday file work.">
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:url" content="https://any2convert.com/">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4031884874698168" crossorigin="anonymous"></script>
 
     <script>
     tailwind.config = {

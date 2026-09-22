@@ -460,6 +460,7 @@ $faqSchema = [
     <meta name="theme-color" content="#3B82F6">
     <meta name="application-name" content="Any2Convert">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="google-adsense-account" content="ca-pub-4031884874698168">
     <meta property="og:title" content="<?= htmlspecialchars($toolTitle) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($toolDescription) ?>">
     <meta property="og:type" content="website">
@@ -472,6 +473,7 @@ $faqSchema = [
     <meta name="twitter:image" content="https://any2convert.com/mylogo.png">
     <meta name="twitter:url" content="<?= htmlspecialchars($toolUrl) ?>">
     <link rel="canonical" href="<?= htmlspecialchars($toolUrl) ?>">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4031884874698168" crossorigin="anonymous"></script>
 
     <script>
     tailwind.config = {
